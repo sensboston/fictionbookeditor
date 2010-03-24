@@ -23,12 +23,12 @@ public:
   virtual HWND X_GetDlgItem(int id) = 0;
   BOOL	SetDlgItemText(int id,const TCHAR *str) { return ::SetWindowText(GetDlgItem(id),str); }
 
-	BEGIN_MSG_MAP(FRBase)
-		ALT_MSG_MAP(1)
-		MESSAGE_HANDLER(WM_INITDIALOG, OnInitDialog)
+  BEGIN_MSG_MAP(FRBase)
+  ALT_MSG_MAP(1)
+    MESSAGE_HANDLER(WM_INITDIALOG, OnInitDialog)
 
-		COMMAND_HANDLER(IDC_TEXT,CBN_EDITCHANGE, OnTextChanged)
-	END_MSG_MAP()
+    COMMAND_HANDLER(IDC_TEXT,CBN_EDITCHANGE, OnTextChanged)
+  END_MSG_MAP()
 
   BEGIN_DDX_MAP(FRBase)
     DDX_TEXT(IDC_TEXT, m_view->m_fo.pattern)
@@ -57,14 +57,13 @@ public:
 		m_view->m_fo.fRegexp = m_regexp != 0;
 	}
 
-	void PutData()
-	{
-		m_case = (m_view->m_fo.flags & CFBEView::FRF_CASE) != 0;
-		m_whole = (m_view->m_fo.flags & CFBEView::FRF_WHOLE) != 0;
-		m_dir = (m_view->m_fo.flags & CFBEView::FRF_REVERSE) == 0;
-		m_regexp = m_view->m_fo.fRegexp;
-		DoDataExchange(FALSE);
-	}
+  void	PutData() {
+    m_case=(m_view->m_fo.flags&CFBEView::FRF_CASE)!=0;
+    m_whole=(m_view->m_fo.flags&CFBEView::FRF_WHOLE)!=0;
+    m_dir=(m_view->m_fo.flags&CFBEView::FRF_REVERSE)==0;
+    m_regexp=m_view->m_fo.fRegexp;
+    DoDataExchange(FALSE);
+  }
 
   void	LoadHistoryImp(const TCHAR *path,CRegKey& rk,HWND hCB,CString& first) {
     if (!hCB)
@@ -94,30 +93,27 @@ public:
       }
     }
   }
+  LRESULT OnInitDialog(UINT, WPARAM, LPARAM, BOOL& bHandled) {
+    bHandled=FALSE;
 
-	LRESULT OnInitDialog(UINT, WPARAM, LPARAM, BOOL& bHandled)
-	{
-		bHandled = FALSE;
+    LoadHistoryImp(_T("SearchHistory"),m_fh,GetDlgItem(IDC_TEXT),m_view->m_fo.pattern);
+    LoadHistoryImp(_T("ReplaceHistory"),m_rh,GetDlgItem(IDC_REPLACE),m_view->m_fo.replacement);
 
-		LoadHistoryImp(_T("SearchHistory"), m_fh, GetDlgItem(IDC_TEXT), m_view->m_fo.pattern);
-		LoadHistoryImp(_T("ReplaceHistory"), m_rh, GetDlgItem(IDC_REPLACE), m_view->m_fo.replacement);
+    // load options
+	DWORD flags = _Settings.GetSearchOptions();
+    m_view->m_fo.fRegexp=(flags&CFBEView::FRF_REGEX)!=0;
+    m_view->m_fo.flags=flags&~CFBEView::FRF_REGEX;
 
-		// Load options
-		DWORD flags = _Settings.GetSearchOptions();
-		m_view->m_fo.fRegexp = (flags & CFBEView::FRF_REGEX) != 0;
-		m_view->m_fo.flags = flags & ~CFBEView::FRF_REGEX;
+    // set fields
+    PutData();
 
-		// Set fields
-		PutData();
+    return 0;
+  }
 
-		return 0;
-	}
-
-	LRESULT OnTextChanged(WORD, WORD wID, HWND, BOOL&)
-	{
-		CheckInput();
-		return 0;
-	}
+  LRESULT OnTextChanged(WORD, WORD wID, HWND, BOOL&) {
+    CheckInput();
+    return 0;
+  }
 
   void	CheckInput() {
     ::EnableWindow(GetDlgItem(IDOK),::GetWindowTextLength(GetDlgItem(IDC_TEXT))>0);
@@ -178,38 +174,33 @@ public:
 	}
 };
 
-class CFindDlgBase: public CModelessDialogImpl<CFindDlgBase>, public FRBase
+class CFindDlgBase: public CModelessDialogImpl<CFindDlgBase>,
+		    public FRBase
 {
 public:
-	enum { IDD = IDD_FIND };
+  enum { IDD = IDD_FIND };
 
-	CFindDlgBase(CFBEView *view) : FRBase(view){ }
+  CFindDlgBase(CFBEView *view) : FRBase(view){ }
 
-	BEGIN_MSG_MAP(CFindDlgBase)
-		COMMAND_ID_HANDLER(IDOK, OnDoFind)
-		COMMAND_ID_HANDLER(IDCANCEL, OnCancel)
+  BEGIN_MSG_MAP(CFindDlgBase)
+    COMMAND_ID_HANDLER(IDOK, OnDoFind)
+    COMMAND_ID_HANDLER(IDCANCEL, OnCancel)
 
-		CHAIN_MSG_MAP_ALT(FRBase, 1)
-	END_MSG_MAP()
+    CHAIN_MSG_MAP_ALT(FRBase, 1)
+  END_MSG_MAP()
 
 
-	LRESULT OnCancel(WORD, WORD wID, HWND, BOOL&)
-	{
-		m_view->CloseFindDialog(this);
-		return 0;
-	}
+  LRESULT OnCancel(WORD, WORD wID, HWND, BOOL&) {
+    m_view->CloseFindDialog(this);
+	return 0;
+  }
+  LRESULT OnDoFind(WORD, WORD, HWND, BOOL&) {
+    DoFind();
+    return 0;
+  }
 
-	LRESULT OnDoFind(WORD, WORD, HWND, BOOL&)
-	{
-		DoFind();
-		return 0;
-	}
-
-	virtual void DoFind() = 0;
-	virtual HWND X_GetDlgItem(int id)
-	{
-		return CModelessDialogImpl<CFindDlgBase>::GetDlgItem(id);
-	}
+  virtual void	DoFind() = 0;
+  virtual HWND	X_GetDlgItem(int id) { return CModelessDialogImpl<CFindDlgBase>::GetDlgItem(id); }
 };
 
 class CReplaceDlgBase: public CModelessDialogImpl<CReplaceDlgBase>,

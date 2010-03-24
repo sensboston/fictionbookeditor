@@ -1,44 +1,23 @@
-body
-{
+body{
 	font-size: 12pt;
 	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
 	padding: 0;
 	margin: 0;
 }
 
-div#fbw_desc
-{
-	text-align: left;
+div#fbw_desc{
 	font-size: 8pt;
-	font-family: Tahoma, sans-serif;
+	font-family: "Tahoma",sans-serif;
 	background-color: #DCDCDC;
-	padding: 0.4em;
+	padding-left: 0.8em;
+	height: 100%;
 }
 
-div#fbw_desc fieldset
-{
-	width: 61.5em;
-	margin: 0.1em;
-	padding-left: 0.5em;
-	padding-right: 0.5em;
-	padding-bottom: 0.5em;
-	padding-top: 0.5em;
-	border: 1px solid #C0C0C0;
+div#fbw_desc br{
+	height: 10px;
 }
 
-div#fbw_desc legend
-{
-	padding-left: 0.5em;
-	padding-right: 0.5em;
-}
-
-div#fbw_desc br
-{
-	height: 0.5em;
-}
-
-div#fbw_desc div
-{
+div#fbw_desc div{
 	border: none;
 	white-space: nowrap;
 	clear: both;
@@ -52,62 +31,48 @@ div#fbw_desc div.float
    top: 0;
    left: 0;
    background: white;
+   border: 2px solid black;
+   margin: 2px 2px 2px 2px;
+   padding: 2px 2px 2px 2px;
 }
 
-div#fbw_desc button
-{
+div#fbw_desc button{
 	font-family: "Webdings";
 	font-size: 8pt;
 	color: Black;
 	float: right;
 	cursor: pointer;
 }
-
-div#fbw_desc button.popup_btn
-{
+div#fbw_desc button.popup_btn{
 	float: none;
 }
 
-div#fbw_desc input
-{
+div#fbw_desc input{
 	font-family: "Tahoma",sans-serif;
 	font-size: 8pt;
 	border: 1px solid #7F9DB8;
 }
-
-div#fbw_desc input.short
-{
+div#fbw_desc input.short{
 	width: 2em;
 }
-
-div#fbw_desc input.middle
-{
-	width: 35em;
-}
-
-div#fbw_desc input.wide
-{
+div#fbw_desc input.wide {
 	width: 48em;
 }
-
-div#fbw_desc input.url
-{
+div#fbw_desc input.url{
 	width: 53.4em;
 	margin-left: 0.3em;
 	margin-top: 0.3em;
 	margin-bottom: 0.1em;
 }
 
-div#fbw_desc textarea
-{
+div#fbw_desc textarea{
 	width: 48em;
 	font-family: "Tahoma",sans-serif;
 	font-size: 8pt;
 	border: 1px solid Black;
 }
 
-div#fbw_desc label
-{
+div#fbw_desc label{
 	width: 6.5em;
 	text-align: right;
 	margin-top: 0.3em;
@@ -116,35 +81,36 @@ div#fbw_desc label
 	vertical-align: 20%;
 	color: black;
 }
-
-div#fbw_desc label.hl
-{
+div#fbw_desc label.hl{
 	color: #EE0000;
 	font-weight: bold;
 }
-
-div#fbw_desc label.short
-{
+div#fbw_desc label.short{
 	width: 4em;
 }
 
-div#fbw_desc fieldset label
-{
+div#fbw_desc fieldset{
+	width: 60em;
+	margin: 0.1em;
+	padding-left: 0.2em;
+	padding-right: 0.2em;
+	padding-bottom: 0.3em;
+	padding-top: 0.3em;
+}
+div#fbw_desc fieldset label{
 	width: 6.9em;
 }
-div#fbw_desc fieldset.kid
-{
-	width: 60em;
-	border: solid 1px #B0B0B0;
+div#fbw_desc fieldset.kid{
+	width: 100%;
 }
-
-div#fbw_desc fieldset.kid label
-{
+div#fbw_desc fieldset.kid label{
 	width: 6.5em;
 }
 
-div#fbw_desc legend.top
-{
+div#fbw_desc legend{
+	padding-right: 0.5em;
+}
+div#fbw_desc legend.top{
 	font-size: 10pt;
 	color: #0000AA;
 	font-weight: bold;
@@ -152,13 +118,11 @@ div#fbw_desc legend.top
 	margin-bottom: 0.4em;
 }
 
-span.top
-{
+span.top{
 	vertical-align: top;
 }
 
-div#fbw_body
-{
+div#fbw_body{
 	padding: 0;
 	margin: 0.2em 0.2em 0 0.2em;
 	border: none;
@@ -302,12 +266,4 @@ div#fbw_body div.hider{
 	padding: 0;
 	width: 100%;
 }
-span.image{
-	text-indent: 0em;
-	margin: 0;
-	padding: 0;
-	border: none;
-	overflow: hidden;
-	clear: both;
-	text-align: center;
-}
+

@@ -27,8 +27,8 @@
 namespace WTL {
 
 #ifndef POSITION
-struct __POSITION_ {};
-typedef __POSITION_* _POSITION_;
+struct __POSITION {};
+typedef __POSITION* POSITION;
 #endif
 
 class CFileDialogEx :
@@ -61,12 +61,12 @@ public:
         return m_FileNames;
     }
 
-    _POSITION_ GetStartPosition() const
+    POSITION GetStartPosition() const
     {
-        return (_POSITION_) m_ofn.lpstrFile;
+        return (POSITION) m_ofn.lpstrFile;
     }
 
-    CString GetNextPathName(_POSITION_& pos) const
+    CString GetNextPathName(POSITION& pos) const
     {
         BOOL bExplorer = m_ofn.Flags & OFN_EXPLORER; // что для WTL завсегда правда
         TCHAR chDelimiter;
@@ -123,7 +123,7 @@ public:
             if (*lpsz == '\0') 
                 pos = NULL;
             else
-                pos = (_POSITION_)lpsz;
+                pos = (POSITION)lpsz;
         }
 
         if (!strPath.IsEmpty())
@@ -149,7 +149,7 @@ public:
         {
             m_FileNames.RemoveAll();
 
-            _POSITION_ pos = GetStartPosition();
+            POSITION pos = GetStartPosition();
             while(pos)
             {
                 m_FileNames.Add(GetNextPathName(pos));

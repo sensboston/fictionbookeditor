@@ -294,6 +294,7 @@ static PARAMDATA rgpinflateBlock[] =
     { OLESTR("document"), VT_DISPATCH}
 };*/
 
+
 enum IMETH_ExtDisp
 {
     IMETH_BeginUndoUnit = 0,
@@ -523,7 +524,6 @@ BSTR STDMETHODCALLTYPE IBrowserExternal::GetUUID()
 	}
 	return L"";
 }
-
 void STDMETHODCALLTYPE IBrowserExternal::InflateParagraphs(IDispatch* elem)
  {	 
 	 MSHTML::IHTMLElement2Ptr el;

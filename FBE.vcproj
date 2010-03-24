@@ -1,14 +1,10 @@
 <?xml version="1.0" encoding="windows-1251"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="9.00"
+	Version="9,00"
 	Name="FBE"
 	ProjectGUID="{E1B04471-3393-4970-93ED-FB6A57BCDA8B}"
 	RootNamespace="FBE"
-	SccProjectName="Svn"
-	SccAuxPath="Svn"
-	SccLocalPath="Svn"
-	SccProvider="SubversionScc"
 	TargetFrameworkVersion="131072"
 	>
 	<Platforms>
@@ -21,8 +17,8 @@
 	<Configurations>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
-			IntermediateDirectory="$(ConfigurationName)"
+			OutputDirectory=".\Release"
+			IntermediateDirectory=".\Release"
 			ConfigurationType="1"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			UseOfMFC="0"
@@ -56,10 +52,10 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="3"
-				InlineFunctionExpansion="0"
+				InlineFunctionExpansion="1"
 				FavorSizeOrSpeed="2"
-				AdditionalIncludeDirectories="extras,utils,wtl,../../../hunspell/src/hunspell"
-				PreprocessorDefinitions="NDEBUG;WIN32;_WINDOWS;UNICODE;STRICT;_CRT_SECURE_NO_WARNINGS"
+				AdditionalIncludeDirectories="wtl,extras,utils"
+				PreprocessorDefinitions="NDEBUG;WIN32;_WINDOWS;UNICODE;STRICT"
 				RuntimeLibrary="0"
 				TreatWChar_tAsBuiltInType="false"
 				UsePrecompiledHeader="2"
@@ -87,12 +83,11 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalOptions="/LTCG"
-				AdditionalDependencies="rpcrt4.lib &#x0A;gdiplus.lib libhunspell.lib $(INTDIR)\buildstamp.obj"
+				AdditionalDependencies="atls.lib msvcrt.lib comctl32.lib rpcrt4.lib comsupp.lib urlmon.lib shlwapi.lib $(INTDIR)\buildstamp.obj libcpmt.lib"
+				OutputFile=".\Release/FBE.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
-				AdditionalLibraryDirectories="..\..\..\hunspell\src\win_api\Release\libhunspell"
-				IgnoreAllDefaultLibraries="false"
+				IgnoreAllDefaultLibraries="true"
 				DelayLoadDLLs=""
 				ProgramDatabaseFile=".\Release/FBE.pdb"
 				SubSystem="2"
@@ -163,11 +158,10 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="extras,utils,wtl,../../../hunspell/src/hunspell"
-				PreprocessorDefinitions="_DEBUG;WIN32;_WINDOWS;UNICODE;STRICT;_ATL_TRACE_LEVEL=4;_CRT_SECURE_NO_WARNINGS"
+				AdditionalIncludeDirectories="extras,utils,wtl"
+				PreprocessorDefinitions="_DEBUG;WIN32;_WINDOWS;UNICODE;STRICT;_ATL_TRACE_LEVEL=4"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="1"
-				BufferSecurityCheck="true"
 				TreatWChar_tAsBuiltInType="false"
 				UsePrecompiledHeader="2"
 				PrecompiledHeaderThrough="stdafx.h"
@@ -175,7 +169,7 @@
 				AssemblerListingLocation=".\Debug/"
 				ObjectFile=".\Debug/"
 				ProgramDataBaseFileName=".\Debug/"
-				WarningLevel="1"
+				WarningLevel="3"
 				SuppressStartupBanner="true"
 				DebugInformationFormat="3"
 				CompileAs="0"
@@ -195,13 +189,12 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalOptions="/ignore:4706 /LTCG"
-				AdditionalDependencies="rpcrt4.lib &#x0A;gdiplus.lib libhunspell.lib $(INTDIR)\buildstamp.obj"
+				AdditionalDependencies="atlsd.lib msvcrtd.lib comctl32.lib rpcrt4.lib comsupp.lib urlmon.lib shlwapi.lib uxtheme.lib $(INTDIR)\buildstamp.obj msvcrt.lib libcpmt.lib libcpmtd.lib"
+				OutputFile=".\Debug/FBE.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
-				AdditionalLibraryDirectories="..\..\..\hunspell\src\win_api\Release\libhunspell"
-				IgnoreAllDefaultLibraries="false"
-				IgnoreDefaultLibraryNames="libcmt.lib"
+				IgnoreAllDefaultLibraries="true"
+				IgnoreDefaultLibraryNames=""
 				DelayLoadDLLs=""
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile=".\Debug/FBE.pdb"
@@ -483,14 +476,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\SettingsWordsDlg.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\Speller.cpp"
-				>
-			</File>
-			<File
 				RelativePath="stdafx.cpp"
 				>
 				<FileConfiguration
@@ -592,10 +577,6 @@
 					/>
 				</FileConfiguration>
 			</File>
-			<File
-				RelativePath=".\XMLSerializer\XMLSerializer.cpp"
-				>
-			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -603,10 +584,6 @@
 			>
 			<File
 				RelativePath="apputils.h"
-				>
-			</File>
-			<File
-				RelativePath=".\utils\CFileDialogEx.h"
 				>
 			</File>
 			<File
@@ -666,10 +643,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\XMLSerializer\Serializable.h"
-				>
-			</File>
-			<File
 				RelativePath=".\Settings.h"
 				>
 			</File>
@@ -686,14 +659,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\SettingsWordsDlg.h"
-				>
-			</File>
-			<File
-				RelativePath=".\Speller.h"
-				>
-			</File>
-			<File
 				RelativePath="stdafx.h"
 				>
 			</File>
@@ -707,10 +672,6 @@
 			</File>
 			<File
 				RelativePath="Words.h"
-				>
-			</File>
-			<File
-				RelativePath=".\XMLSerializer\XMLSerializer.h"
 				>
 			</File>
 			<Filter
@@ -792,6 +753,10 @@
 				>
 			</File>
 			<File
+				RelativePath="res\ExtraIcons.bmp"
+				>
+			</File>
+			<File
 				RelativePath=".\res\Fb2-shema.bmp"
 				>
 			</File>
@@ -839,10 +804,6 @@
 			</File>
 			<File
 				RelativePath="res\wordstat.bmp"
-				>
-			</File>
-			<File
-				RelativePath=".\res\wsoverlays.bmp"
 				>
 			</File>
 		</Filter>

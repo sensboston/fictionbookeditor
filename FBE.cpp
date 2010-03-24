@@ -3,7 +3,6 @@
 
 #include "stdafx.h"
 #include <locale.h>
-#include <sys/stat.h>
 
 #include "resource.h"
 
@@ -137,11 +136,7 @@ int Run(LPTSTR /*lpstrCmdLine*/ = NULL, int nCmdShow = SW_SHOWDEFAULT)
 	if(_Settings.GetWindowPosition(wpl))
 		wndMain.SetWindowPlacement(&wpl);
 	else
-	{
 		wndMain.ShowWindow(nCmdShow);
-		wndMain.GetWindowPlacement(&wpl);
-		_Settings.SetWindowPosition(wpl);
-	}
 
 	int nRet = theLoop.Run();
 
@@ -167,7 +162,7 @@ bool LoadEditor()
 
 int WINAPI _tWinMain(HINSTANCE hInstance, HINSTANCE /*hPrevInstance*/, LPTSTR lpstrCmdLine, int nCmdShow)
 {
-	int nRet=1;
+  int nRet=1;
 
 #if 1
 #ifdef _DEBUG

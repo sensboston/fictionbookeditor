@@ -137,7 +137,6 @@ SF, Fantasy
  home_sport —порт	 Е Sports
  home_sex Ёротика и —екс	 Е Erotica, Sex
  home ƒом и —емь€: ѕрочее	 Е Home: Other
- geo_guides √еоѕутеводитель	Geo_guides
 Е Economy, Business
  job_hunting ѕоиск работы, карьера	Е Job Hunting
  management ”правление, подбор персонала	Е Management
@@ -155,3 +154,4 @@ SF, Fantasy
  small_business ћалый бизнес	Е Small Business
  paper_work Paper ƒелопроизводство	Е Work
  economics_ref —правочники	Е Economics Reference Book
+ 

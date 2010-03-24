@@ -200,6 +200,7 @@ LRESULT CSettingsHotkeysDlg::OnBnClickedButtonHotkeyDelete(WORD wNotifyCode, WOR
 
 LRESULT CSettingsHotkeysDlg::OnClickedOK(WORD wNotifyCode, WORD wID, HWND hWndCtl, BOOL& bHandled)
 {
+	_Settings.SaveHotkeyGroups();
 	for(unsigned int i = 0; i < _Settings.m_hotkey_groups.size(); ++i)
 	{
 		for(unsigned int j = 0; j < _Settings.m_hotkey_groups.at(i).m_hotkeys.size(); ++j)
@@ -431,8 +432,4 @@ void CSettingsHotkeysDlg::ClearAndSet()
 	::EnableWindow(GetDlgItem(IDC_BUTTON_HOTKEY_ASSIGN), FALSE);
 	m_editHotkey.SetWindowText(U::AccelToString(_Settings.m_hotkey_groups[m_selGr].m_hotkeys[m_selHk].m_accel));
 	::SetWindowText(GetDlgItem(IDC_EDIT_HOTKEY_COLLISION), NULL);
-	if(_Settings.m_hotkey_groups[m_selGr].m_hotkeys[m_selHk].m_desc != L"")
-		::SetWindowText(GetDlgItem(IDC_EDIT_HOTKEY_DESCRIPTION), _Settings.m_hotkey_groups[m_selGr].m_hotkeys[m_selHk].m_desc);
-	else
-		::SetWindowText(GetDlgItem(IDC_EDIT_HOTKEY_DESCRIPTION), NULL);
 }

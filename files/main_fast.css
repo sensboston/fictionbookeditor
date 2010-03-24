@@ -22,16 +22,6 @@ div#fbw_desc div{
 	clear: both;
 }
 
-div#fbw_desc div.float
-{
-   visibility: hidden;
-   position: absolute;
-   z-index: 1;
-   top: 0;
-   left: 0;
-   background: white;
-}
-
 div#fbw_desc button{
 	font-family: "Webdings";
 	font-size: 8pt;
@@ -150,6 +140,7 @@ em{
 }
 div.epigraph{
 	padding-left:0.4em;
+	font-style: italic;
 	border-left: solid 1px;
 	border-color: #0000F0;
 	color: #0000F0;
@@ -268,14 +259,5 @@ div#fbw_body div.hider{
 	margin: 0;
 	padding: 0;
 	width: 100%;
-}
-span.image{
-	text-indent: 0em;
-	margin: 0;
-	padding: 0;
-	border: none;
-	overflow: hidden;
-	clear: both;
-	text-align: center;
 }
 

@@ -2,17 +2,17 @@
 
 #pragma once
 
-#include "resource.h"
+#include "resource.h"      
 #include "OptDlg.h"
 
 // CSettingsDlg
 
-class CSettingsDlg : public CAxDialogImpl<CSettingsDlg>
+class CSettingsDlg : 
+	public CAxDialogImpl<CSettingsDlg>
 {
 	CTabCtrl m_tab_ctrl;
-
 public:
-	CSettingsDlg();
+	CSettingsDlg();	
 	~CSettingsDlg();
 
 	enum { IDD = IDD_TOOLS_SETTINGS };

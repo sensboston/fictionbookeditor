@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- edited with XML Spy v4.2 U (http://www.xmlspy.com) by * (*) -->
-<xs:schema targetNamespace="http://www.gribuser.ru/xml/fictionbook/2.0/genres" xmlns="http://www.gribuser.ru/xml/fictionbook/2.0/genres" xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://www.gribuser.ru/xml/fictionbook/2.0/genres" targetNamespace="http://www.gribuser.ru/xml/fictionbook/2.0/genres" elementFormDefault="qualified" attributeFormDefault="unqualified">
 	<xs:simpleType name="genreType">
 		<xs:restriction base="xs:token">
 			<xs:enumeration value="sf_history"/>
@@ -129,7 +129,6 @@
 			<xs:enumeration value="small_business"/>
 			<xs:enumeration value="paper_work"/>
 			<xs:enumeration value="economics_ref"/>
-			<xs:enumeration value="geo_guides"/>
 		</xs:restriction>
 	</xs:simpleType>
 </xs:schema>

@@ -67,8 +67,5 @@ library FBELib
 	[id(14), helpstring("method DescShowMenu")] HRESULT DescShowMenu([in] IDispatch *btn, [in] LONG x,[in] LONG y, [out, retval] BSTR *element_id);
 	[id(15), helpstring("method IsFastMode")] HRESULT IsFastMode([out, retval] BOOL* ext);
 	[id(16), helpstring("method SetStyleEx")] HRESULT SetStyleEx([in] IDispatch *doc, [in] IDispatch* elem, [in] BSTR style);
-	[id(17), helpstring("method GetImageDimsByPath")] HRESULT GetImageDimsByPath([in] BSTR path, [out, retval] BSTR* dims);
-	[id(18), helpstring("method GetImageDimsByData")] HRESULT GetImageDimsByData([in] VARIANT* data, [out, retval] BSTR* dims);
-	[id(19), helpstring("method GetNBSP")] HRESULT GetNBSP([out, retval] BSTR *name);
   };
 };
