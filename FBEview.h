@@ -11,12 +11,9 @@
 #pragma warning(disable : 4996)
 #endif // _MSC_VER >= 1000
 
+#include "apputils.h"
 #include "BrowserUIHandler.h"
 #include "resource.h"
-#include "Settings.h"
-#include "CFileDialogEx.h"
-
-extern CSettings _Settings;
 
 void BubbleUp(MSHTML::IHTMLDOMNode *node, const wchar_t *name);
 
@@ -99,70 +96,26 @@ public:
 	}
 };
 
-static void CenterChildWindow(CWindow parent, CWindow child)
-{
-	RECT rcParent, rcChild;
-	parent.GetWindowRect(&rcParent);
-	child.GetWindowRect(&rcChild);
-	int parentW = rcParent.right - rcParent.left;;
-	int parentH = rcParent.bottom - rcParent.top;
-	int childW = rcChild.right - rcChild.left;
-	int childH = rcChild.bottom - rcChild.top;
-	child.MoveWindow(rcParent.left + parentW/2 - childW/2, rcParent.top + parentH/2 - childH/2, childW, childH);
-}
-
-class CAddImageDlg : public CDialogImpl<CAddImageDlg>
-{
-public:
-	enum { IDD = IDD_ADDIMAGE };
-	BEGIN_MSG_MAP(CAddImageDlg)
-		MESSAGE_HANDLER(WM_INITDIALOG, OnInitDialog)
-		COMMAND_ID_HANDLER(IDYES, OnBtnClicked)
-		COMMAND_ID_HANDLER(IDNO, OnBtnClicked)
-	END_MSG_MAP()
-
-	LRESULT OnInitDialog(UINT, WPARAM, LPARAM, BOOL&)
-	{
-		::CenterChildWindow(GetParent(), m_hWnd);
-		CButton btn = GetDlgItem(IDC_ADDIMAGE_ASKAGAIN);
-		btn.SetCheck(!_Settings.GetInsImageAsking());
-		return 0;
-	}
-
-	LRESULT OnBtnClicked(WORD, WORD wID, HWND, BOOL&)
-	{
-		_Settings.SetIsInsClearImage(wID == IDYES ? true : false);
-		_Settings.SetInsImageAsking(!IsDlgButtonChecked(IDC_ADDIMAGE_ASKAGAIN));
-		return EndDialog(wID);
-	}
-};
-
-template<class T, int chgID>
-class ATL_NO_VTABLE CHTMLChangeSink: public MSHTML::IHTMLChangeSink
-{
+template<class T,int chgID>
+class ATL_NO_VTABLE CHTMLChangeSink: public MSHTML::IHTMLChangeSink {
 protected:
 public:
-	// IUnknown
-	STDMETHOD(QueryInterface)(REFIID iid,void **ppvObject)
-	{
-		if(iid == IID_IUnknown || iid == IID_IHTMLChangeSink)
-		{
-			*ppvObject = this;
-			return S_OK;
-		}
-
-		return E_NOINTERFACE;
-	}
-	STDMETHOD_(ULONG, AddRef)() { return 1; }
-	STDMETHOD_(ULONG, Release)() { return 1; }
-
-	// IHTMLChangeSink
-	STDMETHOD(raw_Notify)()
-	{
-		T* pT = static_cast<T*>(this);
-		pT->EditorChanged(chgID);
-		return S_OK;
-	}
+  // IUnknown
+  STDMETHOD(QueryInterface)(REFIID iid,void **ppvObject) {
+    if (iid==IID_IUnknown || iid==IID_IHTMLChangeSink) {
+      *ppvObject=this;
+      return S_OK;
+    }
+    return E_NOINTERFACE;
+  }
+  STDMETHOD_(ULONG,AddRef)() { return 1; }
+  STDMETHOD_(ULONG,Release)() { return 1; }
+  // IHTMLChangeSink
+  STDMETHOD(raw_Notify)() {
+    T	*pT=static_cast<T*>(this);
+    pT->EditorChanged(chgID);
+    return S_OK;
+  }
 };
 
 typedef CWinTraits<WS_CHILD | WS_CLIPCHILDREN | WS_CLIPSIBLINGS, 0>
@@ -188,16 +141,11 @@ protected:
 
   HWND			    m_frame;
 
-public:
-  CString m_file_name, m_file_path;
-  // changed by SeNS
-  DWORD			    m_dirtyRangeCookie;
-  MSHTML::IMarkupServices2Ptr  m_mk_srv;
-
-protected:
   SHD::IWebBrowser2Ptr	    m_browser;
   MSHTML::IHTMLDocument2Ptr m_hdoc;
+  MSHTML::IMarkupServices2Ptr  m_mk_srv;
   MSHTML::IMarkupContainer2Ptr m_mkc;
+  DWORD			    m_dirtyRangeCookie;
 
   int			    m_ignore_changes;
   int			    m_enable_paste;
@@ -220,67 +168,42 @@ protected:
   static _ATL_FUNC_INFO	VoidEventInfo;
   static _ATL_FUNC_INFO VoidInfo;
 
-	enum
-	{
-		FRF_REVERSE	= 1,
-		FRF_WHOLE	= 2,
-		FRF_CASE	= 4,
-		FRF_REGEX	= 8
-	};
+  enum {
+    FRF_REVERSE	= 1,
+    FRF_WHOLE = 2,
+    FRF_CASE = 4,
+    FRF_REGEX = 8
+  };
+  struct FindReplaceOptions {
+    CString	pattern;
+    CString	replacement;
+    AU::ReMatch	match;
+    int		flags; // IHTMLTxtRange::findText() flags
+    bool	fRegexp;
 
-	struct FindReplaceOptions
-	{
-		CString		pattern;
-		CString		replacement;
-		AU::ReMatch	match;
-		int			flags; // IHTMLTxtRange::findText() flags
-		bool		fRegexp;
+    FindReplaceOptions() : fRegexp(false), flags(0) { }
+  };
+  FindReplaceOptions	    m_fo;
+  MSHTML::IHTMLTxtRangePtr  m_is_start;
 
-		int			replNum;
+  friend class CFindDlgBase;
+  friend class CViewFindDlg;
+  friend class CReplaceDlgBase;
+  friend class CViewReplaceDlg;
+  friend class CSciFindDlg;
+  friend class CSciReplaceDlg;
+  friend class FRBase;
 
-		FindReplaceOptions() : fRegexp(false), flags(0) { }
-	};
-
-	FindReplaceOptions m_fo;
-	MSHTML::IHTMLTxtRangePtr m_is_start;
-
-	struct pElAdjacent
-	{
-		MSHTML::IHTMLElementPtr elem;
-		_bstr_t innerText;
-
-		pElAdjacent(MSHTML::IHTMLElementPtr pElem)
-		{
-			elem = pElem;
-			innerText = pElem->innerText;
-		}
-	};
-
-	friend class CFindDlgBase;
-	friend class CViewFindDlg;
-	friend class CReplaceDlgBase;
-	friend class CViewReplaceDlg;
-	friend class CSciFindDlg;
-	friend class CSciReplaceDlg;
-	friend class FRBase;
-
-	void SelMatch(MSHTML::IHTMLTxtRange* tr, AU::ReMatch rm);
-	MSHTML::IHTMLElementPtr SelectionContainerImp();
+  void			    SelMatch(MSHTML::IHTMLTxtRange *tr,AU::ReMatch rm);
+  MSHTML::IHTMLElementPtr   SelectionContainerImp();
 
 public:
-	CFindDlgBase*			m_find_dlg;
-	CReplaceDlgBase*		m_replace_dlg;
-
-	SHD::IWebBrowser2Ptr	Browser()
-	{
-		return m_browser;
-	}
-
-	MSHTML::IHTMLDocument2Ptr Document()
-	{
-		return m_hdoc;
-	}
-
+  CFindDlgBase*			m_find_dlg;
+  CReplaceDlgBase*		m_replace_dlg;
+  SHD::IWebBrowser2Ptr	    Browser() { return m_browser; }
+  MSHTML::IHTMLDocument2Ptr Document() {
+	  return m_hdoc;
+  }
   bool			    HasDoc() { return m_hdoc; }
   IDispatchPtr		    Script(){ return MSHTML::IHTMLDocumentPtr(m_hdoc)->Script; }
   CString		    NavURL() { return m_nav_url; }
@@ -298,9 +221,9 @@ public:
 
   DECLARE_WND_SUPERCLASS(NULL, CAxWindow::GetWndClassName())
 
-  CFBEView(HWND frame, bool fNorm) : m_frame(frame), m_ignore_changes(0), m_enable_paste(0),
+  CFBEView(HWND frame,bool fNorm) : m_frame(frame), m_ignore_changes(0), m_enable_paste(0),
     m_normalize(fNorm), m_complete(false), m_initialized(false),
-    m_form_changed(false), m_form_cp(false), m_find_dlg(0), m_replace_dlg(0), m_file_path(L""), m_file_name(L"") { }
+    m_form_changed(false), m_form_cp(false), m_find_dlg(0), m_replace_dlg(0) { }
   ~CFBEView();
 
   BOOL PreTranslateMessage(MSG* pMsg);
@@ -320,6 +243,7 @@ public:
     COMMAND_ID_HANDLER(ID_EDIT_FIND, OnFind)
     COMMAND_ID_HANDLER(ID_EDIT_FINDNEXT, OnFindNext)
     COMMAND_ID_HANDLER(ID_EDIT_REPLACE, OnReplace)
+	// Modification by Pilgrim
 	COMMAND_ID_HANDLER(ID_EDIT_STRIK, OnStrik)
 	COMMAND_ID_HANDLER(ID_EDIT_SUP, OnSup)
 	COMMAND_ID_HANDLER(ID_EDIT_SUB, OnSub)
@@ -337,11 +261,9 @@ public:
     COMMAND_ID_HANDLER(ID_EDIT_ADD_BODY, OnEditAddBody)
     COMMAND_ID_HANDLER(ID_EDIT_ADD_EPIGRAPH, OnEditAddEpigraph)
     COMMAND_ID_HANDLER(ID_EDIT_ADD_TA, OnEditAddTA)
-    COMMAND_ID_HANDLER(ID_EDIT_CLONE, OnEditClone)
+    COMMAND_ID_HANDLER(ID_EDIT_CLONE, OnEditClone)    
     COMMAND_ID_HANDLER(ID_EDIT_ADD_IMAGE, OnEditAddImage)
     COMMAND_ID_HANDLER(ID_EDIT_ADD_ANN,OnEditAddAnn)
-	COMMAND_ID_HANDLER(ID_EDIT_INS_IMAGE, OnEditInsImage)
-	COMMAND_ID_HANDLER(ID_EDIT_INS_INLINEIMAGE, OnEditInsImage)
 
     COMMAND_ID_HANDLER(ID_EDIT_SPLIT, OnEditSplit)
     COMMAND_ID_HANDLER(ID_EDIT_MERGE, OnEditMerge)
@@ -349,25 +271,24 @@ public:
 
     COMMAND_ID_HANDLER(ID_EDIT_INS_POEM, OnEditInsPoem)
     COMMAND_ID_HANDLER(ID_EDIT_INS_CITE, OnEditInsCite)
-	COMMAND_ID_HANDLER_EX(ID_INSERT_TABLE, OnEditInsertTable)
+	// Modification by Pilgrim
+	COMMAND_ID_HANDLER_EX(ID_INSERT_TABLE, OnEditInsertTable)	
 
     COMMAND_ID_HANDLER(ID_VIEW_HTML, OnViewHTML)
-
-	COMMAND_ID_HANDLER(ID_SAVEIMG_AS, OnSaveImageAs)
 
     COMMAND_RANGE_HANDLER(ID_SEL_BASE,ID_SEL_BASE+99, OnSelectElement)
   END_MSG_MAP()
 
-	BEGIN_SINK_MAP(CFBEView)
-		SINK_ENTRY_INFO(0, DIID_DWebBrowserEvents2, DISPID_DOCUMENTCOMPLETE, OnDocumentComplete, &DocumentCompleteInfo)
-		SINK_ENTRY_INFO(0, DIID_DWebBrowserEvents2, DISPID_BEFORENAVIGATE2, OnBeforeNavigate, &BeforeNavigateInfo)
-		SINK_ENTRY_INFO(0, DIID_HTMLDocumentEvents2, DISPID_HTMLDOCUMENTEVENTS2_ONSELECTIONCHANGE, OnSelChange, &VoidEventInfo)
-		SINK_ENTRY_INFO(0, DIID_HTMLDocumentEvents2, DISPID_HTMLDOCUMENTEVENTS2_ONCONTEXTMENU, OnContextMenu, &EventInfo)
-		SINK_ENTRY_INFO(0, DIID_HTMLDocumentEvents2, DISPID_HTMLDOCUMENTEVENTS2_ONCLICK, OnClick, &EventInfo)
-		SINK_ENTRY_INFO(0, DIID_HTMLDocumentEvents2, DISPID_HTMLDOCUMENTEVENTS2_ONFOCUSIN, OnFocusIn, &VoidEventInfo)
-		SINK_ENTRY_INFO(0, DIID_HTMLTextContainerEvents2, DISPID_HTMLELEMENTEVENTS2_ONPASTE, OnRealPaste, &EventInfo)
-		SINK_ENTRY_INFO(0, DIID_HTMLTextContainerEvents2, DISPID_HTMLELEMENTEVENTS2_ONDRAGEND, OnDrop, &VoidEventInfo)
-	END_SINK_MAP()
+  BEGIN_SINK_MAP(CFBEView)
+    SINK_ENTRY_INFO(0, DIID_DWebBrowserEvents2, DISPID_DOCUMENTCOMPLETE, OnDocumentComplete, &DocumentCompleteInfo)
+    SINK_ENTRY_INFO(0, DIID_DWebBrowserEvents2, DISPID_BEFORENAVIGATE2, OnBeforeNavigate, &BeforeNavigateInfo)
+    SINK_ENTRY_INFO(0, DIID_HTMLDocumentEvents2, DISPID_HTMLDOCUMENTEVENTS2_ONSELECTIONCHANGE, OnSelChange, &VoidEventInfo)
+    SINK_ENTRY_INFO(0, DIID_HTMLDocumentEvents2, DISPID_HTMLDOCUMENTEVENTS2_ONCONTEXTMENU, OnContextMenu, &EventInfo)
+    SINK_ENTRY_INFO(0, DIID_HTMLDocumentEvents2, DISPID_HTMLDOCUMENTEVENTS2_ONCLICK, OnClick, &EventInfo)
+    SINK_ENTRY_INFO(0, DIID_HTMLDocumentEvents2, DISPID_HTMLDOCUMENTEVENTS2_ONFOCUSIN, OnFocusIn, &VoidEventInfo)
+    SINK_ENTRY_INFO(0, DIID_HTMLTextContainerEvents2, DISPID_HTMLELEMENTEVENTS2_ONPASTE, OnRealPaste, &EventInfo)
+    SINK_ENTRY_INFO(0, DIID_HTMLTextContainerEvents2, DISPID_HTMLELEMENTEVENTS2_ONDRAGEND, OnDrop, &VoidEventInfo)
+  END_SINK_MAP()
 
   LRESULT OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
   LRESULT OnFocus(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) {
@@ -416,79 +337,21 @@ public:
       ct->Exec(&CGID_MSHTML, IDM_VIEWSOURCE, 0, NULL, NULL);
     return 0;
   }
-	LRESULT OnSelectElement(WORD, WORD, HWND, BOOL&);
-	LRESULT OnEditAddTitle(WORD, WORD, HWND, BOOL&)
-	{
-		Call(L"AddTitle", SelectionStructCon());
-		return 0;
-	}
-	LRESULT OnEditAddEpigraph(WORD, WORD, HWND, BOOL&)
-	{
-		Call(L"AddEpigraph", SelectionStructCon());
-		return 0;
-	}
-	LRESULT OnEditAddBody(WORD, WORD, HWND, BOOL&) { Call(L"AddBody"); return 0; }
-	LRESULT OnEditAddTA(WORD, WORD, HWND, BOOL&) { Call(L"AddTA",SelectionStructCon()); return 0; }
-	LRESULT OnEditClone(WORD, WORD, HWND, BOOL&) { Call(L"CloneContainer",SelectionStructCon()); return 0; }
-	LRESULT OnEditAddImage(WORD, WORD, HWND, BOOL&)
-	{
-		Call(L"AddImage", SelectionStructCon());
-		return 0;
-	}
-	LRESULT OnEditInsImage(WORD, WORD, HWND, BOOL&);
-	LRESULT OnEditInsInlineImage(WORD, WORD, HWND, BOOL&);
-	LRESULT OnEditAddAnn(WORD, WORD, HWND, BOOL&) { Call(L"AddAnnotation", SelectionStructCon()); return 0; }
-	LRESULT OnEditMerge(WORD, WORD, HWND, BOOL&) { Call(L"MergeContainers", SelectionStructCon()); return 0; }
-	LRESULT OnEditSplit(WORD, WORD, HWND, BOOL&) { SplitContainer(false); return 0; }
-	LRESULT OnEditInsPoem(WORD, WORD, HWND, BOOL&) { InsertPoem(false); return 0; }
-	LRESULT OnEditInsCite(WORD, WORD, HWND, BOOL&) { InsertCite(false); return 0; }
-	LRESULT OnEditRemoveOuter(WORD, WORD, HWND, BOOL&) { Call(L"RemoveOuterContainer",SelectionStructCon()); return 0; }
-	LRESULT OnSaveImageAs(WORD, WORD, HWND, BOOL&)
-	{
-		CString src;
-		MSHTML::IHTMLImgElementPtr image = MSHTML::IHTMLDOMNodePtr(SelectionContainer())->firstChild;
-		src = image->src.GetBSTR();
-		src.Delete(src.Find(L"fbw-internal:#"), 14);
-
-		_variant_t data;
-		try
-		{
-			CComDispatchDriver dd(Script());
-			_variant_t arg(src);
-			if(!SUCCEEDED(dd.Invoke1(L"GetImageData", &arg, &data)) || data.vt == VT_EMPTY)
-				return 0;
-		}
-		catch (_com_error&)
-		{
-			return 0;
-		}
-
-		CFileDialog imgSaveDlg(FALSE, NULL, src);
-		if(m_file_path != L"")
-			imgSaveDlg.m_ofn.lpstrInitialDir = m_file_path;
-
-		if(imgSaveDlg.DoModal(m_hWnd) == IDOK)
-		{
-			HANDLE imgFile = ::CreateFile(	imgSaveDlg.m_szFileName,
-											GENERIC_WRITE,
-											NULL,
-											NULL,
-											CREATE_ALWAYS,
-											FILE_ATTRIBUTE_NORMAL,
-											NULL);
-			long elnum = 0;
-			void* pData;
-			::SafeArrayPtrOfIndex(data.parray, &elnum, &pData);
-			long size = 0;
-			::SafeArrayGetUBound(data.parray, 1, &size);
-			DWORD written;
-			::WriteFile(imgFile, pData, size, &written, NULL);
-
-			CloseHandle(imgFile);
-		}
-
-		return 0;
-	}
+  LRESULT OnSelectElement(WORD, WORD, HWND, BOOL&);
+  LRESULT OnEditAddTitle(WORD, WORD, HWND, BOOL&) { Call(L"AddTitle",SelectionStructCon()); return 0; }
+  LRESULT OnEditAddEpigraph(WORD, WORD, HWND, BOOL&) { Call(L"AddEpigraph",SelectionStructCon()); return 0; }
+  LRESULT OnEditAddBody(WORD, WORD, HWND, BOOL&) { Call(L"AddBody"); return 0; }
+  LRESULT OnEditAddTA(WORD, WORD, HWND, BOOL&) { Call(L"AddTA",SelectionStructCon()); return 0; }
+  LRESULT OnEditClone(WORD, WORD, HWND, BOOL&) { Call(L"CloneContainer",SelectionStructCon()); return 0; }
+  LRESULT OnEditAddImage(WORD, WORD, HWND, BOOL&) { Call(L"AddImage",SelectionStructCon()); return 0; }
+  LRESULT OnEditAddAnn(WORD, WORD, HWND, BOOL&) { Call(L"AddAnnotation",SelectionStructCon()); return 0; }
+  LRESULT OnEditMerge(WORD, WORD, HWND, BOOL&) { Call(L"MergeContainers",SelectionStructCon()); return 0; }
+  LRESULT OnEditSplit(WORD, WORD, HWND, BOOL&) { SplitContainer(false); return 0; }
+  //LRESULT OnEditInsPoem(WORD, WORD, HWND, BOOL&) { Call(L"AddCitation",SelectionStructCon()); return 0; }
+  LRESULT OnEditInsPoem(WORD, WORD, HWND, BOOL&) { InsertPoemOrCite(false,false); return 0; }
+  //LRESULT OnEditInsCite(WORD, WORD, HWND, BOOL&) { Call(L"AddPoem",SelectionStructCon()); return 0; }
+  LRESULT OnEditInsCite(WORD, WORD, HWND, BOOL&) { InsertPoemOrCite(true,false); return 0; }
+  LRESULT OnEditRemoveOuter(WORD, WORD, HWND, BOOL&) { Call(L"RemoveOuterContainer",SelectionStructCon()); return 0; }
 
   // Modification by Pilgrim
   LRESULT OnEditInsertTable(WORD wNotifyCode, WORD wID, HWND hWndCtl);
@@ -496,73 +359,31 @@ public:
   bool	CheckCommand(WORD wID);
   bool	CheckSetCommand(WORD wID);
 
-	// Searching
-	bool	CanFindNext()
-	{
-		return !m_fo.pattern.IsEmpty();
-	}
-
-	void	CancelIncSearch();
-	void	StartIncSearch();
-
-	void	StopIncSearch()
-	{
-		if(m_is_start)
-			m_is_start.Release();
-	}
-
-	bool	DoIncSearch(const CString& str, bool fMore)
-	{
-		++m_ignore_changes;
-		m_fo.pattern = str;
-		bool ret = DoSearch(fMore);
-		--m_ignore_changes;
-		return ret;
-	}
-
-	bool DoSearch(bool fMore=true);
-	bool DoSearchStd(bool fMore=true);
-	bool DoSearchRegexp(bool fMore=true);
-	void DoReplace();
-	int GlobalReplace(MSHTML::IHTMLElementPtr elem = NULL, CString cntTag = L"P");
-	int ToolWordsGlobalReplace(MSHTML::IHTMLElementPtr fbw_body, int* pIndex = NULL, int* globIndex = NULL, bool find = false, CString cntTag = L"P");
-
-	BSTR PrepareDefaultId(const CString& filename);
-	void AddImage(const CString& filename,  bool bInline = false);
-
-	CString LastSearchPattern()
-	{
-		return m_fo.pattern;
-	}
-
-	int ReplaceAllRe(const CString& re, const CString& str, MSHTML::IHTMLElementPtr elem = NULL, CString cntTag = L"P")
-	{
-		m_fo.pattern = re;
-		m_fo.replacement = str;
-		m_fo.fRegexp = true;
-		m_fo.flags = 0;
-
-		return GlobalReplace(elem, cntTag);
-	}
-
-	int ReplaceToolWordsRe( const CString& re,
-							const CString& str,
-							MSHTML::IHTMLElementPtr fbw_body,
-							bool replace = false,
-							CString cntTag = L"P",
-							int* pIndex = NULL,
-							int* globIndex = NULL,
-							int replNum = 0
-							)
-	{
-		m_fo.pattern = re;
-		m_fo.replacement = str;
-		m_fo.fRegexp = true;
-		m_fo.flags = FRF_CASE | FRF_WHOLE;
-		m_fo.replNum = replNum;
-
-		return ToolWordsGlobalReplace(fbw_body, pIndex, globIndex, !replace, cntTag);
-	}
+  // searching
+  bool	  CanFindNext() { return !m_fo.pattern.IsEmpty(); }
+  void	  CancelIncSearch();
+  void	  StartIncSearch();
+  void	  StopIncSearch() { if (m_is_start) m_is_start.Release(); }
+  bool	  DoIncSearch(const CString& str,bool fMore) {
+    ++m_ignore_changes;
+    m_fo.pattern=str;
+    bool ret=DoSearch(fMore);
+    --m_ignore_changes;
+    return ret;
+  }
+  bool	  DoSearch(bool fMore=true);
+  bool	  DoSearchStd(bool fMore=true);
+  bool	  DoSearchRegexp(bool fMore=true);
+  void	  DoReplace();
+  int	  GlobalReplace();
+  CString LastSearchPattern() { return m_fo.pattern; }
+  int	  ReplaceAllRe(const CString& re,const CString& str) {
+    m_fo.pattern=re;
+    m_fo.replacement=str;
+    m_fo.fRegexp=true;
+    m_fo.flags=0;
+    return GlobalReplace();
+  }
 
   // searching in scintilla
   bool SciFindNext(HWND src,bool fFwdOnly,bool fBarf);
@@ -570,12 +391,13 @@ public:
   // utilities
   CString		    SelPath();
   void			    GoTo(MSHTML::IHTMLElement *e,bool fScroll=true);
-  MSHTML::IHTMLElementPtr SelectionContainer()
-  {
-    if (m_cur_sel)
-      return m_cur_sel;
-    return SelectionContainerImp();
-  }
+
+	MSHTML::IHTMLElementPtr SelectionContainer()
+	{
+		if(m_cur_sel)
+			return m_cur_sel;
+		return SelectionContainerImp();
+	}
 
   bool GetSelectionInfo(MSHTML::IHTMLElementPtr *begin, MSHTML::IHTMLElementPtr *end, int* begin_char, int* end_char, MSHTML::IHTMLTxtRangePtr range);
 
@@ -584,6 +406,7 @@ public:
   MSHTML::IHTMLElementPtr   SelectionStructCon();
   MSHTML::IHTMLElementPtr	SelectionStructNearestCon();
   MSHTML::IHTMLElementPtr   SelectionStructCode();
+  MSHTML::IHTMLElementPtr	SelectionStructNearestPrg();
   MSHTML::IHTMLElementPtr   SelectionStructImage();
   MSHTML::IHTMLElementPtr   SelectionStructSection();
   MSHTML::IHTMLElementPtr   SelectionStructTable();
@@ -609,8 +432,7 @@ public:
 
   bool			    SplitContainer(bool fCheck);
   MSHTML::IHTMLDOMNodePtr	  ChangeAttribute(MSHTML::IHTMLElementPtr elem, const wchar_t* attrib, const wchar_t* value);
-  bool				InsertPoem(bool fCheck);
-  bool				InsertCite(bool fCheck);
+  bool				InsertPoemOrCite(bool fCite, bool fCheck);
   bool				InsertTable(bool fCheck, bool bTitle=true, int nrows=1);
   long				InsertCode();
   bool				GoToFootnote(bool fCheck);
@@ -649,13 +471,12 @@ public:
   VARIANT_BOOL __stdcall  OnClick(IDispatch *evt);
   void __stdcall	  OnFocusIn(IDispatch *evt);
 
-	// HTMLTextContainerEvents2
-	VARIANT_BOOL __stdcall OnRealPaste(IDispatch *evt);
-	void __stdcall OnDrop(IDispatch *evt)
-	{
-		if(m_normalize)
-			Normalize(Document()->body);
-	}
+  // HTMLTextContainerEvents2
+  VARIANT_BOOL __stdcall  OnRealPaste(IDispatch *evt);
+  void __stdcall  OnDrop(IDispatch *evt) {
+    if (m_normalize)
+      Normalize(Document()->body);
+  }
 
   // form changes
   bool	    IsFormChanged();
@@ -667,16 +488,6 @@ public:
   _bstr_t   Selection();
   bool CloseFindDialog(CFindDlgBase* dlg);
   bool CloseFindDialog(CReplaceDlgBase* dlg); 
-
-  // added by SeNS
-  long m_elementsNum;
-  bool IsHTMLChanged()
-  {
-	  long newElementsNum = Document()->all->length;
-	  bool b = (newElementsNum != m_elementsNum);
-	  m_elementsNum = newElementsNum;
-	  return b;
-  }
 
 private:
 	bool				ExpandTxtRangeToParagraphs(MSHTML::IHTMLTxtRangePtr &rng, MSHTML::IHTMLElementPtr& begin, MSHTML::IHTMLElementPtr& end)const;

@@ -49,27 +49,6 @@ LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 #pragma code_page(1252)
 #endif //_WIN32
 
-#ifdef APSTUDIO_INVOKED
-/////////////////////////////////////////////////////////////////////////////
-//
-// TEXTINCLUDE
-//
-
-1 TEXTINCLUDE 
-BEGIN
-    "resource.h\0"
-END
-
-2 TEXTINCLUDE 
-BEGIN
-    "#include ""atlres.h""\r\n"
-    "#include ""res1.h""\r\n"
-    "\0"
-END
-
-#endif    // APSTUDIO_INVOKED
-
-
 /////////////////////////////////////////////////////////////////////////////
 //
 // DESIGNINFO
@@ -81,9 +60,9 @@ BEGIN
     IDD_SETTING_OTHER, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 228
+        RIGHTMARGIN, 248
         TOPMARGIN, 7
-        BOTTOMMARGIN, 207
+        BOTTOMMARGIN, 221
     END
 
     IDD_TOOLS_SETTINGS, DIALOG
@@ -102,17 +81,17 @@ BEGIN
     IDD_WORDS, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 361
+        RIGHTMARGIN, 309
         TOPMARGIN, 7
-        BOTTOMMARGIN, 316
+        BOTTOMMARGIN, 234
     END
 
     IDD_OPTIONS, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 217
+        RIGHTMARGIN, 212
         TOPMARGIN, 7
-        BOTTOMMARGIN, 206
+        BOTTOMMARGIN, 198
     END
 
     IDD_INPUTBOX, DIALOG
@@ -138,38 +117,6 @@ BEGIN
         TOPMARGIN, 7
         BOTTOMMARGIN, 128
     END
-
-    IDD_HOTKEYS, DIALOG
-    BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 241
-        TOPMARGIN, 7
-        BOTTOMMARGIN, 220
-    END
-
-    IDD_SETTINGS_WORDS, DIALOG
-    BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 241
-        TOPMARGIN, 7
-        BOTTOMMARGIN, 220
-    END
-
-    IDD_PROPPAGE_LARGE, DIALOG
-    BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 228
-        TOPMARGIN, 7
-        BOTTOMMARGIN, 149
-    END
-
-    IDD_SPELL_CHECK, DIALOG
-    BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 266
-        TOPMARGIN, 7
-        BOTTOMMARGIN, 128
-    END
 END
 #endif    // APSTUDIO_INVOKED
 
@@ -179,37 +126,36 @@ END
 // Dialog
 //
 
-IDD_SETTING_OTHER DIALOGEX 0, 0, 235, 214
+IDD_SETTING_OTHER DIALOGEX 0, 0, 255, 228
 STYLE DS_SETFONT | WS_CHILD | WS_SYSMENU
 FONT 9, "Tahoma", 400, 0, 0xCC
 BEGIN
-    GROUPBOX        "Save File",IDC_STATIC,7,9,207,40
-    LTEXT           "Default encoding:",IDC_STATIC,11,21,60,9
-    CONTROL         "Keep Encoding",IDC_KEEP,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,10,33,63,10
-    COMBOBOX        IDC_DEFAULT_ENC,72,19,132,30,CBS_DROPDOWNLIST | CBS_SORT | WS_VSCROLL | WS_TABSTOP
-    GROUPBOX        "Open File",IDC_STATIC,7,51,208,24
-    CONTROL         "Restory Position",IDC_RESTORE_POS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,10,61,68,10
-    GROUPBOX        "Scripts folder",IDC_STATIC,7,81,208,42
-    CONTROL         "Default folder",IDC_DEFAULT_SCRIPTS_FOLDER,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,11,91,60,10
-    EDITTEXT        IDC_SCRIPTS_FOLDER_PATH,10,104,170,14,ES_AUTOHSCROLL
-    PUSHBUTTON      "...",IDC_SELECT_SCRIPTS_FOLDER_BUTTON,188,104,17,14
-    GROUPBOX        "Dialogs",IDC_STATIC,7,127,121,27
+    COMBOBOX        IDC_SHORTCUTS,63,10,142,76,CBS_DROPDOWNLIST | CBS_SORT | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Shortcuts:",IDC_STATIC,11,12,48,9
+    GROUPBOX        "Save File",IDC_STATIC,7,24,207,40
+    LTEXT           "Default encoding:",IDC_STATIC,11,36,60,9
+    CONTROL         "Keep Encoding",IDC_KEEP,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,10,48,63,10
+    COMBOBOX        IDC_DEFAULT_ENC,72,34,132,30,CBS_DROPDOWNLIST | CBS_SORT | WS_VSCROLL | WS_TABSTOP
+    GROUPBOX        "Open File",IDC_STATIC,7,66,208,24
+    CONTROL         "Restory Position",IDC_RESTORE_POS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,10,76,68,10
+    GROUPBOX        "Scripts folder",IDC_STATIC,7,96,208,42
+    CONTROL         "Default folder",IDC_DEFAULT_SCRIPTS_FOLDER,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,11,106,60,10
+    EDITTEXT        IDC_SCRIPTS_FOLDER_PATH,10,119,170,14,ES_AUTOHSCROLL
+    PUSHBUTTON      "...",IDC_SELECT_SCRIPTS_FOLDER_BUTTON,188,119,17,14
+    GROUPBOX        "Dialogs",IDC_STATIC,7,142,208,40
     CONTROL         "Ask for non clear image insertion",IDC_SETTINGS_ASKIMAGE,
-                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,12,138,113,10
-    GROUPBOX        "Images",IDC_STATIC,135,127,80,27
-    CONTROL         "Insert clear images",IDC_OPTIONS_CLEARIMGS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,140,138,69,10
-    GROUPBOX        "Non-breaking space",IDC_STATIC,7,156,121,27
-    LTEXT           "Use special character:",IDC_STATIC,13,168,68,8
-    COMBOBOX        IDC_NBSP_CHAR,89,165,29,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
-    GROUPBOX        "Keyboard layout",IDC_STATIC,135,156,80,27
-    CONTROL         "Change on start",IDC_CHANGE_KEYB,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,140,168,69,10
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,12,153,112,10
+    CONTROL         "Notify script hotkeys conflicts",IDC_SCRIPTS_HK_NOTIFY,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,12,168,110,10
+    GROUPBOX        "Images",IDC_STATIC,7,186,208,24
+    CONTROL         "Insert clear images",IDC_OPTIONS_CLEARIMGS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,12,196,68,10
 END
 
 IDD_TOOLS_SETTINGS DIALOGEX 0, 0, 266, 270
-STYLE DS_SETFONT | DS_MODALFRAME | DS_CENTER | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | DS_CENTER | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
 EXSTYLE WS_EX_APPWINDOW
 CAPTION "Settings"
-FONT 8, "Microsoft Sans Serif", 400, 0, 0xCC
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     CONTROL         "",IDC_TAB_CTRL,"SysTabControl32",0x0,0,0,265,251
     PUSHBUTTON      "OK",IDOK,140,254,55,15
@@ -218,43 +164,27 @@ END
 
 IDD_TABLE DIALOGEX 0, 0, 260, 46
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | DS_CENTER | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Table properties"
+CAPTION "????????? ???????"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     DEFPUSHBUTTON   "OK",IDOK,203,7,50,14
     PUSHBUTTON      "Cancel",IDCANCEL,203,24,50,14
-    LTEXT           "Number of table cells <tr><td></td></tr>:",IDC_STATIC,7,22,150,8
-    CONTROL         "Add table header <tr><th></th></tr>",IDC_CHECK_TABLE_TITLE,
+    LTEXT           "????? ????? ??????? <tr><td></td></tr>:",IDC_STATIC,7,22,150,8
+    CONTROL         "???????? ?????? ?????????? <tr><th></th></tr>",IDC_CHECK_TABLE_TITLE,
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,7,187,10
     EDITTEXT        IDC_EDIT_TABLE_ROWS,157,19,35,14,ES_AUTOHSCROLL | ES_NUMBER
     CONTROL         "",IDC_SPIN_TABLE_ROWS,"msctls_updown32",UDS_WRAP | UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS | UDS_NOTHOUSANDS,192,19,11,14
 END
 
-IDD_WORDS DIALOGEX 0, 0, 366, 323
-STYLE DS_SETFONT | DS_CENTER | WS_POPUP | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME
+IDD_WORDS DIALOGEX 0, 0, 314, 241
+STYLE DS_SETFONT | DS_MODALFRAME | DS_CENTER | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Words"
 FONT 9, "Tahoma", 0, 0, 0x1
 BEGIN
-    CONTROL         "List1",IDC_WLIST,"SysListView32",LVS_REPORT | LVS_SHOWSELALWAYS | LVS_OWNERDATA | WS_TABSTOP,7,7,354,208,WS_EX_CLIENTEDGE
-    DEFPUSHBUTTON   "OK",IDOK,301,233,40,14
-    PUSHBUTTON      "Cancel",IDCANCEL,301,253,40,14
-    EDITTEXT        IDC_REDIT,242,223,41,12,NOT WS_VISIBLE | NOT WS_TABSTOP
-    CONTROL         "Show/hide exclusions",IDC_CHECK_SHOWHIDE_EXCLS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,15,223,80,10
-    GROUPBOX        "Process",IDC_STATIC,287,220,70,55
-    GROUPBOX        "Process highlited",IDC_STATIC,14,237,250,37
-    PUSHBUTTON      "Invert",IDC_BUTTON_DESEL,138,251,50,14
-    PUSHBUTTON      "Reset replaced",IDC_BUTTON_REMOVEHLREPL,198,251,55,14
-    PUSHBUTTON      "To exclusions",IDC_BUTTON_ADDHLTOEXCLS,21,251,51,14
-    PUSHBUTTON      "Highlight all",IDC_BUTTON_SELALL,114,221,51,14
-    PUSHBUTTON      "Set replaced",IDC_BUTTON_SETHLREPL,80,251,50,14
-    PUSHBUTTON      "Set replaced all",IDC_BUTTON_SELALLREPL,179,221,58,14
-    GROUPBOX        "Current word",IDC_WORDS_FR_GBOX_CURWORD,14,282,343,34
-    EDITTEXT        IDC_WORDS_FR_EDIT_WORD,42,296,67,14,ES_AUTOHSCROLL | ES_READONLY
-    EDITTEXT        IDC_WORDS_FR_EDIT_REPL,165,296,67,14,ES_AUTOHSCROLL | ES_READONLY
-    LTEXT           "Word:",IDC_WORDS_FR_TEXT_WORD,20,298,20,8
-    LTEXT           "Replacement:",IDC_WORDS_FR_TEXT_REPL,117,298,44,8
-    PUSHBUTTON      "Find",IDC_WORDS_FR_BTN_FIND,245,296,42,14
-    PUSHBUTTON      "Replace",IDC_WORDS_FR_BTN_REPL,299,296,43,14
+    CONTROL         "List1",IDC_WLIST,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_OWNERDATA | WS_TABSTOP,7,7,302,208,WS_EX_CLIENTEDGE
+    DEFPUSHBUTTON   "OK",IDOK,221,220,40,14
+    PUSHBUTTON      "Cancel",IDCANCEL,269,220,40,14
+    EDITTEXT        IDC_REDIT,7,224,41,10,ES_AUTOHSCROLL | NOT WS_VISIBLE | NOT WS_BORDER | NOT WS_TABSTOP,WS_EX_CLIENTEDGE
 END
 
 IDD_REPLACE DIALOGEX 0, 0, 295, 87
@@ -275,34 +205,27 @@ BEGIN
     PUSHBUTTON      "Cancel",IDCANCEL,238,61,50,14
 END
 
-IDD_OPTIONS DIALOGEX 0, 0, 222, 215
+IDD_OPTIONS DIALOGEX 0, 0, 255, 218
 STYLE DS_SETFONT | WS_CHILD | WS_SYSMENU
 FONT 9, "Tahoma", 0, 0, 0x0
 BEGIN
-    LTEXT           "Text color:",IDC_STATIC,15,74,49,9
-    PUSHBUTTON      "",IDC_FG,67,72,31,12
-    LTEXT           "Background:",IDC_STATIC,128,74,49,9
-    PUSHBUTTON      "",IDC_BG,180,72,31,12
+    LTEXT           "Text color:",IDC_STATIC,15,70,49,9
+    PUSHBUTTON      "",IDC_FG,67,67,31,12
+    LTEXT           "Background:",IDC_STATIC,15,81,49,9
+    PUSHBUTTON      "",IDC_BG,67,80,31,12
     LTEXT           "Editor font:",IDC_STATIC,15,58,49,9
-    COMBOBOX        IDC_FONT,70,53,141,70,CBS_DROPDOWNLIST | CBS_SORT | WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_FONT,67,53,140,70,CBS_DROPDOWNLIST | CBS_SORT | WS_VSCROLL | WS_TABSTOP
     LTEXT           "Font size:",IDC_STATIC,15,30,49,9
     COMBOBOX        IDC_FONT_SIZE,67,28,56,70,CBS_DROPDOWN | WS_VSCROLL | WS_TABSTOP
-    GROUPBOX        "Common",IDC_STATIC,7,2,210,44
-    GROUPBOX        "Body",IDC_STATIC,7,46,210,57
-    GROUPBOX        "XML source editor",IDC_STATIC,7,105,210,46
-    CONTROL         "Wrap lines",IDC_WRAP,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,15,115,56,11
-    CONTROL         "Syntax highlighting",IDC_SYNTAXHL,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,15,126,87,11
-    CONTROL         "Show end of line marks",IDC_SHOWEOL,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,15,137,104,11
-    CONTROL         "Fast Mode",IDC_FAST_MODE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,89,101,11
+    GROUPBOX        "Common",IDC_STATIC,8,2,208,44
+    GROUPBOX        "Body",IDC_STATIC,8,46,208,70
+    GROUPBOX        "XML source editor",IDC_STATIC,8,117,208,46
+    CONTROL         "Wrap lines",IDC_WRAP,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,15,127,56,11
+    CONTROL         "Syntax highlighting",IDC_SYNTAXHL,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,15,138,87,11
+    CONTROL         "Show end of line marks",IDC_SHOWEOL,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,15,149,104,11
+    CONTROL         "Fast Mode",IDC_FAST_MODE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,15,100,101,11
     LTEXT           "Language:",IDC_STATIC,15,15,48,8
-    COMBOBOX        IDC_LANG,70,13,141,30,CBS_DROPDOWNLIST | CBS_SORT | WS_VSCROLL | WS_TABSTOP
-    GROUPBOX        "Spellcheck",IDC_STATIC,7,154,210,45
-    CONTROL         "Highlight misspelled words",IDC_BACKGROUNDSPELLCHECK,
-                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,117,166,94,10
-    CONTROL         "Use spellchecker",IDC_USESPELLCHECKER,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,15,166,83,10
-    EDITTEXT        IDC_CUSTOM_DICT,78,181,122,12,ES_AUTOHSCROLL
-    LTEXT           "Custom dictionary:",IDS_SPELL_CUSTOM_DICT,15,183,60,9
-    PUSHBUTTON      "..",IDC_DICTPATH,201,181,12,12
+    COMBOBOX        IDC_LANG,67,13,138,30,CBS_DROPDOWNLIST | CBS_SORT | WS_VSCROLL | WS_TABSTOP
 END
 
 IDD_INPUTBOX DIALOG  0, 0, 288, 46
@@ -316,10 +239,10 @@ BEGIN
     PUSHBUTTON      "Cancel",IDCANCEL,231,24,50,14
 END
 
-IDD_FIND DIALOGEX 0, 0, 295, 76
+IDD_FIND DIALOG  0, 0, 295, 76
 STYLE DS_SETFONT | DS_MODALFRAME | DS_CENTER | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
 CAPTION "Find"
-FONT 9, "Tahoma", 0, 0, 0x0
+FONT 9, "Tahoma"
 BEGIN
     LTEXT           "Fi&nd what:",IDC_STATIC,7,9,40,8
     COMBOBOX        IDC_TEXT,49,7,183,62,CBS_DROPDOWN | WS_VSCROLL | WS_GROUP | WS_TABSTOP
@@ -347,93 +270,50 @@ CAPTION "About"
 FONT 9, "Tahoma", 0, 0, 0x0
 BEGIN
     DEFPUSHBUTTON   "OK",IDOK,105,114,50,14
-    CONTROL         "FictionBook Editor v2.0 BETA",IDC_STATIC_AB_APPNAMEVER,
+    CONTROL         "FictionBook Editor v. 2.0 beta",IDC_STATIC_AB_APPNAMEVER,
                     "Static",SS_LEFTNOWORDWRAP | WS_GROUP,94,14,95,9
     ICON            IDR_MAINFRAME,IDC_STATIC_AB_APPICON,72,14,20,20
     RTEXT           "Build",IDC_STATIC,93,24,16,8
     LTEXT           "",IDC_BUILDSTAMP,112,24,85,8
-    LTEXT           "© 2003 Mike Matsnev\n© 2008 LitRes\n© 2010 SeNS\n\nModification by: Pilgrim, Hose,SeNS\nSupported by: SeNS, Sclex",IDC_STATIC_AB_CONTRIBUTORS,94,37,116,48
+    LTEXT           "© 2003 Mike Matsnev\n© 2008 LitRes\n\nModification by: Pilgrim, Hose\nSupported by: Hose, KVS",IDC_STATIC_AB_CONTRIBUTORS,94,42,116,43
     CONTROL         248,IDC_AB_BANNER,"Static",SS_BITMAP | SS_REALSIZEIMAGE,7,7,56,123,WS_EX_CLIENTEDGE
     CONTROL         "<a href=""http://fbe.litres.ru/"">http://fbe.litres.ru/</a>\n<a href=""mailto:fbe@litres.ru"">fbe@litres.ru</a>",IDC_SYSLINK_AB_LINKS,
-                    "SysLink",WS_TABSTOP,116,91,60,19
-    LTEXT           "Site:\nE-mail:",IDC_STATIC_AB_LINKS,94,91,21,18
+                    "SysLink",WS_TABSTOP,116,89,60,19
+    LTEXT           "Site:\nE-mail:",IDC_STATIC_AB_LINKS,94,89,21,18
 END
 
 IDD_ADDIMAGE DIALOGEX 0, 0, 147, 66
-STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Choose"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     DEFPUSHBUTTON   "Yes",IDYES,21,31,49,14
     PUSHBUTTON      "No",IDNO,77,31,49,14
     CONTROL         "Don't ask again",IDC_ADDIMAGE_ASKAGAIN,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,41,53,64,10
-    LTEXT           "Insert clear image?",IDS_ADD_CLEARIMG_TEXT,46,11,65,8
+    LTEXT           "Insert clear image?",IDS_ADD_CLEARIMG_TEXT,46,12,65,8
     ICON            IDR_MAINFRAME,IDC_ADDIMAGE_ICON,19,6,21,20
 END
 
-IDD_HOTKEYS DIALOGEX 0, 0, 249, 227
-STYLE DS_SETFONT | WS_CHILD | WS_SYSMENU
-FONT 9, "Tahoma", 400, 0, 0xCC
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE 
 BEGIN
-    LISTBOX         IDC_LIST_HOTKEYS_GROUPS,7,21,70,88,LBS_NOINTEGRALHEIGHT | NOT WS_BORDER | WS_VSCROLL | WS_TABSTOP,WS_EX_STATICEDGE
-    LISTBOX         IDC_LIST_HOTKEYS,83,21,132,88,LBS_NOINTEGRALHEIGHT | NOT WS_BORDER | WS_VSCROLL | WS_HSCROLL | WS_TABSTOP,WS_EX_STATICEDGE
-    GROUPBOX        "Description",IDC_STATIC_HOTKEY_DESCRIPTION,7,180,208,33,WS_TABSTOP
-    EDITTEXT        IDC_EDIT_HOTKEY,41,121,94,14,ES_MULTILINE | ES_AUTOHSCROLL
-    LTEXT           "Groups:",IDC_STATIC_HOTKEYS_GROUPS,9,11,25,8,WS_TABSTOP
-    LTEXT           "Commands:",IDC_STATIC_HOTKEYS,85,11,37,8,WS_TABSTOP
-    LTEXT           "Shortcut:",IDC_STATIC,10,124,31,8,WS_TABSTOP
-    PUSHBUTTON      "Default",IDC_BUTTON_DEFAULT,153,125,50,14
-    EDITTEXT        IDC_EDIT_HOTKEY_DESCRIPTION,9,189,202,22,ES_MULTILINE | ES_AUTOVSCROLL | ES_READONLY | NOT WS_BORDER | WS_VSCROLL
-    PUSHBUTTON      "Delete",IDC_BUTTON_HOTKEY_DELETE,153,143,50,14
-    GROUPBOX        "Actions",IDC_STATIC_HOTKEY_ACTIONS,143,114,72,65
-    GROUPBOX        "Assigned to",IDC_STATIC_HOTKEY_COLLISION,7,138,129,41
-    PUSHBUTTON      "Assign",IDC_BUTTON_HOTKEY_ASSIGN,153,161,50,14,WS_DISABLED
-    EDITTEXT        IDC_EDIT_HOTKEY_COLLISION,14,150,115,24,ES_MULTILINE | ES_AUTOVSCROLL | ES_READONLY | NOT WS_BORDER | WS_VSCROLL
+    "resource.h\0"
 END
 
-IDD_SETTINGS_WORDS DIALOGEX 0, 0, 249, 227
-STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD
-FONT 8, "Tahoma", 400, 0, 0x1
+2 TEXTINCLUDE 
 BEGIN
-    EDITTEXT        IDC_EDIT_NEW,22,137,145,14,ES_AUTOHSCROLL
-    PUSHBUTTON      "Add",IDC_BUTTON_ADD,176,137,50,14
-    GROUPBOX        "Word-exclusion list",IDC_STATIC_WORDS_CHEVRON,7,8,234,155
-    CONTROL         "",IDC_LIST_WORDS,"SysListView32",LVS_REPORT | LVS_SHOWSELALWAYS | LVS_SORTDESCENDING | LVS_OWNERDATA | WS_BORDER | WS_TABSTOP,22,25,205,87,WS_EX_CLIENTEDGE
-    CONTROL         "Show exclusions in Words dialog",IDC_CHECK_SHOW_EXCLUSIONS,
-                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,22,170,119,10
-    CONTROL         "Select All",IDC_CHECK_SELALL,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,23,119,45,10
-    PUSHBUTTON      "Remove selected",IDC_BUTTON_REMOVESEL,71,116,73,14
-    EDITTEXT        IDC_EDIT_LV,183,7,43,14,ES_AUTOHSCROLL | NOT WS_VISIBLE | NOT WS_TABSTOP,WS_EX_CLIENTEDGE | WS_EX_STATICEDGE
+    "#include ""atlres.h""\r\n"
+    "#include ""res1.h""\r\n"
+    "\0"
 END
 
-IDD_PROPPAGE_LARGE DIALOGEX 0, 0, 235, 156
-STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD | WS_DISABLED | WS_CAPTION
-CAPTION "Property Page"
-FONT 8, "MS Shell Dlg", 400, 0, 0x0
-BEGIN
-    LTEXT           "TODO: layout property page",IDC_STATIC,73,74,90,8
-END
-
-IDD_SPELL_CHECK DIALOGEX 0, 0, 273, 135
-STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | DS_CENTER | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Spelling"
-FONT 8, "MS Shell Dlg", 400, 0, 0x1
-BEGIN
-    DEFPUSHBUTTON   "Cancel",IDCANCEL,216,112,50,14
-    LTEXT           "Not In Dictionary:",IDC_STATIC,7,14,64,8
-    EDITTEXT        IDC_SPELL_BEDWORD,72,12,194,12,ES_AUTOHSCROLL
-    LTEXT           "Change To:",IDC_STATIC,8,30,46,8
-    EDITTEXT        IDC_SPELL_REPLACEMENT,72,29,194,12,ES_AUTOHSCROLL
-    LTEXT           "Suggestions:",IDC_STATIC,7,47,46,8
-    LISTBOX         IDC_SPELL_SUGG_LIST,7,58,145,68,LBS_SORT | LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
-    PUSHBUTTON      "Ignore",IDC_SPELL_IGNORE,159,58,50,14
-    PUSHBUTTON      "Ignore All",IDC_SPELL_IGNOREALL,216,58,50,14
-    PUSHBUTTON      "Change",IDC_SPELL_CHANGE,159,76,50,14
-    PUSHBUTTON      "Change All",IDC_SPELL_CHANGEALL,216,76,50,14
-    PUSHBUTTON      "Add",IDC_SPELL_ADD,159,94,50,14
-    PUSHBUTTON      "Suggets",IDC_SPELL_SUGGEST,216,94,50,14,WS_DISABLED
-    PUSHBUTTON      "Undo last",IDC_SPELL_UNDO,159,112,50,14,WS_DISABLED
-END
+#endif    // APSTUDIO_INVOKED
 
 
 /////////////////////////////////////////////////////////////////////////////
@@ -491,56 +371,72 @@ BEGIN
     BUTTON      ID_STYLE_NORMAL
     BUTTON      ID_STYLE_SUBTITLE
     BUTTON      ID_STYLE_TEXTAUTHOR
-    SEPARATOR
-    BUTTON      ID_TOOLS_SPELLCHECK
 END
 
-IDR_MAINFRAME_SMALL TOOLBAR  16, 16
+IDR_MAINFRAME_SMALL TOOLBAR  16, 15
 BEGIN
     BUTTON      ID_FILE_NEW
     BUTTON      ID_FILE_OPEN
     BUTTON      ID_FILE_SAVE
+    SEPARATOR
     BUTTON      ID_FILE_VALIDATE
+    SEPARATOR
     BUTTON      ID_VIEW_DESC
     BUTTON      ID_VIEW_BODY
     BUTTON      ID_VIEW_SOURCE
-    BUTTON      ID_VIEW_OPTIONS
+    SEPARATOR
     BUTTON      ID_EDIT_ADDBINARY
+    SEPARATOR
     BUTTON      ID_EDIT_FIND
     BUTTON      ID_EDIT_FINDNEXT
-    BUTTON      ID_EDIT_REPLACE
+    SEPARATOR
     BUTTON      ID_EDIT_CUT
     BUTTON      ID_EDIT_COPY
     BUTTON      ID_EDIT_PASTE
+    SEPARATOR
     BUTTON      ID_EDIT_UNDO
     BUTTON      ID_EDIT_REDO
-    BUTTON      ID_EDIT_INS_IMAGE
-    BUTTON      ID_EDIT_ADD_IMAGE
+    SEPARATOR
+    BUTTON      ID_EDIT_BOLD
+    BUTTON      ID_EDIT_ITALIC
+    BUTTON      ID_EDIT_SUP
+    BUTTON      ID_EDIT_SUB
+    BUTTON      ID_EDIT_STRIK
+    BUTTON      ID_EDIT_CODE
+    SEPARATOR
     BUTTON      ID_STYLE_LINK
     BUTTON      ID_STYLE_NOTE
     BUTTON      ID_STYLE_NOLINK
+    BUTTON      ID_GOTO_FOOTNOTE
+    BUTTON      ID_GOTO_REFERENCE
+    SEPARATOR
     BUTTON      ID_STYLE_NORMAL
     BUTTON      ID_STYLE_SUBTITLE
     BUTTON      ID_STYLE_TEXTAUTHOR
-    BUTTON      ID_GOTO_FOOTNOTE
-    BUTTON      ID_GOTO_REFERENCE
-    BUTTON      ID_EDIT_ADD_BODY
-    BUTTON      ID_EDIT_ADD_TITLE
-    BUTTON      ID_EDIT_ADD_EPIGRAPH
-    BUTTON      ID_EDIT_ADD_ANN
-    BUTTON      ID_EDIT_INS_POEM
-    BUTTON      ID_EDIT_INS_CITE
-    BUTTON      ID_INSERT_TABLE
-    BUTTON      ID_TOOLS_SPELLCHECK
+    SEPARATOR
+    BUTTON      ID_EDIT_INS_IMAGE
+END
+
+IDR_EXTRAICONS TOOLBAR  16, 15
+BEGIN
+    BUTTON      ID_VIEW_OPTIONS
+    BUTTON      ID_EDIT_REPLACE
+    BUTTON      ID_FILE_VALIDATE
+    BUTTON      ID_EDIT_ADD_IMAGE
 END
 
 IDR_DOCUMENT_TREE TOOLBAR  24, 24
 BEGIN
+    BUTTON      ID_DOCUMENT_TREE_CUT
+    BUTTON      ID_DOCUMENT_TREE_PASTE
+    BUTTON      ID_DT_DELETE
+    BUTTON      ID_DT_RIGHT
+    BUTTON      ID_DT_LEFT
+    BUTTON      ID_DT_RIGHT_WITH_CHILDREN
     BUTTON      ID_DT_RIGHT_ONE
     BUTTON      ID_DT_RIGHT_SMART
     BUTTON      ID_DT_LEFT
     BUTTON      ID_DT_MERGE
-    BUTTON      ID_DT_DELETE
 END
 
 
@@ -551,10 +447,169 @@ END
 
 IDR_MAINFRAME           BITMAP                  "res\\Toolbar.bmp"
 IDR_MAINFRAME_SMALL     BITMAP                  "res\\Toolbar_small.bmp"
+IDR_EXTRAICONS          BITMAP                  "res\\ExtraIcons.bmp"
 IDB_STRUCTURE           BITMAP                  "res\\struct.bmp"
 IDB_WORDSTATES          BITMAP                  "res\\wordstat.bmp"
 IDR_DOCUMENT_TREE       BITMAP                  "res\\document.bmp"
 IDB_AB_BANNER           BITMAP                  "res\\Fb2-shema.bmp"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Accelerator
+//
+
+IDR_MAINFRAME ACCELERATORS 
+BEGIN
+    "J",            ID_EDIT_ADD_ANN,        VIRTKEY, CONTROL, NOINVERT
+    "B",            ID_EDIT_ADD_BODY,       VIRTKEY, ALT, NOINVERT
+    "N",            ID_EDIT_ADD_EPIGRAPH,   VIRTKEY, CONTROL, NOINVERT
+    "G",            ID_EDIT_ADD_IMAGE,      VIRTKEY, CONTROL, NOINVERT
+    "D",            ID_EDIT_ADD_TA,         VIRTKEY, CONTROL, NOINVERT
+    "T",            ID_EDIT_ADD_TITLE,      VIRTKEY, CONTROL, NOINVERT
+    "B",            ID_EDIT_BOLD,           VIRTKEY, CONTROL, NOINVERT
+    VK_RETURN,      ID_EDIT_CLONE,          VIRTKEY, CONTROL, NOINVERT
+    "C",            ID_EDIT_COPY,           VIRTKEY, CONTROL, NOINVERT
+    VK_INSERT,      ID_EDIT_COPY,           VIRTKEY, CONTROL, NOINVERT
+    VK_DELETE,      ID_EDIT_CUT,            VIRTKEY, SHIFT, NOINVERT
+    "X",            ID_EDIT_CUT,            VIRTKEY, CONTROL, NOINVERT
+    "F",            ID_EDIT_FIND,           VIRTKEY, CONTROL, NOINVERT
+    VK_F3,          ID_EDIT_FINDNEXT,       VIRTKEY, NOINVERT
+    "I",            ID_EDIT_INCSEARCH,      VIRTKEY, ALT, NOINVERT
+    "C",            ID_EDIT_INS_CITE,       VIRTKEY, ALT, NOINVERT
+    "M",            ID_EDIT_INS_IMAGE,      VIRTKEY, CONTROL, NOINVERT
+    "P",            ID_EDIT_INS_POEM,       VIRTKEY, CONTROL, NOINVERT
+    "E",            ID_EDIT_ITALIC,         VIRTKEY, CONTROL, NOINVERT
+    "I",            ID_EDIT_ITALIC,         VIRTKEY, CONTROL, NOINVERT
+    VK_DELETE,      ID_EDIT_MERGE,          VIRTKEY, ALT, NOINVERT
+    "V",            ID_EDIT_PASTE,          VIRTKEY, CONTROL, NOINVERT
+    VK_INSERT,      ID_EDIT_PASTE,          VIRTKEY, SHIFT, NOINVERT
+    "Y",            ID_EDIT_REDO,           VIRTKEY, CONTROL, NOINVERT
+    "H",            ID_EDIT_REPLACE,        VIRTKEY, CONTROL, NOINVERT
+    "R",            ID_EDIT_REPLACE,        VIRTKEY, CONTROL, NOINVERT
+    VK_RETURN,      ID_EDIT_SPLIT,          VIRTKEY, SHIFT, NOINVERT
+    VK_BACK,        ID_EDIT_UNDO,           VIRTKEY, ALT, NOINVERT
+    "Z",            ID_EDIT_UNDO,           VIRTKEY, CONTROL, NOINVERT
+    "O",            ID_FILE_OPEN,           VIRTKEY, CONTROL, NOINVERT
+    "S",            ID_FILE_SAVE,           VIRTKEY, CONTROL, NOINVERT
+    VK_F2,          ID_FILE_SAVE,           VIRTKEY, NOINVERT
+    VK_F2,          ID_FILE_SAVE_AS,        VIRTKEY, SHIFT, NOINVERT
+    VK_F2,          ID_FILE_SAVE_AS,        VIRTKEY, SHIFT, NOINVERT
+    VK_F8,          ID_FILE_VALIDATE,       VIRTKEY, NOINVERT
+    VK_BACK,        ID_GOTO_REFERENCE,      VIRTKEY, CONTROL, NOINVERT
+    "T",            ID_INSERT_TABLE,        VIRTKEY, ALT, NOINVERT
+    VK_TAB,         ID_NEXT_ITEM,           VIRTKEY, CONTROL, NOINVERT
+    "1",            ID_SCI_COLLAPSE1,       VIRTKEY, ALT, NOINVERT
+    "2",            ID_SCI_COLLAPSE2,       VIRTKEY, ALT, NOINVERT
+    "3",            ID_SCI_COLLAPSE3,       VIRTKEY, ALT, NOINVERT
+    "4",            ID_SCI_COLLAPSE4,       VIRTKEY, ALT, NOINVERT
+    "5",            ID_SCI_COLLAPSE5,       VIRTKEY, ALT, NOINVERT
+    "6",            ID_SCI_COLLAPSE6,       VIRTKEY, ALT, NOINVERT
+    "7",            ID_SCI_COLLAPSE7,       VIRTKEY, ALT, NOINVERT
+    "8",            ID_SCI_COLLAPSE8,       VIRTKEY, ALT, NOINVERT
+    "9",            ID_SCI_COLLAPSE9,       VIRTKEY, ALT, NOINVERT
+    "1",            ID_SCI_EXPAND1,         VIRTKEY, SHIFT, ALT, NOINVERT
+    "2",            ID_SCI_EXPAND2,         VIRTKEY, SHIFT, ALT, NOINVERT
+    "3",            ID_SCI_EXPAND3,         VIRTKEY, SHIFT, ALT, NOINVERT
+    "4",            ID_SCI_EXPAND4,         VIRTKEY, SHIFT, ALT, NOINVERT
+    "5",            ID_SCI_EXPAND5,         VIRTKEY, SHIFT, ALT, NOINVERT
+    "6",            ID_SCI_EXPAND6,         VIRTKEY, SHIFT, ALT, NOINVERT
+    "7",            ID_SCI_EXPAND7,         VIRTKEY, SHIFT, ALT, NOINVERT
+    "8",            ID_SCI_EXPAND8,         VIRTKEY, SHIFT, ALT, NOINVERT
+    "9",            ID_SCI_EXPAND9,         VIRTKEY, SHIFT, ALT, NOINVERT
+    "H",            ID_SELECT_HREF,         VIRTKEY, ALT, NOINVERT
+    "I",            ID_SELECT_ID,           VIRTKEY, ALT, NOINVERT
+    "I",            ID_SELECT_IDT,          VIRTKEY, CONTROL, ALT, NOINVERT
+    VK_ESCAPE,      ID_SELECT_TEXT,         VIRTKEY, NOINVERT
+    "Q",            ID_SELECT_TREE,         VIRTKEY, ALT, NOINVERT
+    "L",            ID_STYLE_LINK,          VIRTKEY, CONTROL, NOINVERT
+    "U",            ID_STYLE_NOLINK,        VIRTKEY, CONTROL, NOINVERT
+    "N",            ID_STYLE_NORMAL,        VIRTKEY, ALT, NOINVERT
+    "W",            ID_STYLE_NOTE,          VIRTKEY, CONTROL, NOINVERT
+    "S",            ID_STYLE_SUBTITLE,      VIRTKEY, ALT, NOINVERT
+    "A",            ID_STYLE_TEXTAUTHOR,    VIRTKEY, ALT, NOINVERT
+    VK_F2,          ID_VIEW_BODY,           VIRTKEY, ALT, NOINVERT
+    VK_F1,          ID_VIEW_DESC,           VIRTKEY, ALT, NOINVERT
+    VK_F9,          ID_VIEW_HTML,           VIRTKEY, NOINVERT
+    VK_F3,          ID_VIEW_SOURCE,         VIRTKEY, ALT, NOINVERT
+    VK_F5,          IDCANCEL,               VIRTKEY, NOINVERT
+    "S",            ID_LAST_SCRIPT,         VIRTKEY, SHIFT, CONTROL, NOINVERT
+END
+
+IDR_MAINFRAME_FBW_SHORTCUTS ACCELERATORS 
+BEGIN
+    "J",            ID_EDIT_ADD_ANN,        VIRTKEY, CONTROL, NOINVERT
+    "B",            ID_EDIT_ADD_BODY,       VIRTKEY, ALT, NOINVERT
+    "G",            ID_EDIT_ADD_EPIGRAPH,   VIRTKEY, ALT, NOINVERT
+    "G",            ID_EDIT_ADD_IMAGE,      VIRTKEY, CONTROL, NOINVERT
+    "D",            ID_EDIT_ADD_TA,         VIRTKEY, CONTROL, NOINVERT
+    "T",            ID_EDIT_ADD_TITLE,      VIRTKEY, ALT, NOINVERT
+    VK_RETURN,      ID_EDIT_CLONE,          VIRTKEY, CONTROL, NOINVERT
+    "C",            ID_EDIT_COPY,           VIRTKEY, CONTROL, NOINVERT
+    VK_INSERT,      ID_EDIT_COPY,           VIRTKEY, CONTROL, NOINVERT
+    VK_DELETE,      ID_EDIT_CUT,            VIRTKEY, SHIFT, NOINVERT
+    "X",            ID_EDIT_CUT,            VIRTKEY, CONTROL, NOINVERT
+    "F",            ID_EDIT_FIND,           VIRTKEY, CONTROL, NOINVERT
+    VK_F3,          ID_EDIT_FINDNEXT,       VIRTKEY, NOINVERT
+    "C",            ID_EDIT_INS_CITE,       VIRTKEY, ALT, NOINVERT
+    "M",            ID_EDIT_INS_IMAGE,      VIRTKEY, CONTROL, NOINVERT
+    "P",            ID_EDIT_INS_POEM,       VIRTKEY, ALT, NOINVERT
+    "I",            ID_EDIT_ITALIC,         VIRTKEY, CONTROL, NOINVERT
+    VK_DELETE,      ID_EDIT_MERGE,          VIRTKEY, ALT, NOINVERT
+    "V",            ID_EDIT_PASTE,          VIRTKEY, CONTROL, NOINVERT
+    VK_INSERT,      ID_EDIT_PASTE,          VIRTKEY, SHIFT, NOINVERT
+    "Y",            ID_EDIT_REDO,           VIRTKEY, CONTROL, NOINVERT
+    "H",            ID_EDIT_REPLACE,        VIRTKEY, CONTROL, NOINVERT
+    "R",            ID_EDIT_REPLACE,        VIRTKEY, CONTROL, NOINVERT
+    VK_RETURN,      ID_EDIT_SPLIT,          VIRTKEY, SHIFT, NOINVERT
+    VK_BACK,        ID_EDIT_UNDO,           VIRTKEY, ALT, NOINVERT
+    "Z",            ID_EDIT_UNDO,           VIRTKEY, CONTROL, NOINVERT
+    "O",            ID_FILE_OPEN,           VIRTKEY, CONTROL, NOINVERT
+    "S",            ID_FILE_SAVE,           VIRTKEY, CONTROL, NOINVERT
+    VK_F2,          ID_FILE_SAVE,           VIRTKEY, NOINVERT
+    VK_F2,          ID_FILE_SAVE_AS,        VIRTKEY, SHIFT, NOINVERT
+    VK_F8,          ID_FILE_VALIDATE,       VIRTKEY, NOINVERT
+    VK_BACK,        ID_GOTO_REFERENCE,      VIRTKEY, CONTROL, NOINVERT
+    "T",            ID_INSERT_TABLE,        VIRTKEY, CONTROL, NOINVERT
+    VK_TAB,         ID_NEXT_ITEM,           VIRTKEY, CONTROL, NOINVERT
+    "1",            ID_SCI_COLLAPSE1,       VIRTKEY, ALT, NOINVERT
+    "2",            ID_SCI_COLLAPSE2,       VIRTKEY, ALT, NOINVERT
+    "3",            ID_SCI_COLLAPSE3,       VIRTKEY, ALT, NOINVERT
+    "4",            ID_SCI_COLLAPSE4,       VIRTKEY, ALT, NOINVERT
+    "5",            ID_SCI_COLLAPSE5,       VIRTKEY, ALT, NOINVERT
+    "6",            ID_SCI_COLLAPSE6,       VIRTKEY, ALT, NOINVERT
+    "7",            ID_SCI_COLLAPSE7,       VIRTKEY, ALT, NOINVERT
+    "8",            ID_SCI_COLLAPSE8,       VIRTKEY, ALT, NOINVERT
+    "9",            ID_SCI_COLLAPSE9,       VIRTKEY, ALT, NOINVERT
+    "1",            ID_SCI_EXPAND1,         VIRTKEY, SHIFT, ALT, NOINVERT
+    "2",            ID_SCI_EXPAND2,         VIRTKEY, SHIFT, ALT, NOINVERT
+    "3",            ID_SCI_EXPAND3,         VIRTKEY, SHIFT, ALT, NOINVERT
+    "4",            ID_SCI_EXPAND4,         VIRTKEY, SHIFT, ALT, NOINVERT
+    "5",            ID_SCI_EXPAND5,         VIRTKEY, SHIFT, ALT, NOINVERT
+    "6",            ID_SCI_EXPAND6,         VIRTKEY, SHIFT, ALT, NOINVERT
+    "7",            ID_SCI_EXPAND7,         VIRTKEY, SHIFT, ALT, NOINVERT
+    "8",            ID_SCI_EXPAND8,         VIRTKEY, SHIFT, ALT, NOINVERT
+    "9",            ID_SCI_EXPAND9,         VIRTKEY, SHIFT, ALT, NOINVERT
+    "H",            ID_SELECT_HREF,         VIRTKEY, ALT, NOINVERT
+    "I",            ID_SELECT_ID,           VIRTKEY, ALT, NOINVERT
+    "I",            ID_SELECT_IDT,          VIRTKEY, CONTROL, ALT, NOINVERT
+    VK_ESCAPE,      ID_SELECT_TEXT,         VIRTKEY, NOINVERT
+    "Q",            ID_SELECT_TREE,         VIRTKEY, ALT, NOINVERT
+    "L",            ID_STYLE_LINK,          VIRTKEY, CONTROL, NOINVERT
+    "U",            ID_STYLE_NOLINK,        VIRTKEY, CONTROL, NOINVERT
+    "N",            ID_STYLE_NORMAL,        VIRTKEY, ALT, NOINVERT
+    "W",            ID_STYLE_NOTE,          VIRTKEY, CONTROL, NOINVERT
+    "S",            ID_STYLE_SUBTITLE,      VIRTKEY, ALT, NOINVERT
+    "A",            ID_STYLE_TEXTAUTHOR,    VIRTKEY, ALT, NOINVERT
+    VK_F2,          ID_VIEW_BODY,           VIRTKEY, ALT, NOINVERT
+    VK_F1,          ID_VIEW_DESC,           VIRTKEY, ALT, NOINVERT
+    VK_F9,          ID_VIEW_HTML,           VIRTKEY, NOINVERT
+    VK_F3,          ID_VIEW_SOURCE,         VIRTKEY, ALT, NOINVERT
+    VK_F5,          IDCANCEL,               VIRTKEY, NOINVERT
+    VK_F2,          ID_FILE_SAVE_AS,        VIRTKEY, SHIFT, NOINVERT
+    "B",            ID_EDIT_BOLD,           VIRTKEY, CONTROL, NOINVERT
+    "O",            ID_EDIT_ADDBINARY,      VIRTKEY, ALT, NOINVERT
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -612,10 +667,10 @@ BEGIN
     POPUP "&File"
     BEGIN
         MENUITEM "&New",                        ID_FILE_NEW
-        MENUITEM "&Open...",                    ID_FILE_OPEN
-        MENUITEM "&Save",                       ID_FILE_SAVE
-        MENUITEM "Save &As...",                 ID_FILE_SAVE_AS
-        MENUITEM "&Validate",                   ID_FILE_VALIDATE
+        MENUITEM "&Open...\tCtrl+O",            ID_FILE_OPEN
+        MENUITEM "&Save\tF2",                   ID_FILE_SAVE
+        MENUITEM "Save &As...\tShift+F2",       ID_FILE_SAVE_AS
+        MENUITEM "&Validate\tF8",               ID_FILE_VALIDATE
         MENUITEM SEPARATOR
         POPUP "&Import"
         BEGIN
@@ -635,20 +690,20 @@ BEGIN
     END
     POPUP "&Edit"
     BEGIN
-        MENUITEM "&Undo",                       ID_EDIT_UNDO
-        MENUITEM "&Redo",                       ID_EDIT_REDO
+        MENUITEM "&Undo\tCtrl+Z",               ID_EDIT_UNDO
+        MENUITEM "&Redo\tCtrl+Y",               ID_EDIT_REDO
         MENUITEM SEPARATOR
-        MENUITEM "Cu&t",                        ID_EDIT_CUT
-        MENUITEM "&Copy",                       ID_EDIT_COPY
-        MENUITEM "&Paste",                      ID_EDIT_PASTE
+        MENUITEM "Cu&t\tCtrl+X",                ID_EDIT_CUT
+        MENUITEM "&Copy\tCtrl+C",               ID_EDIT_COPY
+        MENUITEM "&Paste\tCtrl+V",              ID_EDIT_PASTE
         MENUITEM SEPARATOR
-        MENUITEM "&Find...",                    ID_EDIT_FIND
-        MENUITEM "Find &Next",                  ID_EDIT_FINDNEXT
-        MENUITEM "R&eplace...",                 ID_EDIT_REPLACE
+        MENUITEM "&Find...\tCtrl+F",            ID_EDIT_FIND
+        MENUITEM "Find &Next\tF3",              ID_EDIT_FINDNEXT
+        MENUITEM "R&eplace...\tCtrl+H",         ID_EDIT_REPLACE
         MENUITEM SEPARATOR
-        MENUITEM "C&lone container",            ID_EDIT_CLONE
-        MENUITEM "Sp&lit container",            ID_EDIT_SPLIT
-        MENUITEM "&Merge containers",           ID_EDIT_MERGE
+        MENUITEM "C&lone container\tCtrl+Enter", ID_EDIT_CLONE
+        MENUITEM "Sp&lit container\tShift+Enter", ID_EDIT_SPLIT
+        MENUITEM "&Merge containers\tAlt+Delelte", ID_EDIT_MERGE
         MENUITEM "Remove outer container",      ID_EDIT_REMOVE_OUTER_SECTION
         MENUITEM SEPARATOR
         MENUITEM "Add &Binary Object...",       ID_EDIT_ADDBINARY
@@ -661,36 +716,36 @@ BEGIN
         MENUITEM "&Status Bar",                 ID_VIEW_STATUS_BAR
         MENUITEM "&Document Tree",              ID_VIEW_TREE
         MENUITEM SEPARATOR
-        MENUITEM "D&escription",                ID_VIEW_DESC
-        MENUITEM "&Body",                       ID_VIEW_BODY
-        MENUITEM "So&urce",                     ID_VIEW_SOURCE
+        MENUITEM "D&escriptionl\tAlt+F1",       ID_VIEW_DESC
+        MENUITEM "&Body\tAlt+F2",               ID_VIEW_BODY
+        MENUITEM "So&urce\tAlt+F3",             ID_VIEW_SOURCE
         MENUITEM SEPARATOR
         MENUITEM "Fast Mode",                   ID_VIEW_FASTMODE
+        MENUITEM SEPARATOR
     END
     POPUP "&Add"
     BEGIN
-        MENUITEM "&Body",                       ID_EDIT_ADD_BODY
-        MENUITEM "&Title",                      ID_EDIT_ADD_TITLE
-        MENUITEM "&Epigraph",                   ID_EDIT_ADD_EPIGRAPH
-        MENUITEM "A&nnotation",                 ID_EDIT_ADD_ANN
+        MENUITEM "&Body\tAlt+B",                ID_EDIT_ADD_BODY
+        MENUITEM "&Title\tCtrl+T",              ID_EDIT_ADD_TITLE
+        MENUITEM "&Epigraph\tCtrl+N",           ID_EDIT_ADD_EPIGRAPH
+        MENUITEM "A&nnotation\tCtrl+J",         ID_EDIT_ADD_ANN
         MENUITEM SEPARATOR
-        MENUITEM "T&ext author",                ID_EDIT_ADD_TA
-        MENUITEM "&Image",                      ID_EDIT_INS_IMAGE
-        MENUITEM "In&line image",               ID_EDIT_INS_INLINEIMAGE
-        MENUITEM "&Poem",                       ID_EDIT_INS_POEM
-        MENUITEM "&Cite",                       ID_EDIT_INS_CITE
-        MENUITEM "T&able",                      ID_INSERT_TABLE
-        MENUITEM "&Section image",              ID_EDIT_ADD_IMAGE
+        MENUITEM "T&ext author\tCtrl+D",        ID_EDIT_ADD_TA
+        MENUITEM "&Image\tCtrl+M",              ID_EDIT_INS_IMAGE
+        MENUITEM "&Poem\tCtrl+P",               ID_EDIT_INS_POEM
+        MENUITEM "&Cite\tAlt+C",                ID_EDIT_INS_CITE
+        MENUITEM "T&able\tAlt+T",               ID_INSERT_TABLE
+        MENUITEM "&Section image\tCtrl+G",      ID_EDIT_ADD_IMAGE
     END
     POPUP "&Style"
     BEGIN
-        MENUITEM "&Normal",                     ID_STYLE_NORMAL
-        MENUITEM "Text &Author",                ID_STYLE_TEXTAUTHOR
-        MENUITEM "&Subtitle",                   ID_STYLE_SUBTITLE
+        MENUITEM "&Normal\tAlt+N",              ID_STYLE_NORMAL
+        MENUITEM "Text &Author\tAlt+A",         ID_STYLE_TEXTAUTHOR
+        MENUITEM "&Subtitle\tAlt+S",            ID_STYLE_SUBTITLE
         MENUITEM SEPARATOR
-        MENUITEM "&Link...",                    ID_STYLE_LINK
-        MENUITEM "&Footnote...",                ID_STYLE_NOTE
-        MENUITEM "&Remove link",                ID_STYLE_NOLINK
+        MENUITEM "&Link...\tCtrl+L",            ID_STYLE_LINK
+        MENUITEM "&Footnote...\tCtrl+W",        ID_STYLE_NOTE
+        MENUITEM "&Remove link\tCtrl+U",        ID_STYLE_NOLINK
     END
     POPUP "&Goto"
     BEGIN
@@ -701,8 +756,6 @@ BEGIN
     BEGIN
         MENUITEM "&Words...",                   ID_TOOLS_WORDS
         MENUITEM "&Options...",                 ID_VIEW_OPTIONS
-        MENUITEM SEPARATOR
-        MENUITEM "Spell check...",              ID_TOOLS_SPELLCHECK
     END
     POPUP "&Scripts"
     BEGIN
@@ -724,8 +777,6 @@ BEGIN
         MENUITEM "Move Right",                  ID_DT_RIGHT_ONE
         MENUITEM "Move With Children",          ID_DT_RIGHT_SMART
         MENUITEM "Move Left",                   ID_DT_LEFT
-        MENUITEM SEPARATOR
-        MENUITEM "Delete",                      ID_DT_DELETE
     END
 END
 
@@ -737,29 +788,14 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_HOTKEY_EDIT_ADD_EPIGRAPH "Add epigraph"
-    IDS_HOTKEY_EDIT_ADD_IMAGE "Add section image"
-    IDS_HOTKEY_EDIT_ADD_TA  "Add text author"
-    IDS_HOTKEY_EDIT_ADD_TITLE "Add title"
-    IDS_HOTKEY_EDIT_BOLD    "Bold"
-    IDS_HOTKEY_EDIT_CLONE   "Clone"
-    IDS_HOTKEY_EDIT_COPY    "Copy"
-    IDS_HOTKEY_EDIT_CUT     "Cut"
-    IDS_HOTKEY_EDIT_FIND    "Find"
-    IDS_HOTKEY_EDIT_FIND_NEXT "Find next"
-    IDS_HOTKEY_EDIT_INCREMENTAL_SEARCH "Incremental search"
-    IDS_HOTKEY_EDIT_INSERT_CITE "Insert cite"
-    IDS_HOTKEY_EDIT_INSERT_IMAGE "Insert image"
-    IDS_HOTKEY_EDIT_INSERT_POEM "Insert poem"
-    IDS_HOTKEY_EDIT_ITALIC  "Italic"
-    ID_VIEW_SOURCE          "Show document source code\nSource"
+    ID_VIEW_SOURCE          "Show document source code\nSource  (Alt+F3)"
 END
 
 STRINGTABLE 
 BEGIN
     ID_INSERT_TABLE         "Insert an table at cursor\nInsert table"
-    ID_GOTO_FOOTNOTE        "Goto footnote text\nGoto footnote text"
-    ID_GOTO_REFERENCE       "Goto footnote reference\nGoto footnote reference"
+    ID_GOTO_FOOTNOTE        "??????? ?? ????? ??????\n??????? ?? ????? ??????(Alt+Click)"
+    ID_GOTO_REFERENCE       "??????? ?? ?????, ??????? ????????? ?? ??? ??????\n??????? ?? ?????? ??????(Ctrl+BACK)"
 END
 
 STRINGTABLE 
@@ -793,13 +829,6 @@ BEGIN
     IDS_PANE_INS            "INS"
     IDS_PANE_OVR            "OVR"
     IDS_DOC_TREE_CLEANUP    "Clean"
-    IDS_HOTKEY_FILE_OPEN    "Open"
-    IDS_HOTKEY_FILE_SAVE    "Save"
-    IDS_HOTKEY_FILE_SAVEAS  "Save as..."
-    IDS_HOTKEY_FILE_VALIDATE "Validate"
-    IDS_HOTKEY_GROUP_FILE   "File"
-    IDS_HOTKEY_EDIT_ADD_ANNOTATION "Add annotation"
-    IDS_HOTKEY_EDIT_ADD_BODY "Add body"
 END
 
 STRINGTABLE 
@@ -833,8 +862,8 @@ BEGIN
     ID_STYLE_LINK           "Add a hyperlink\nHyperlink"
     ID_STYLE_NOTE           "Add a footnote\nFootnote"
     ID_EDIT_FINDNEXT        "Repeats the last find\nFind next"
-    ID_VIEW_DESC            "Show document description\nDescription"
-    ID_VIEW_BODY            "Show document body\nBody"
+    ID_VIEW_DESC            "Show document description\nDescription (Alt+F1)"
+    ID_VIEW_BODY            "Show document body\nBody (Alt+F2)"
     ID_STYLE_NOLINK         "Remove links from selected text\nRemove links"
     ID_EDIT_ADDBINARY       "Add a new binary object to the document\nAdd binary object"
 END
@@ -869,20 +898,7 @@ BEGIN
     IDS_CHOOSE_SCRIPTS_FLD  "Specify scripts folder"
     IDS_SCRIPT_HOTKEY_CONFLICT 
                             "Script\n%s\n returned a virtual-key that conflicts with previously loaded script\n %s"
-    IDS_HOTKEY_EDIT_MERGE   "Merge"
-    IDS_HOTKEY_EDIT_PASTE   "Paste"
-    IDS_HOTKEY_EDIT_REDO    "Redo"
-    IDS_HOTKEY_EDIT_REPLACE "Replace"
-    IDS_HOTKEY_EDIT_SPLIT   "Split"
-    IDS_HOTKEY_EDIT_UNDO    "Undo"
-    IDS_HOTKEY_GROUP_EDIT   "Edit"
-    IDS_HOTKEY_GROUP_NAVIGATION "Navigation"
-    IDS_HOTKEY_NAVIGATION_GOTO_REFERENCE "Goto reference"
-    IDS_HOTKEY_NAVIGATION_NEXT_ITEM "Next item"
     ID_PANE_INS             "OVR"
-    IDS_HOTKEY_NAVIGATION_SCI_COLLAPSE1 "Collapse 1 tree level"
-    IDS_HOTKEY_NAVIGATION_SCI_COLLAPSE2 "Collapse 2 tree levels"
-    IDS_HOTKEY_NAVIGATION_SCI_COLLAPSE3 "Collapse 3 tree levels"
 END
 
 STRINGTABLE 
@@ -894,8 +910,7 @@ STRINGTABLE
 BEGIN
     ATL_IDS_MRU_FILE        "Open this document"
     IDS_ENCODINGS           "utf-8,utf-16,windows-1251,windows-1252,iso-8859-1,iso-8859-2,iso-8859-5,iso-8859-15,koi8-r"
-    IDS_DOCUMENT_TREE_CAPTION 
-                            "Insert an inline image at cursor\nInsert inline image"
+    IDS_DOCUMENT_TREE_CAPTION "Document Tree"
 END
 
 STRINGTABLE 
@@ -916,11 +931,6 @@ BEGIN
     IDS_SETTINGS_OTHER_CAPTION "Other"
     IDS_TB_CAPT_ID          "ID:"
     IDS_TB_CAPT_HREF        "Href:"
-END
-
-STRINGTABLE 
-BEGIN
-    IDS_LANG_UKRAINIAN      "Ukrainian"
 END
 
 STRINGTABLE 
@@ -981,123 +991,6 @@ BEGIN
     IDS_ADD_CLEARIMG_CAPTION "Add image"
     IDS_ADD_IMAGE_FILEDLG   "Choose image to add:"
     IDS_ADD_BINARIES_FILEDLG "Choose binaries to add:"
-END
-
-STRINGTABLE 
-BEGIN
-    IDS_HOTKEY_NAVIGATION_SCI_COLLAPSE4 "Collapse 4 tree levels"
-    IDS_HOTKEY_NAVIGATION_SCI_COLLAPSE5 "Collapse 5 tree levels"
-    IDS_HOTKEY_NAVIGATION_SCI_COLLAPSE6 "Collapse 6 tree levels"
-    IDS_HOTKEY_NAVIGATION_SCI_COLLAPSE7 "Collapse 7 tree levels"
-    IDS_HOTKEY_NAVIGATION_SCI_COLLAPSE8 "Collapse 8 tree levels"
-    IDS_HOTKEY_NAVIGATION_SCI_COLLAPSE9 "Collapse 9 tree levels"
-    IDS_HOTKEY_NAVIGATION_SCI_EXPAND1 "Expand 1 tree level"
-    IDS_HOTKEY_NAVIGATION_SCI_EXPAND2 "Expand 2 tree levels"
-    IDS_HOTKEY_NAVIGATION_SCI_EXPAND3 "Expand 3 tree levels"
-    IDS_HOTKEY_NAVIGATION_SCI_EXPAND4 "Expand 4 tree levels"
-    IDS_HOTKEY_NAVIGATION_SCI_EXPAND5 "Expand 5 tree levels"
-    IDS_HOTKEY_NAVIGATION_SCI_EXPAND6 "Expand 6 tree levels"
-    IDS_HOTKEY_NAVIGATION_SCI_EXPAND7 "Expand 7 tree levels"
-    IDS_HOTKEY_NAVIGATION_SCI_EXPAND8 "Expand 8 tree levels"
-    IDS_HOTKEY_NAVIGATION_SCI_EXPAND9 "Expand 9 tree levels"
-    IDS_HOTKEY_NAVIGATION_SELECT_HREF "Href"
-END
-
-STRINGTABLE 
-BEGIN
-    IDS_HOTKEY_NAVIGATION_SELECT_ID "ID "
-    IDS_HOTKEY_NAVIGATION_SELECT_ID_TABLE "Table ID"
-    IDS_HOTKEY_NAVIGATION_SELECT_TEXT "Text"
-    IDS_HOTKEY_NAVIGATION_SELECT_TREE "Tree"
-    IDS_HOTKEY_GROUP_STYLE  "Style"
-    IDS_HOTKEY_STYLE_LINK   "Link"
-    IDS_HOTKEY_STYLE_NO_LINK "No link"
-    IDS_HOTKEY_STYLE_NORMAL "Normal"
-    IDS_HOTKEY_STYLE_NOTE   "Note"
-    IDS_HOTKEY_STYLE_SUBTITLE "Subtitle"
-    IDS_HOTKEY_STYLE_TEXT_AUTHOR "Text author"
-    IDS_HOTKEY_GROUP_VIEW   "View"
-    IDS_HOTKEY_VIEW_BODY    "Body"
-    IDS_HOTKEY_VIEW_DESCRIPTION "Description"
-    IDS_HOTKEY_VIEW_SOURCE  "Source"
-    IDS_HOTKEY_EDIT_INSERT_TABLE "Insert table"
-END
-
-STRINGTABLE 
-BEGIN
-    IDS_HOTKEY_GROUP_SCRIPTS "Scripts"
-    IDS_HOTKEY_SCRIPTS_LAST_SCRIPT "Last script"
-    IDS_SETTINGS_HOTKEYS_CAPTION "Hotkeys"
-    IDS_HOTKEY_GROUP_SYMBOLS "Symbols"
-    IDS_SETTINGS_WORDS_CAPTION "Words"
-    IDS_SETTINGS_WLIST_COUNTED "Counted"
-    IDS_SETTINGS_WLIST_WORD "Word"
-    IDS_SETTINGS_WORDS_ADD_ERR_TEXT "This word is already in list!"
-    IDS_SETTINGS_WORDS_ADD_ERR_CAP "Error adding word"
-    IDS_SETTINGS_WORDS_ADD_ERR_SYM 
-                            "New exclusion word must contain only alpha characters and one '-' between them!"
-    IDS_WORDS_WLIST_WORD    "Word"
-    IDS_WORDS_WLIST_REPLACEMENT "Replacement"
-    IDS_WORDS_WLIST_COUNTED "Counted"
-    IDS_WORDS_FR_BTN_FIND0  "Find"
-    IDS_WORDS_FR_BTN_FIND1  "Next"
-    IDS_CTXMENU_CUT         "Cut"
-END
-
-STRINGTABLE 
-BEGIN
-    IDS_CTXMENU_COPY        "Copy"
-    IDS_CTXMENU_PASTE       "Paste"
-    IDS_CTXMENU_SELECT      "Select"
-    IDS_CTXMENU_IMG_SAVEAS  "Save image as..."
-    IDS_HOTKEY_WRONG        "Wrong shortcut!"
-    IDS_HOTKEY_DEFAULT_COLLISION 
-                            "Default hotkey for this command was assigned to ""%s""! Replace?"
-    IDS_HOTKEY_ASSIGN_NO_COLLISION "Not assigned to other command"
-    IDS_HOTKEY_ASSIGN_COLLISION "Assigned to ""%s"""
-    IDS_SETTINGS_NEED_RESTART 
-                            "In order to process changes the program must be restarted.\nRestart now?"
-    IDS_DOCTREE_MENU_ELEMENTS "Elements"
-    IDS_DOCTREE_MENU_SCRIPTS "Scripts"
-    IDS_HOTKEY_EDIT_REMOVE_OUTER_SECTION "Remove outer section"
-    IDS_HOTKEY_GROUP_TOOLS  "Tools"
-    IDS_HOTKEY_TOOLS_WORDS  "Words"
-    IDS_HOTKEY_GROUP_PLUGINS "Plugins"
-END
-
-STRINGTABLE 
-BEGIN
-    IDC_SPELL_IGNORE        "Ignore"
-END
-
-STRINGTABLE 
-BEGIN
-    IDS_HOTKEY_PLUGINS_LAST_PLUGIN "Last plugin"
-    IDS_HOTKEY_TOOLS_SPELL  "Spell check"
-    IDC_SPELL_ADD2DICT      "Add to dictionary"
-    IDS_SPELL_COMPLETED     "The spelling check is complete."
-    IDC_SPELL_IGNOREALL     "Ignore All"
-    IDS_SPELL_CONTINUE      "Continue"
-END
-
-STRINGTABLE 
-BEGIN
-    IDC_SPELL_REPLACE       "Replace word"
-END
-
-STRINGTABLE 
-BEGIN
-    ID_DT_LEFT              "\nMove to the left"
-    ID_DT_DELETE            "\nDelete selected node"
-    ID_DT_RIGHT_ONE         "\nMove node once to the right"
-    ID_DT_RIGHT_SMART       "\nMove one node to the right with smart mode"
-    ID_DT_MERGE             "\nMerge containers"
-END
-
-STRINGTABLE 
-BEGIN
-    ID_TOOLS_SPELLCHECK     "Check document spelling...\nCheck document spelling"
-    ID_EDIT_INS_INLINEIMAGE "Insert inline image"
 END
 
 #endif    // English (U.S.) resources

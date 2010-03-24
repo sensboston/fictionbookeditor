@@ -26,8 +26,3 @@ function GetClassName()
 {
 	return "abc";
 }
-
-function GetTitle()
-{
-	return "Пример 1";
-}

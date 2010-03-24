@@ -19,11 +19,11 @@ bool  CMainFrame::IsBandVisible(int id) {
 }
 
 void  CMainFrame::AttachDocument(FB::Doc *doc) {
-  /*if (IsSourceActive()) {
+  if (IsSourceActive()) {
     UIEnable(ID_VIEW_TREE, 1);
     UISetCheck(ID_VIEW_TREE, m_save_sp_mode);
     m_splitter.SetSinglePaneMode(m_save_sp_mode ? SPLIT_PANE_NONE : SPLIT_PANE_RIGHT);
-  }*/
+  }
   m_view.AttachWnd(doc->m_body);
 //  m_view.AttachWnd(doc->m_desc);
   UISetCheck(ID_VIEW_BODY, 1);
@@ -36,18 +36,8 @@ void  CMainFrame::AttachDocument(FB::Doc *doc) {
   m_view.SetFocus();
   m_cb_updated=false;
   m_need_title_update=m_sel_changed=true;
-  if(_Settings.ViewDocumentTree())
-  {
-	  m_document_tree.GetDocumentStructure(/*doc->m_body*/doc->m_body.Document());
-	  m_document_tree.HighlightItemAtPos(doc->m_body.SelectionContainer());
-  }
-  // added by SeNS
-  if (m_Speller && m_Speller->Enabled())
-  {
-	  m_Speller->SetFrame(m_hWnd);
-	  m_Speller->SetCustomDictionary(_Settings.GetCustomDict());
-	  m_Speller->AttachDocument(doc->m_body.Document());
-  }
+  m_document_tree.GetDocumentStructure(/*doc->m_body*/doc->m_body.Document());
+  m_document_tree.HighlightItemAtPos(doc->m_body.SelectionContainer());
 }
 
 CString	CMainFrame::GetOpenFileName() {
@@ -171,7 +161,6 @@ bool	CMainFrame::DocChanged() {
 
 bool	CMainFrame::DiscardChanges() {	
   U::SaveFileSelectedPos(m_doc->m_filename, m_doc->GetSelectedPos());
-
   if (DocChanged())
   {
     wchar_t cpt[MAX_LOAD_STRING + 1];
@@ -259,8 +248,7 @@ CMainFrame::FILE_OP_STATUS CMainFrame::SaveFile(bool askname) {
   }
 }
 
-CMainFrame::FILE_OP_STATUS  CMainFrame::LoadFile(const wchar_t *initfilename)
-{
+CMainFrame::FILE_OP_STATUS  CMainFrame::LoadFile(const wchar_t *initfilename) {
   if (!DiscardChanges())
     return CANCELLED;
   
@@ -270,13 +258,8 @@ CMainFrame::FILE_OP_STATUS  CMainFrame::LoadFile(const wchar_t *initfilename)
   if (filename.IsEmpty())
     return CANCELLED;
   
-	FB::Doc *doc = new FB::Doc(*this);
-	FB::Doc::m_active_doc = doc;
-	if((filename.ReverseFind(L'\\') + 1) != -1 && (filename.ReverseFind(L'\\') + 1) < filename.GetLength() - 1)
-	{
-		doc->m_body.m_file_path = filename.Mid(0, filename.ReverseFind(L'\\') + 1);
-		doc->m_body.m_file_name = filename.Mid(filename.ReverseFind(L'\\') + 1, filename.GetLength() - 1);
-	}
+  FB::Doc *doc = new FB::Doc(*this);
+  FB::Doc::m_active_doc = doc;
 
   EnableWindow(FALSE);
   m_status.SetPaneText(ID_DEFAULT_PANE,_T("Loading..."));
@@ -310,51 +293,109 @@ void  CMainFrame::GoTo(MSHTML::IHTMLElement *e) {
 }
 
 // message handlers
-BOOL CMainFrame::PreTranslateMessage(MSG* pMsg)
-{
-	// reset ctrl tab
-	if (pMsg->message == WM_KEYUP && pMsg->wParam == VK_CONTROL)
-	{
-		m_ctrl_tab = false;
-	}
-
-	// well, if we are doing an incremental search, then swallow WM_CHARS
-	if (m_incsearch && pMsg->hwnd != *this)
-	{
-		BOOL tmp;
-		if(pMsg->message == WM_CHAR)
+BOOL CMainFrame::PreTranslateMessage(MSG* pMsg) {
+  // provide an easy way to enter unicode chars
+  if (pMsg->message==WM_KEYDOWN && ::GetKeyState(VK_CONTROL)&0x8000) 
+  {    
+    wchar_t   c=0;	
+	/*if(_Settings.FBWHotkeys())
+	{*/		
+		switch (pMsg->wParam)
 		{
-			OnChar(WM_CHAR, pMsg->wParam, 0, tmp);
-			return TRUE;
+		//case VK_OEM_3: c=_Settings.GetLastUsedSymbol(); break;//~
+		case 0x31: c=L'\x0020'; break;//1
+		case 0x32: c=L'\x00B4'; break;//2
+		case 0x33: c=L'\x2022'; break;//3
+		case 0x34: c=L'\x00B0'; break;//4
+		case 0x35: c=L'\x00B9'; break;//5
+		case 0x36: c=L'\x00B2'; break;//6
+		case 0x37: c=L'\x00B3'; break;//7
+		case 0x38: c=L'\x00D7'; break;//8
+		case 0x39: c=L'\x00F7'; break;//9
+		case VK_OEM_4: c=L'\x2018'; break;//[
+		case VK_OEM_6: c=L'\x2019'; break;//]
+		case VK_OEM_1: c=L'\x201C'; break;//:
+		case VK_OEM_7: c=L'\x201D'; break;//"
+		//case 0x4C: c=L'\x00AB'; break;//L
+		case VK_OEM_COMMA : c=L'\x00AB'; break;//<
+		case VK_OEM_PERIOD : c=L'\x00BB'; break;//>
+		case VK_OEM_2: c=L'\x2026'; break;//?
+		case VK_OEM_MINUS: c=L'\x2013'; break;//+
+		case VK_OEM_PLUS: c=L'\x2014'; break;//-
 		}
-		if ((pMsg->message == WM_KEYDOWN || pMsg->message == WM_KEYUP) &&
-			(pMsg->wParam == VK_BACK || pMsg->wParam == VK_RETURN))
-		{
-			if (pMsg->message == WM_KEYDOWN)
-				OnChar(WM_CHAR, pMsg->wParam, 0, tmp);
-			return TRUE;
-		}
-	}
-
-	// let other windows do their translations
-	if(CFrameWindowImpl<CMainFrame>::PreTranslateMessage(pMsg))
-		return TRUE;
-
-	// this is needed to pass certain keys to the web browser
-	HWND hWndFocus = ::GetFocus();
-	if(m_doc)
+	/*}
+	else
 	{
-		if(::IsChild(m_doc->m_body,hWndFocus))
+		switch (pMsg->wParam) 
 		{
-			if (m_doc->m_body.PreTranslateMessage(pMsg))
-				return TRUE;
-			/*    } else if (::IsChild(m_doc->m_desc,hWndFocus)) {
-			if (m_doc->m_desc.PreTranslateMessage(pMsg))
-			return TRUE;*/
+		//case VK_OEM_4: c=L'\x2018'; break;
+		case VK_OEM_4: c=L'\x00AB'; break;
+		case VK_OEM_6: c=L'\x00BB'; break;
+		case VK_OEM_1: c=L'\x201C'; break;
+		case VK_OEM_7: c=L'\x201D'; break;
+		case VK_OEM_MINUS: c=L'\x2013'; break;
+		case VK_OEM_PLUS: c=L'\x2014'; break;
+		case VK_OEM_PERIOD: c=L'\x2026'; break;	
 		}
-	}
+	}*/
+    if (c) 
+	{
+      pMsg->message=WM_CHAR;
+      pMsg->wParam=c;
+    }
+  }
+  /*if(_Settings.FBWHotkeys() && (pMsg->message==WM_SYSKEYDOWN || pMsg->message==WM_KEYDOWN) && ::GetKeyState(VK_MENU)&0x8000)
+  {
+	wchar_t   c=0;
+    switch (pMsg->wParam) 
+	{		
+    }
+    if (c) 
+	{
+      pMsg->message=WM_CHAR;
+      pMsg->wParam=c;
+    }
+  }*/
 
-	return FALSE;
+  // reset ctrl tab
+  if (pMsg->message==WM_KEYUP && pMsg->wParam == VK_CONTROL)
+  {
+	  m_ctrl_tab = false;
+  }
+
+  // well, if we are doing an incremental search, then swallow WM_CHARS
+  if (m_incsearch && pMsg->hwnd!=*this) {
+    BOOL tmp;
+    if (pMsg->message==WM_CHAR) {
+      OnChar(WM_CHAR,pMsg->wParam,0,tmp);
+      return TRUE;
+    }
+    if ((pMsg->message==WM_KEYDOWN || pMsg->message==WM_KEYUP) &&
+	(pMsg->wParam==VK_BACK || pMsg->wParam==VK_RETURN))
+    {
+      if (pMsg->message==WM_KEYDOWN)
+	OnChar(WM_CHAR,pMsg->wParam,0,tmp);
+      return TRUE;
+    }
+  }
+
+  // let other windows do their translations
+  if(CFrameWindowImpl<CMainFrame>::PreTranslateMessage(pMsg))
+    return TRUE;
+
+  // this is needed to pass certain keys to the web browser
+  HWND	  hWndFocus=::GetFocus();
+  if (m_doc) {
+    if (::IsChild(m_doc->m_body,hWndFocus)) {
+      if (m_doc->m_body.PreTranslateMessage(pMsg))
+	return TRUE;
+/*    } else if (::IsChild(m_doc->m_desc,hWndFocus)) {
+      if (m_doc->m_desc.PreTranslateMessage(pMsg))
+	return TRUE;*/
+    }
+  }
+
+  return FALSE;
 }
 
 void  CMainFrame::UIUpdateViewCmd(CFBEView& view, WORD wID, OLECMD& oc, const wchar_t *hk)
@@ -374,7 +415,7 @@ BOOL CMainFrame::OnIdle()
 
 	if (IsSourceActive())
 	{
-		static WORD disabled_commands[] =
+		static WORD	disabled_commands[] =
 		{
 			ID_EDIT_BOLD,
 			ID_EDIT_ITALIC,
@@ -399,7 +440,6 @@ BOOL CMainFrame::OnIdle()
 			ID_EDIT_ADD_ANN,
 			ID_EDIT_ADD_TA,
 			ID_EDIT_INS_IMAGE,
-			ID_EDIT_INS_INLINEIMAGE,
 			ID_EDIT_INS_POEM,
 			ID_EDIT_INS_CITE,
 			ID_EDIT_ADDBINARY,
@@ -411,15 +451,6 @@ BOOL CMainFrame::OnIdle()
 
 		for (int i = 0; i < sizeof(disabled_commands)/sizeof(disabled_commands[0]); ++i)
 			UIEnable(disabled_commands[i], FALSE);
-
-		HMENU scripts = GetSubMenu(m_CmdBar.GetMenu(), 7);
-		for(int i = 0; i < m_scripts.GetSize(); ++i)
-		{
-			if(!m_scripts[i].isFolder)
-			{
-				::EnableMenuItem(scripts, ID_SCRIPT_BASE + m_scripts[i].wID, MF_BYCOMMAND | MF_GRAYED);
-			}
-		}
 
 		m_id_box.EnableWindow(FALSE);
 		m_href_box.EnableWindow(FALSE);
@@ -448,6 +479,7 @@ BOOL CMainFrame::OnIdle()
 		m_tr_allign_caption.SetEnabled(false);
 		m_th_allign_caption.SetEnabled(false);
 		m_valign_caption.SetEnabled(false);	
+
 
 		bool fCanCC = m_source.SendMessage(SCI_GETSELECTIONSTART) != m_source.SendMessage(SCI_GETSELECTIONEND);
 		UIEnable(ID_EDIT_COPY, fCanCC);
@@ -481,15 +513,6 @@ BOOL CMainFrame::OnIdle()
 	}
 	else
 	{
-		HMENU scripts = GetSubMenu(m_CmdBar.GetMenu(), 7);
-		for (int i = 0; i < m_scripts.GetSize(); ++i)
-		{
-			if(!m_scripts[i].isFolder)
-			{
-				::EnableMenuItem(scripts, ID_SCRIPT_BASE + m_scripts[i].wID, MF_BYCOMMAND | MF_ENABLED);
-			}
-		}
-
 		// check if editing commands can be performed
 		CString fbuf;
 		CFBEView& view = ActiveView();
@@ -550,7 +573,6 @@ BOOL CMainFrame::OnIdle()
 		UIUpdateViewCmd(view, ID_EDIT_ADD_TA);
 		UIUpdateViewCmd(view, ID_EDIT_CLONE);
 		UIUpdateViewCmd(view, ID_EDIT_INS_IMAGE);
-		UIUpdateViewCmd(view, ID_EDIT_INS_INLINEIMAGE);
 		UIUpdateViewCmd(view, ID_EDIT_ADD_IMAGE);
 		UIUpdateViewCmd(view, ID_EDIT_ADD_EPIGRAPH);
 		UIUpdateViewCmd(view, ID_EDIT_ADD_ANN);
@@ -568,7 +590,6 @@ BOOL CMainFrame::OnIdle()
 		if (m_sel_changed && /*GetCurView()*/m_current_view != DESC)
 		{
 			m_status.SetPaneText(ID_DEFAULT_PANE, m_doc->m_body.SelPath());
-
 			// update links and IDs
 			try
 			{
@@ -583,13 +604,8 @@ BOOL CMainFrame::OnIdle()
 					m_href_box.EnableWindow();
 					m_href_caption.SetEnabled();
 					m_ignore_cb_changes = true;
-
-					if(!(m_href == ::GetFocus()))
-					{
-						m_href.SetWindowText(V_BSTR(&href));
-						m_href.SetSel(wcslen(V_BSTR(&href)), wcslen(V_BSTR(&href)), FALSE);
-					}
-
+					m_href.SetWindowText(V_BSTR(&href));
+					m_href.SetSel(wcslen(V_BSTR(&href)), wcslen(V_BSTR(&href)), FALSE);
 					m_ignore_cb_changes = false;
 
 					bool img = U::scmp(an->tagName, L"DIV") == 0;
@@ -887,9 +903,8 @@ BOOL CMainFrame::OnIdle()
 			}
 
 			// update current tree node	  
-			if (!m_doc_changed && _Settings.ViewDocumentTree())
+			if (!m_doc_changed)
 				m_document_tree.HighlightItemAtPos(m_doc->m_body.SelectionContainer()); // locate appropriate tree node	  
-
 			m_sel_changed = false;
 		}
 
@@ -904,25 +919,6 @@ BOOL CMainFrame::OnIdle()
 		}
 	}
 
-	// added by SeNS
-	// detect page scrolling, run a background spellcheck if necessary
-	if (m_Speller && m_Speller->Enabled() && m_current_view == BODY) 
-	{
-		if (!m_Speller->Available())
-			UIEnable(ID_TOOLS_SPELLCHECK, false, true);
-		else
-		{
-			UIEnable(ID_TOOLS_SPELLCHECK, true, true);
-			m_Speller->CheckScroll();
-		}
-	}
-	else UIEnable(ID_TOOLS_SPELLCHECK, false, true);
-
-	// temporary disable inline images
-#ifndef _DEBUG
-	UIEnable(ID_EDIT_INS_INLINEIMAGE, false, true);
-#endif
-
 	// update UI
 	UIUpdateToolBar();
 
@@ -930,6 +926,7 @@ BOOL CMainFrame::OnIdle()
 	if (m_doc_changed)
 	{
 		MSHTML::IHTMLDOMNodePtr chp(m_doc->m_body.GetChangedNode());
+
 		if ((bool)chp && m_document_tree.IsWindowVisible())
 		{
 			m_document_tree.UpdateDocumentStructure(m_doc->m_body.Document(), chp);
@@ -1020,6 +1017,18 @@ static void SubclassBox(HWND hWnd, RECT& rc, const int pos, CComboBox& box, DWOR
 	  custedit.SubclassWindow(box.ChildWindowFromPoint(CPoint(3,3)));
 }
 
+static void CenterChildWindow(CWindow parent, CWindow child)
+{
+		RECT rcParent, rcChild;
+		parent.GetWindowRect(&rcParent);
+		child.GetWindowRect(&rcChild);
+		int parentW = rcParent.right - rcParent.left;;
+		int parentH = rcParent.bottom - rcParent.top;
+		int childW = rcChild.right - rcChild.left;
+		int childH = rcChild.bottom - rcChild.top;
+		child.MoveWindow(rcParent.left + parentW/2 - childW/2, rcParent.top + parentH/2 - childH/2, childW, childH);
+}
+
 void CMainFrame::AddStaticText(CCustomStatic &st, HWND toolbarHwnd, int id, const TCHAR *text, HFONT hFont)
 {
 	RECT rect;
@@ -1032,155 +1041,148 @@ void CMainFrame::AddStaticText(CCustomStatic &st, HWND toolbarHwnd, int id, cons
 	st.SetEnabled(true);
 }
 
-void CMainFrame::InitPluginsType(HMENU hMenu, const TCHAR* type, UINT cmdbase, CSimpleArray<CLSID>& plist)
+void	CMainFrame::InitPluginsType(HMENU hMenu,const TCHAR *type,
+				    UINT cmdbase,CSimpleArray<CLSID>& plist)
 {
-	CRegKey rk;
+  CRegKey   rk;
 
-	if(rk.Open(HKEY_LOCAL_MACHINE, _Settings.GetKeyPath() + L"\\Plugins") != ERROR_SUCCESS)
-		return;
-	int ncmd = 0;
-	for(int i = 0; ncmd < 20; ++i)
-	{
-		CString name;
-		DWORD size = 128; // enough for GUIDs
-		TCHAR* cp = name.GetBuffer(size);
-		FILETIME ft;
-		if(::RegEnumKeyEx(rk, i, cp, &size, 0, 0, 0, &ft) != ERROR_SUCCESS)
-			break;
-		name.ReleaseBuffer(size);
-		CRegKey pk;
-		if(pk.Open(rk, name) != ERROR_SUCCESS)
-			continue;
-		CString pt(U::QuerySV(pk, L"Type"));
-		CString ms(U::QuerySV(pk, L"Menu"));
-		if(pt.IsEmpty() || ms.IsEmpty() || pt != type)
-			continue;
-		CLSID clsid;
-		if(::CLSIDFromString((TCHAR*)(const TCHAR *)name, &clsid) != NOERROR)
-			continue;
+  if (rk.Open(HKEY_LOCAL_MACHINE,_Settings.GetKeyPath()+_T("\\Plugins"))!=ERROR_SUCCESS)
+    return;
+  int	ncmd=0;
+  for (int i=0;ncmd<20;++i) {
+    CString   name;
+    DWORD     size=128; // enough for guids
+    TCHAR     *cp=name.GetBuffer(size);
+    FILETIME  ft;
+    if (::RegEnumKeyEx(rk,i,cp,&size,0,0,0,&ft)!=ERROR_SUCCESS)
+      break;
+    name.ReleaseBuffer(size);
+    CRegKey   pk;
+    if (pk.Open(rk,name)!=ERROR_SUCCESS)
+      continue;
+    CString   pt(U::QuerySV(pk,_T("Type")));
+    CString   ms(U::QuerySV(pk,_T("Menu")));
+    if (pt.IsEmpty() || ms.IsEmpty() || pt!=type)
+      continue;
+    CLSID     clsid;
+    if (::CLSIDFromString((TCHAR*)(const TCHAR *)name,&clsid)!=NOERROR)
+      continue;
+    // all checks pass, add to menu and remember clsid
+    plist.Add(clsid);
+    ::AppendMenu(hMenu,MF_STRING,cmdbase+ncmd,ms);
+    // check if an icon is avaliable
+    CString   icon(U::QuerySV(pk,_T("Icon")));
+    if (!icon.IsEmpty()) {
+      int   cp=icon.ReverseFind(_T(','));
+      int   iconID;
+      if (cp>0 && _stscanf((const TCHAR *)icon+cp,_T(",%d"),&iconID)==1)
+	icon.Delete(cp,icon.GetLength()-cp);
+      else
+	iconID=0;
 
-		// all checks pass, add to menu and remember clsid
-		plist.Add(clsid);
-		::AppendMenu(hMenu, MF_STRING, cmdbase + ncmd, ms);
-		CString hs = ms;
-		hs.Remove(L'&');
-		InitPluginHotkey(name, cmdbase + ncmd, pt + CString(L" | ") + hs);
-		// check if an icon is available
-		CString icon(U::QuerySV(pk, L"Icon"));
-		if(!icon.IsEmpty())
-		{
-			int cp = icon.ReverseFind(L',');
-			int iconID;
-			if(cp > 0 && _stscanf((const TCHAR *)icon + cp, L",%d", &iconID) == 1)
-				icon.Delete(cp, icon.GetLength() - cp);
-			else
-				iconID = 0;
-
-			// try load from file first
-			HICON hIcon;
-			if(::ExtractIconEx(icon, iconID, NULL, &hIcon, 1) > 0 && hIcon)
-			{
-				m_CmdBar.AddIcon(hIcon, cmdbase + ncmd);
-				::DestroyIcon(hIcon);
-			}
-		}
-		++ncmd;
-	}
-
-	// Old path to provide searching of old plugins
-	CRegKey oldRk;
-	if(oldRk.Open(HKEY_LOCAL_MACHINE, L"Software\\Haali\\FBE\\Plugins") != ERROR_SUCCESS)
-		goto skip;
-	else
-	{
-		for(int i = ncmd; ncmd < 20; ++i)
-		{
-			CString name;
-			DWORD size = 128; // enough for GUIDs
-			TCHAR* cp = name.GetBuffer(size);
-			FILETIME ft;
-			if(::RegEnumKeyEx(oldRk, i, cp, &size, 0, 0, 0, &ft) != ERROR_SUCCESS)
-				break;
-			name.ReleaseBuffer(size);
-			CRegKey pk;
-			if(pk.Open(oldRk, name) != ERROR_SUCCESS)
-				continue;
-			CString pt(U::QuerySV(pk, L"Type"));
-			CString ms(U::QuerySV(pk, L"Menu"));
-			if(pt.IsEmpty() || ms.IsEmpty() || pt != type)
-				continue;
-			CLSID clsid;
-			if(::CLSIDFromString((TCHAR*)(const TCHAR *)name, &clsid) != NOERROR)
-				continue;
-
-			// all checks pass, add to menu and remember clsid
-			plist.Add(clsid);
-			::AppendMenu(hMenu, MF_STRING, cmdbase + ncmd, ms);
-			CString hs = ms;
-			hs.Remove(L'&');
-			InitPluginHotkey(name, cmdbase + ncmd,pt + CString(L" | ") + hs);
-			// check if an icon is available
-			CString icon(U::QuerySV(pk, L"Icon"));
-			if(!icon.IsEmpty())
-			{
-				int cp = icon.ReverseFind(L',');
-				int iconID;
-				if(cp > 0 && _stscanf((const TCHAR *)icon + cp, L",%d", &iconID) == 1)
-					icon.Delete(cp, icon.GetLength() - cp);
-				else
-					iconID = 0;
-
-				// try load from file first
-				HICON hIcon;
-				if(::ExtractIconEx(icon, iconID, NULL, &hIcon, 1) > 0 && hIcon)
-				{
-					m_CmdBar.AddIcon(hIcon, cmdbase + ncmd);
-					::DestroyIcon(hIcon);
-				}
-			}
-			++ncmd;
-		}
-	}
-skip:
-	if(ncmd > 0) // delete placeholder from menu
-	::RemoveMenu(hMenu, 0, MF_BYPOSITION);
+      // try load from file first
+      HICON hIcon;
+      if (::ExtractIconEx(icon,iconID,NULL,&hIcon,1)>0 && hIcon) {
+	m_CmdBar.AddIcon(hIcon,cmdbase+ncmd);
+	::DestroyIcon(hIcon);
+      }
+    }
+    ++ncmd;
+  }
+  if (ncmd>0) // delete placeholder from menu
+    ::RemoveMenu(hMenu,0,MF_BYPOSITION);
 }
 
-void CMainFrame::InitPlugins()
+void	CMainFrame::InitPlugins() 
 {
-	CollectScripts(_Settings.GetScriptsFolder(), L"*.js", 1, L"0");	
-	QuickScriptsSort(m_scripts, 0, m_scripts.GetSize() - 1);
-	UpScriptsFolders(m_scripts);
+  CollectScripts(_Settings.GetScriptsFolder(), L"*.js", 1, L"0");
+  QuickScriptsSort(m_scripts, 0, m_scripts.GetSize() - 1);
+  UpScriptsFolders(m_scripts);
+  HMENU file=::GetSubMenu(m_CmdBar.GetMenu(),0);
+  HMENU sub=::GetSubMenu(file,6);
+  InitPluginsType(sub,_T("Import"),ID_IMPORT_BASE,m_import_plugins);
 
-	HMENU file = ::GetSubMenu(m_CmdBar.GetMenu(), 0);
-	HMENU sub = ::GetSubMenu(file, 6);
-	InitPluginsType(sub, L"Import", ID_IMPORT_BASE, m_import_plugins);
+  sub=::GetSubMenu(file,7);
+  InitPluginsType(sub,_T("Export"),ID_EXPORT_BASE,m_export_plugins);
 
-	sub = ::GetSubMenu(file, 7);
-	InitPluginsType(sub, L"Export", ID_EXPORT_BASE, m_export_plugins);
+  sub=::GetSubMenu(file,9);
+  m_mru.SetMenuHandle(sub);
+  m_mru.ReadFromRegistry(_Settings.GetKeyPath());
+  m_mru.SetMaxEntries(m_mru.m_nMaxEntries_Max-1);	
 
-	sub = ::GetSubMenu(file, 9);
-	m_mru.SetMenuHandle(sub);
-	m_mru.ReadFromRegistry(_Settings.GetKeyPath());
-	m_mru.SetMaxEntries(m_mru.m_nMaxEntries_Max - 1);
-
-	// Scripts
-	HMENU ManMenu = m_CmdBar.GetMenu();
-	HMENU scripts = GetSubMenu(ManMenu, 7);
-
-	while(::GetMenuItemCount(scripts) > 0)
-	::RemoveMenu(scripts, 0, MF_BYPOSITION);
-
-	if(m_scripts.GetSize())
+  /*for (int i=0;i<::GetMenuItemCount(file);++i) 
+  {
+    HMENU sub=::GetSubMenu(file,i);
+    if (sub) 
 	{
-		AddScriptsSubMenu(scripts, L"0", m_scripts);
-	}
-	else
-	{
-		wchar_t buf[MAX_LOAD_STRING + 1];
-		::LoadString(_Module.GetResourceInstance(), IDS_NO_SCRIPTS, buf, MAX_LOAD_STRING);
-		AppendMenu(scripts, MF_STRING | MF_DISABLED | MF_GRAYED, IDCANCEL, buf);
-	}
+      CString	name;
+      DWORD	size=128;
+      name.ReleaseBuffer(::GetMenuString(file,i,name.GetBuffer(size),size,MF_BYPOSITION));
+      if (name==_T("&Import"))
+		InitPluginsType(sub,_T("Import"),ID_IMPORT_BASE,m_import_plugins);
+      else if (name==_T("&Export"))
+		InitPluginsType(sub,_T("Export"),ID_EXPORT_BASE,m_export_plugins);
+      else if (name==_T("&Recent Files")) 
+	  {
+		m_mru.SetMenuHandle(sub);
+		m_mru.ReadFromRegistry(_Settings.GetKeyPath());
+		m_mru.SetMaxEntries(m_mru.m_nMaxEntries_Max-1);	
+      }
+    }
+  }*/
+
+  // scripts
+  HMENU ManMenu = m_CmdBar.GetMenu();  
+  HMENU scripts = GetSubMenu(ManMenu, 7);  
+
+  while (::GetMenuItemCount(scripts) > 0)
+    ::RemoveMenu(scripts, 0, MF_BYPOSITION);
+
+  //CString dir(U::GetProgDir());
+  //WIN32_FIND_DATA fd;
+  // в текущей дирректории лежат скрипты дл€ FBE
+  // просматриваем текущую
+  //HANDLE hFind = FindFirstFile(dir + _T("\\*.js"),&fd);
+  //if (hFind != INVALID_HANDLE_VALUE) {
+  //  StopScript();
+  //  do {
+		//if (StartScript(this) < 0)
+		//	continue;
+		//CString   sfn(dir + _T("\\") + fd.cFileName);
+		//if (SUCCEEDED(ScriptLoad(sfn))) {
+		//	CComVariant vt;
+		//	if (SUCCEEDED(ScriptCall(L"FBEScriptName",NULL, 0,&vt)) && V_VT(&vt) == VT_BSTR && V_BSTR(&vt))
+		//	{		
+		//		AppendMenu(scripts,MF_STRING,ID_SCRIPT_BASE + m_scripts.GetSize(),V_BSTR(&vt));
+		//		ScrInfo sc;
+		//		sc.name = sfn;
+		//		if (SUCCEEDED(ScriptCall(L"FBEGetFlags",NULL,0,&vt)))
+		//		{
+		//			sc.Type = V_INT(&vt);
+		//		}
+		//		else
+		//		{
+		//			sc.Type = 0;
+		//		}
+		//		  
+		//		//m_scripts.Add(sc);
+		//	}
+		//}
+		//StopScript();
+  //  } while (FindNextFile(hFind,&fd));
+  //  FindClose(hFind);
+  //}
+
+  if(m_scripts.GetSize())
+  {
+	AddScriptsSubMenu(scripts, L"0", m_scripts);
+  }
+  else
+  {
+	  wchar_t buf[MAX_LOAD_STRING + 1];
+	  ::LoadString(_Module.GetResourceInstance(), IDS_NO_SCRIPTS, buf, MAX_LOAD_STRING);
+	  AppendMenu(scripts,MF_STRING | MF_DISABLED | MF_GRAYED, IDCANCEL, buf);
+  }
 }
 
 LRESULT CMainFrame::OnCreate(UINT, WPARAM, LPARAM, BOOL&)
@@ -1199,6 +1201,7 @@ LRESULT CMainFrame::OnCreate(UINT, WPARAM, LPARAM, BOOL&)
 
   // load command bar images
   m_CmdBar.LoadImages(IDR_MAINFRAME_SMALL);
+  m_CmdBar.LoadImages(IDR_EXTRAICONS);
 
   HWND hWndToolBar = CreateSimpleToolBarCtrl(m_hWnd, IDR_MAINFRAME, FALSE,  ATL_SIMPLE_TOOLBAR_PANE_STYLE | TBSTYLE_LIST);
   UIAddToolBar(hWndToolBar);
@@ -1412,6 +1415,7 @@ LRESULT CMainFrame::OnCreate(UINT, WPARAM, LPARAM, BOOL&)
 	m_file_age = ~0;
   }
 
+
   if (_Settings.FastMode()) {
 		m_doc->SetFastMode(true);
 		UISetCheck(ID_VIEW_FASTMODE, TRUE);
@@ -1427,6 +1431,7 @@ LRESULT CMainFrame::OnCreate(UINT, WPARAM, LPARAM, BOOL&)
     ShowView(DESC);
 
   // init plugins&MRU list
+  InitKeyMap();
   InitPlugins();  
 
   if(start_with_params)
@@ -1501,28 +1506,13 @@ LRESULT CMainFrame::OnCreate(UINT, WPARAM, LPARAM, BOOL&)
   ::DragAcceptFiles(*this,TRUE);
 
   // Modification by Pilgrim
-  BOOL bVisible = _Settings.ViewDocumentTree();
+  BOOL bVisible = !m_document_tree.IsWindowVisible();
   m_document_tree.ShowWindow(bVisible ? SW_SHOWNOACTIVATE : SW_HIDE);
   UISetCheck(ID_VIEW_TREE, bVisible);
   m_splitter.SetSinglePaneMode(bVisible ? SPLIT_PANE_NONE : SPLIT_PANE_RIGHT);
 
   // –аскладка русской клавиатуры
-  if (_Settings.GetChangeKeybLayout())
-  {
-	LoadKeyboardLayout(_T("00000419"),KLF_ACTIVATE);
-  }
-
-  // Added by SeNS
-  if (m_Speller && m_Speller->Enabled())
-  {
-	if (!m_Speller->Available())
-		UIEnable(ID_TOOLS_SPELLCHECK, false, true);
-	else
-		UIEnable(ID_TOOLS_SPELLCHECK, true, true);
-	m_Speller->SetHighlightMisspells(_Settings.GetHighlightMisspells());
-  }
-  else UIEnable(ID_TOOLS_SPELLCHECK, false, true);
-
+  LoadKeyboardLayout(_T("00000419"),KLF_ACTIVATE);
   return 0;
 }
 
@@ -1537,7 +1527,7 @@ LRESULT CMainFrame::OnClose(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/,
 {
   if (DiscardChanges()) {
 	_Settings.SetViewStatusBar(m_status.IsWindowVisible() != 0);
-	//_Settings.SetViewDocumentTree(IsSourceActive() ? m_document_tree.IsWindowVisible()==0 : !m_save_sp_mode);
+	_Settings.SetViewDocumentTree(IsSourceActive() ? m_document_tree.IsWindowVisible()==0 : !m_save_sp_mode);
     _Settings.SetSplitterPos(m_splitter.GetSplitterPos());	
     WINDOWPLACEMENT wpl;
     wpl.length=sizeof(wpl);
@@ -1558,15 +1548,9 @@ LRESULT CMainFrame::OnClose(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/,
       tbs+=bi;
     }
     _Settings.SetToolbarsSettings(tbs);
-	_Settings.SaveHotkeyGroups();
 	_Settings.Save();
-	_Settings.SaveWords();
 	_Settings.Close();
-
-	// added by SeNS
-	if (m_Speller) m_Speller->EndDocumentCheck();
-
-	DefWindowProc(WM_CLOSE,0,0);
+    DefWindowProc(WM_CLOSE,0,0);
 	return 1;
   }
   return 0;
@@ -1574,66 +1558,38 @@ LRESULT CMainFrame::OnClose(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/,
 
 LRESULT CMainFrame::OnPostCreate(UINT, WPARAM, LPARAM, BOOL&)
 {
-	//SetSplitterPos works best after the default WM_CREATE has been handled
-	m_splitter.SetSplitterPos(_Settings.GetSplitterPos());
+  //SetSplitterPos works best after the default WM_CREATE has been handled
+  m_splitter.SetSplitterPos(_Settings.GetSplitterPos());
 
-	_Settings.LoadHotkeyGroups();
-	DestroyAcceleratorTable(m_hAccel);
+  int newHKentries = 0;
+  for(int i = 0; i < m_scripts.GetSize(); ++i)
+  {
+	  if(!m_scripts[i].isFolder && m_scripts[i].accel.key != 0)
+		  newHKentries++;
+  }
 
-	LPACCEL lpaccelNew = new ACCEL[_Settings.keycodes];
-	int HKentries = _Settings.keycodes;
-	for(unsigned int i = 0; i < _Settings.m_hotkey_groups.size(); ++i)
-	{
-		for(unsigned int j = 0; j < _Settings.m_hotkey_groups.at(i).m_hotkeys.size(); ++j)
+  if(newHKentries)
+  {
+	HACCEL old_hAccel = m_hAccel;
+	int HKentries = CopyAcceleratorTable(old_hAccel, NULL, 0);
+	LPACCEL lpaccelNew = new ACCEL[HKentries + newHKentries];
+
+	int nindex = HKentries;
+	CopyAcceleratorTable(m_hAccel, lpaccelNew, HKentries);
+	for(int i = 0; i < m_scripts.GetSize(); ++i)
+	{		
+		if(m_scripts[i].accel.key != 0)
 		{
-			ACCEL accel = _Settings.m_hotkey_groups.at(i).m_hotkeys.at(j).m_accel;
-			if(accel.fVirt != NULL && accel.key != NULL && accel.cmd != NULL)
-			{
-				lpaccelNew[--HKentries] = accel;
-			}
+			m_scripts[i].accel.fVirt = FCONTROL | FSHIFT | FVIRTKEY;
+			lpaccelNew[nindex++] = m_scripts[i].accel;
 		}
 	}
-
-	m_hAccel = CreateAcceleratorTable(lpaccelNew, _Settings.keycodes);
+    
+	DestroyAcceleratorTable(old_hAccel);
+	m_hAccel = CreateAcceleratorTable(lpaccelNew, HKentries + newHKentries);
 	delete[] lpaccelNew;
-
-	FillMenuWithHkeys(m_CmdBar.GetMenu());
-	return 0;
-}
-
-// Fill current menu with accelerators' text
-void CMainFrame::FillMenuWithHkeys(HMENU menu)
-{
-	for(unsigned int i = 0; i < _Settings.m_hotkey_groups.size(); ++i)
-	{
-		std::vector<CHotkey>::iterator begin = _Settings.m_hotkey_groups.at(i).m_hotkeys.begin();
-		if(_Settings.m_hotkey_groups.at(i).m_reg_name == L"Scripts"
-			|| _Settings.m_hotkey_groups.at(i).m_reg_name == L"Plugins")
-			begin++;
-
-		std::sort(begin, _Settings.m_hotkey_groups.at(i).m_hotkeys.end());
-		for(unsigned int j = 0; j < _Settings.m_hotkey_groups.at(i).m_hotkeys.size(); ++j)
-		{
-			CString text;
-			WORD cmd = _Settings.m_hotkey_groups.at(i).m_hotkeys.at(j).m_accel.cmd;
-
-			if(::GetMenuString(menu, cmd, text.GetBufferSetLength(MAX_LOAD_STRING + 1), MAX_LOAD_STRING + 1,
-				MF_BYCOMMAND))
-			{
-				text.ReleaseBuffer();
-				text += L"\t";
-				text += U::AccelToString(_Settings.m_hotkey_groups.at(i).m_hotkeys.at(j).m_accel);
-
-				MENUITEMINFO miim;
-				ZeroMemory(&miim, sizeof(MENUITEMINFO));
-				miim.cbSize = sizeof(MENUITEMINFO);
-				miim.fMask = MIIM_STRING;
-				miim.dwTypeData = text.GetBuffer();
-				miim.cch = text.GetLength();
-				::SetMenuItemInfo(menu, cmd, FALSE, &miim);
-			}
-		}
-	}
+  }
+  return 0;
 }
 
 // search&replace in scintilla
@@ -1668,13 +1624,10 @@ class CSciFindDlg : public CFindDlgBase {
 public:
   CWindow	m_source;
 
-  CSciFindDlg(CFBEView *view,HWND src) :
-    CFindDlgBase(view), m_source(src)
-  {    
-  }
-  void UpdatePattern()
+  CSciFindDlg(FB::Doc *doc,HWND src) :
+    CFindDlgBase(doc), m_source(src)
   {
-	  m_view->m_fo.pattern=SciSelection(m_source);
+    doc->m_body.m_fo.pattern=SciSelection(src);
   }
 
   virtual void	DoFind() {
@@ -1690,15 +1643,11 @@ class CSciReplaceDlg : public CReplaceDlgBase {
 public:
   CWindow	m_source;
 
-  CSciReplaceDlg(CFBEView *view,HWND src) : 
-    CReplaceDlgBase(view), m_source(src)
-  {    
+  CSciReplaceDlg(FB::Doc *doc, HWND src) : 
+    CReplaceDlgBase(doc), m_source(src)
+  {
+    doc->m_body.m_fo.pattern=SciSelection(src);
   }
-
-	void UpdatePattern()
-	{
-		m_view->m_fo.pattern=SciSelection(m_source);
-	}
 
   virtual void DoFind() {
     if (!m_view->SciFindNext(m_source,true,false))
@@ -1844,111 +1793,67 @@ CMainFrame::~CMainFrame()
 
 LRESULT CMainFrame::OnUnhandledCommand(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 {
-	HWND hFocus = ::GetFocus();
-	UINT idCtl = HIWORD(wParam);
-
-	// only pass messages to the editors
-	if (idCtl == 0 || idCtl == 1)
-	{
-		if (
-			hFocus == m_id || hFocus == m_href || hFocus == m_section || ::IsChild(m_id, hFocus)
-			|| ::IsChild(m_href, hFocus) || ::IsChild(m_section, hFocus) || hFocus == m_styleT_table
-			|| hFocus == m_id_table_id || hFocus == m_id_table || hFocus == m_style_table
-			|| hFocus == m_colspan_table || hFocus == m_rowspan_table || hFocus == m_align_table
-			|| hFocus == m_valign_table || hFocus == m_alignTR_table || hFocus==m_image_title
-			|| ::IsChild(m_id_table_id,hFocus) || ::IsChild(m_id_table, hFocus)
-			|| ::IsChild(m_style_table,hFocus) || ::IsChild(m_styleT_table, hFocus)
-			|| ::IsChild(m_colspan_table,hFocus) ||::IsChild(m_rowspan_table, hFocus)
-			|| ::IsChild(m_alignTR_table,hFocus) || ::IsChild(m_align_table, hFocus)
-			|| ::IsChild(m_valign_table,hFocus)|| ::IsChild(m_image_title, hFocus)
-			)
-				return ::SendMessage(hFocus, WM_COMMAND, wParam, lParam);
-
-		// We need to check that the focused window is a web browser indeed
-		if(hFocus == m_view.GetActiveWnd() || ::IsChild(m_view.GetActiveWnd(), hFocus))
-		{
-			if(IsSourceActive())
-			{
-				switch (LOWORD(wParam))
-				{
-					/*case ID_EDIT_UNDO:
-						m_source.SendMessage(SCI_UNDO);
-						break;*/
-					case ID_EDIT_REDO:
-						m_source.SendMessage(SCI_REDO);
-						break;
-					/*case ID_EDIT_CUT:
-						m_source.SendMessage(SCI_CUT);
-						break;
-					case ID_EDIT_COPY:
-						m_source.SendMessage(SCI_COPY);
-						break;
-					case ID_EDIT_PASTE:
-						m_source.SendMessage(SCI_PASTE);
-						break;*/
-					case ID_EDIT_FIND:
-						{
-						if(!m_sci_find_dlg)
-							m_sci_find_dlg = new CSciFindDlg(&m_doc->m_body, m_source);
-
-						if(m_sci_find_dlg->IsValid())
-							break;
-
-						m_sci_find_dlg->UpdatePattern();
-
-						m_sci_find_dlg->ShowDialog();
-						break;
-						}
-					case ID_EDIT_FINDNEXT:
-						m_doc->m_body.SciFindNext(m_source, false, true);
-						break;
-					case ID_EDIT_REPLACE:
-						{
-							if(!m_sci_replace_dlg)
-								m_sci_replace_dlg = new CSciReplaceDlg(&m_doc->m_body, m_source);
-
-							if(m_sci_replace_dlg->IsValid())
-							break;
-
-							m_sci_replace_dlg->UpdatePattern();
-
-							m_sci_replace_dlg->ShowDialog();
-							break;
-						}
-				}
-			}
-			else
-				return ActiveView().SendMessage(WM_COMMAND, wParam, 0);
-		}
-
-		if(hFocus == m_document_tree.m_hWnd || ::IsChild(m_document_tree.m_hWnd, hFocus))
-			return m_doc->m_body.SendMessage(WM_COMMAND,wParam,0);
-	}
-
-	// Last chance to send common commands to any focused window
-	switch (LOWORD(wParam))
-	{
+  HWND	  hFocus=::GetFocus();
+  UINT	  idCtl=HIWORD(wParam);
+  // only pass messages to the editors
+  if (idCtl==0 || idCtl==1) {// Modification by Pilgrim
+    if (hFocus==m_id || hFocus==m_href || hFocus==m_section || ::IsChild(m_id,hFocus) || ::IsChild(m_href,hFocus) || 
+		::IsChild(m_section,hFocus) ||	hFocus==m_styleT_table || 
+		hFocus==m_id_table_id || hFocus==m_id_table || hFocus==m_style_table || hFocus==m_colspan_table ||
+		hFocus==m_rowspan_table || hFocus==m_align_table || hFocus==m_valign_table || hFocus==m_alignTR_table ||
+		hFocus==m_image_title ||
+		::IsChild(m_id_table_id,hFocus) || ::IsChild(m_id_table,hFocus) || 
+		::IsChild(m_style_table,hFocus) || ::IsChild(m_styleT_table,hFocus) ||
+		::IsChild(m_colspan_table,hFocus) ||::IsChild(m_rowspan_table,hFocus) || ::IsChild(m_alignTR_table,hFocus) || 
+		::IsChild(m_align_table,hFocus) || ::IsChild(m_valign_table,hFocus)||
+		::IsChild(m_image_title,hFocus))
+      return ::SendMessage(hFocus,WM_COMMAND,wParam,lParam);
+    // we need to check that the focused window is a web browser indeed
+    if (hFocus==m_view.GetActiveWnd() || ::IsChild(m_view.GetActiveWnd(),hFocus)) {
+      if (IsSourceActive()) {
+	switch (LOWORD(wParam)) {
 	case ID_EDIT_UNDO:
-		::SendMessage(hFocus, WM_UNDO, 0, 0);
-		break;
+	  m_source.SendMessage(SCI_UNDO);
+	  break;
 	case ID_EDIT_REDO:
-		::SendMessage(hFocus, EM_REDO, 0, 0);
-		break;
+	  m_source.SendMessage(SCI_REDO);
+	  break;
 	case ID_EDIT_CUT:
-		::SendMessage(hFocus, WM_CUT, 0, 0);
-		break;
+	  m_source.SendMessage(SCI_CUT);
+	  break;
 	case ID_EDIT_COPY:
-		::SendMessage(hFocus, WM_COPY, 0, 0);
-		break;
+	  m_source.SendMessage(SCI_COPY);
+	  break;
 	case ID_EDIT_PASTE:
-		::SendMessage(hFocus, WM_PASTE, 0, 0);
-		break;
-	case ID_EDIT_INS_SYMBOL:
-		::SendMessage(hFocus, WM_CHAR, wParam, 0);
-		break;
-	}
+	  m_source.SendMessage(SCI_PASTE);
+	  break;
+	case ID_EDIT_FIND: {
+		if(!m_sci_find_dlg)
+			m_sci_find_dlg = new CSciFindDlg(m_doc, m_source);
+		if(m_sci_find_dlg->IsValid())
+			break;
 
-	return 0;
+		m_sci_find_dlg->ShowDialog();		
+	  break; }
+	case ID_EDIT_FINDNEXT:
+	  m_doc->m_body.SciFindNext(m_source,false,true);
+	  break;
+	case ID_EDIT_REPLACE: {
+	  if(!m_sci_replace_dlg)
+			m_sci_replace_dlg = new CSciReplaceDlg(m_doc, m_source);
+		if(m_sci_replace_dlg->IsValid())
+			break;
+
+		m_sci_replace_dlg->ShowDialog();		
+	  break; }
+	}
+      } else
+	return ActiveView().SendMessage(WM_COMMAND,wParam,0);	
+	}
+	if(hFocus == m_document_tree.m_hWnd || ::IsChild(m_document_tree.m_hWnd,hFocus))
+		return m_doc->m_body.SendMessage(WM_COMMAND,wParam,0);
+  }
+  return 0;
 }
 
 LRESULT CMainFrame::OnDropFiles(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
@@ -2080,48 +1985,26 @@ LRESULT CMainFrame::OnViewFastMode(WORD, WORD, HWND, BOOL&)
 
 LRESULT CMainFrame::OnViewTree(WORD, WORD, HWND, BOOL&)
 {
-	if(IsSourceActive())
-		return 0;
+  if (IsSourceActive())
+    return 0;
 
-	BOOL bVisible = !_Settings.ViewDocumentTree();
-	m_document_tree.ShowWindow(bVisible ? SW_SHOWNOACTIVATE : SW_HIDE);
-	if(bVisible)
-		m_document_tree.GetDocumentStructure(m_doc->m_body.Document());
-	UISetCheck(ID_VIEW_TREE, bVisible);
-	m_splitter.SetSinglePaneMode(bVisible ? SPLIT_PANE_NONE : SPLIT_PANE_RIGHT);
-	_Settings.SetViewDocumentTree(bVisible != 0 , TRUE);
-
-	return 0;
+  BOOL bVisible = !m_document_tree.IsWindowVisible();
+  m_document_tree.ShowWindow(bVisible ? SW_SHOWNOACTIVATE : SW_HIDE);
+  if(bVisible)
+	m_document_tree.GetDocumentStructure(m_doc->m_body.Document());
+  UISetCheck(ID_VIEW_TREE, bVisible);
+  m_splitter.SetSinglePaneMode(bVisible ? SPLIT_PANE_NONE : SPLIT_PANE_RIGHT);
+  return 0;
 }
 
 LRESULT CMainFrame::OnViewOptions(WORD, WORD, HWND, BOOL&)
 {
-	bool bFind = m_doc->m_body.CloseFindDialog(m_doc->m_body.m_find_dlg);
-	bool bReplace = m_doc->m_body.CloseFindDialog(m_doc->m_body.m_replace_dlg);
-
-	bool bSciFind = m_doc->m_body.CloseFindDialog(m_sci_find_dlg);
-	bool bSciRepl = m_doc->m_body.CloseFindDialog(m_sci_replace_dlg);
-
-	int find_repl = bFind || bSciFind ? 1 : 0 + bReplace || bSciRepl ? 2 : 0;
-
-	if(ShowSettingsDialog(m_hWnd))
-	{
-		ApplyConfChanges();
-		/*m_doc->ApplyConfChanges();
-		SetSciStyles();*/
-	}
-
-	switch(find_repl)
-	{
-	case 1:
-		SendMessage(WM_COMMAND, ID_EDIT_FIND, NULL);
-		break;
-	case 2:
-		SendMessage(WM_COMMAND, ID_EDIT_REPLACE, NULL);
-		break;
-	}
-
-	return 0;
+  if (ShowSettingsDialog()) {
+	  ApplyConfChanges();
+    /*m_doc->ApplyConfChanges();
+    SetSciStyles();*/
+  }
+  return 0;
 }
 
 LRESULT CMainFrame::OnToolsImport(WORD, WORD wID, HWND, BOOL&) {
@@ -2137,7 +2020,6 @@ LRESULT CMainFrame::OnToolsImport(WORD, WORD wID, HWND, BOOL&) {
       _bstr_t	    filename;
       if (ipl) 
 	  {
-		m_last_plugin = wID + ID_EXPORT_BASE;
 		BSTR	bs=NULL;
 		HRESULT hr=ipl->Import((long)m_hWnd,&bs,&obj);
 		CheckError(hr);
@@ -2207,158 +2089,129 @@ LRESULT CMainFrame::OnToolsImport(WORD, WORD wID, HWND, BOOL&) {
   return 0;
 }
 
-LRESULT CMainFrame::OnToolsExport(WORD, WORD wID, HWND, BOOL&)
+LRESULT CMainFrame::OnToolsExport(WORD, WORD wID, HWND, BOOL&) 
 {
-	wID -= ID_EXPORT_BASE;
-	if(wID<m_export_plugins.GetSize())
+  wID-=ID_EXPORT_BASE;
+  if (wID<m_export_plugins.GetSize()) 
+  {
+    try 
 	{
-		try
-		{
-			IUnknownPtr unk;
-			CheckError(unk.CreateInstance(m_export_plugins[wID]));
+      IUnknownPtr			  unk;
+      CheckError(unk.CreateInstance(m_export_plugins[wID]));
 
-			CComQIPtr<IFBEExportPlugin> epl(unk);
+      CComQIPtr<IFBEExportPlugin>	  epl(unk);
 
-			if(epl)
-			{
-				m_last_plugin = wID + ID_EXPORT_BASE;
-				MSXML2::IXMLDOMDocument2Ptr dom(m_doc->CreateDOM(m_doc->m_encoding));
-				_bstr_t filename;
-				if(m_doc->m_namevalid)
-				{
-					CString tmp(m_doc->m_filename);
-					if(tmp.GetLength() >= 4 && tmp.Right(4).CompareNoCase(_T(".fb2")) == 0)
-						tmp.Delete(tmp.GetLength() - 4, 4);
-						filename = (const TCHAR*)tmp;
-				}
-				if(dom)
-					CheckError(epl->Export((long)m_hWnd, filename, dom));
-				} 
-				else 
-				{
-					wchar_t cpt[MAX_LOAD_STRING + 1];
-					wchar_t msg[MAX_LOAD_STRING + 1];
-					::LoadString(_Module.GetResourceInstance(), IDS_EXPORT_ERR_CPT, cpt, MAX_LOAD_STRING);
-					::LoadString(_Module.GetResourceInstance(), IDS_EXPORT_ERR_MSG, msg, MAX_LOAD_STRING);	
-					U::MessageBox(MB_OK|MB_ICONERROR, cpt, msg);
-				return 0;
-			}
-		}
-		catch(_com_error& e)
+      if (epl) 
+	  {
+		MSXML2::IXMLDOMDocument2Ptr	  dom(m_doc->CreateDOM(m_doc->m_encoding));
+		_bstr_t				  filename;
+		if (m_doc->m_namevalid) 
 		{
-			U::ReportError(e);
+			CString tmp(m_doc->m_filename);
+			if (tmp.GetLength()>=4 && tmp.Right(4).CompareNoCase(_T(".fb2"))==0)
+				tmp.Delete(tmp.GetLength()-4,4);
+			filename=(const TCHAR *)tmp;
 		}
-	}
-	return 0;
+		if (dom)
+			CheckError(epl->Export((long)m_hWnd,filename,dom));
+	  } 
+	  else 
+	  {
+		wchar_t cpt[MAX_LOAD_STRING + 1];
+		wchar_t msg[MAX_LOAD_STRING + 1];
+		::LoadString(_Module.GetResourceInstance(), IDS_EXPORT_ERR_CPT, cpt, MAX_LOAD_STRING);
+		::LoadString(_Module.GetResourceInstance(), IDS_EXPORT_ERR_MSG, msg, MAX_LOAD_STRING);	
+		U::MessageBox(MB_OK|MB_ICONERROR, cpt, msg);
+		return 0;
+      }
+    }
+    catch (_com_error& e) 
+	{
+      U::ReportError(e);
+    }
+  }
+  return 0;
 }
 
-LRESULT CMainFrame::OnLastPlugin(WORD, WORD wID, HWND, BOOL&)
+extern "C" 
 {
-	if(m_last_plugin)
-		::SendMessage(m_hWnd, WM_COMMAND, m_last_plugin, NULL);
-	return 0;
-}
-
-extern "C"
-{
-	extern const char* build_timestamp;
+  extern const char *build_timestamp;
 };
 
-class CAboutDlg : public CDialogImpl<CAboutDlg>
-{
+class CAboutDlg : public CDialogImpl<CAboutDlg> {
 public:
-	enum { IDD = IDD_ABOUTBOX };
+  enum { IDD = IDD_ABOUTBOX };
+  BEGIN_MSG_MAP(CAboutDlg)
+    MESSAGE_HANDLER(WM_INITDIALOG, OnInitDialog)
+    COMMAND_ID_HANDLER(IDOK, OnCloseCmd)
+    COMMAND_ID_HANDLER(IDCANCEL, OnCloseCmd)
+	NOTIFY_HANDLER(IDC_SYSLINK_AB_LINKS, NM_CLICK, OnNMClickSyslinkAbLinks)
+  END_MSG_MAP()
 
-	BEGIN_MSG_MAP(CAboutDlg)
+  LRESULT OnInitDialog(UINT, WPARAM, LPARAM, BOOL&) {
+    CString stamp(build_timestamp);
+    ::SetWindowText(GetDlgItem(IDC_BUILDSTAMP),stamp);
+    return 0;
+  }
+
+  LRESULT OnCloseCmd(WORD, WORD wID, HWND, BOOL&) {
+    EndDialog(wID);
+    return 0;
+  }
+
+  LRESULT CAboutDlg::OnNMClickSyslinkAbLinks(int /*idCtrl*/, LPNMHDR pNMHDR, BOOL& /*bHandled*/)
+  {
+	  PNMLINK pNMLink = (PNMLINK)pNMHDR;
+	  CString args;
+
+	  args.Format(L"url.dll, FileProtocolHandler %s", pNMLink->item.szUrl);
+	  ShellExecute(NULL, L"open", L"rundll32.exe", args, NULL, SW_SHOW);
+
+	  return 0;
+  }
+};
+
+class CAddImageDlg : public CDialogImpl<CAddImageDlg>
+{	
+public:
+	enum { IDD = IDD_ADDIMAGE };
+	BEGIN_MSG_MAP(CAddImageDlg)
 		MESSAGE_HANDLER(WM_INITDIALOG, OnInitDialog)
-
-		COMMAND_ID_HANDLER(IDOK, OnCloseCmd)
-		COMMAND_ID_HANDLER(IDCANCEL, OnCloseCmd)
-
-		NOTIFY_HANDLER(IDC_SYSLINK_AB_LINKS, NM_CLICK, OnNMClickSyslinkAbLinks)
+		COMMAND_ID_HANDLER(IDYES, OnBtnClicked)
+		COMMAND_ID_HANDLER(IDNO, OnBtnClicked)
 	END_MSG_MAP()
 
 	LRESULT OnInitDialog(UINT, WPARAM, LPARAM, BOOL&)
 	{
-		CString stamp(build_timestamp);
-		::SetWindowText(GetDlgItem(IDC_BUILDSTAMP), stamp);
+		::CenterChildWindow(GetParent(), m_hWnd);
+		CButton btn = GetDlgItem(IDC_ADDIMAGE_ASKAGAIN);
+		btn.SetCheck(!_Settings.GetInsImageAsking());
 		return 0;
 	}
 
-	LRESULT OnCloseCmd(WORD, WORD wID, HWND, BOOL&)
+	LRESULT OnBtnClicked(WORD, WORD wID, HWND, BOOL&)
 	{
-		EndDialog(wID);
-		return 0;
-	}
-
-	LRESULT CAboutDlg::OnNMClickSyslinkAbLinks(int /*idCtrl*/, LPNMHDR pNMHDR, BOOL&)
-	{
-		PNMLINK pNMLink = (PNMLINK)pNMHDR;
-		CString args;
-
-		args.Format(L"url.dll, FileProtocolHandler %s", pNMLink->item.szUrl);
-		ShellExecute(NULL, L"open", L"rundll32.exe", args, NULL, SW_SHOW);
-
-		return 0;
+		_Settings.SetIsInsClearImage(wID == IDYES ? true : false);
+		_Settings.SetInsImageAsking(!IsDlgButtonChecked(IDC_ADDIMAGE_ASKAGAIN));
+		return EndDialog(wID);
 	}
 };
 
-LRESULT CMainFrame::OnToolsWords(WORD, WORD, HWND, BOOL&)
-{
-	if(IsSourceActive())
-		ShowView(BODY);
-
-	bool bFind = m_doc->m_body.CloseFindDialog(m_doc->m_body.m_find_dlg);
-	bool bReplace = m_doc->m_body.CloseFindDialog(m_doc->m_body.m_replace_dlg);
-
-	int find_repl = bFind ? 1 : 0 + bReplace ? 2 : 0;
-	ShowWordsDialog(*m_doc, m_hWnd);
-
-	switch(find_repl)
-	{
-	case 1:
-		SendMessage(WM_COMMAND, ID_EDIT_FIND, NULL);
-		break;
-	case 2:
-		SendMessage(WM_COMMAND, ID_EDIT_REPLACE, NULL);
-		break;
-	}
-
+LRESULT CMainFrame::OnToolsWords(WORD, WORD, HWND, BOOL&) {
+	ShowWordsDialog(*m_doc);
 	return 0;
 }
 
-LRESULT CMainFrame::OnToolsOptions(WORD, WORD, HWND, BOOL&)
-{
-	bool bFind = m_doc->m_body.CloseFindDialog(m_doc->m_body.m_find_dlg);
-	bool bReplace = m_doc->m_body.CloseFindDialog(m_doc->m_body.m_replace_dlg);
-
-	bool bSciFind = m_doc->m_body.CloseFindDialog(m_sci_find_dlg);
-	bool bSciRepl = m_doc->m_body.CloseFindDialog(m_sci_replace_dlg);
-
-	int find_repl = bFind || bSciFind ? 1 : 0 + bReplace || bSciRepl ? 2 : 0;
-
-	if(ShowSettingsDialog(m_hWnd))
+LRESULT CMainFrame::OnToolsOptions(WORD, WORD, HWND, BOOL&) {
+	if (ShowSettingsDialog()) {
 		ApplyConfChanges();
-
-	switch(find_repl)
-	{
-	case 1:
-		SendMessage(WM_COMMAND, ID_EDIT_FIND, NULL);
-		break;
-	case 2:
-		SendMessage(WM_COMMAND, ID_EDIT_REPLACE, NULL);
-		break;
 	}
-
 	return 0;
 }
 
 LRESULT CMainFrame::OnToolsScript(WORD wNotifyCode, WORD wID, HWND hWndCtl, BOOL& bHandled)
 {
-	wID -= ID_SCRIPT_BASE;
-
-	if(IsSourceActive())
-		return 0;
+  wID -= ID_SCRIPT_BASE;
 
   // скрипты от FBE и от FBW запускаютс€ по разному. ¬ FBE скрипты исполн€ютс€ через Active Scripting
   // и документ в него передает€с€ через параметры. 
@@ -2425,58 +2278,6 @@ LRESULT CMainFrame::OnToolsScript(WORD wNotifyCode, WORD wID, HWND hWndCtl, BOOL
   return 0;
 }
 
-LRESULT CMainFrame::OnEditInsSymbol(WORD wNotifyCode, WORD wID, HWND hWndCtl, BOOL& bHandled)
-{
-	static int symHkGroup = -1;
-	if(symHkGroup == -1)
-	{
-		for(unsigned int i = 0; i < _Settings.m_hotkey_groups.size(); ++i)
-		{
-			if(_Settings.m_hotkey_groups[i].m_reg_name == L"Symbols")
-			{
-				symHkGroup = i;
-				break;
-			}
-		}
-	}
-	std::vector<CHotkey>& symHotkeys = _Settings.m_hotkey_groups[symHkGroup].m_hotkeys;
-
-	wchar_t c = NULL;
-	for(unsigned int i = 0; i < symHotkeys.size(); ++i)
-	{
-		if(symHotkeys[i].m_accel.cmd == wID)
-		{
-			c = symHotkeys[i].m_char_val;
-			break;
-		}
-	}
-
-	if(c)
-	{
-		HWND aw = ::GetFocus();
-		::SendMessage(::GetFocus(), WM_CHAR, c, NULL);
-
-		/*IServiceProviderPtr ServiceProvider;
-		ServiceProvider = m_doc->m_body.Browser();
-		if(ServiceProvider)
-		{
-			IOleWindowPtr Window = NULL;
-			if(SUCCEEDED(ServiceProvider->QueryService(SID_SShellBrowser, IID_IOleWindow, (void**)&Window)))
-			{
-				HWND hwndBrowser = NULL;
-				if (SUCCEEDED(Window->GetWindow(&hwndBrowser)))
-				{
-					while(::GetWindow(hwndBrowser, GW_CHILD))
-						hwndBrowser = ::GetWindow(hwndBrowser, GW_CHILD);
-					::SendMessage(hwndBrowser, WM_CHAR, c, 0);
-				}
-			}
-		}*/
-	}
-
-	return 0;
-}
-
 LRESULT CMainFrame::OnAppAbout(WORD, WORD, HWND, BOOL&)
 {
   CAboutDlg dlg;
@@ -2484,86 +2285,85 @@ LRESULT CMainFrame::OnAppAbout(WORD, WORD, HWND, BOOL&)
   return 0;
 }
 
-// Navigation
+// navigation
 LRESULT CMainFrame::OnSelectCtl(WORD wNotifyCode, WORD wID, HWND hWndCtl, BOOL& bHandled)
 {
-	switch(wID)
-	{
-		case ID_SELECT_TREE:
-			if(!m_document_tree.IsWindowVisible())
-				OnViewTree(0, 0, 0, bHandled);
-			m_document_tree.m_tree.m_tree.SetFocus();
-			break;
-		case ID_SELECT_ID:
-			if(!IsBandVisible(ATL_IDW_BAND_FIRST + 2))
-				OnViewToolBar(0, ATL_IDW_BAND_FIRST + 2, NULL, bHandled);
-			m_id.SetFocus();
-			break;
-			case ID_SELECT_HREF:
-			{
-				if(!IsBandVisible(ATL_IDW_BAND_FIRST + 2))
-					OnViewToolBar(0,ATL_IDW_BAND_FIRST + 2, NULL, bHandled);
-				m_href.SetFocus();
-				CString href(U::GetWindowText(m_href));
-				m_href.SetSel(0, href.GetLength(), FALSE);
-				break;
-			}
-		case ID_SELECT_IMAGE:
-			if(!IsBandVisible(ATL_IDW_BAND_FIRST + 2))
-				OnViewToolBar(0, ATL_IDW_BAND_FIRST + 2, NULL, bHandled);
-			m_image_title.SetFocus();
-			break;
-		case ID_SELECT_TEXT:
-			m_view.SetFocus();
-			break;
-		case ID_SELECT_SECTION:
-			if (!IsBandVisible(ATL_IDW_BAND_FIRST + 2))
-				OnViewToolBar(0, ATL_IDW_BAND_FIRST + 2, NULL, bHandled);
-			m_section.SetFocus();
-			break;
-		case ID_SELECT_IDT:
-			if(!IsBandVisible(ATL_IDW_BAND_FIRST + 2))
-				OnViewToolBar(0, ATL_IDW_BAND_FIRST + 2, NULL, bHandled);
-			m_id_table_id.SetFocus();
-			break;
-		case ID_SELECT_STYLET:
-			if(!IsBandVisible(ATL_IDW_BAND_FIRST + 2))
-				OnViewToolBar(0, ATL_IDW_BAND_FIRST + 2, NULL, bHandled);
-			m_styleT_table.SetFocus();
-			break;
-		case ID_SELECT_STYLE:
-			if(!IsBandVisible(ATL_IDW_BAND_FIRST+  2))
-				OnViewToolBar(0, ATL_IDW_BAND_FIRST + 2, NULL, bHandled);
-			m_style_table.SetFocus();
-			break;
-		case ID_SELECT_COLSPAN:
-			if(!IsBandVisible(ATL_IDW_BAND_FIRST + 3))
-				OnViewToolBar(0, ATL_IDW_BAND_FIRST + 3, NULL, bHandled);
-			m_colspan_table.SetFocus();
-			break;
-		case ID_SELECT_ROWSPAN:
-			if(!IsBandVisible(ATL_IDW_BAND_FIRST + 3))
-				OnViewToolBar(0, ATL_IDW_BAND_FIRST + 3, NULL, bHandled);
-			m_rowspan_table.SetFocus();
-			break;
-		case ID_SELECT_ALIGNTR:
-			if(!IsBandVisible(ATL_IDW_BAND_FIRST + 3))
-			OnViewToolBar(0, ATL_IDW_BAND_FIRST + 3, NULL, bHandled);
-			m_alignTR_table.SetFocus();
-			break;
-		case ID_SELECT_ALIGN:
-			if(!IsBandVisible(ATL_IDW_BAND_FIRST + 3))
-				OnViewToolBar(0, ATL_IDW_BAND_FIRST + 3, NULL, bHandled);
-			m_align_table.SetFocus();
-			break;
-		case ID_SELECT_VALIGN:
-			if(!IsBandVisible(ATL_IDW_BAND_FIRST + 3))
-				OnViewToolBar(0, ATL_IDW_BAND_FIRST + 3, NULL, bHandled);
-			m_valign_table.SetFocus();
-			break;
-	}
-
-	return 0;
+  switch (wID) {
+  case ID_SELECT_TREE:
+    if (!m_document_tree.IsWindowVisible())
+      OnViewTree(0,0,0,bHandled);
+    m_document_tree.SetFocus();
+    break;
+  case ID_SELECT_ID:
+    if (!IsBandVisible(ATL_IDW_BAND_FIRST+2))
+      OnViewToolBar(0,ATL_IDW_BAND_FIRST+2,NULL,bHandled);
+    m_id.SetFocus();
+    break;
+  case ID_SELECT_HREF:
+	  {
+    if (!IsBandVisible(ATL_IDW_BAND_FIRST+2))
+      OnViewToolBar(0,ATL_IDW_BAND_FIRST+2,NULL,bHandled);
+    m_href.SetFocus();
+	CString href(U::GetWindowText(m_href));
+	m_href.SetSel(0, href.GetLength(), FALSE);
+    break;
+	  }
+  case ID_SELECT_IMAGE:
+    if (!IsBandVisible(ATL_IDW_BAND_FIRST+2))
+      OnViewToolBar(0,ATL_IDW_BAND_FIRST+2,NULL,bHandled);
+	m_image_title.SetFocus();
+    break;
+  case ID_SELECT_TEXT:
+    m_view.SetFocus();
+    break;
+  // Modification by Pilgrim
+  case ID_SELECT_SECTION:
+	  if (!IsBandVisible(ATL_IDW_BAND_FIRST+2))
+		  OnViewToolBar(0,ATL_IDW_BAND_FIRST+2,NULL,bHandled);
+	  m_section.SetFocus();
+	  break;
+  case ID_SELECT_IDT:
+	  if (!IsBandVisible(ATL_IDW_BAND_FIRST+2))
+		  OnViewToolBar(0,ATL_IDW_BAND_FIRST+2,NULL,bHandled);
+	  m_id_table_id.SetFocus();
+	  break;
+  case ID_SELECT_STYLET:
+	  if (!IsBandVisible(ATL_IDW_BAND_FIRST+2))
+		  OnViewToolBar(0,ATL_IDW_BAND_FIRST+2,NULL,bHandled);
+	  m_styleT_table.SetFocus();
+	  break;
+  case ID_SELECT_STYLE:
+	  if (!IsBandVisible(ATL_IDW_BAND_FIRST+2))
+		  OnViewToolBar(0,ATL_IDW_BAND_FIRST+2,NULL,bHandled);
+	  m_style_table.SetFocus();
+	  break;
+  case ID_SELECT_COLSPAN:
+	  if (!IsBandVisible(ATL_IDW_BAND_FIRST+3))
+		  OnViewToolBar(0,ATL_IDW_BAND_FIRST+3,NULL,bHandled);
+	  m_colspan_table.SetFocus();
+	  break;
+  case ID_SELECT_ROWSPAN:
+	  if (!IsBandVisible(ATL_IDW_BAND_FIRST+3))
+		  OnViewToolBar(0,ATL_IDW_BAND_FIRST+3,NULL,bHandled);
+	  m_rowspan_table.SetFocus();
+	  break;
+  case ID_SELECT_ALIGNTR:
+	  if (!IsBandVisible(ATL_IDW_BAND_FIRST+3))
+		  OnViewToolBar(0,ATL_IDW_BAND_FIRST+3,NULL,bHandled);
+	  m_alignTR_table.SetFocus();
+	  break;
+  case ID_SELECT_ALIGN:
+	  if (!IsBandVisible(ATL_IDW_BAND_FIRST+3))
+		  OnViewToolBar(0,ATL_IDW_BAND_FIRST+3,NULL,bHandled);
+	  m_align_table.SetFocus();
+	  break;
+  case ID_SELECT_VALIGN:
+	  if (!IsBandVisible(ATL_IDW_BAND_FIRST+3))
+		  OnViewToolBar(0,ATL_IDW_BAND_FIRST+3,NULL,bHandled);
+	  m_valign_table.SetFocus();
+	  break;
+  }
+  return 0;
 }
 
 LRESULT CMainFrame::OnNextItem(WORD wNotifyCode, WORD wID, HWND hWndCtl, BOOL& bHandled)
@@ -2850,7 +2650,6 @@ LRESULT CMainFrame::OnTreeMoveElementOne(WORD, WORD, HWND, BOOL&)
 	m_doc->m_body.BeginUndoUnit(L"structure editing");
 	CTreeItem item = m_document_tree.m_tree.m_tree.GetFirstSelectedItem();
 	MSHTML::IHTMLElementPtr elem = 0;
-	MSHTML::IHTMLDOMNodePtr ret_node = 0;
 	
 	do
 	{
@@ -2865,16 +2664,8 @@ LRESULT CMainFrame::OnTreeMoveElementOne(WORD, WORD, HWND, BOOL&)
 		if(!(bool)node)
 			continue;
 		
-		ret_node = MoveRightElementWithoutChildren(node);
+		MoveRightElementWithoutChildren(node);
 	}while(item = m_document_tree.m_tree.m_tree.GetNextSelectedItem(item));
-
-	GetDocumentStructure();
-	if((bool)ret_node)
-	{
-		MSHTML::IHTMLElementPtr elem(ret_node);
-		m_document_tree.m_tree.m_tree.SelectElement(elem);
-		GoTo(elem);
-	}
 
 	m_doc->m_body.EndUndoUnit();
 	return 0;
@@ -2883,9 +2674,8 @@ LRESULT CMainFrame::OnTreeMoveElementOne(WORD, WORD, HWND, BOOL&)
 LRESULT CMainFrame::OnTreeMoveLeftElement(WORD, WORD, HWND, BOOL&)
 {
 	m_doc->m_body.BeginUndoUnit(L"structure editing");
-	CTreeItem item = m_document_tree.m_tree.m_tree.GetLastSelectedItem();
+	CTreeItem item = m_document_tree.m_tree.m_tree.GetFirstSelectedItem();
 	MSHTML::IHTMLElementPtr elem = 0;
-	MSHTML::IHTMLDOMNodePtr ret_node;
 	
 	do
 	{
@@ -2899,16 +2689,8 @@ LRESULT CMainFrame::OnTreeMoveLeftElement(WORD, WORD, HWND, BOOL&)
 		if(!(bool)node)
 			continue;
 
-		ret_node = MoveLeftElement(node);
-	}while(item = m_document_tree.m_tree.m_tree.GetPrevSelectedItem(item));
-
-	GetDocumentStructure();
-	if((bool)ret_node)
-	{
-		MSHTML::IHTMLElementPtr elem(ret_node);
-		m_document_tree.m_tree.m_tree.SelectElement(elem);
-		GoTo(elem);
-	}
+		MoveLeftElement(node);
+	}while(item = m_document_tree.m_tree.m_tree.GetNextSelectedItem(item));
 
 	m_doc->m_body.EndUndoUnit();
 	return 0;
@@ -2932,28 +2714,20 @@ LRESULT CMainFrame::OnTreeMoveElementSmart(WORD, WORD, HWND, BOOL&)
 	m_doc->m_body.BeginUndoUnit(L"structure editing");
 	CTreeItem item = m_document_tree.m_tree.m_tree.GetFirstSelectedItem();
 
-	MSHTML::IHTMLDOMNodePtr node = RecoursiveMoveRightElement(item);	
-	GetDocumentStructure();
-	if((bool)node)
-	{
-		MSHTML::IHTMLElementPtr elem(node);
-		m_document_tree.m_tree.m_tree.SelectElement(elem);
-		GoTo(elem);
-	}
+	RecoursiveMoveRightElement(item);	
 
 	m_doc->m_body.EndUndoUnit();
 	
 	return 0;
 }
 
-MSHTML::IHTMLDOMNodePtr CMainFrame::RecoursiveMoveRightElement(CTreeItem item)
+bool CMainFrame::RecoursiveMoveRightElement(CTreeItem item)
 {
-	MSHTML::IHTMLDOMNodePtr ret;
 	if(item.IsNull() || !item.GetData())
 		return false;
 
 	CTreeItem next_selected_sibling = m_document_tree.m_tree.m_tree.GetNextSelectedSibling(item);
-	bool smart_selection = (!next_selected_sibling.IsNull()) && (item.GetNextSibling() != next_selected_sibling);
+	bool smart_selection = !next_selected_sibling.IsNull();
 
 	if(smart_selection)
 	{		
@@ -3002,12 +2776,12 @@ MSHTML::IHTMLDOMNodePtr CMainFrame::RecoursiveMoveRightElement(CTreeItem item)
 			if(!(bool)node)
 				return 0;
 
-			ret = MoveRightElement(node);
+			MoveRightElement(node);
 
 			item = m_document_tree.m_tree.m_tree.GetNextSelectedItem(item);
 		}
 	}
-	return ret;
+	return false;
 }
 
 
@@ -3035,47 +2809,32 @@ LRESULT CMainFrame::OnTreeViewElementSource(WORD, WORD, HWND, BOOL&)
 
 LRESULT CMainFrame::OnTreeDeleteElement(WORD, WORD, HWND, BOOL&)
 {
-	CTreeItem item = m_document_tree.m_tree.m_tree.GetLastSelectedItem();
-	m_doc->m_body.BeginUndoUnit(L"structure editing");
-	do 
-	{	
-		if(!item.IsNull() && item.GetData())
-		{
-			MSHTML::IHTMLElement* elem = (MSHTML::IHTMLElement*)item.GetData();
-			if(!elem)
-				return 0;
+	CTreeItem item = m_document_tree.GetSelectedItem();
+	if(!item.IsNull() && item.GetData())
+	{
+		MSHTML::IHTMLElement* elem = (MSHTML::IHTMLElement*)item.GetData();
+		if(!elem)
+			return 0;
 
-			MSHTML::IHTMLDOMNodePtr node = (MSHTML::IHTMLDOMNodePtr)elem;
-			
-			
-			node->removeNode(VARIANT_TRUE);
-			
-		}
-		else
-		{
-			break;
-		}
-
-		item = m_document_tree.m_tree.m_tree.GetPrevSelectedItem(item);
-	} while(!item.IsNull());
-	m_doc->m_body.EndUndoUnit();
+		MSHTML::IHTMLDOMNodePtr node = (MSHTML::IHTMLDOMNodePtr)elem;
+		node->removeNode(VARIANT_TRUE);
+	}
 	return 0;
 }
-
-
 LRESULT CMainFrame::OnTreeMerge(WORD, WORD, HWND, BOOL&)
-{
+{	
 	CTreeItem item = m_document_tree.GetSelectedItem();
 	if(item.IsNull())
 		return 0;
 
+	
 	MSHTML::IHTMLElement* elem = (MSHTML::IHTMLElement*)item.GetData();
 	if(!elem)
 		return 0;
 
-	bool merged = m_doc->m_body.bCall(L"MergeContainers", elem);
-	m_doc->m_body.Call(L"MergeContainers", elem);
-	// Move cursor to selected element
+	bool merged = m_doc->m_body.bCall(L"MergeContainers",elem);
+	m_doc->m_body.Call(L"MergeContainers",elem);	
+	// переводим курсор на выделенный элемент
 	if(merged)
 		GoTo(elem);
 
@@ -3109,7 +2868,7 @@ LRESULT CMainFrame::OnEditAddBinary(WORD, WORD, HWND, BOOL&) {
 
 
   if (dlg.DoModal(*this)==IDOK) {
-	_POSITION_ pos = dlg.GetStartPosition();
+	POSITION pos = dlg.GetStartPosition();
 	while(pos) {
 		CString fileName(dlg.GetNextPathName(pos));
 		m_doc->AddBinary(fileName);
@@ -3139,6 +2898,51 @@ LRESULT CMainFrame::OnEditIncSearch(WORD, WORD, HWND, BOOL&) {
       PostMessage(WM_CHAR,m_is_prev[i],0x20000000);
   } else if (!m_is_fail)
     m_doc->m_body.DoIncSearch(m_is_str,true);
+  return 0;
+}
+
+LRESULT	CMainFrame::OnEditInsImage(WORD, WORD, HWND, BOOL&)
+{	
+  if (!m_doc)
+    return 0;
+
+  if(_Settings.GetInsImageAsking())
+  {
+	  CAddImageDlg imgDialog;
+	  imgDialog.DoModal(*this);
+  }
+
+  if(!_Settings.GetIsInsClearImage())
+  {	  
+  CFileDialogEx	dlg(
+    TRUE,
+    NULL,
+    NULL,
+	OFN_FILEMUSTEXIST | OFN_HIDEREADONLY | OFN_PATHMUSTEXIST | OFN_NOCHANGEDIR,
+	L"FBE supported (*.jpg;*.jpeg;*.png)\0*.jpg;*.jpeg;*.png\0JPEG (*.jpg)\0*.jpg\0PNG (*.png)\0*.png\0Bitmap (*.bmp"\
+	L")\0*.bmp\0GIF (*.gif)\0*.gif\0TIFF (*.tif)\0*.tif\0\0"
+  );
+
+  wchar_t dlgTitle[MAX_LOAD_STRING + 1];
+  ::LoadString(_Module.GetResourceInstance(), IDS_ADD_IMAGE_FILEDLG, dlgTitle, MAX_LOAD_STRING);
+  dlg.m_ofn.lpstrTitle = dlgTitle;
+  dlg.m_ofn.nFilterIndex = 1;
+
+  if (dlg.DoModal(*this) == IDOK)
+  {
+    m_doc->AddImage(dlg.m_szFileName);
+  }	
+  }
+  else
+  {
+	try {
+	  MSHTML::IHTMLDOMNodePtr node(m_doc->m_body.Call(L"InsImage"));
+      if (node)
+        BubbleUp(node,L"DIV");
+    }
+    catch (_com_error&) { }
+  }
+
   return 0;
 }
 
@@ -3244,7 +3048,7 @@ bool  CMainFrame::SourceToHTML()
 			if(ret.vt == VT_DISPATCH)
 			{
 				m_saved_xml = ret.pdispVal;
-				// если вернулс€ не xml, значит вернулась ошибка
+				// если вернулс€ не xml, значит вернуласб ошибка
 				if(!(bool)m_saved_xml)
 				{
 					MSXML2::IXMLDOMParseErrorPtr err = ret.pdispVal;
@@ -3316,8 +3120,6 @@ bool  CMainFrame::SourceToHTML()
 		args[0] = _Settings.GetInterfaceLanguageName();
 		CheckError(body.InvokeN(L"LoadFromDOM", args, 2));
 		m_doc->m_body.Init();
-		// у нас совершенно новый HTML и указатели на элшементы старого теперь невалидны.
-		ClearSelection();
 		
         //m_saved_xml.Release();
 		//m_saved_xml = 0;		
@@ -3356,16 +3158,15 @@ bool  CMainFrame::SourceToHTML()
 	}while(root = root->nextSibling);
 	
 	free(buffer);
-	m_doc->m_body.GoTo(selectedHTMLElementBegin);		
+	m_doc->m_body.GoTo(selectedHTMLElementBegin);	
 	m_body_selection =  m_doc->m_body.SetSelection(selectedHTMLElementBegin, selectedHTMLElementEnd, begin_char, end_char);	
 	m_doc->MarkDocCP(); // document is in sync with source
-	if(_Settings.ViewDocumentTree())
-	{
-		m_document_tree.GetDocumentStructure(m_doc->m_body.Document());	
-	}
+	m_document_tree.GetDocumentStructure(m_doc->m_body.Document());
 	return true;
 	//m_document_tree.HighlightItemAtPos(m_doc->m_body.SelectionContainer());  
 }
+
+
 
 bool CMainFrame::ShowSource(bool saveSelection)
 {
@@ -3423,6 +3224,8 @@ bool CMainFrame::ShowSource(bool saveSelection)
 				}
 			}
 		}while(root = root->nextSibling);
+
+		
 	}
 
 	// если документ изменилс€, то заново строим XMLDOM
@@ -3440,22 +3243,6 @@ bool CMainFrame::ShowSource(bool saveSelection)
 			}
 		}
 	}
-
-/*	std::ofstream save;
-	CString s = m_saved_xml->xml;
-	CT2A str (s, 1251);
-	save.open(L"1.xml", std::ios_base::out | std::ios_base::trunc);
-	if (save.is_open())
-		save << str << '\n';
-	save.close();
-
-	MSHTML::IHTMLElementPtr body = (MSHTML::IHTMLElementPtr)m_doc->m_body.Document()->body;
-	s.SetString(body->innerHTML);
-	CT2A str2 (s, 1251);
-	save.open(L"1.htm", std::ios_base::out | std::ios_base::trunc);
-	if (save.is_open())
-		save << str2 << '\n';
-	save.close(); */
 
 	MSXML2::IXMLDOMNodePtr xml_selected_begin;
 	MSXML2::IXMLDOMNodePtr xml_selected_end;
@@ -3496,7 +3283,7 @@ bool CMainFrame::ShowSource(bool saveSelection)
 	}
 
 	// перегон€ем XML в текст
-	_bstr_t   src(m_saved_xml->xml);
+	_bstr_t   src(m_saved_xml->xml);	
 
 	int savedPosBegin = 0;
 	int savedPosEnd = 0;
@@ -3531,7 +3318,6 @@ bool CMainFrame::ShowSource(bool saveSelection)
 			free(buffer);
 		}
 	}
-
 	//	переходим на позицию
 	m_source.SendMessage(SCI_SETSELECTIONSTART,savedPosBegin);
 	m_source.SendMessage(SCI_SETSELECTIONEND,savedPosEnd);
@@ -3546,11 +3332,6 @@ bool CMainFrame::ShowSource(bool saveSelection)
 void  CMainFrame::ShowView(VIEW_TYPE vt) {
   VIEW_TYPE prev = m_current_view;//GetCurView();
   SaveSelection(m_current_view);
-
-  // added by SeNS
-  if (vt != BODY)
-	if (m_Speller) 
-		m_Speller->EndDocumentCheck();
 
   if (vt == NEXT)
   {
@@ -3619,15 +3400,15 @@ void  CMainFrame::ShowView(VIEW_TYPE vt) {
 		  return;
 	  }	  
 	  // turn off doctree
-	  /*m_save_sp_mode=m_document_tree.IsWindowVisible()!=0;
-	  UISetCheck(ID_VIEW_TREE,0);*/
+	  m_save_sp_mode=m_document_tree.IsWindowVisible()!=0;
+	  UISetCheck(ID_VIEW_TREE,0);    
   }
 
   if (prev!=vt && vt!=SOURCE) {
     UIEnable(ID_VIEW_TREE,1);	
-	/*m_save_sp_mode=true;// Modification by Pilgrim - иначе только на ’–(!)при выборе DESC слитает ID_VIEW_TREE и переход на BODY не восстанавливает. Ќо, если после запуска сразу перейти на SOURCE, то переходы на DESC и BODY не снос€т ID_VIEW_TREE. Ќадо разобратьс€, а потом удалить m_save_sp_mode=true;
-    UISetCheck(ID_VIEW_TREE, m_save_sp_mode);*/
-    m_splitter.SetSinglePaneMode(_Settings.ViewDocumentTree() ? SPLIT_PANE_NONE : SPLIT_PANE_RIGHT);
+	m_save_sp_mode=true;// Modification by Pilgrim - иначе только на ’–(!)при выборе DESC слитает ID_VIEW_TREE и переход на BODY не восстанавливает. Ќо, если после запуска сразу перейти на SOURCE, то переходы на DESC и BODY не снос€т ID_VIEW_TREE. Ќадо разобратьс€, а потом удалить m_save_sp_mode=true;
+    UISetCheck(ID_VIEW_TREE, m_save_sp_mode);
+    m_splitter.SetSinglePaneMode(m_save_sp_mode ? SPLIT_PANE_NONE : SPLIT_PANE_RIGHT);
   }
 
   UISetCheck(ID_VIEW_BODY, 0);
@@ -3986,22 +3767,21 @@ void CMainFrame::SciCollapse(int level2Collapse, bool mode)
 	}
 }
 
-MSHTML::IHTMLDOMNodePtr CMainFrame::MoveRightElementWithoutChildren(MSHTML::IHTMLDOMNodePtr node)
+bool CMainFrame::MoveRightElementWithoutChildren(MSHTML::IHTMLDOMNodePtr node)
 {
 	MSHTML::IHTMLDOMNodePtr move_from;
 	MSHTML::IHTMLDOMNodePtr move_to;
 	MSHTML::IHTMLDOMNodePtr insert_before;
-	MSHTML::IHTMLDOMNodePtr ret;
 	// делаем себ€ ребенком своего предыдущего брата
 	// потом всех своих детей делаем своими брать€ми	
 
-	if(!(bool)(ret = MoveRightElement(node)))
-		return 0;
+	if(!MoveRightElement(node))
+		return false;
 
 	MSHTML::IHTMLDOMNodePtr parent = node->parentNode ;
 	MSHTML::IHTMLDOMNodePtr nextSibling = GetNextSiblingSection(node);		
 	
-	MSHTML::IHTMLDOMNodePtr child = GetFirstChildSection(node);	
+	MSHTML::IHTMLDOMNodePtr child = GetFirstChildSection(node);
 	if((bool)child)
 	{
 		move_to = parent;
@@ -4016,10 +3796,10 @@ MSHTML::IHTMLDOMNodePtr CMainFrame::MoveRightElementWithoutChildren(MSHTML::IHTM
 		}while(nextChild);		
 	}
 	
-	return ret;
+	return true;
 }
 
-MSHTML::IHTMLDOMNodePtr CMainFrame::MoveRightElement(MSHTML::IHTMLDOMNodePtr node)
+bool CMainFrame::MoveRightElement(MSHTML::IHTMLDOMNodePtr node)
 {
 	MSHTML::IHTMLDOMNodePtr move_from;
 	MSHTML::IHTMLDOMNodePtr move_to;
@@ -4027,17 +3807,17 @@ MSHTML::IHTMLDOMNodePtr CMainFrame::MoveRightElement(MSHTML::IHTMLDOMNodePtr nod
 	// делаем себ€ ребенком своего предыдущего брата
 	
 	if(!(bool)node)
-		return 0;
+		return false;
 
 	// пока будем таскать только секции
 	if(!IsNodeSection(node))
-		return 0;
+		return false;
 
 	// если не можем переместить себ€, то не дклаем ничего
 	MSHTML::IHTMLDOMNodePtr prev_sibling = GetPrevSiblingSection(node);
 	
 	if(!(bool)prev_sibling)
-		return 0;
+		return false;
 
 	MSHTML::IHTMLDOMNodePtr child = GetLastChildSection(prev_sibling);
 
@@ -4050,27 +3830,27 @@ MSHTML::IHTMLDOMNodePtr CMainFrame::MoveRightElement(MSHTML::IHTMLDOMNodePtr nod
 	{
 		CreateNestedSection(move_to);
 	}
+	m_doc->MoveNode(move_from, move_to, insert_before);	
 	
-	return m_doc->MoveNode(move_from, move_to, insert_before);			
+	return true;			
 }
 
-MSHTML::IHTMLDOMNodePtr CMainFrame::MoveLeftElement(MSHTML::IHTMLDOMNodePtr node)
+bool CMainFrame::MoveLeftElement(MSHTML::IHTMLDOMNodePtr node)
 {
-	MSHTML::IHTMLDOMNodePtr ret;
 	// делаем себ€  ближайшим братом своего отца
 	// а своих следующих братьев своими детьми
 	
 	if(!(bool)node)
-		return 0;
+		return false;
 
 	// пока будем таскать только секции
 	if(!IsNodeSection(node))
-		return 0;
+		return false;
 
 	// если не можем переместить себ€, то не делаем ничего
 	MSHTML::IHTMLDOMNodePtr parent = node->parentNode;
 	if(!(bool)parent || !IsNodeSection(parent->parentNode))
-		return 0;
+		return false;
 	
 	MSHTML::IHTMLDOMNodePtr sibling = node->nextSibling;
 
@@ -4081,9 +3861,9 @@ MSHTML::IHTMLDOMNodePtr CMainFrame::MoveLeftElement(MSHTML::IHTMLDOMNodePtr node
 		sibling = next_sibling;
 	}	
 	// делаем себ€  ближайшим братом своего отца	
-	ret = m_doc->MoveNode(node, parent->parentNode, parent->nextSibling);	
+	m_doc->MoveNode(node, parent->parentNode, parent->nextSibling);	
 	
-	return ret;			
+	return true;			
 }
 
 bool CMainFrame::IsNodeSection(MSHTML::IHTMLDOMNodePtr node)
@@ -4312,6 +4092,7 @@ MSHTML::IHTMLDOMNodePtr CMainFrame::CreateNestedSection(MSHTML::IHTMLDOMNodePtr 
 
 void CMainFrame::RestoreSelection()
 {
+	bstr_t text;
 	if(m_current_view == BODY && (bool)m_body_selection)
 	{
 		m_body_selection->select();
@@ -4333,12 +4114,6 @@ void CMainFrame::SaveSelection(VIEW_TYPE vt)
 	{		
 		m_desc_selection = m_doc->m_body.Document()->selection->createRange();
 	}
-}
-
-void CMainFrame::ClearSelection()
-{
-	m_body_selection = NULL;
-	m_desc_selection = NULL;
 }
 
 void CMainFrame::SourceGoTo(int line, int col)
@@ -4431,58 +4206,24 @@ void CMainFrame::GoTo(int selected_pos)
 	rng->select();
 }
 
-bool CMainFrame::ShowSettingsDialog(HWND parent)
+bool CMainFrame::ShowSettingsDialog()
 {	
 	CSettingsDlg dlg;
-	return dlg.DoModal(parent) == IDOK;
+	return dlg.DoModal() == IDOK;
 }
 
 void CMainFrame::ApplyConfChanges()
 {
-	wchar_t restartMsg[MAX_LOAD_STRING + 1];
-	::LoadString(_Module.GetResourceInstance(), IDS_SETTINGS_NEED_RESTART, restartMsg, MAX_LOAD_STRING);
-
-	m_doc->ApplyConfChanges();
-	SetupSci();
-	SetSciStyles();
-
-	// added by SeNS
-	if (_Settings.GetUseSpellChecker())
-	{
-		if (!m_Speller)
-		{
-			TCHAR prgPath[MAX_PATH];
-			DWORD pathlen = ::GetModuleFileName(_Module.GetModuleInstance(), prgPath, MAX_PATH);
-			PathRemoveFileSpec(prgPath);
-			m_Speller = new CSpeller(CString(prgPath)+L"\\dict\\");
-			m_Speller->SetEnabled(false);
-		}
-		if (!m_Speller->Enabled())
-		{
-			m_Speller->SetFrame(m_hWnd);
-			m_Speller->AttachDocument(m_doc->m_body.Document());
-			m_Speller->SetEnabled(true);
-		}
-	}
-	// don't use spellchecker
-	else if (m_Speller) m_Speller->SetEnabled(false);
-
-	if (m_Speller && m_Speller->Enabled())
-	{
-		m_Speller->SetHighlightMisspells(_Settings.GetHighlightMisspells());
-		m_Speller->SetCustomDictionary(_Settings.GetCustomDict());
-	}
-
-	_Settings.SaveHotkeyGroups();
-	_Settings.Save();
-	_Settings.SaveWords();
-
-	if(_Settings.NeedRestart() && MessageBox(restartMsg, L"", MB_YESNO | MB_ICONINFORMATION) == IDYES)
+	if(_Settings.NeedRestart())
 	{
 		return RestartProgram();
 	}
+	m_doc->ApplyConfChanges();
+	SetupSci();
+    SetSciStyles();
+	
+	_Settings.Save();
 }
-
 void CMainFrame::RestartProgram()
 {	
 	BOOL b = false;
@@ -4490,10 +4231,7 @@ void CMainFrame::RestartProgram()
 	{
 		wchar_t filename[MAX_PATH];
 		::GetModuleFileName(_Module.GetModuleInstance(), filename, MAX_PATH);
-		CString ofn = m_doc->GetOpenFileName();
-//		if(wcschr(filename, L' '))
-		ofn.Format(L"\"%s\"", m_doc->GetOpenFileName());
-		HINSTANCE hInst = ShellExecute(0, L"open", filename, ofn, 0, SW_SHOW);
+		HINSTANCE hInst = ShellExecute(0, L"open", filename, m_doc->GetOpenFileName(), 0, SW_SHOW);
 	}
 }
 
@@ -4542,7 +4280,7 @@ void CMainFrame::CollectScripts(CString path, TCHAR* mask, int lastid, CString r
 						folder.id = refid + temp;
 						folder.refid = refid;
 						folder.isFolder = true;
-						//folder.accel.key = 0;
+						folder.accel.key = 0;
 
 						folder.picture = NULL;
 						folder.pictType = CMainFrame::NO_PICT;
@@ -4564,8 +4302,8 @@ void CMainFrame::CollectScripts(CString path, TCHAR* mask, int lastid, CString r
 							{
 								folder.picture = bitmap;	
 								folder.pictType = CMainFrame::BITMAP;
-							}
-						}
+							}								
+						}							
 
 						else if(hIcon != INVALID_HANDLE_VALUE)
 						{
@@ -4573,7 +4311,7 @@ void CMainFrame::CollectScripts(CString path, TCHAR* mask, int lastid, CString r
 								IMAGE_ICON, 0, 0, LR_LOADFROMFILE);
 							if(icon != NULL)
 							{
-								folder.picture = icon;
+								folder.picture = icon;	
 								folder.pictType = CMainFrame::ICON;
 							}
 							
@@ -4581,7 +4319,7 @@ void CMainFrame::CollectScripts(CString path, TCHAR* mask, int lastid, CString r
 
 						FindClose(hPicture);
 						FindClose(hIcon);
-						delete[] picName;
+						delete[] picName;						
 
 						m_scripts.Add(folder);
 						delete[] Name;
@@ -4602,15 +4340,18 @@ int CMainFrame::GrabScripts(CString path, TCHAR* mask, CString refid)
 	WIN32_FIND_DATA fd;
 	HANDLE found = FindFirstFile(path + mask, &fd);
 	int newid = 1;
-	
 	if(found)
 	 {
-		do
-		{
-			if(!(fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY))
-			{
-				if (StartScript(this) ==0 && SUCCEEDED(ScriptLoad(path + fd.cFileName)) && ScriptFindFunc(L"Run"))
-				{
+		 do
+		 {
+			 if(!(fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY))
+			 {
+				StopScript();
+				if (StartScript(this) < 0)
+					continue;
+				if (SUCCEEDED(ScriptLoad(path + fd.cFileName)) && SUCCEEDED(ScriptLoad(U::GetProgDir() + L"\\main.js"))) {
+					CComVariant vt;					
+					if (SUCCEEDED(ScriptCall(L"apiCheckRunnableScript", NULL, 0, &vt)) && vt.boolVal == VARIANT_TRUE)
 					{
 						ScrInfo script;
 						wchar_t* Name = new wchar_t[wcslen(fd.cFileName) + 1];
@@ -4627,7 +4368,7 @@ int CMainFrame::GrabScripts(CString path, TCHAR* mask, CString refid)
 						{
 							wcscpy(Name, pos + 1);
 							script.order = fd.cFileName;
-						}
+						}						
 					
 						Name[wcslen(Name) - 3] = 0;
 						script.name = Name;
@@ -4649,29 +4390,29 @@ int CMainFrame::GrabScripts(CString path, TCHAR* mask, CString refid)
 							HBITMAP bitmap = (HBITMAP)LoadImage(NULL, (picPathNoExt + L".bmp").GetBuffer(), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
 							if(bitmap != NULL)
 							{
-								script.picture = bitmap;
+								script.picture = bitmap;	
 								script.pictType = CMainFrame::BITMAP;
-							}
+							}							
 						}
 						else if(hIcon != INVALID_HANDLE_VALUE)
 						{
 							HICON icon = (HICON)LoadImage(NULL, (picPathNoExt + L".ico").GetBuffer(), IMAGE_ICON, 0, 0, LR_LOADFROMFILE);
 							if(icon != NULL)
 							{
-								script.picture = icon;
+								script.picture = icon;	
 								script.pictType = CMainFrame::ICON;
-							}
+							}							
 						}
 
 						FindClose(hPicture);
 						FindClose(hIcon);
 						delete[] picName;
 
-						/*CComVariant accel;
+						CComVariant accel;
 						ZeroMemory(&script.accel, sizeof(script.accel));
-						script.accel.key = 0;*/
+						script.accel.key = 0;
 
-						/*if (SUCCEEDED(ScriptCall(L"SetHotkey", NULL, 0, &accel)))
+						if (SUCCEEDED(ScriptCall(L"SetHotkey", NULL, 0, &accel)))
 						{
 							TCHAR errCaption[MAX_LOAD_STRING + 1];
 							LoadString(_Module.GetResourceInstance(), IDS_ERRMSGBOX_CAPTION, errCaption, MAX_LOAD_STRING);
@@ -4692,7 +4433,7 @@ int CMainFrame::GrabScripts(CString path, TCHAR* mask, CString refid)
 							}
 							if(j == m_scripts.GetSize() && keycodes.FindKey(accel.intVal) != -1)
 								script.accel.key = accel.intVal;
-						}*/
+						}
 						
 						CString temp;
 						temp.Format(L"_%d", newid);
@@ -4705,8 +4446,8 @@ int CMainFrame::GrabScripts(CString path, TCHAR* mask, CString refid)
 
 						delete[] Name;
 					}
-					StopScript();
-				}				
+				}
+				StopScript();
 			 }		 
 		 }
 		 while(FindNextFile(found, &fd));
@@ -4740,7 +4481,7 @@ void CMainFrame::AddScriptsSubMenu(HMENU parentItem, CString refid, CSimpleArray
 		{
 			if(scripts[i].isFolder)
 			{
-				mi.fMask |= MIIM_SUBMENU | MIIM_ID;
+				mi.fMask |= MIIM_SUBMENU | MIIM_ID;			
 				mi.hSubMenu = CreateMenu();
 				mi.wID = SCRIPT_COMMAND_ID++;
 				scripts[i].wID = -1;
@@ -4751,16 +4492,20 @@ void CMainFrame::AddScriptsSubMenu(HMENU parentItem, CString refid, CSimpleArray
 				mi.fMask |= MIIM_ID;
 				mi.wID = ID_SCRIPT_BASE + SCRIPT_COMMAND_ID;
 				scripts[i].wID = SCRIPT_COMMAND_ID;
-				SCRIPT_COMMAND_ID++;
 
-				InitScriptHotkey(scripts[i]);
+				if(scripts[i].accel.key != 0)
+				{
+					scripts[i].accel.cmd = ID_SCRIPT_BASE + SCRIPT_COMMAND_ID;
+					scripts[i].name += L"\tCtrl+Shift+" + keycodes.GetValueAt(keycodes.FindKey(scripts[i].accel.key));
+				}
+				SCRIPT_COMMAND_ID++;
 			}
 
 			mi.dwTypeData = scripts[i].name.GetBuffer();
-			mi.cch = wcslen(scripts[i].name);
+			mi.cch = wcslen(scripts[i].name);			
 
 			if(scripts[i].isFolder)
-				InsertMenuItem(parentItem, 0, true, &mi);
+				InsertMenuItem(parentItem, 0, true, &mi);				
 			else
 				InsertMenuItem(parentItem, menupos--, true, &mi);
 
@@ -4774,7 +4519,109 @@ void CMainFrame::AddScriptsSubMenu(HMENU parentItem, CString refid, CSimpleArray
 					break;
 			}
 		}
-	}
+	}		
+}
+
+void CMainFrame::InitKeyMap()
+{
+	keycodes.Add(0x08, L"BACKSPACE");
+	keycodes.Add(0x09, L"TAB");
+	keycodes.Add(0x0C, L"CLEAR");
+	keycodes.Add(0x0D, L"ENTER");
+	keycodes.Add(0x12, L"ALT");
+	keycodes.Add(0x13, L"PAUSE");
+	keycodes.Add(0x14, L"CAPS LOCK");
+	keycodes.Add(0x1B, L"ESC");
+	keycodes.Add(0x20, L"SPACEBAR");
+	keycodes.Add(0x21, L"PAGE UP");
+	keycodes.Add(0x22, L"PAGE DOWN");
+	keycodes.Add(0x23, L"END");
+	keycodes.Add(0x24, L"HOME");
+	keycodes.Add(0x29, L"SELECT");
+	keycodes.Add(0x2A, L"PRINT");
+	keycodes.Add(0x2B, L"EXECUTE");
+	keycodes.Add(0x2C, L"PRINT SCREEN");
+	keycodes.Add(0x2D, L"INS");
+	keycodes.Add(0x2E, L"DEL");
+	keycodes.Add(0x2F, L"HELP");
+	keycodes.Add(0x30, L"0");
+	keycodes.Add(0x31, L"1");
+	keycodes.Add(0x32, L"2");
+	keycodes.Add(0x33, L"3");
+	keycodes.Add(0x34, L"4");
+	keycodes.Add(0x35, L"5");
+	keycodes.Add(0x36, L"6");
+	keycodes.Add(0x37, L"7");
+	keycodes.Add(0x38, L"8");
+	keycodes.Add(0x39, L"9");
+	keycodes.Add(0x41, L"A");
+	keycodes.Add(0x42, L"B");
+	keycodes.Add(0x43, L"C");
+	keycodes.Add(0x44, L"D");
+	keycodes.Add(0x45, L"E");
+	keycodes.Add(0x46, L"F");
+	keycodes.Add(0x47, L"G");
+	keycodes.Add(0x48, L"H");
+	keycodes.Add(0x49, L"I");
+	keycodes.Add(0x4A, L"J");
+	keycodes.Add(0x4B, L"K");
+	keycodes.Add(0x4C, L"L");
+	keycodes.Add(0x4D, L"M");
+	keycodes.Add(0x4E, L"N");
+	keycodes.Add(0x4F, L"O");
+	keycodes.Add(0x50, L"P");
+	keycodes.Add(0x51, L"Q");
+	keycodes.Add(0x52, L"R");
+	//keycodes.Add(0x53, L"S"); // Reserved for last called script call
+	keycodes.Add(0x54, L"T");
+	keycodes.Add(0x55, L"U");
+	keycodes.Add(0x56, L"V");
+	keycodes.Add(0x57, L"W");
+	keycodes.Add(0x58, L"X");
+	keycodes.Add(0x59, L"Y");
+	keycodes.Add(0x5A, L"Z");
+	keycodes.Add(0x60, L"Numeric pad 0");
+	keycodes.Add(0x61, L"Numeric pad 1");
+	keycodes.Add(0x62, L"Numeric pad 2");
+	keycodes.Add(0x63, L"Numeric pad 3");
+	keycodes.Add(0x64, L"Numeric pad 4");
+	keycodes.Add(0x65, L"Numeric pad 5");
+	keycodes.Add(0x66, L"Numeric pad 6");
+	keycodes.Add(0x67, L"Numeric pad 7");
+	keycodes.Add(0x68, L"Numeric pad 8");
+	keycodes.Add(0x69, L"Numeric pad 9");
+	keycodes.Add(0x6A, L"Multiply");
+	keycodes.Add(0x6B, L"Add");
+	keycodes.Add(0x6C, L"Separator");
+	keycodes.Add(0x6D, L"Subtract");
+	keycodes.Add(0x6E, L"Decimal");
+	keycodes.Add(0x6F, L"Divide");
+	keycodes.Add(0x70, L"F1");
+	keycodes.Add(0x71, L"F2");
+	keycodes.Add(0x72, L"F3");
+	keycodes.Add(0x73, L"F4");
+	keycodes.Add(0x74, L"F5");
+	keycodes.Add(0x75, L"F6");
+	keycodes.Add(0x76, L"F7");
+	keycodes.Add(0x77, L"F8");
+	keycodes.Add(0x78, L"F9");
+	keycodes.Add(0x79, L"F10");
+	keycodes.Add(0x7A, L"F11");
+	keycodes.Add(0x7B, L"F12");
+	keycodes.Add(0x7C, L"F13");
+	keycodes.Add(0x7D, L"F14");
+	keycodes.Add(0x7E, L"F15");
+	keycodes.Add(0x7F, L"F16");
+	keycodes.Add(0x80, L"F17");
+	keycodes.Add(0x81, L"F18");
+	keycodes.Add(0x82, L"F19");
+	keycodes.Add(0x83, L"F20");
+	keycodes.Add(0x84, L"F21");
+	keycodes.Add(0x85, L"F22");
+	keycodes.Add(0x86, L"F23");
+	keycodes.Add(0x87, L"F24");
+	keycodes.Add(0x90, L"NUM LOCK");
+	keycodes.Add(0x91, L"SCROLL LOCK");
 }
 
 void CMainFrame::QuickScriptsSort(CSimpleArray<ScrInfo>& scripts, int min, int max)
@@ -4821,7 +4668,7 @@ void CMainFrame::UpScriptsFolders(CSimpleArray<ScrInfo>& scripts)
 			for(int j = i; j < scripts.GetSize(); ++j)
 			{
 				if(scripts[j].isFolder)
-				{
+				{					
 					for(int k = j; k > i; --k)
 					{
 						ScrInfo tmp = scripts[k-1];
@@ -4830,41 +4677,6 @@ void CMainFrame::UpScriptsFolders(CSimpleArray<ScrInfo>& scripts)
 					}
 				}
 			}
-		}
-	}
-}
-
-void CMainFrame::InitScriptHotkey(CMainFrame::ScrInfo& script)
-{
-	std::vector<CHotkeysGroup>& hotkey_groups = _Settings.m_hotkey_groups;
-	for(unsigned int i = 0; i < hotkey_groups.size(); ++i)
-	{
-		if(hotkey_groups.at(i).m_reg_name == L"Scripts")
-		{
-			CHotkey ScriptsHotkey(script.path,
-				script.name,
-				NULL,
-				ID_SCRIPT_BASE + script.wID,
-				NULL,
-				script.path);
-			hotkey_groups.at(i).m_hotkeys.push_back(ScriptsHotkey);
-		}
-	}
-}
-
-void CMainFrame::InitPluginHotkey(CString guid, UINT cmd, CString name)
-{
-	std::vector<CHotkeysGroup>& hotkey_groups = _Settings.m_hotkey_groups;
-	for(unsigned int i = 0; i < hotkey_groups.size(); ++i)
-	{
-		if(hotkey_groups.at(i).m_reg_name == L"Plugins")
-		{
-			CHotkey PluginsHotkey(guid,
-				name,
-				NULL,
-				cmd,
-				NULL);
-			hotkey_groups.at(i).m_hotkeys.push_back(PluginsHotkey);
 		}
 	}
 }
