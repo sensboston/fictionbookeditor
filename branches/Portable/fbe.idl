@@ -1,0 +1,71 @@
+import "oaidl.idl";
+import "ocidl.idl";
+
+[
+  uuid(37B16C7D-4400-4d7d-AA35-14C74E265EA4),
+  version(1.0),
+  helpstring("FictionBook Editor 1.0 Type Library")
+]
+library FBELib
+{
+  importlib("stdole32.tlb");
+  importlib("stdole2.tlb");
+
+  [
+    object,
+    uuid(8094bc55-99c0-4adf-bd55-71e206dfd403),
+    helpstring("IFBEImportPlugin interface"),
+    pointer_default(unique),
+  ]
+  interface IFBEImportPlugin : IUnknown
+  {
+    [id(1), helpstring("method Import")] HRESULT Import([in] long hWnd,[out] BSTR *filename,[out] IDispatch **document);
+  };
+
+  [
+    object,
+    uuid(1afaab7f-6f66-4ef6-b199-16fa49cc5b52),
+    helpstring("IFBEExportPlugin interface"),
+    pointer_default(unique),
+  ]
+  interface IFBEExportPlugin : IUnknown
+  {
+    [id(1), helpstring("method Export")] HRESULT Export([in] long hWnd,[in] BSTR filename,[in] IDispatch *document);
+  };
+
+  [
+    object,
+    uuid(7269066E-2089-4408-B3F3-E8D75984D5A6),
+    dual,
+    helpstring("IExternalHelper interface"),
+    pointer_default(unique)
+  ]
+  interface IExternalHelper : IDispatch
+  {
+    [id(1), helpstring("method BeginUndoUnit")] HRESULT BeginUndoUnit([in] IDispatch *document,[in] BSTR action);
+    [id(2), helpstring("method EndUndoUnit")] HRESULT EndUndoUnit([in] IDispatch *document);
+    [propget, id(3), helpstring("property inflateBlock")]
+      HRESULT inflateBlock([in] IDispatch *elem, [out, retval] BOOL *pVal);
+
+    [propput, id(3), helpstring("property inflateBlock")]
+      HRESULT inflateBlock([in] IDispatch *elem, [in] BOOL newVal);
+	[id(4), helpstring("method GenrePopup")] HRESULT GenrePopup([in] IDispatch *elem,[in] LONG x,[in] LONG y, [out, retval] BSTR *name);
+	// Modification by Pilgrim
+	/*[id(5), helpstring("method LangPopup")] HRESULT LangPopup([in] IDispatch *elem,[in] LONG x,[in] LONG y, [out, retval] BSTR *name);
+	[id(6), helpstring("method SrcLangPopup")] HRESULT SrcLangPopup([in] IDispatch *elem,[in] LONG x,[in] LONG y, [out, retval] BSTR *name);
+	[id(7), helpstring("method STILangPopup")] HRESULT STILangPopup([in] IDispatch *elem,[in] LONG x,[in] LONG y, [out, retval] BSTR *name);
+	[id(8), helpstring("method STISrcLangPopup")] HRESULT STISrcLangPopup([in] IDispatch *elem,[in] LONG x,[in] LONG y, [out, retval] BSTR *name);*/
+	[id(5), helpstring("method GetStylePath")] HRESULT GetStylePath([out, retval] BSTR *name);
+	[id(6), helpstring("method GetBinarySize")] HRESULT GetBinarySize([in] BSTR data, [out, retval] int *length);
+	[id(7), helpstring("method InflateParagraphs")] HRESULT InflateParagraphs([in] IDispatch *data);
+	[id(8), helpstring("method GetUUID")] HRESULT GetUUID([out, retval] BSTR *name);
+	[id(9), helpstring("method MsgBox")] HRESULT MsgBox([in] BSTR message);
+	[id(10), helpstring("method AskYesNo")] HRESULT AskYesNo([in] BSTR message, [out, retval] BOOL *pVal);
+	[id(11), helpstring("method SaveBinary")] HRESULT SaveBinary([in] BSTR path, [in] BSTR data, [out, retval] BOOL *pVal);
+	[id(12), helpstring("method GetExtendedStyle")] HRESULT GetExtendedStyle([in] BSTR elem, [out, retval] BOOL* ext);
+	[id(13), helpstring("method DescShowElement")] HRESULT DescShowElement([in] BSTR elem, [in]BOOL show);
+	[id(14), helpstring("method DescShowMenu")] HRESULT DescShowMenu([in] IDispatch *btn, [in] LONG x,[in] LONG y, [out, retval] BSTR *element_id);
+	[id(15), helpstring("method IsFastMode")] HRESULT IsFastMode([out, retval] BOOL* ext);
+	[id(16), helpstring("method SetStyleEx")] HRESULT SetStyleEx([in] IDispatch *doc, [in] IDispatch* elem, [in] BSTR style);
+  };
+};

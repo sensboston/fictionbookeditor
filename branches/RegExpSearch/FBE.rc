@@ -1,0 +1,1010 @@
+// Microsoft Visual C++ generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "atlres.h"
+#include "res1.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// Russian resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_RUS)
+#ifdef _WIN32
+LANGUAGE LANG_RUSSIAN, SUBLANG_DEFAULT
+#pragma code_page(1251)
+#endif //_WIN32
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+3 TEXTINCLUDE 
+BEGIN
+    "1 TYPELIB ""FBE.tlb""\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+#endif    // Russian resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.S.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO 
+BEGIN
+    IDD_SETTING_OTHER, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 248
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 221
+    END
+
+    IDD_TOOLS_SETTINGS, DIALOG
+    BEGIN
+        BOTTOMMARGIN, 255
+    END
+
+    IDD_TABLE, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 253
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 39
+    END
+
+    IDD_WORDS, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 309
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 234
+    END
+
+    IDD_OPTIONS, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 212
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 198
+    END
+
+    IDD_INPUTBOX, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 281
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 39
+    END
+
+    IDD_FIND, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 288
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 69
+    END
+
+    IDD_ABOUTBOX, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 212
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 128
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_SETTING_OTHER DIALOGEX 0, 0, 255, 228
+STYLE DS_SETFONT | WS_CHILD | WS_SYSMENU
+FONT 9, "Tahoma", 400, 0, 0xCC
+BEGIN
+    COMBOBOX        IDC_SHORTCUTS,63,10,142,76,CBS_DROPDOWNLIST | CBS_SORT | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Shortcuts:",IDC_STATIC,11,12,48,9
+    GROUPBOX        "Save File",IDC_STATIC,7,24,207,40
+    LTEXT           "Default encoding:",IDC_STATIC,11,36,60,9
+    CONTROL         "Keep Encoding",IDC_KEEP,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,10,48,63,10
+    COMBOBOX        IDC_DEFAULT_ENC,72,34,132,30,CBS_DROPDOWNLIST | CBS_SORT | WS_VSCROLL | WS_TABSTOP
+    GROUPBOX        "Open File",IDC_STATIC,7,66,208,24
+    CONTROL         "Restory Position",IDC_RESTORE_POS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,10,76,68,10
+    GROUPBOX        "Scripts folder",IDC_STATIC,7,96,208,42
+    CONTROL         "Default folder",IDC_DEFAULT_SCRIPTS_FOLDER,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,11,106,60,10
+    EDITTEXT        IDC_SCRIPTS_FOLDER_PATH,10,119,170,14,ES_AUTOHSCROLL
+    PUSHBUTTON      "...",IDC_SELECT_SCRIPTS_FOLDER_BUTTON,188,119,17,14
+    GROUPBOX        "Dialogs",IDC_STATIC,7,142,208,40
+    CONTROL         "Ask for non clear image insertion",IDC_SETTINGS_ASKIMAGE,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,12,153,112,10
+    CONTROL         "Notify script hotkeys conflicts",IDC_SCRIPTS_HK_NOTIFY,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,12,168,110,10
+    GROUPBOX        "Images",IDC_STATIC,7,186,208,24
+    CONTROL         "Insert clear images",IDC_OPTIONS_CLEARIMGS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,12,196,68,10
+END
+
+IDD_TOOLS_SETTINGS DIALOGEX 0, 0, 266, 270
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | DS_CENTER | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_APPWINDOW
+CAPTION "Settings"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "",IDC_TAB_CTRL,"SysTabControl32",0x0,0,0,265,251
+    PUSHBUTTON      "OK",IDOK,140,254,55,15
+    PUSHBUTTON      "Cancel",IDCANCEL,203,254,55,15
+END
+
+IDD_TABLE DIALOGEX 0, 0, 260, 46
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | DS_CENTER | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "????????? ???????"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,203,7,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,203,24,50,14
+    LTEXT           "????? ????? ??????? <tr><td></td></tr>:",IDC_STATIC,7,22,150,8
+    CONTROL         "???????? ?????? ?????????? <tr><th></th></tr>",IDC_CHECK_TABLE_TITLE,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,7,187,10
+    EDITTEXT        IDC_EDIT_TABLE_ROWS,157,19,35,14,ES_AUTOHSCROLL | ES_NUMBER
+    CONTROL         "",IDC_SPIN_TABLE_ROWS,"msctls_updown32",UDS_WRAP | UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS | UDS_NOTHOUSANDS,192,19,11,14
+END
+
+IDD_WORDS DIALOGEX 0, 0, 314, 241
+STYLE DS_SETFONT | DS_MODALFRAME | DS_CENTER | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Words"
+FONT 9, "Tahoma", 0, 0, 0x1
+BEGIN
+    CONTROL         "List1",IDC_WLIST,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_OWNERDATA | WS_TABSTOP,7,7,302,208,WS_EX_CLIENTEDGE
+    DEFPUSHBUTTON   "OK",IDOK,221,220,40,14
+    PUSHBUTTON      "Cancel",IDCANCEL,269,220,40,14
+    EDITTEXT        IDC_REDIT,7,224,41,10,ES_AUTOHSCROLL | NOT WS_VISIBLE | NOT WS_BORDER | NOT WS_TABSTOP,WS_EX_CLIENTEDGE
+END
+
+IDD_REPLACE DIALOGEX 0, 0, 295, 87
+STYLE DS_SETFONT | DS_MODALFRAME | DS_CENTER | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+CAPTION "Replace"
+FONT 9, "Tahoma", 0, 0, 0x0
+BEGIN
+    LTEXT           "Fi&nd what:",IDC_STATIC,7,9,45,8,NOT WS_GROUP
+    COMBOBOX        IDC_TEXT,53,7,179,62,CBS_DROPDOWN | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Replace with:",IDC_STATIC,7,25,45,8,NOT WS_GROUP
+    COMBOBOX        IDC_REPLACE,53,23,179,62,CBS_DROPDOWN | WS_VSCROLL | WS_TABSTOP
+    CONTROL         "Match &whole words",IDC_WHOLE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,41,98,13
+    CONTROL         "Match &case",IDC_MATCHCASE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,54,98,13
+    CONTROL         "Regular &expression",IDC_REGEXP,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,67,98,13
+    DEFPUSHBUTTON   "&Find Next",IDOK,238,7,50,14,WS_GROUP
+    PUSHBUTTON      "&Replace",IDC_REPLACE_ONE,238,25,50,14
+    PUSHBUTTON      "Replace &All",IDC_REPLACE_ALL,238,43,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,238,61,50,14
+END
+
+IDD_OPTIONS DIALOGEX 0, 0, 255, 218
+STYLE DS_SETFONT | WS_CHILD | WS_SYSMENU
+FONT 9, "Tahoma", 0, 0, 0x0
+BEGIN
+    LTEXT           "Text color:",IDC_STATIC,15,70,49,9
+    PUSHBUTTON      "",IDC_FG,67,67,31,12
+    LTEXT           "Background:",IDC_STATIC,15,81,49,9
+    PUSHBUTTON      "",IDC_BG,67,80,31,12
+    LTEXT           "Editor font:",IDC_STATIC,15,58,49,9
+    COMBOBOX        IDC_FONT,67,53,140,70,CBS_DROPDOWNLIST | CBS_SORT | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Font size:",IDC_STATIC,15,30,49,9
+    COMBOBOX        IDC_FONT_SIZE,67,28,56,70,CBS_DROPDOWN | WS_VSCROLL | WS_TABSTOP
+    GROUPBOX        "Common",IDC_STATIC,8,2,208,44
+    GROUPBOX        "Body",IDC_STATIC,8,46,208,70
+    GROUPBOX        "XML source editor",IDC_STATIC,8,117,208,46
+    CONTROL         "Wrap lines",IDC_WRAP,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,15,127,56,11
+    CONTROL         "Syntax highlighting",IDC_SYNTAXHL,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,15,138,87,11
+    CONTROL         "Show end of line marks",IDC_SHOWEOL,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,15,149,104,11
+    CONTROL         "Fast Mode",IDC_FAST_MODE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,15,100,101,11
+    LTEXT           "Language:",IDC_STATIC,15,15,48,8
+    COMBOBOX        IDC_LANG,67,13,138,30,CBS_DROPDOWNLIST | CBS_SORT | WS_VSCROLL | WS_TABSTOP
+END
+
+IDD_INPUTBOX DIALOG  0, 0, 288, 46
+STYLE DS_SETFONT | DS_MODALFRAME | DS_CENTER | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Input"
+FONT 9, "Tahoma"
+BEGIN
+    LTEXT           "Text:",IDC_PROMPT,7,7,221,10
+    EDITTEXT        IDC_INPUT,7,20,221,12,ES_AUTOHSCROLL
+    DEFPUSHBUTTON   "OK",IDOK,231,7,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,231,24,50,14
+END
+
+IDD_FIND DIALOG  0, 0, 295, 76
+STYLE DS_SETFONT | DS_MODALFRAME | DS_CENTER | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+CAPTION "Find"
+FONT 9, "Tahoma"
+BEGIN
+    LTEXT           "Fi&nd what:",IDC_STATIC,7,9,40,8
+    COMBOBOX        IDC_TEXT,49,7,183,62,CBS_DROPDOWN | WS_VSCROLL | WS_GROUP | WS_TABSTOP
+    CONTROL         "Match &whole words",IDC_WHOLE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,30,98,13
+    CONTROL         "Match &case",IDC_MATCHCASE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,43,98,13
+    CONTROL         "Regular &expression",IDC_REGEXP,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,56,98,13
+    GROUPBOX        "Direction",IDC_STATIC,172,30,60,38,WS_GROUP
+    CONTROL         "&Up",IDC_UP,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,179,41,44,11
+    CONTROL         "&Down",IDC_DOWN,"Button",BS_AUTORADIOBUTTON,179,52,44,11
+    DEFPUSHBUTTON   "&Find Next",IDOK,238,7,50,14,WS_GROUP
+    PUSHBUTTON      "Cancel",IDCANCEL,238,24,50,14
+END
+
+IDD_CUSTOMSAVEDLG DIALOGEX 0, 0, 415, 18
+STYLE DS_SETFONT | DS_3DLOOK | DS_CONTROL | WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN
+FONT 8, "Tahoma", 0, 0, 0x0
+BEGIN
+    LTEXT           "Encoding:",IDC_STATIC,68,2,41,10
+    COMBOBOX        IDC_ENCODING,130,0,164,104,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+END
+
+IDD_ABOUTBOX DIALOGEX 0, 0, 219, 135
+STYLE DS_SETFONT | DS_MODALFRAME | DS_CENTER | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "About"
+FONT 9, "Tahoma", 0, 0, 0x0
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,105,114,50,14
+    CONTROL         "FictionBook Editor v. 2.0 beta",IDC_STATIC_AB_APPNAMEVER,
+                    "Static",SS_LEFTNOWORDWRAP | WS_GROUP,94,14,95,9
+    ICON            IDR_MAINFRAME,IDC_STATIC_AB_APPICON,72,14,20,20
+    RTEXT           "Build",IDC_STATIC,93,24,16,8
+    LTEXT           "",IDC_BUILDSTAMP,112,24,85,8
+    LTEXT           "© 2003 Mike Matsnev\n© 2008 LitRes\n\nModification by: Pilgrim, Hose\nSupported by: Hose, KVS",IDC_STATIC_AB_CONTRIBUTORS,94,42,116,43
+    CONTROL         248,IDC_AB_BANNER,"Static",SS_BITMAP | SS_REALSIZEIMAGE,7,7,56,123,WS_EX_CLIENTEDGE
+    CONTROL         "<a href=""http://fbe.litres.ru/"">http://fbe.litres.ru/</a>\n<a href=""mailto:fbe@litres.ru"">fbe@litres.ru</a>",IDC_SYSLINK_AB_LINKS,
+                    "SysLink",WS_TABSTOP,116,89,60,19
+    LTEXT           "Site:\nE-mail:",IDC_STATIC_AB_LINKS,94,89,21,18
+END
+
+IDD_ADDIMAGE DIALOGEX 0, 0, 147, 66
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Choose"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "Yes",IDYES,21,31,49,14
+    PUSHBUTTON      "No",IDNO,77,31,49,14
+    CONTROL         "Don't ask again",IDC_ADDIMAGE_ASKAGAIN,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,41,53,64,10
+    LTEXT           "Insert clear image?",IDS_ADD_CLEARIMG_TEXT,46,12,65,8
+    ICON            IDR_MAINFRAME,IDC_ADDIMAGE_ICON,19,6,21,20
+END
+
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE 
+BEGIN
+    "#include ""atlres.h""\r\n"
+    "#include ""res1.h""\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDR_MAINFRAME           ICON                    "res\\FBE.ico"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Toolbar
+//
+
+IDR_MAINFRAME TOOLBAR  24, 24
+BEGIN
+    BUTTON      ID_FILE_NEW
+    BUTTON      ID_FILE_OPEN
+    BUTTON      ID_FILE_SAVE
+    SEPARATOR
+    BUTTON      ID_FILE_VALIDATE
+    SEPARATOR
+    BUTTON      ID_VIEW_DESC
+    BUTTON      ID_VIEW_BODY
+    BUTTON      ID_VIEW_SOURCE
+    SEPARATOR
+    BUTTON      ID_EDIT_ADDBINARY
+    BUTTON      ID_EDIT_INS_IMAGE
+    SEPARATOR
+    BUTTON      ID_EDIT_FIND
+    BUTTON      ID_EDIT_FINDNEXT
+    SEPARATOR
+    BUTTON      ID_EDIT_CUT
+    BUTTON      ID_EDIT_COPY
+    BUTTON      ID_EDIT_PASTE
+    SEPARATOR
+    BUTTON      ID_EDIT_UNDO
+    BUTTON      ID_EDIT_REDO
+    SEPARATOR
+    BUTTON      ID_EDIT_BOLD
+    BUTTON      ID_EDIT_ITALIC
+    BUTTON      ID_EDIT_SUP
+    BUTTON      ID_EDIT_SUB
+    BUTTON      ID_EDIT_STRIK
+    BUTTON      ID_EDIT_CODE
+    SEPARATOR
+    BUTTON      ID_STYLE_LINK
+    BUTTON      ID_STYLE_NOTE
+    BUTTON      ID_STYLE_NOLINK
+    BUTTON      ID_GOTO_FOOTNOTE
+    BUTTON      ID_GOTO_REFERENCE
+    SEPARATOR
+    BUTTON      ID_STYLE_NORMAL
+    BUTTON      ID_STYLE_SUBTITLE
+    BUTTON      ID_STYLE_TEXTAUTHOR
+END
+
+IDR_MAINFRAME_SMALL TOOLBAR  16, 15
+BEGIN
+    BUTTON      ID_FILE_NEW
+    BUTTON      ID_FILE_OPEN
+    BUTTON      ID_FILE_SAVE
+    SEPARATOR
+    BUTTON      ID_FILE_VALIDATE
+    SEPARATOR
+    BUTTON      ID_VIEW_DESC
+    BUTTON      ID_VIEW_BODY
+    BUTTON      ID_VIEW_SOURCE
+    SEPARATOR
+    BUTTON      ID_EDIT_ADDBINARY
+    SEPARATOR
+    BUTTON      ID_EDIT_FIND
+    BUTTON      ID_EDIT_FINDNEXT
+    SEPARATOR
+    BUTTON      ID_EDIT_CUT
+    BUTTON      ID_EDIT_COPY
+    BUTTON      ID_EDIT_PASTE
+    SEPARATOR
+    BUTTON      ID_EDIT_UNDO
+    BUTTON      ID_EDIT_REDO
+    SEPARATOR
+    BUTTON      ID_EDIT_BOLD
+    BUTTON      ID_EDIT_ITALIC
+    BUTTON      ID_EDIT_SUP
+    BUTTON      ID_EDIT_SUB
+    BUTTON      ID_EDIT_STRIK
+    BUTTON      ID_EDIT_CODE
+    SEPARATOR
+    BUTTON      ID_STYLE_LINK
+    BUTTON      ID_STYLE_NOTE
+    BUTTON      ID_STYLE_NOLINK
+    BUTTON      ID_GOTO_FOOTNOTE
+    BUTTON      ID_GOTO_REFERENCE
+    SEPARATOR
+    BUTTON      ID_STYLE_NORMAL
+    BUTTON      ID_STYLE_SUBTITLE
+    BUTTON      ID_STYLE_TEXTAUTHOR
+    SEPARATOR
+    BUTTON      ID_EDIT_INS_IMAGE
+END
+
+IDR_EXTRAICONS TOOLBAR  16, 15
+BEGIN
+    BUTTON      ID_VIEW_OPTIONS
+    BUTTON      ID_EDIT_REPLACE
+    BUTTON      ID_FILE_VALIDATE
+    BUTTON      ID_EDIT_ADD_IMAGE
+END
+
+IDR_DOCUMENT_TREE TOOLBAR  24, 24
+BEGIN
+    BUTTON      ID_DOCUMENT_TREE_CUT
+    BUTTON      ID_DOCUMENT_TREE_PASTE
+    BUTTON      ID_DT_DELETE
+    BUTTON      ID_DT_RIGHT
+    BUTTON      ID_DT_LEFT
+    BUTTON      ID_DT_RIGHT_WITH_CHILDREN
+    BUTTON      ID_DT_RIGHT_ONE
+    BUTTON      ID_DT_RIGHT_SMART
+    BUTTON      ID_DT_LEFT
+    BUTTON      ID_DT_MERGE
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Bitmap
+//
+
+IDR_MAINFRAME           BITMAP                  "res\\Toolbar.bmp"
+IDR_MAINFRAME_SMALL     BITMAP                  "res\\Toolbar_small.bmp"
+IDR_EXTRAICONS          BITMAP                  "res\\ExtraIcons.bmp"
+IDB_STRUCTURE           BITMAP                  "res\\struct.bmp"
+IDB_WORDSTATES          BITMAP                  "res\\wordstat.bmp"
+IDR_DOCUMENT_TREE       BITMAP                  "res\\document.bmp"
+IDB_AB_BANNER           BITMAP                  "res\\Fb2-shema.bmp"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Accelerator
+//
+
+IDR_MAINFRAME ACCELERATORS 
+BEGIN
+    "J",            ID_EDIT_ADD_ANN,        VIRTKEY, CONTROL, NOINVERT
+    "B",            ID_EDIT_ADD_BODY,       VIRTKEY, ALT, NOINVERT
+    "N",            ID_EDIT_ADD_EPIGRAPH,   VIRTKEY, CONTROL, NOINVERT
+    "G",            ID_EDIT_ADD_IMAGE,      VIRTKEY, CONTROL, NOINVERT
+    "D",            ID_EDIT_ADD_TA,         VIRTKEY, CONTROL, NOINVERT
+    "T",            ID_EDIT_ADD_TITLE,      VIRTKEY, CONTROL, NOINVERT
+    "B",            ID_EDIT_BOLD,           VIRTKEY, CONTROL, NOINVERT
+    VK_RETURN,      ID_EDIT_CLONE,          VIRTKEY, CONTROL, NOINVERT
+    "C",            ID_EDIT_COPY,           VIRTKEY, CONTROL, NOINVERT
+    VK_INSERT,      ID_EDIT_COPY,           VIRTKEY, CONTROL, NOINVERT
+    VK_DELETE,      ID_EDIT_CUT,            VIRTKEY, SHIFT, NOINVERT
+    "X",            ID_EDIT_CUT,            VIRTKEY, CONTROL, NOINVERT
+    "F",            ID_EDIT_FIND,           VIRTKEY, CONTROL, NOINVERT
+    VK_F3,          ID_EDIT_FINDNEXT,       VIRTKEY, NOINVERT
+    "I",            ID_EDIT_INCSEARCH,      VIRTKEY, ALT, NOINVERT
+    "C",            ID_EDIT_INS_CITE,       VIRTKEY, ALT, NOINVERT
+    "M",            ID_EDIT_INS_IMAGE,      VIRTKEY, CONTROL, NOINVERT
+    "P",            ID_EDIT_INS_POEM,       VIRTKEY, CONTROL, NOINVERT
+    "E",            ID_EDIT_ITALIC,         VIRTKEY, CONTROL, NOINVERT
+    "I",            ID_EDIT_ITALIC,         VIRTKEY, CONTROL, NOINVERT
+    VK_DELETE,      ID_EDIT_MERGE,          VIRTKEY, ALT, NOINVERT
+    "V",            ID_EDIT_PASTE,          VIRTKEY, CONTROL, NOINVERT
+    VK_INSERT,      ID_EDIT_PASTE,          VIRTKEY, SHIFT, NOINVERT
+    "Y",            ID_EDIT_REDO,           VIRTKEY, CONTROL, NOINVERT
+    "H",            ID_EDIT_REPLACE,        VIRTKEY, CONTROL, NOINVERT
+    "R",            ID_EDIT_REPLACE,        VIRTKEY, CONTROL, NOINVERT
+    VK_RETURN,      ID_EDIT_SPLIT,          VIRTKEY, SHIFT, NOINVERT
+    VK_BACK,        ID_EDIT_UNDO,           VIRTKEY, ALT, NOINVERT
+    "Z",            ID_EDIT_UNDO,           VIRTKEY, CONTROL, NOINVERT
+    "O",            ID_FILE_OPEN,           VIRTKEY, CONTROL, NOINVERT
+    "S",            ID_FILE_SAVE,           VIRTKEY, CONTROL, NOINVERT
+    VK_F2,          ID_FILE_SAVE,           VIRTKEY, NOINVERT
+    VK_F2,          ID_FILE_SAVE_AS,        VIRTKEY, SHIFT, NOINVERT
+    VK_F2,          ID_FILE_SAVE_AS,        VIRTKEY, SHIFT, NOINVERT
+    VK_F8,          ID_FILE_VALIDATE,       VIRTKEY, NOINVERT
+    VK_BACK,        ID_GOTO_REFERENCE,      VIRTKEY, CONTROL, NOINVERT
+    "T",            ID_INSERT_TABLE,        VIRTKEY, ALT, NOINVERT
+    VK_TAB,         ID_NEXT_ITEM,           VIRTKEY, CONTROL, NOINVERT
+    "1",            ID_SCI_COLLAPSE1,       VIRTKEY, ALT, NOINVERT
+    "2",            ID_SCI_COLLAPSE2,       VIRTKEY, ALT, NOINVERT
+    "3",            ID_SCI_COLLAPSE3,       VIRTKEY, ALT, NOINVERT
+    "4",            ID_SCI_COLLAPSE4,       VIRTKEY, ALT, NOINVERT
+    "5",            ID_SCI_COLLAPSE5,       VIRTKEY, ALT, NOINVERT
+    "6",            ID_SCI_COLLAPSE6,       VIRTKEY, ALT, NOINVERT
+    "7",            ID_SCI_COLLAPSE7,       VIRTKEY, ALT, NOINVERT
+    "8",            ID_SCI_COLLAPSE8,       VIRTKEY, ALT, NOINVERT
+    "9",            ID_SCI_COLLAPSE9,       VIRTKEY, ALT, NOINVERT
+    "1",            ID_SCI_EXPAND1,         VIRTKEY, SHIFT, ALT, NOINVERT
+    "2",            ID_SCI_EXPAND2,         VIRTKEY, SHIFT, ALT, NOINVERT
+    "3",            ID_SCI_EXPAND3,         VIRTKEY, SHIFT, ALT, NOINVERT
+    "4",            ID_SCI_EXPAND4,         VIRTKEY, SHIFT, ALT, NOINVERT
+    "5",            ID_SCI_EXPAND5,         VIRTKEY, SHIFT, ALT, NOINVERT
+    "6",            ID_SCI_EXPAND6,         VIRTKEY, SHIFT, ALT, NOINVERT
+    "7",            ID_SCI_EXPAND7,         VIRTKEY, SHIFT, ALT, NOINVERT
+    "8",            ID_SCI_EXPAND8,         VIRTKEY, SHIFT, ALT, NOINVERT
+    "9",            ID_SCI_EXPAND9,         VIRTKEY, SHIFT, ALT, NOINVERT
+    "H",            ID_SELECT_HREF,         VIRTKEY, ALT, NOINVERT
+    "I",            ID_SELECT_ID,           VIRTKEY, ALT, NOINVERT
+    "I",            ID_SELECT_IDT,          VIRTKEY, CONTROL, ALT, NOINVERT
+    VK_ESCAPE,      ID_SELECT_TEXT,         VIRTKEY, NOINVERT
+    "Q",            ID_SELECT_TREE,         VIRTKEY, ALT, NOINVERT
+    "L",            ID_STYLE_LINK,          VIRTKEY, CONTROL, NOINVERT
+    "U",            ID_STYLE_NOLINK,        VIRTKEY, CONTROL, NOINVERT
+    "N",            ID_STYLE_NORMAL,        VIRTKEY, ALT, NOINVERT
+    "W",            ID_STYLE_NOTE,          VIRTKEY, CONTROL, NOINVERT
+    "S",            ID_STYLE_SUBTITLE,      VIRTKEY, ALT, NOINVERT
+    "A",            ID_STYLE_TEXTAUTHOR,    VIRTKEY, ALT, NOINVERT
+    VK_F2,          ID_VIEW_BODY,           VIRTKEY, ALT, NOINVERT
+    VK_F1,          ID_VIEW_DESC,           VIRTKEY, ALT, NOINVERT
+    VK_F9,          ID_VIEW_HTML,           VIRTKEY, NOINVERT
+    VK_F3,          ID_VIEW_SOURCE,         VIRTKEY, ALT, NOINVERT
+    VK_F5,          IDCANCEL,               VIRTKEY, NOINVERT
+    "S",            ID_LAST_SCRIPT,         VIRTKEY, SHIFT, CONTROL, NOINVERT
+END
+
+IDR_MAINFRAME_FBW_SHORTCUTS ACCELERATORS 
+BEGIN
+    "J",            ID_EDIT_ADD_ANN,        VIRTKEY, CONTROL, NOINVERT
+    "B",            ID_EDIT_ADD_BODY,       VIRTKEY, ALT, NOINVERT
+    "G",            ID_EDIT_ADD_EPIGRAPH,   VIRTKEY, ALT, NOINVERT
+    "G",            ID_EDIT_ADD_IMAGE,      VIRTKEY, CONTROL, NOINVERT
+    "D",            ID_EDIT_ADD_TA,         VIRTKEY, CONTROL, NOINVERT
+    "T",            ID_EDIT_ADD_TITLE,      VIRTKEY, ALT, NOINVERT
+    VK_RETURN,      ID_EDIT_CLONE,          VIRTKEY, CONTROL, NOINVERT
+    "C",            ID_EDIT_COPY,           VIRTKEY, CONTROL, NOINVERT
+    VK_INSERT,      ID_EDIT_COPY,           VIRTKEY, CONTROL, NOINVERT
+    VK_DELETE,      ID_EDIT_CUT,            VIRTKEY, SHIFT, NOINVERT
+    "X",            ID_EDIT_CUT,            VIRTKEY, CONTROL, NOINVERT
+    "F",            ID_EDIT_FIND,           VIRTKEY, CONTROL, NOINVERT
+    VK_F3,          ID_EDIT_FINDNEXT,       VIRTKEY, NOINVERT
+    "C",            ID_EDIT_INS_CITE,       VIRTKEY, ALT, NOINVERT
+    "M",            ID_EDIT_INS_IMAGE,      VIRTKEY, CONTROL, NOINVERT
+    "P",            ID_EDIT_INS_POEM,       VIRTKEY, ALT, NOINVERT
+    "I",            ID_EDIT_ITALIC,         VIRTKEY, CONTROL, NOINVERT
+    VK_DELETE,      ID_EDIT_MERGE,          VIRTKEY, ALT, NOINVERT
+    "V",            ID_EDIT_PASTE,          VIRTKEY, CONTROL, NOINVERT
+    VK_INSERT,      ID_EDIT_PASTE,          VIRTKEY, SHIFT, NOINVERT
+    "Y",            ID_EDIT_REDO,           VIRTKEY, CONTROL, NOINVERT
+    "H",            ID_EDIT_REPLACE,        VIRTKEY, CONTROL, NOINVERT
+    "R",            ID_EDIT_REPLACE,        VIRTKEY, CONTROL, NOINVERT
+    VK_RETURN,      ID_EDIT_SPLIT,          VIRTKEY, SHIFT, NOINVERT
+    VK_BACK,        ID_EDIT_UNDO,           VIRTKEY, ALT, NOINVERT
+    "Z",            ID_EDIT_UNDO,           VIRTKEY, CONTROL, NOINVERT
+    "O",            ID_FILE_OPEN,           VIRTKEY, CONTROL, NOINVERT
+    "S",            ID_FILE_SAVE,           VIRTKEY, CONTROL, NOINVERT
+    VK_F2,          ID_FILE_SAVE,           VIRTKEY, NOINVERT
+    VK_F2,          ID_FILE_SAVE_AS,        VIRTKEY, SHIFT, NOINVERT
+    VK_F8,          ID_FILE_VALIDATE,       VIRTKEY, NOINVERT
+    VK_BACK,        ID_GOTO_REFERENCE,      VIRTKEY, CONTROL, NOINVERT
+    "T",            ID_INSERT_TABLE,        VIRTKEY, CONTROL, NOINVERT
+    VK_TAB,         ID_NEXT_ITEM,           VIRTKEY, CONTROL, NOINVERT
+    "1",            ID_SCI_COLLAPSE1,       VIRTKEY, ALT, NOINVERT
+    "2",            ID_SCI_COLLAPSE2,       VIRTKEY, ALT, NOINVERT
+    "3",            ID_SCI_COLLAPSE3,       VIRTKEY, ALT, NOINVERT
+    "4",            ID_SCI_COLLAPSE4,       VIRTKEY, ALT, NOINVERT
+    "5",            ID_SCI_COLLAPSE5,       VIRTKEY, ALT, NOINVERT
+    "6",            ID_SCI_COLLAPSE6,       VIRTKEY, ALT, NOINVERT
+    "7",            ID_SCI_COLLAPSE7,       VIRTKEY, ALT, NOINVERT
+    "8",            ID_SCI_COLLAPSE8,       VIRTKEY, ALT, NOINVERT
+    "9",            ID_SCI_COLLAPSE9,       VIRTKEY, ALT, NOINVERT
+    "1",            ID_SCI_EXPAND1,         VIRTKEY, SHIFT, ALT, NOINVERT
+    "2",            ID_SCI_EXPAND2,         VIRTKEY, SHIFT, ALT, NOINVERT
+    "3",            ID_SCI_EXPAND3,         VIRTKEY, SHIFT, ALT, NOINVERT
+    "4",            ID_SCI_EXPAND4,         VIRTKEY, SHIFT, ALT, NOINVERT
+    "5",            ID_SCI_EXPAND5,         VIRTKEY, SHIFT, ALT, NOINVERT
+    "6",            ID_SCI_EXPAND6,         VIRTKEY, SHIFT, ALT, NOINVERT
+    "7",            ID_SCI_EXPAND7,         VIRTKEY, SHIFT, ALT, NOINVERT
+    "8",            ID_SCI_EXPAND8,         VIRTKEY, SHIFT, ALT, NOINVERT
+    "9",            ID_SCI_EXPAND9,         VIRTKEY, SHIFT, ALT, NOINVERT
+    "H",            ID_SELECT_HREF,         VIRTKEY, ALT, NOINVERT
+    "I",            ID_SELECT_ID,           VIRTKEY, ALT, NOINVERT
+    "I",            ID_SELECT_IDT,          VIRTKEY, CONTROL, ALT, NOINVERT
+    VK_ESCAPE,      ID_SELECT_TEXT,         VIRTKEY, NOINVERT
+    "Q",            ID_SELECT_TREE,         VIRTKEY, ALT, NOINVERT
+    "L",            ID_STYLE_LINK,          VIRTKEY, CONTROL, NOINVERT
+    "U",            ID_STYLE_NOLINK,        VIRTKEY, CONTROL, NOINVERT
+    "N",            ID_STYLE_NORMAL,        VIRTKEY, ALT, NOINVERT
+    "W",            ID_STYLE_NOTE,          VIRTKEY, CONTROL, NOINVERT
+    "S",            ID_STYLE_SUBTITLE,      VIRTKEY, ALT, NOINVERT
+    "A",            ID_STYLE_TEXTAUTHOR,    VIRTKEY, ALT, NOINVERT
+    VK_F2,          ID_VIEW_BODY,           VIRTKEY, ALT, NOINVERT
+    VK_F1,          ID_VIEW_DESC,           VIRTKEY, ALT, NOINVERT
+    VK_F9,          ID_VIEW_HTML,           VIRTKEY, NOINVERT
+    VK_F3,          ID_VIEW_SOURCE,         VIRTKEY, ALT, NOINVERT
+    VK_F5,          IDCANCEL,               VIRTKEY, NOINVERT
+    VK_F2,          ID_FILE_SAVE_AS,        VIRTKEY, SHIFT, NOINVERT
+    "B",            ID_EDIT_BOLD,           VIRTKEY, CONTROL, NOINVERT
+    "O",            ID_EDIT_ADDBINARY,      VIRTKEY, ALT, NOINVERT
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Version
+//
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION 2,0,0,0
+ PRODUCTVERSION 2,0,0,0
+ FILEFLAGSMASK 0x3fL
+#ifdef _DEBUG
+ FILEFLAGS 0x1L
+#else
+ FILEFLAGS 0x0L
+#endif
+ FILEOS 0x4L
+ FILETYPE 0x1L
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904b0"
+        BEGIN
+            VALUE "CompanyName", "LitRes"
+            VALUE "FileDescription", "FictionBook Editor"
+            VALUE "FileVersion", "2, 0, 0, 0"
+            VALUE "InternalName", "FBE"
+            VALUE "LegalCopyright", "Copyright 2003 Mike Matsnev, 2008 LitRes"
+            VALUE "OriginalFilename", "FBE.exe"
+            VALUE "ProductName", "FictionBook Editor"
+            VALUE "ProductVersion", "2, 0, 0, 0"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x409, 1200
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// RT_MANIFEST
+//
+
+1                       RT_MANIFEST             "res\\FBE.exe.manifest"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Menu
+//
+
+IDR_MAINFRAME MENU 
+BEGIN
+    POPUP "&File"
+    BEGIN
+        MENUITEM "&New",                        ID_FILE_NEW
+        MENUITEM "&Open...\tCtrl+O",            ID_FILE_OPEN
+        MENUITEM "&Save\tF2",                   ID_FILE_SAVE
+        MENUITEM "Save &As...\tShift+F2",       ID_FILE_SAVE_AS
+        MENUITEM "&Validate\tF8",               ID_FILE_VALIDATE
+        MENUITEM SEPARATOR
+        POPUP "&Import"
+        BEGIN
+            MENUITEM "No import plugins installed", IDCANCEL
+        END
+        POPUP "&Export"
+        BEGIN
+            MENUITEM "No export plugins installed", IDCANCEL
+        END
+        MENUITEM SEPARATOR
+        POPUP "&Recent Files"
+        BEGIN
+            MENUITEM "No Recent Files",             ID_FILE_MRU_FIRST, INACTIVE
+        END
+        MENUITEM SEPARATOR
+        MENUITEM "E&xit",                       ID_APP_EXIT
+    END
+    POPUP "&Edit"
+    BEGIN
+        MENUITEM "&Undo\tCtrl+Z",               ID_EDIT_UNDO
+        MENUITEM "&Redo\tCtrl+Y",               ID_EDIT_REDO
+        MENUITEM SEPARATOR
+        MENUITEM "Cu&t\tCtrl+X",                ID_EDIT_CUT
+        MENUITEM "&Copy\tCtrl+C",               ID_EDIT_COPY
+        MENUITEM "&Paste\tCtrl+V",              ID_EDIT_PASTE
+        MENUITEM SEPARATOR
+        MENUITEM "&Find...\tCtrl+F",            ID_EDIT_FIND
+        MENUITEM "Find &Next\tF3",              ID_EDIT_FINDNEXT
+        MENUITEM "R&eplace...\tCtrl+H",         ID_EDIT_REPLACE
+        MENUITEM SEPARATOR
+        MENUITEM "C&lone container\tCtrl+Enter", ID_EDIT_CLONE
+        MENUITEM "Sp&lit container\tShift+Enter", ID_EDIT_SPLIT
+        MENUITEM "&Merge containers\tAlt+Delelte", ID_EDIT_MERGE
+        MENUITEM "Remove outer container",      ID_EDIT_REMOVE_OUTER_SECTION
+        MENUITEM SEPARATOR
+        MENUITEM "Add &Binary Object...",       ID_EDIT_ADDBINARY
+    END
+    POPUP "&View"
+    BEGIN
+        MENUITEM "&Toolbar",                    60161
+        MENUITEM "&Links Bar",                  60162
+        MENUITEM "Table Bar",                   60163
+        MENUITEM "&Status Bar",                 ID_VIEW_STATUS_BAR
+        MENUITEM "&Document Tree",              ID_VIEW_TREE
+        MENUITEM SEPARATOR
+        MENUITEM "D&escriptionl\tAlt+F1",       ID_VIEW_DESC
+        MENUITEM "&Body\tAlt+F2",               ID_VIEW_BODY
+        MENUITEM "So&urce\tAlt+F3",             ID_VIEW_SOURCE
+        MENUITEM SEPARATOR
+        MENUITEM "Fast Mode",                   ID_VIEW_FASTMODE
+        MENUITEM SEPARATOR
+    END
+    POPUP "&Add"
+    BEGIN
+        MENUITEM "&Body\tAlt+B",                ID_EDIT_ADD_BODY
+        MENUITEM "&Title\tCtrl+T",              ID_EDIT_ADD_TITLE
+        MENUITEM "&Epigraph\tCtrl+N",           ID_EDIT_ADD_EPIGRAPH
+        MENUITEM "A&nnotation\tCtrl+J",         ID_EDIT_ADD_ANN
+        MENUITEM SEPARATOR
+        MENUITEM "T&ext author\tCtrl+D",        ID_EDIT_ADD_TA
+        MENUITEM "&Image\tCtrl+M",              ID_EDIT_INS_IMAGE
+        MENUITEM "&Poem\tCtrl+P",               ID_EDIT_INS_POEM
+        MENUITEM "&Cite\tAlt+C",                ID_EDIT_INS_CITE
+        MENUITEM "T&able\tAlt+T",               ID_INSERT_TABLE
+        MENUITEM "&Section image\tCtrl+G",      ID_EDIT_ADD_IMAGE
+    END
+    POPUP "&Style"
+    BEGIN
+        MENUITEM "&Normal\tAlt+N",              ID_STYLE_NORMAL
+        MENUITEM "Text &Author\tAlt+A",         ID_STYLE_TEXTAUTHOR
+        MENUITEM "&Subtitle\tAlt+S",            ID_STYLE_SUBTITLE
+        MENUITEM SEPARATOR
+        MENUITEM "&Link...\tCtrl+L",            ID_STYLE_LINK
+        MENUITEM "&Footnote...\tCtrl+W",        ID_STYLE_NOTE
+        MENUITEM "&Remove link\tCtrl+U",        ID_STYLE_NOLINK
+    END
+    POPUP "&Goto"
+    BEGIN
+        MENUITEM "Note",                        ID_GOTO_FOOTNOTE
+        MENUITEM "Note Reference",              ID_GOTO_REFERENCE
+    END
+    POPUP "&Tools"
+    BEGIN
+        MENUITEM "&Words...",                   ID_TOOLS_WORDS
+        MENUITEM "&Options...",                 ID_VIEW_OPTIONS
+    END
+    POPUP "&Scripts"
+    BEGIN
+        MENUITEM "No scripts found",            IDCANCEL, INACTIVE
+    END
+    POPUP "&Help"
+    BEGIN
+        MENUITEM "&About FBE...",               ID_APP_ABOUT
+    END
+END
+
+IDR_DOCUMENT_TREE MENU 
+BEGIN
+    POPUP "DT"
+    BEGIN
+        MENUITEM "View",                        ID_DT_VIEW
+        MENUITEM "View Source",                 ID_DT_VIEWSOURCE
+        MENUITEM SEPARATOR
+        MENUITEM "Move Right",                  ID_DT_RIGHT_ONE
+        MENUITEM "Move With Children",          ID_DT_RIGHT_SMART
+        MENUITEM "Move Left",                   ID_DT_LEFT
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE 
+BEGIN
+    ID_VIEW_SOURCE          "Show document source code\nSource  (Alt+F3)"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_INSERT_TABLE         "Insert an table at cursor\nInsert table"
+    ID_GOTO_FOOTNOTE        "??????? ?? ????? ??????\n??????? ?? ????? ??????(Alt+Click)"
+    ID_GOTO_REFERENCE       "??????? ?? ?????, ??????? ????????? ?? ??? ??????\n??????? ?? ?????? ??????(Ctrl+BACK)"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_EDIT_ADD_TA          "Add a text author paragraph to the selected container\nAdd text author"
+    ID_EDIT_MERGE           "Merge selected container with next\nMerge containers"
+    ID_EDIT_INS_CITE        "Replace selection with a cite container\nInsert cite"
+    ID_EDIT_STRIK           "Marks the selection """"strikethrough"""" (toggle)\nStrikethrough"
+    ID_EDIT_SUB             "Marks the selection """"sub"""" (toggle)\nSub"
+    ID_EDIT_SUP             "Marks the selection """"sup"""" (toggle)\nSup"
+    ID_EDIT_CODE            "Marks the selection """"code"""" (toggle)\nCode"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_EDIT_ADD_TITLE       "Add a title to the selected object\nAdd title"
+    ID_EDIT_ADD_BODY        "Add a new body to the document\nAdd body"
+    ID_EDIT_CLONE           "Clone selected object\nClone"
+    ID_EDIT_INS_IMAGE       "Insert an image at cursor\nInsert image"
+    ID_FILE_VALIDATE        "Validate current document against FictionBook schema\nValidate"
+    ID_EDIT_ADD_EPIGRAPH    "Add epigraph to selected object\nAdd epigraph"
+    ID_EDIT_ADD_IMAGE       "Add an image to the selected object\nAdd image"
+    ID_EDIT_ADD_ANN         "Add annotation to the selected obejct\nAdd annotation"
+    ID_EDIT_SPLIT           "Split parent container at selection\nSplit container"
+    ID_EDIT_INS_POEM        "Replace selection with a poem container\nInsert poem"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_VIEW_TREE            "Show or hide the document tree\nToggle document tree"
+    IDS_PANE_INS            "INS"
+    IDS_PANE_OVR            "OVR"
+    IDS_DOC_TREE_CLEANUP    "Clean"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_VIEW_STATUS_BAR      "Show or hide the status bar\nToggle StatusBar"
+END
+
+STRINGTABLE 
+BEGIN
+    60161                   "Show or hide the toolbar\nToggle ToolBar"
+    60162                   "Show or hide the links bar\nToggle LinksBar"
+    60163                   "Show or hide the table bar\nToggle TableBar"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_STYLE_NORMAL         "Normal paragraph style\nNormal"
+    ID_STYLE_TEXTAUTHOR     "Text author paragraph style\nText author"
+    ID_STYLE_SUBTITLE       "Subtitle paragraph style\nSubtitle"
+    ID_VIEW_OPTIONS         "Display options\nDisplay options"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_EDIT_BOLD            "Marks the selection ""strong"" (toggle)\nStrong"
+    ID_EDIT_ITALIC          "Marks the selection ""emphasis"" (toggle)\nEmphasis"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_STYLE_LINK           "Add a hyperlink\nHyperlink"
+    ID_STYLE_NOTE           "Add a footnote\nFootnote"
+    ID_EDIT_FINDNEXT        "Repeats the last find\nFind next"
+    ID_VIEW_DESC            "Show document description\nDescription (Alt+F1)"
+    ID_VIEW_BODY            "Show document body\nBody (Alt+F2)"
+    ID_STYLE_NOLINK         "Remove links from selected text\nRemove links"
+    ID_EDIT_ADDBINARY       "Add a new binary object to the document\nAdd binary object"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_EDIT_COPY            "Copy the selection and put it on the Clipboard\nCopy"
+    ID_EDIT_CUT             "Cut the selection and put it on the Clipboard\nCut"
+    ID_EDIT_FIND            "Find the specified text\nFind"
+    ID_EDIT_PASTE           "Insert Clipboard contents\nPaste"
+    ID_EDIT_REPLACE         "Replace specific text with different text\nReplace"
+    ID_EDIT_UNDO            "Undo the last action\nUndo"
+    ID_EDIT_REDO            "Redo the previously undone action\nRedo"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_APP_ABOUT            "Display program information, version number and copyright\nAbout"
+    ID_APP_EXIT             "Quit the application; prompts to save documents\nExit"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_FILE_NEW             "Create a new document\nNew"
+    ID_FILE_OPEN            "Open an existing document\nOpen"
+    ID_FILE_SAVE            "Save the active document\nSave"
+    ID_FILE_SAVE_AS         "Save the active document with a new name\nSave As"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_CHOOSE_SCRIPTS_FLD  "Specify scripts folder"
+    IDS_SCRIPT_HOTKEY_CONFLICT 
+                            "Script\n%s\n returned a virtual-key that conflicts with previously loaded script\n %s"
+    ID_PANE_INS             "OVR"
+END
+
+STRINGTABLE 
+BEGIN
+    ATL_IDS_IDLEMESSAGE     "Ready"
+END
+
+STRINGTABLE 
+BEGIN
+    ATL_IDS_MRU_FILE        "Open this document"
+    IDS_ENCODINGS           "utf-8,utf-16,windows-1251,windows-1252,iso-8859-1,iso-8859-2,iso-8859-5,iso-8859-15,koi8-r"
+    IDS_DOCUMENT_TREE_CAPTION "Document Tree"
+END
+
+STRINGTABLE 
+BEGIN
+    IDR_MAINFRAME           "FBE"
+    IDS_SB_NO_ERR           "No errors found."
+    IDS_DMS_TI              "Title info"
+    IDS_LANG_ENGLISH        "English"
+    IDS_LANG_RUSSIAN        "Russian"
+    IDS_DMS_GENRE_M         "Genre Match"
+    IDS_DMS_KW              "KeyWords"
+    IDS_DMS_AUTHOR          "Author NickName"
+    IDS_DMS_DI              "Document Info"
+    IDS_DMS_ID              "ID"
+    IDS_DMS_STI             "Source Title Info"
+    IDS_DMS_CI              "Custom Info"
+    IDS_SETTINGS_VIEW_CAPTION "View"
+    IDS_SETTINGS_OTHER_CAPTION "Other"
+    IDS_TB_CAPT_ID          "ID:"
+    IDS_TB_CAPT_HREF        "Href:"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_TB_CAPT_SECTION_ID  "Section ID:"
+    IDS_TB_CAPT_IMAGE_TITLE "Image title:"
+    IDS_TB_CAPT_TABLE_ID    "Table ID:"
+    IDS_TB_CAPT_TABLE_STYLE "Table Style:"
+    IDS_TB_CAPT_STYLE       "style:"
+    IDS_TB_CAPT_COLSPAN     "colspan:"
+    IDS_TB_CAPT_ROWSPAN     "rowspan:"
+    IDS_TB_CAPT_TR_ALIGN    "tr align:"
+    IDS_TB_CAPT_TD_ALIGN    "th, td align:"
+    IDS_TB_CAPT_TD_VALIGN   "th, td valign:"
+    IDS_SAVE_DLG_MSG        "Save changes to %s?"
+    IDS_ERRMSGBOX_CAPTION   "Error"
+    IDS_INVALID_CML_MSG     "Invalid command line option: '%c'"
+    IDS_CML_ARGS_MSG        "Command line option '%c' requires an argument"
+    IDS_SEARCH_END_MSG      "Finished searching for '%s'."
+    IDS_REPL_ALL_CAPT       "Replace All"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_REPL_DONE_MSG       "%d replacement(s) done."
+    IDS_SEARCH_FAIL_MSG     "Cannot find the string '%s'."
+    IDS_SCRIPT_MSG_CPT      "FBE Script message"
+    IDS_GENRES_LIST_MSG     "Can't open genres file %s"
+    IDS_VALIDATION_FAIL_MSG "%s\r\nDo you still want to save the file?\r\n\r\nWARNING: Invalid files can be improperly displayed and can cause errors in other applications."
+    IDS_VALIDATION_FAIL_CPT "Validation failed"
+    IDS_OUT_OF_MEM_MSG      "Out of memory"
+    IDS_SCINTILLA_LOAD_ERR_MSG "Can't load Scintilla."
+    IDS_GOTO_REF_FAIL_MSG   "Reference not found."
+    IDS_IMPORT_ERR_CPT      "Import Error"
+    IDS_IMPORT_ERR_MSG      "Plugin does not support the required interface"
+    IDS_IMPORT_XML_ERR_MSG  "Imported object does not support IXMLDOMDocument2 interface"
+    IDS_EXPORT_ERR_CPT      "Export Error"
+    IDS_EXPORT_ERR_MSG      "Plugin does not support the required interface"
+    IDS_FILE_CHANGED_CPT    "File changed"
+    IDS_FILE_CHANGED_MSG    "%s has been changed by anouther application.\nDo you want to reload it?"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_SCRIPT_ERRX_MSG     "Script error: %08X at line %d, column %d"
+    IDS_SCRIPT_ERRD_MSG     "Script error: %s at line %d, column %d"
+    IDS_SCRIPT_MSG          "Unknown error in script."
+    IDS_SCRIPT_LOAD_ERR_MSG "Error loading %s: %s"
+    IDS_COM_ERR_CPT         "COM Error"
+    IDS_XML_PARSE_ERR_CPT   "XML Parse Error"
+    IDS_XML_PARSE_ERR_MSG   "At %s, line %d, column %d: %s"
+    IDS_XML_PARSE_ERRQ_MSG  "At %s: %s"
+    IDS_REPL_WORDS_CPT      "Replace words"
+    IDS_REPL_WORDS_MSG      "%d replacement(s) done"
+    IDS_NO_SCRIPTS          "No scripts found"
+    IDS_SB_SAVED_NO_ERR     "Document saved - No errors found."
+    IDS_ADD_CLEARIMG_TEXT   "Insert clear image?"
+    IDS_ADD_CLEARIMG_CAPTION "Add image"
+    IDS_ADD_IMAGE_FILEDLG   "Choose image to add:"
+    IDS_ADD_BINARIES_FILEDLG "Choose binaries to add:"
+END
+
+#endif    // English (U.S.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+1 TYPELIB "FBE.tlb"
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+

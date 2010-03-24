@@ -1,0 +1,157 @@
+1252 // codepage
+SF, Fantasy
+ sf_history Alternative history
+ sf_action Action SF
+ sf_epic Epic SF
+ sf_heroic Heroic SF
+ sf_detective Detective SF
+ sf_cyberpunk Cyberpunk
+ sf_space Space SF
+ sf_social Social SF
+ sf_horror Horror & Mystic
+ sf_humor Humor SF
+ sf_fantasy Fantasy
+ sf Science Fiction
+ child_sf Science Fiction for Kids
+ love_sf Love
+Detectives, Thrillers
+ det_classic Classical Detective
+ det_police Police Stories
+ det_action Action
+ det_irony Ironical Detective
+ det_history Historical Detective
+ det_espionage Espionage Detective
+ det_crime Crime Detective
+ det_political Political Detective
+ det_maniac Maniacs
+ det_hard Hard-boiled Detective
+ thriller Thrillers
+ detective Detective
+ sf_detective Detective SF
+ child_det Detectives & Thrillers
+ love_detective Detective Romance
+Prose
+ prose_classic Classics Prose
+ prose_history Historical Prose
+ prose_contemporary Contemporary Prose
+ prose_counter Counterculture
+ prose_rus_classic Russian Classics
+ prose_su_classics Soviet Classics
+ prose_military Military
+ humor_prose Humor Prose
+ child_prose Prose
+Romance
+ love_contemporary Contemporary Romance
+ love_history Historical Romance
+ love_detective Detective Romance
+ love_short Short Romance
+ love_erotica Erotica
+ love_sf Science Fiction
+Adventure
+ adv_western Western
+ adv_history History
+ adv_indian Indians
+ adv_maritime Maritime Fiction
+ adv_geo Travel & Geography
+ adv_animal Nature & Animals
+ adventure Misk Adventures
+ child_adv Adventures for Kids
+Children's
+ child_tale Fairy Tales
+ child_verse Verses
+ child_prose Prose for Kids
+ child_sf Science Fiction for Kids
+ child_det Detectives & Thrillers
+ child_adv Adventures for Kids
+ child_education Education for Kids
+ children For Kids: Misk
+Poetry, Dramaturgy
+ poetry Poetry
+ dramaturgy Dramaturgy
+ humor_verse Humor Verses
+ child_verse Verses
+Antique
+ antique_ant Antique Literature
+ antique_european European Literature
+ antique_russian Antique Russian Literature
+ antique_east Antique East Literature
+ antique_myths Myths. Legends. Epos
+ antique Other Antique
+Science, Education
+ sci_history History
+ sci_psychology Psychology
+ sci_culture Cultural Science
+ sci_religion Religious Studies
+ sci_philosophy Philosophy
+ sci_politics Politics
+ sci_juris Jurisprudence
+ sci_linguistic Linguistics
+ sci_medicine Medicine
+ sci_phys Physics
+ sci_math Mathematics
+ sci_chem Chemistry
+ sci_biology Biology
+ sci_tech Technical
+ science Misk Science, Education
+ adv_animal Nature & Animals
+Computers
+ comp_www Internet
+ comp_programming Programming
+ comp_hard Hardware
+ comp_soft Software
+ comp_db Databases
+ comp_osnet OS & Networking
+ computers Computers: Misk
+Reference
+ ref_encyc Encyclopedias
+ ref_dict Dictionaries
+ ref_ref Reference
+ ref_guide Guidebooks
+ reference Misk References
+Nonfiction
+ nonf_biography Biography & Memoirs
+ nonf_publicism Publicism
+ nonf_criticism Criticism
+ nonfiction Misk Nonfiction
+ design Art, Design
+ adv_animal Nature & Animals
+Religion
+ religion_rel Religion
+ religion_esoterics Esoterics
+ religion_self Self-perfection
+ religion Religion: Other
+ sci_religion Religious Studies
+Humor
+ humor_anecdote Anecdote
+ humor_prose Humor Prose
+ humor_verse Humor Verses
+ humor Misk Humor
+Home, Family
+ home_cooking Cooking
+ home_pets Pets
+ home_crafts Hobbies & Crafts
+ home_entertain Entertaining
+ home_health Health
+ home_garden Garden
+ home_diy Do it yourself
+ home_sport Sports
+ home_sex Erotica, Sex
+ home Home: Other
+Economy, Business
+ job_hunting Job Hunting
+ management Management
+ marketing Marketing
+ banking Banking
+ stock Stock
+ accounting	Accounting
+ global_economy Global Economy
+ economics Economics
+ industries Industries
+ org_behavior Corporate Culture
+ personal_finance Personal Finance
+ real_estate Real Estate
+ popular_business Popular Business
+ small_business Small Business
+ paper_work Paper Work
+ economics_ref Economics Reference Book
+ 

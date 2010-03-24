@@ -1,0 +1,165 @@
+div#fbw_body{
+        padding: 0;
+        margin: 0.2em 0.2em 0 1em;
+        border: none;
+        clear: both;
+        width: 100%;
+}
+
+div#fbw_body div{
+        padding: 0em 0em 0em 0.4em;
+        margin: 0.5em 0em 0.5em 0em;
+        border-left: solid 1px;
+        clear: both;
+}
+
+div#fbw_body div.body {
+        padding: 0px;
+        margin: 0px;
+        border: none;
+}
+
+div.section{
+        border-color: #bbbbbb;
+}
+div.cite{
+        padding-left: 2em;
+        padding-right: 2em;
+	border-color: #e6b000;
+	background:  #fffcf5;
+	color: #7a5c00;
+}
+
+em{
+        font-style: italic;
+}
+div.epigraph{
+	padding-left: 10em;
+	border-left: solid 1px;
+	border-color: #9900cc;
+	color: #490099;
+	background: #eefaff none;
+	text-align: justify;
+	font-size: 90%;
+}
+
+div.epigraph p{
+	text-indent: 2em;
+	margin: 0 1em 0.5em 45%;
+}
+div.annotation{
+	border-left: solid 1px;
+	border-color: #ff4040;
+	color: #7a7a7a;
+}
+div.history{
+	border-right: 1px dashed;
+	border-color: #eeee11;
+	color: #505000;
+	border-left: none White;
+	background: #fffff6;
+}
+div.poem{
+	border-color: #74bd00;
+	background: #f6fef9;
+}
+div.stanza{
+	border-color: #83d600;
+	background: #d6fbe4;
+}
+div.stanza p{
+	text-align: left;
+	text-indent: 3em;
+	padding-left: 10%;
+	margin-bottom: 0em;
+	color: #008000;
+}
+div.title{
+	font-size: 120%;
+	border: none;
+	background: #999999;
+	color: #ffe1aa;
+	padding:0.3em;
+	background-image: url(../img/p_1.png);
+}
+div.title p{
+	text-align: center;
+	text-indent: 0em;
+}
+p{
+	text-indent: 3em;
+	margin-top: 0em;
+	margin-bottom: 0.2em;
+	text-align: justify;
+}
+p.subtitle{
+	text-align: center;
+	font-size: 100%;
+	text-indent: 0em;
+	padding-top: 0.2em;
+	padding-bottom: 0.2em;
+	color: #d27400;
+	background: transparent url(../img/p_2.png) repeat-y;
+}
+p.text-author{
+	 text-align: right;
+	 margin-right: 2em;
+	 padding-right: 2em;
+	 margin-bottom: 0.3em;
+	 color: #ff4040;
+}
+span.code{
+	font-family: "Courier New", monospce;
+	font-style: normal;
+	background: rgb(238,238,238);
+}
+a.note{
+	vertical-align: super;
+	color: #9B38CB;
+	font-size: 75%;
+}
+div.table {
+        border-color: teal;
+}
+div.tr {
+        border-color: rgb(150,120,20);
+}
+p.th {
+        text-align: center;
+        background: rgb(117,255,255);
+        text-indent: 0em;
+        margin-bottom: 0em;
+        color: purple;
+}
+p.td {
+        text-indent: 0em;
+        margin-bottom: 0em;
+        background: rgb(186,213,237);
+        color: navy;
+}
+
+div#fbw_body div.image{
+	margin-left: 0.2em;
+	margin-right: 0.2em;
+	padding:0;
+	border: dashed 1px;
+	border-color: #cccccc;
+	overflow:hidden;
+	clear:both;
+	text-align:center;
+}
+#fbw_body img{
+        margin: 0;
+        padding: 0;
+        border: none;
+        position: relative;
+        z-index: -1;
+        cursor: move;
+}
+
+div#fbw_body div.hider{
+        border: none;
+        margin: 0;
+        padding: 0;
+        width: 100%;
+}  

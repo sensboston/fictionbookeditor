@@ -1,0 +1,106 @@
+<head>
+ <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+ <meta http-equiv="MSThemeCompatible" content="yes">
+ <title>...Иврит...   </title>
+ <style>
+  td {font-family: Arial Unicode MS; font-size:16px; text-align: center; }
+ </style>
+</head>
+<body>
+<div id=divForTable></div>
+<script>
+function myMain() {
+
+ function onClick() {
+  var rng;
+  if (event.srcElement.nodeName=="TD" && fbw_body.contains(fb2doc.selection.createRange().parentElement())) {
+   var rng=fb2doc.selection.createRange();
+   var ht=event.srcElement.innerHTML;
+   if (ht=="́ ́") rng.pasteHTML(rng.htmlText+"&#769;");
+   else rng.pasteHTML(rng.htmlText+ht);
+   rng.collapse(false);
+   rng.select();
+  }
+ }
+ 
+var tableX=1;                                                //количество столбцов в таблице символов
+var tableY=30;                                              //количество строк в таблице символов
+
+//символы для таблицы 
+var charStr="&#1488;&#1489;&#1490;&#1491;&#1492;&#1493;&#1494;&#1495;&#1496;&#1497;&#1498;&#1499;&#1500;&#1501;&#1502;&#1503;&#1504;&#1505;&#1506;&#1507;&#1508;&#1509;&#1510;&#1511;&#1512;&#1513;&#1514;&#1520;&#1521;&#1522;";
+ //всплывающие подсказки для символов, разделенные символов разделителя
+var titleStr="Алеф|Бейт|Гимл|Далет|Хей|Вав|Зайн|Хет|Тэт|Йод|Каф софит (Ланге хоф)|Каф|Ламед|Мем софит (Шлосмем)|Мем|Нун софит (Шлоснун)|Нун|Самех|Айн|Пей софит (Ланге фей)|Пей|Цаде софит (Ланге цадик)|Цаде|Коф|Рейш|Шин|Тав|Цвей вовн|Вов-йуд|Цвей йудн";
+ //символ разделителя для строки всплывающих подсказок
+ var dividerChar="|";
+
+ var params=window.dialogArguments;
+ var fbw_body=params["fbw_body"];
+ var fb2doc=params["document"];
+ var fb2window=params["window"];
+ var nbspRegExp=new RegExp("&nbsp;","gi");
+ var nbspRegExp_=" ";
+ var ltRegExp=new RegExp("&lt;","gi");
+ var ltRegExp_="<"; 
+ var gtRegExp=new RegExp("&gt;","gi");
+ var gtRegExp_=">"; 
+ var digitRegExp=new RegExp("[0-9]","");
+ charStr=charStr.replace(nbspRegExp,nbspRegExp_).replace(ltRegExp,ltRegExp_).replace(gtRegExp,gtRegExp_);
+var htmlStr="<TABLE cellspacing=0 cellpadding=1 width=100%>";
+ var len=charStr.length;
+ var indexOfCharInTitleStr=0;
+ var indexOfCharInCharStr=0;
+ var title,myChar;
+ var lengthOfCharStr=charStr.length;
+ var lengthOfTitleStr=titleStr.length;
+ for (var y=0;y<tableY;y++) {
+  htmlStr+="<TR>";
+  for (var x=0;x<tableX;x++) {
+   title="";
+   if (indexOfCharInTitleStr<lengthOfTitleStr) {
+    title=" title='";
+    while (indexOfCharInTitleStr<lengthOfTitleStr && titleStr.charAt(indexOfCharInTitleStr)!=dividerChar) {
+     title+=titleStr.charAt(indexOfCharInTitleStr);
+     indexOfCharInTitleStr++;
+    }
+    if (indexOfCharInTitleStr<lengthOfTitleStr)
+     if (titleStr.charAt(indexOfCharInTitleStr)==dividerChar) 
+      indexOfCharInTitleStr++;
+    title+="'";  
+   } 
+   myChar="";
+   if (indexOfCharInCharStr<lengthOfCharStr) {
+    myChar=charStr.charAt(indexOfCharInCharStr);
+    indexOfCharInCharStr++;    
+    if (myChar=="&") {
+     myChar=charStr.charAt(indexOfCharInCharStr);
+     indexOfCharInCharStr++;    
+     if (myChar!="#") {
+      alert("Ошибка настройки скрипта.\nПосле символа амперсанда в charStr идет не символ решетки.");
+      return;
+     }
+     myChar="";
+     while (indexOfCharInCharStr<lengthOfCharStr && charStr.charAt(indexOfCharInCharStr).search(digitRegExp)>=0) {
+      myChar+=charStr.charAt(indexOfCharInCharStr);
+      indexOfCharInCharStr++;
+     }
+     if (myChar=="" || indexOfCharInCharStr>=lengthOfCharStr || charStr.charAt(indexOfCharInCharStr)!=";") {
+      alert("Ошибка в charStr при записи числа через код.");
+      return;
+     }
+     indexOfCharInCharStr++;
+     myChar=String.fromCharCode(eval(myChar));
+    }
+   }
+  htmlStr+="<TD"+title+" onmouseover='this.style.fontWeight=\"bold\"; style.backgroundColor=\"cyan\";' onmouseout='this.style.fontWeight=\"normal\"; style.backgroundColor=\"white\";'>"+(myChar!="" ? (myChar!=769 ? myChar : "&#160;&#769;") : " ")+"</TD>";
+  }
+  htmlStr+="</TR>";
+ }
+ htmlStr+="</TABLE>";
+ document.getElementById("divForTable").innerHTML=htmlStr;
+ document.body.onclick=function() {onClick();}
+//fb2window.focus();
+}
+
+myMain();
+</script>
+</body>

@@ -1,0 +1,194 @@
+#pragma once
+
+#include <algorithm>
+#include <vector>
+
+#include "resource.h"
+#include "res1.h"
+#include "utils.h"
+
+/*const int ILANG_ENGLISH = 0;
+const int ILANG_RUSSIAN = 1;*/
+
+class CHotkey
+{
+public:
+	CString m_name;
+	CString m_reg_name;
+	ACCEL m_accel;
+	ACCEL m_def_accel;
+	CString m_desc;
+
+	CHotkey(CString reg_name, int IDS_CMD_NAME, WORD fVirt, WORD cmd, WORD key)
+	{
+		m_reg_name = reg_name;
+		::LoadString(_Module.GetResourceInstance(), IDS_CMD_NAME, m_name.GetBufferSetLength(MAX_LOAD_STRING + 1), 
+			MAX_LOAD_STRING + 1);
+
+		m_def_accel.fVirt = FVIRTKEY | fVirt;
+		m_def_accel.cmd = cmd;
+		m_def_accel.key = key;
+
+		m_accel = m_def_accel;
+	}
+
+	CHotkey(CString reg_name, CString cmd_name, WORD fVirt, WORD cmd, WORD key)
+	{
+		m_reg_name = reg_name;
+		m_name = cmd_name;
+
+		m_def_accel.fVirt = FVIRTKEY | fVirt;
+		m_def_accel.cmd = cmd;
+		m_def_accel.key = key;
+
+		m_accel = m_def_accel;
+	}
+
+	bool operator < (const CHotkey& other) const
+	{
+		return (m_name.CompareNoCase(other.m_name) < 0);
+	}
+};
+
+class CHotkeysGroup
+{
+public:
+	CString m_name;
+	CString m_reg_name;
+	std::vector<CHotkey> m_hotkeys;
+
+	CHotkeysGroup(CString reg_name, int IDS_GROUP_NAME)
+	{
+		m_reg_name = reg_name;
+		::LoadString(_Module.GetResourceInstance(), IDS_GROUP_NAME, m_name.GetBufferSetLength(MAX_LOAD_STRING + 1), 
+			MAX_LOAD_STRING + 1);
+	}
+
+	bool operator < (const CHotkeysGroup& other) const
+	{
+		return (m_name.CompareNoCase(other.m_name) < 0);
+	}
+};
+
+class CSettings
+{
+	CRegKey		m_key;
+	CRegKey		m_key_hotkeys;
+	CString		m_key_path;
+	CString		m_key_hotkeys_path;
+
+	bool		m_keep_encoding; // save with opened encoding
+	CString		m_default_encoding;
+
+	DWORD		m_search_options;
+
+	DWORD		m_collorBG;
+	DWORD		m_collorFG;
+	DWORD		m_font_size;
+	CString		m_font;
+
+	bool		m_xml_src_wrap;
+	bool		m_xml_src_syntaxHL;
+	bool		m_xml_src_showEOL;	
+
+	bool		m_fast_mode;
+	bool		m_view_status_bar;
+	bool		m_view_doc_tree;
+
+	DWORD		m_splitter_pos;
+	CString		m_toolbars_settings;
+
+	bool		m_restore_file_position;
+
+	DWORD		m_interface_lang_id;
+
+	bool		m_need_restart;
+
+	CString		m_scripts_folder;
+
+	bool		m_insimage_ask;
+	bool		m_script_hotkey_err;
+	bool		m_ins_clear_image;
+
+public:
+	std::vector<CHotkeysGroup> m_hotkey_groups;
+	int keycodes; // total number of accelerators
+
+public:
+	CSettings();
+	~CSettings();
+	void Init();
+	void InitHotkeyGroups();
+	void Close();
+	void Load();
+	void LoadHotkeyGroups();
+	void Save();
+	void SaveHotkeyGroups();
+
+	bool NeedRestart()const;
+
+	bool KeepEncoding()const;
+	bool FBWHotkeys()const;
+	bool XmlSrcWrap()const;
+	bool XmlSrcSyntaxHL()const;
+	bool XmlSrcShowEOL()const;
+	bool FastMode()const;
+	bool ViewStatusBar()const;
+	bool ViewDocumentTree()const;
+	bool RestoreFilePosition()const;
+
+	CString GetKeyPath()const;
+
+	CString GetDefaultEncoding()const;
+	DWORD	GetSearchOptions()const;
+	DWORD	GetColorBG()const;
+	DWORD	GetColorFG()const;
+	DWORD	GetFontSize()const;
+	CString	GetFont()const;
+	DWORD	GetSplitterPos()const;	
+	CString GetToolbarsSettings()const;
+	const CRegKey& GetKey()const;
+	bool	GetExtElementStyle(const CString& elem)const;
+	bool	GetWindowPosition(WINDOWPLACEMENT& wpl)const;
+	DWORD GetInterfaceLanguageID()const;
+	CString GetInterfaceLanguageDllName()const;
+	CString GetLocalizedGenresFileName()const;
+	CString GetInterfaceLanguageName()const;
+	CString GetScriptsFolder() const;
+	CString GetDefaultScriptsFolder();
+	bool	IsDefaultScriptsFolder();
+	bool	GetInsImageAsking()const;
+	bool	GetScriptsHkErrNotify()const;
+	bool    GetIsInsClearImage()const;
+
+	bool	GetDocTreeItemState(const CString& item, bool default_state);
+
+	void	SetKeepEncoding(bool keep, bool apply = false);
+	void	SetDefaultEncoding(const CString& encoding, bool apply = false);	
+	void	SetSearchOptions(DWORD opt, bool apply = false);
+	void	SetColorBG(DWORD color, bool apply = false);
+	void	SetColorFG(DWORD color, bool apply = false);
+	void	SetFontSize(DWORD size, bool apply = false);
+	void	SetXmlSrcWrap(bool wrap, bool apply = false);
+	void	SetXmlSrcSyntaxHL(bool hl, bool apply = false);
+	void	SetXmlSrcShowEOL(bool eol, bool apply = false);
+	void	SetFastMode(bool mode,  bool apply = false);
+	void	SetFont(const CString& font, bool apply = false);
+	void	SetViewStatusBar(bool view,  bool apply = false);
+	void	SetViewDocumentTree(bool view,  bool apply = false);
+	void	SetSplitterPos(DWORD pos,  bool apply = false);
+	void	SetToolbarsSettings(CString& settings,  bool apply = false);
+	void	SetExtElementStyle(const CString& elem, bool ext, bool apply = false);
+	void	SetWindowPosition(const WINDOWPLACEMENT& wpl,  bool apply = false);
+	void	SetRestoreFilePosition(bool restore, bool apply = false);	
+	void	SetInterfaceLanguage(DWORD Language, bool apply = false);
+	void	SetScriptsFolder(const CString fullpath, bool apply = false);
+	void	SetInsImageAsking(const bool value, bool apply = false);
+	void	SetScriptsHkErrNotify(const bool value, bool apply = false);
+	void	SetIsInsClearImage(const bool value, bool apply = false);
+	void	SetDocTreeItemState(const CString& item, bool state);
+
+	void	SetNeedRestart();
+
+	CString	m_initial_scripts_folder;
+};

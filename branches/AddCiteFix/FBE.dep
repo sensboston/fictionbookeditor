@@ -1,0 +1,141 @@
+# Microsoft Developer Studio Generated Dependency File, included by FBE.mak
+
+.\apputils.cpp : \
+	".\apputils.h"\
+	".\utils\utils.h"\
+	
+
+.\ExternalHelper.cpp : \
+	".\apputils.h"\
+	".\ExternalHelper.h"\
+	".\FBE.h"\
+	".\utils\utils.h"\
+	
+
+.\FBDoc.cpp : \
+	".\apputils.h"\
+	".\extras\scintilla.h"\
+	".\FBDoc.h"\
+	".\FBEview.h"\
+	".\utils\utils.h"\
+	
+
+.\FBE.cpp : \
+	".\apputils.h"\
+	".\ContainerWnd.h"\
+	".\ExternalHelper.h"\
+	".\extras\scintilla.h"\
+	".\FBDoc.h"\
+	".\FBE.h"\
+	".\FBE_i.c"\
+	".\FBEview.h"\
+	".\mainfrm.h"\
+	".\MemProtocol.h"\
+	".\TreeView.h"\
+	".\utils\utils.h"\
+	
+
+.\FBEview.cpp : \
+	".\apputils.h"\
+	".\extras\scintilla.h"\
+	".\FBEview.h"\
+	".\SearchReplace.h"\
+	".\utils\utils.h"\
+	
+
+.\mainfrm.cpp : \
+	".\apputils.h"\
+	".\ContainerWnd.h"\
+	".\extras\scintilla.h"\
+	".\FBDoc.h"\
+	".\FBE.h"\
+	".\FBEview.h"\
+	".\mainfrm.h"\
+	".\OptDlg.h"\
+	".\SearchReplace.h"\
+	".\TreeView.h"\
+	".\utils\utils.h"\
+	".\Words.h"\
+	
+
+.\OptDlg.cpp : \
+	"..\..\..\..\..\..\program files\microsoft sdk\include\schemadef.h"\
+	"..\..\..\..\..\..\program files\microsoft sdk\include\tmschema.h"\
+	"..\..\..\..\..\..\program files\microsoft sdk\include\uxtheme.h"\
+	".\apputils.h"\
+	".\extras\atlgdix.h"\
+	".\extras\ColorButton.h"\
+	".\OptDlg.h"\
+	".\utils\utils.h"\
+	".\wtl\atltheme.h"\
+	
+
+.\stdafx.cpp : \
+	"..\..\..\..\..\..\program files\microsoft sdk\include\basetsd.h"\
+	"..\..\..\..\..\..\program files\microsoft sdk\include\dimm.h"\
+	"..\..\..\..\..\..\program files\microsoft sdk\include\guiddef.h"\
+	"..\..\..\..\..\..\program files\microsoft sdk\include\propidl.h"\
+	"..\..\..\..\..\..\program files\microsoft sdk\include\reason.h"\
+	"..\..\..\..\..\..\program files\microsoft sdk\include\shldisp.h"\
+	"..\..\..\..\..\..\program files\microsoft sdk\include\shobjidl.h"\
+	"..\..\..\..\..\..\program files\microsoft sdk\include\shtypes.h"\
+	"..\..\..\..\..\..\program files\microsoft sdk\include\stralign.h"\
+	"..\..\..\..\..\..\program files\microsoft sdk\include\tvout.h"\
+	"..\..\..\..\..\..\program files\microsoft sdk\include\winefs.h"\
+	"..\..\..\..\..\..\windows\system32\mshtml.tlb"\
+	"..\..\..\..\..\..\windows\system32\msxml4.dll"\
+	"..\..\..\..\..\..\windows\system32\shdocvw.dll"\
+	".\stdafx.h"\
+	".\vbscript3.tlb"\
+	".\wtl\atlapp.h"\
+	".\wtl\atlctrls.h"\
+	".\wtl\atlctrlw.h"\
+	".\wtl\atlctrlx.h"\
+	".\wtl\atlddx.h"\
+	".\wtl\atldlgs.h"\
+	".\wtl\atlframe.h"\
+	".\wtl\atlgdi.h"\
+	".\wtl\atlmisc.h"\
+	".\wtl\atlres.h"\
+	".\wtl\atlsplit.h"\
+	".\wtl\atluser.h"\
+	
+
+.\TreeView.cpp : \
+	".\apputils.h"\
+	".\FBDoc.h"\
+	".\FBEview.h"\
+	".\TreeView.h"\
+	".\utils\utils.h"\
+	
+
+.\utils\Utils.cpp : \
+	".\utils\utils.h"\
+	
+
+.\Words.cpp : \
+	".\apputils.h"\
+	".\FBDoc.h"\
+	".\FBEview.h"\
+	".\utils\utils.h"\
+	".\Words.h"\
+	
+
+.\FBE.rc : \
+	".\FBE.tlb"\
+	".\res\ExtraIcons.bmp"\
+	".\res\FBE.exe.manifest"\
+	".\res\FBE.ico"\
+	".\res\struct.bmp"\
+	".\res\toolbar.bmp"\
+	".\res\wordstat.bmp"\
+	".\wtl\atlres.h"\
+	
+
+.\extras\ColorButton.cpp : \
+	"..\..\..\..\..\..\program files\microsoft sdk\include\schemadef.h"\
+	"..\..\..\..\..\..\program files\microsoft sdk\include\tmschema.h"\
+	"..\..\..\..\..\..\program files\microsoft sdk\include\uxtheme.h"\
+	".\extras\ColorButton.h"\
+	".\wtl\atltheme.h"\
+	

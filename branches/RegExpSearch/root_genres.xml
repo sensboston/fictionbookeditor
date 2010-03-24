@@ -1,0 +1,582 @@
+<?xml version="1.0" encoding="Windows-1251"?>
+<?xml-stylesheet type="text/xsl" href="fbgenres.xsl"?>
+<fbjenresstructure>
+	<genre genre-path="sf">
+		<root-descr lang="en" genre-title="SF, Fantasy" detailed="Alternate History, Cyberpunk, Fantasy, Science Fiction"/>
+		<root-descr lang="ru" genre-title="Фантастика, Фэнтэзи" detailed="НФ, Фэнтези, Мистика, Киберпанк"/>
+		<subgenres>
+			<subgenre path="sf_history">
+				<genre-descr lang="en" title="Alternative history"/>
+				<genre-descr lang="ru" title="Альтернативная история"/>
+			</subgenre>
+			<subgenre path="sf_action">
+				<genre-descr lang="en" title="Action SF"/>
+				<genre-descr lang="ru" title="Боевая Фантастика"/>
+			</subgenre>
+			<subgenre path="sf_epic">
+				<genre-descr lang="en" title="Epic SF"/>
+				<genre-descr lang="ru" title="Эпическая Фантастика"/>
+			</subgenre>
+			<subgenre path="sf_heroic">
+				<genre-descr lang="en" title="Heroic SF"/>
+				<genre-descr lang="ru" title="Героическая фантастика"/>
+			</subgenre>
+			<subgenre path="sf_detective">
+				<genre-descr lang="en" title="Detective SF"/>
+				<genre-descr lang="ru" title="Детективная Фантастика"/>
+			</subgenre>
+			<subgenre path="sf_cyberpunk">
+				<genre-descr lang="en" title="Cyberpunk"/>
+				<genre-descr lang="ru" title="Киберпанк"/>
+			</subgenre>
+			<subgenre path="sf_space">
+				<genre-descr lang="en" title="Space SF"/>
+				<genre-descr lang="ru" title="Космическая Фантастика"/>
+			</subgenre>
+			<subgenre path="sf_social">
+				<genre-descr lang="en" title="Social SF"/>
+				<genre-descr lang="ru" title="Социальная фантастика"/>
+			</subgenre>
+			<subgenre path="sf_horror">
+				<genre-descr lang="en" title="Horror &amp; Mystic"/>
+				<genre-descr lang="ru" title="Ужасы и Мистика"/>
+			</subgenre>
+			<subgenre path="sf_humor">
+				<genre-descr lang="en" title="Humor SF"/>
+				<genre-descr lang="ru" title="Юмористическая фантастика"/>
+			</subgenre>
+			<subgenre path="sf_fantasy">
+				<genre-descr lang="en" title="Fantasy"/>
+				<genre-descr lang="ru" title="Фэнтези"/>
+			</subgenre>
+			<subgenre path="sf">
+				<genre-descr lang="en" title="Science Fiction"/>
+				<genre-descr lang="ru" title="Научная Фантастика"/>
+			</subgenre>
+			<subgenre path="child_sf">
+				<genre-descr lang="en" title="Science Fiction for Kids"/>
+				<genre-descr lang="ru" title="Детская Фантастика"/>
+			</subgenre>
+		</subgenres>
+	</genre>
+	<genre genre-path="detective">
+		<root-descr lang="en" genre-title="Detectives, Thrillers" detailed="Police Stories, Ironical, Espionage, Crime"/>
+		<root-descr lang="ru" genre-title="Детективы, Боевики" detailed="Полицейские,	иронические, шпионские, криминальные"/>
+		<subgenres>
+			<subgenre path="det_classic">
+				<genre-descr lang="en" title="Classical Detective"/>
+				<genre-descr lang="ru" title="Классический Детектив"/>
+			</subgenre>
+			<subgenre path="det_police">
+				<genre-descr lang="en" title="Police Stories"/>
+				<genre-descr lang="ru" title="Полицейский Детектив"/>
+			</subgenre>
+			<subgenre path="det_action">
+				<genre-descr lang="en" title="Action"/>
+				<genre-descr lang="ru" title="Боевики"/>
+			</subgenre>
+			<subgenre path="det_irony">
+				<genre-descr lang="en" title="Ironical Detective"/>
+				<genre-descr lang="ru" title="Иронический Детектив"/>
+			</subgenre>
+			<subgenre path="det_history">
+				<genre-descr lang="en" title="Historical Detective"/>
+				<genre-descr lang="ru" title="Исторический Детектив"/>
+			</subgenre>
+			<subgenre path="det_espionage">
+				<genre-descr lang="en" title="Espionage Detective"/>
+				<genre-descr lang="ru" title="Шпионский Детектив"/>
+			</subgenre>
+			<subgenre path="det_crime">
+				<genre-descr lang="en" title="Crime Detective"/>
+				<genre-descr lang="ru" title="Криминальный Детектив"/>
+			</subgenre>
+			<subgenre path="det_political">
+				<genre-descr lang="en" title="Political Detective"/>
+				<genre-descr lang="ru" title="Политический Детектив"/>
+			</subgenre>
+			<subgenre path="det_maniac">
+				<genre-descr lang="en" title="Maniacs"/>
+				<genre-descr lang="ru" title="Маньяки"/>
+			</subgenre>
+			<subgenre path="det_hard">
+				<genre-descr lang="en" title="Hard-boiled Detective"/>
+				<genre-descr lang="ru" title="Крутой Детектив"/>
+			</subgenre>
+			<subgenre path="thriller">
+				<genre-descr lang="en" title="Thrillers"/>
+				<genre-descr lang="ru" title="Триллеры"/>
+			</subgenre>
+			<subgenre path="detective">
+				<genre-descr lang="en" title="Detective"/>
+				<genre-descr lang="ru" title="Детектив"/>
+			</subgenre>
+			<subgenre path="sf_detective">
+				<genre-descr lang="en" title="Detective SF"/>
+				<genre-descr lang="ru" title="Детективная Фантастика"/>
+			</subgenre>
+			<subgenre path="child_det">
+				<genre-descr lang="en" title="Detectives &amp; Thrillers"/>
+				<genre-descr lang="ru" title="Детские Остросюжетные"/>
+			</subgenre>
+			<subgenre path="love_detective">
+				<genre-descr lang="en" title="Detective Romance"/>
+				<genre-descr lang="ru" title="Остросюжетные Любовные Романы"/>
+			</subgenre>
+		</subgenres>
+	</genre>
+	<genre genre-path="prose">
+		<root-descr lang="en" genre-title="Prose" detailed="Classical, History, Contemporary"/>
+		<root-descr lang="ru" genre-title="Проза" detailed="Классика, историческая, современная"/>
+		<subgenres>
+			<subgenre path="prose_classic">
+				<genre-descr lang="en" title="Classics Prose"/>
+				<genre-descr lang="ru" title="Классическая Проза"/>
+			</subgenre>
+			<subgenre path="prose_history">
+				<genre-descr lang="en" title="Historical Prose"/>
+				<genre-descr lang="ru" title="Историческая Проза"/>
+			</subgenre>
+			<subgenre path="prose_contemporary">
+				<genre-descr lang="en" title="Contemporary Prose"/>
+				<genre-descr lang="ru" title="Современная Проза"/>
+			</subgenre>
+			<subgenre path="prose_counter">
+				<genre-descr lang="en" title="Counterculture"/>
+				<genre-descr lang="ru" title="Контркультура"/>
+			</subgenre>
+			<subgenre path="prose_rus_classic">
+				<genre-descr lang="en" title="Russian Classics"/>
+				<genre-descr lang="ru" title="Русская Классика"/>
+			</subgenre>
+			<subgenre path="prose_su_classics">
+				<genre-descr lang="en" title="Soviet Classics"/>
+				<genre-descr lang="ru" title="Советская Классика"/>
+			</subgenre>
+			<direct-link href="/genre/love/">
+				<genre-descr lang="en" title="Romance"/>
+				<genre-descr lang="ru" title="Любовные романы"/>
+			</direct-link>
+			<subgenre path="humor_prose">
+				<genre-descr lang="en" title="Humor Prose"/>
+				<genre-descr lang="ru" title="Юмористическая Проза"/>
+			</subgenre>
+			<subgenre path="child_prose">
+				<genre-descr lang="en" title="Prose"/>
+				<genre-descr lang="ru" title="Детская Проза"/>
+			</subgenre>
+		</subgenres>
+	</genre>
+	<genre genre-path="love">
+		<root-descr lang="en" genre-title="Romance" detailed="Historical, Contemporary, Detective"/>
+		<root-descr lang="ru" genre-title="Любовные романы" detailed="Исторические, современные, остросюжетные"/>
+		<subgenres>
+			<subgenre path="love_contemporary">
+				<genre-descr lang="en" title="Contemporary Romance"/>
+				<genre-descr lang="ru" title="Современные Любовные Романы"/>
+			</subgenre>
+			<subgenre path="love_history">
+				<genre-descr lang="en" title="Historical Romance"/>
+				<genre-descr lang="ru" title="Исторические Любовные Романы"/>
+			</subgenre>
+			<subgenre path="love_detective">
+				<genre-descr lang="en" title="Detective Romance"/>
+				<genre-descr lang="ru" title="Остросюжетные Любовные Романы"/>
+			</subgenre>
+			<subgenre path="love_short">
+				<genre-descr lang="en" title="Short Romance"/>
+				<genre-descr lang="ru" title="Короткие Любовные Романы"/>
+			</subgenre>
+			<subgenre path="love_erotica">
+				<genre-descr lang="en" title="Erotica"/>
+				<genre-descr lang="ru" title="Эротика"/>
+			</subgenre>
+		</subgenres>
+	</genre>
+	<genre genre-path="adventure">
+		<root-descr lang="en" genre-title="Adventure" detailed="Western, Historical, Sea"/>
+		<root-descr lang="ru" genre-title="Приключения" detailed="Вестерны, исторические, морские"/>
+		<subgenres>
+			<subgenre path="adv_western">
+				<genre-descr lang="en" title="Western"/>
+				<genre-descr lang="ru" title="Вестерны"/>
+			</subgenre>
+			<subgenre path="adv_history">
+				<genre-descr lang="en" title="History"/>
+				<genre-descr lang="ru" title="Исторические Приключения"/>
+			</subgenre>
+			<subgenre path="adv_indian">
+				<genre-descr lang="en" title="Indians"/>
+				<genre-descr lang="ru" title="Приключения: Индейцы"/>
+			</subgenre>
+			<subgenre path="adv_maritime">
+				<genre-descr lang="en" title="Maritime Fiction"/>
+				<genre-descr lang="ru" title="Морские Приключения"/>
+			</subgenre>
+			<subgenre path="adv_geo">
+				<genre-descr lang="en" title="Travel &amp; Geography"/>
+				<genre-descr lang="ru" title="Путешествия и География"/>
+			</subgenre>
+			<subgenre path="adv_animal">
+				<genre-descr lang="en" title="Nature &amp; Animals"/>
+				<genre-descr lang="ru" title="Природа и Животные"/>
+			</subgenre>
+			<subgenre path="adventure">
+				<genre-descr lang="en" title="Misk Adventures"/>
+				<genre-descr lang="ru" title="Приключения: Прочее"/>
+			</subgenre>
+			<subgenre path="child_adv">
+				<genre-descr lang="en" title="Adventures for Kids"/>
+				<genre-descr lang="ru" title="Детские Приключения"/>
+			</subgenre>
+		</subgenres>
+	</genre>
+	<genre genre-path="children">
+		<root-descr lang="en" genre-title="Children's" detailed="Fairy Tales, Fantasy, Detectives..."/>
+		<root-descr lang="ru" genre-title="Детское" detailed="Сказки, фантастика, детективы..."/>
+		<subgenres>
+			<subgenre path="child_tale">
+				<genre-descr lang="en" title="Fairy Tales"/>
+				<genre-descr lang="ru" title="Сказки"/>
+			</subgenre>
+			<subgenre path="child_verse">
+				<genre-descr lang="en" title="Verses"/>
+				<genre-descr lang="ru" title="Детские Стихи"/>
+			</subgenre>
+			<subgenre path="child_prose">
+				<genre-descr lang="en" title="Prose for Kids"/>
+				<genre-descr lang="ru" title="Детская Проза"/>
+			</subgenre>
+			<subgenre path="child_sf">
+				<genre-descr lang="en" title="Science Fiction for Kids"/>
+				<genre-descr lang="ru" title="Детская Фантастика"/>
+			</subgenre>
+			<subgenre path="child_det">
+				<genre-descr lang="en" title="Detectives &amp; Thrillers"/>
+				<genre-descr lang="ru" title="Детские Остросюжетные"/>
+			</subgenre>
+			<subgenre path="child_adv">
+				<genre-descr lang="en" title="Adventures for Kids"/>
+				<genre-descr lang="ru" title="Детские Приключения"/>
+			</subgenre>
+			<subgenre path="child_education">
+				<genre-descr lang="en" title="Education for Kids"/>
+				<genre-descr lang="ru" title="Детская Образовательная литература"/>
+			</subgenre>
+			<subgenre path="children">
+				<genre-descr lang="en" title="For Kids: Misk"/>
+				<genre-descr lang="ru" title="Детское: Прочее"/>
+			</subgenre>
+		</subgenres>
+	</genre>
+	<genre genre-path="poetry">
+		<root-descr lang="en" genre-title="Poetry, Dramaturgy" detailed="Poetry, Dramaturgy"/>
+		<root-descr lang="ru" genre-title="Поэзия, Драматургия" detailed="Поэзия, драматургия"/>
+		<subgenres>
+			<subgenre path="poetry">
+				<genre-descr lang="en" title="Poetry"/>
+				<genre-descr lang="ru" title="Поэзия"/>
+			</subgenre>
+			<subgenre path="dramaturgy">
+				<genre-descr lang="en" title="Dramaturgy"/>
+				<genre-descr lang="ru" title="Драматургия"/>
+			</subgenre>
+			<subgenre path="humor_verse">
+				<genre-descr lang="en" title="Humor Verses"/>
+				<genre-descr lang="ru" title="Юмористические Стихи"/>
+			</subgenre>
+			<subgenre path="child_verse">
+				<genre-descr lang="en" title="Verses"/>
+				<genre-descr lang="ru" title="Детские Стихи"/>
+			</subgenre>
+		</subgenres>
+	</genre>
+	<genre genre-path="antique">
+		<root-descr lang="en" genre-title="Antique" detailed="Antique literature, Myths, Legends"/>
+		<root-descr lang="ru" genre-title="Старинное" detailed="Античная литература, мифы, легенды"/>
+		<subgenres>
+			<subgenre path="antique_ant">
+				<genre-descr lang="en" title="Antique Literature"/>
+				<genre-descr lang="ru" title="Античная Литература"/>
+			</subgenre>
+			<subgenre path="antique_european">
+				<genre-descr lang="en" title="European Literature"/>
+				<genre-descr lang="ru" title="Европейская Старинная Литература"/>
+			</subgenre>
+			<subgenre path="antique_russian">
+				<genre-descr lang="en" title="Antique Russian Literature"/>
+				<genre-descr lang="ru" title="Древнерусская Литература"/>
+			</subgenre>
+			<subgenre path="antique_east">
+				<genre-descr lang="en" title="Antique East Literature"/>
+				<genre-descr lang="ru" title="Древневосточная Литература"/>
+			</subgenre>
+			<subgenre path="antique_myths">
+				<genre-descr lang="en" title="Myths. Legends. Epos"/>
+				<genre-descr lang="ru" title="Мифы. Легенды. Эпос"/>
+			</subgenre>
+			<subgenre path="antique">
+				<genre-descr lang="en" title="Other Antique"/>
+				<genre-descr lang="ru" title="Старинная Литература: Прочее"/>
+			</subgenre>
+		</subgenres>
+	</genre>
+	<genre genre-path="science">
+		<root-descr lang="en" genre-title="Science, Education" detailed="Physics, Philosophy, Psychology, Business literature"/>
+		<root-descr lang="ru" genre-title="Наука, Образование" detailed="Физика, философия, психология, деловая литература"/>
+		<subgenres>
+			<subgenre path="sci_history">
+				<genre-descr lang="en" title="History"/>
+				<genre-descr lang="ru" title="История"/>
+			</subgenre>
+			<subgenre path="sci_psychology">
+				<genre-descr lang="en" title="Psychology"/>
+				<genre-descr lang="ru" title="Психология"/>
+			</subgenre>
+			<subgenre path="sci_culture">
+				<genre-descr lang="en" title="Cultural Science"/>
+				<genre-descr lang="ru" title="Культурология"/>
+			</subgenre>
+			<subgenre path="sci_religion">
+				<genre-descr lang="en" title="Religious Studies"/>
+				<genre-descr lang="ru" title="Религиоведение"/>
+			</subgenre>
+			<subgenre path="sci_philosophy">
+				<genre-descr lang="en" title="Philosophy"/>
+				<genre-descr lang="ru" title="Философия"/>
+			</subgenre>
+			<subgenre path="sci_politics">
+				<genre-descr lang="en" title="Politics"/>
+				<genre-descr lang="ru" title="Политика"/>
+			</subgenre>
+			<subgenre path="sci_business">
+				<genre-descr lang="en" title="Business literature"/>
+				<genre-descr lang="ru" title="Деловая литература"/>
+			</subgenre>
+			<subgenre path="sci_juris">
+				<genre-descr lang="en" title="Jurisprudence"/>
+				<genre-descr lang="ru" title="Юриспруденция"/>
+			</subgenre>
+			<subgenre path="sci_linguistic">
+				<genre-descr lang="en" title="Linguistics"/>
+				<genre-descr lang="ru" title="Языкознание"/>
+			</subgenre>
+			<subgenre path="sci_medicine">
+				<genre-descr lang="en" title="Medicine"/>
+				<genre-descr lang="ru" title="Медицина"/>
+			</subgenre>
+			<subgenre path="sci_phys">
+				<genre-descr lang="en" title="Physics"/>
+				<genre-descr lang="ru" title="Физика"/>
+			</subgenre>
+			<subgenre path="sci_math">
+				<genre-descr lang="en" title="Mathematics"/>
+				<genre-descr lang="ru" title="Математика"/>
+			</subgenre>
+			<subgenre path="sci_chem">
+				<genre-descr lang="en" title="Chemistry"/>
+				<genre-descr lang="ru" title="Химия"/>
+			</subgenre>
+			<subgenre path="sci_biology">
+				<genre-descr lang="en" title="Biology"/>
+				<genre-descr lang="ru" title="Биология"/>
+			</subgenre>
+			<subgenre path="sci_tech">
+				<genre-descr lang="en" title="Technical"/>
+				<genre-descr lang="ru" title="Технические"/>
+			</subgenre>
+			<subgenre path="science">
+				<genre-descr lang="en" title="Misk Science, Education"/>
+				<genre-descr lang="ru" title="Научно-образовательная: Прочее"/>
+			</subgenre>
+			<subgenre path="adv_animal">
+				<genre-descr lang="en" title="Nature &amp; Animals"/>
+				<genre-descr lang="ru" title="Природа и Животные"/>
+			</subgenre>
+		</subgenres>
+	</genre>
+	<genre genre-path="computers">
+		<root-descr lang="en" genre-title="Computers" detailed="Internet, Programming, Hardware"/>
+		<root-descr lang="ru" genre-title="Компьютеры" detailed="Интернет, программирование, железо"/>
+		<subgenres>
+			<subgenre path="comp_www">
+				<genre-descr lang="en" title="Internet"/>
+				<genre-descr lang="ru" title="Интернет"/>
+			</subgenre>
+			<subgenre path="comp_programming">
+				<genre-descr lang="en" title="Programming"/>
+				<genre-descr lang="ru" title="Программирование"/>
+			</subgenre>
+			<subgenre path="comp_hard">
+				<genre-descr lang="en" title="Hardware"/>
+				<genre-descr lang="ru" title="Компьютерное Железо"/>
+			</subgenre>
+			<subgenre path="comp_soft">
+				<genre-descr lang="en" title="Software"/>
+				<genre-descr lang="ru" title="Программы"/>
+			</subgenre>
+			<subgenre path="comp_db">
+				<genre-descr lang="en" title="Databases"/>
+				<genre-descr lang="ru" title="Базы Данных"/>
+			</subgenre>
+			<subgenre path="comp_osnet">
+				<genre-descr lang="en" title="OS &amp; Networking"/>
+				<genre-descr lang="ru" title="ОС и Сети"/>
+			</subgenre>
+			<subgenre path="computers">
+				<genre-descr lang="en" title="Computers: Misk"/>
+				<genre-descr lang="ru" title="Компьютеры: Прочее"/>
+			</subgenre>
+		</subgenres>
+	</genre>
+	<genre genre-path="reference">
+		<root-descr lang="en" genre-title="Reference" detailed="Reference, Encyclopedias, Dictionaries"/>
+		<root-descr lang="ru" genre-title="Справочники" detailed="Справочники, энциклопедии, словари"/>
+		<subgenres>
+			<subgenre path="ref_encyc">
+				<genre-descr lang="en" title="Encyclopedias"/>
+				<genre-descr lang="ru" title="Энциклопедии"/>
+			</subgenre>
+			<subgenre path="ref_dict">
+				<genre-descr lang="en" title="Dictionaries"/>
+				<genre-descr lang="ru" title="Словари"/>
+			</subgenre>
+			<subgenre path="ref_ref">
+				<genre-descr lang="en" title="Reference"/>
+				<genre-descr lang="ru" title="Справочники"/>
+			</subgenre>
+			<subgenre path="ref_guide">
+				<genre-descr lang="en" title="Guidebooks"/>
+				<genre-descr lang="ru" title="Руководства"/>
+			</subgenre>
+			<subgenre path="reference">
+				<genre-descr lang="en" title="Misk References"/>
+				<genre-descr lang="ru" title="Справочная Литература: Прочее"/>
+			</subgenre>
+		</subgenres>
+	</genre>
+	<genre genre-path="nonfiction">
+		<root-descr lang="en" genre-title="Nonfiction" detailed="Biography, Memoirs, Publicism"/>
+		<root-descr lang="ru" genre-title="Документальное" detailed="Биографии, мемуары, публицистика"/>
+		<subgenres>
+			<subgenre path="nonf_biography">
+				<genre-descr lang="en" title="Biography &amp; Memoirs"/>
+				<genre-descr lang="ru" title="Биографии и Мемуары"/>
+			</subgenre>
+			<subgenre path="nonf_publicism">
+				<genre-descr lang="en" title="Publicism"/>
+				<genre-descr lang="ru" title="Публицистика"/>
+			</subgenre>
+			<subgenre path="nonf_criticism">
+				<genre-descr lang="en" title="Criticism"/>
+				<genre-descr lang="ru" title="Критика"/>
+			</subgenre>
+			<subgenre path="nonfiction">
+				<genre-descr lang="en" title="Misk Nonfiction"/>
+				<genre-descr lang="ru" title="Документальное: Прочее"/>
+			</subgenre>
+			<subgenre path="design">
+				<genre-descr lang="en" title="Art, Design"/>
+				<genre-descr lang="ru" title="Искусство, Дизайн"/>
+			</subgenre>
+			<subgenre path="adv_animal">
+				<genre-descr lang="en" title="Nature &amp; Animals"/>
+				<genre-descr lang="ru" title="Природа и Животные"/>
+			</subgenre>
+		</subgenres>
+	</genre>
+	<genre genre-path="religion">
+		<root-descr lang="en" genre-title="Religion" detailed="Religion, Esoterics"/>
+		<root-descr lang="ru" genre-title="Религия" detailed="Религия, эзотерика"/>
+		<subgenres>
+			<subgenre path="religion_rel">
+				<genre-descr lang="en" title="Religion"/>
+				<genre-descr lang="ru" title="Религия"/>
+			</subgenre>
+			<subgenre path="religion_esoterics">
+				<genre-descr lang="en" title="Esoterics"/>
+				<genre-descr lang="ru" title="Эзотерика"/>
+			</subgenre>
+			<subgenre path="religion_self">
+				<genre-descr lang="en" title="Self-perfection"/>
+				<genre-descr lang="ru" title="Самосовершенствование"/>
+			</subgenre>
+			<subgenre path="religion">
+				<genre-descr lang="en" title="Religion: Other"/>
+				<genre-descr lang="ru" title="Религия и духовность: Прочее"/>
+			</subgenre>
+			<subgenre path="sci_religion">
+				<genre-descr lang="en" title="Religious Studies"/>
+				<genre-descr lang="ru" title="Религиоведение"/>
+			</subgenre>
+		</subgenres>
+	</genre>
+	<genre genre-path="humor">
+		<root-descr lang="en" genre-title="Humor" detailed="Prose, Verses, Anecdote"/>
+		<root-descr lang="ru" genre-title="Юмор" detailed="Проза, стихи, анекдоты"/>
+		<subgenres>
+			<subgenre path="humor_anecdote">
+				<genre-descr lang="en" title="Anecdote"/>
+				<genre-descr lang="ru" title="Анекдоты"/>
+			</subgenre>
+			<subgenre path="humor_prose">
+				<genre-descr lang="en" title="Humor Prose"/>
+				<genre-descr lang="ru" title="Юмористическая Проза"/>
+			</subgenre>
+			<subgenre path="humor_verse">
+				<genre-descr lang="en" title="Humor Verses"/>
+				<genre-descr lang="ru" title="Юмористические Стихи"/>
+			</subgenre>
+			<subgenre path="humor">
+				<genre-descr lang="en" title="Misk Humor"/>
+				<genre-descr lang="ru" title="Юмор: Прочее"/>
+			</subgenre>
+		</subgenres>
+	</genre>
+	<genre genre-path="home">
+		<root-descr lang="en" genre-title="Home, Family" detailed="Cooking, Pets, Hobby"/>
+		<root-descr lang="ru" genre-title="Дом, Семья" detailed="Кулинария, домашние животные, хобби"/>
+		<subgenres>
+			<subgenre path="home_cooking">
+				<genre-descr lang="en" title="Cooking"/>
+				<genre-descr lang="ru" title="Кулинария"/>
+			</subgenre>
+			<subgenre path="home_pets">
+				<genre-descr lang="en" title="Pets"/>
+				<genre-descr lang="ru" title="Домашние Животные"/>
+			</subgenre>
+			<subgenre path="home_crafts">
+				<genre-descr lang="en" title="Hobbies &amp; Crafts"/>
+				<genre-descr lang="ru" title="Хобби, Ремесла"/>
+			</subgenre>
+			<subgenre path="home_entertain">
+				<genre-descr lang="en" title="Entertaining"/>
+				<genre-descr lang="ru" title="Развлечения"/>
+			</subgenre>
+			<subgenre path="home_health">
+				<genre-descr lang="en" title="Health"/>
+				<genre-descr lang="ru" title="Здоровье"/>
+			</subgenre>
+			<subgenre path="home_garden">
+				<genre-descr lang="en" title="Garden"/>
+				<genre-descr lang="ru" title="Сад и Огород"/>
+			</subgenre>
+			<subgenre path="home_diy">
+				<genre-descr lang="en" title="Do it yourself"/>
+				<genre-descr lang="ru" title="Сделай Сам"/>
+			</subgenre>
+			<subgenre path="home_sport">
+				<genre-descr lang="en" title="Sports"/>
+				<genre-descr lang="ru" title="Спорт"/>
+			</subgenre>
+			<subgenre path="home_sex">
+				<genre-descr lang="en" title="Erotica, Sex"/>
+				<genre-descr lang="ru" title="Эротика, Секс"/>
+			</subgenre>
+			<subgenre path="home">
+				<genre-descr lang="en" title="Home: Other"/>
+				<genre-descr lang="ru" title="Дом и Семья: Прочее"/>
+			</subgenre>
+		</subgenres>
+	</genre>
+</fbjenresstructure>
