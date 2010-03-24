@@ -2,17 +2,18 @@
 
 #pragma once
 
-#include "resource.h"
+#include "resource.h"      
+
 #include "OptDlg.h"
 
 // CSettingsDlg
 
-class CSettingsDlg : public CAxDialogImpl<CSettingsDlg>
+class CSettingsDlg : 
+	public CAxDialogImpl<CSettingsDlg>
 {
 	CTabCtrl m_tab_ctrl;
-
 public:
-	CSettingsDlg();
+	CSettingsDlg();	
 	~CSettingsDlg();
 
 	enum { IDD = IDD_TOOLS_SETTINGS };
@@ -27,13 +28,14 @@ BEGIN_MSG_MAP(CSettingsDlg)
 	CHAIN_MSG_MAP(CAxDialogImpl<CSettingsDlg>)
 END_MSG_MAP()
 
-	LRESULT OnInitDialog(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
+	LRESULT OnInitDialog(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);	
 	LRESULT OnClickedOK(WORD wNotifyCode, WORD wID, HWND hWndCtl, BOOL& bHandled);
 	LRESULT OnClickedCancel(WORD wNotifyCode, WORD wID, HWND hWndCtl, BOOL& bHandled);
 	LRESULT OnSelchangeTab(int idCtrl, LPNMHDR pnmh, BOOL& bHandled);
-	LRESULT OnSelchangingTab(int idCtrl, LPNMHDR pnmh, BOOL& bHandled);
+	LRESULT OnSelchangingTab(int idCtrl, LPNMHDR pnmh, BOOL& bHandled);	
 	LRESULT OnDestroy(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 
 private:
 	void AddTabPage(const int index, CWindow* Dialog, const CRect& rect);
 };
+

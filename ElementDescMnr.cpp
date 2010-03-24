@@ -182,74 +182,61 @@ CString GetTableTitle(const MSHTML::IHTMLElementPtr elem)
 	return U::FindTitle(elem);
 }
 
-CElementDescMnr::CElementDescMnr() : m_initedStEDs(false)
+CElementDescMnr::CElementDescMnr()
 {
 }
 
-// Init uses Settings to get information about each item in its list,
-// but until Settings are deserialized, that information is reflected
-// by CSettings::GetDocTreeItemState via variable which is set to
-// CElementDescriptor constructor. On the other hand information about
-// serialized fields and default values is collected after initiation, but not before.
-// Though we have to assign really deserialized values during creation of CTreeWithToolBar
-// explicitly calling information on CSettings::TREEITEMSHOWINFO instance via the same
-// CSettings::GetDocTreeItemState. That is non-obvious but works!
 bool CElementDescMnr::InitStandartEDs()
 {
-	if(!m_initedStEDs)
-	{
-		CElementDescriptor* section = new CElementDescriptor;
-		section->Init(IsSection, GetSectionTitle, 0, true, L"Section");
-		CElementDescriptor* body = new CElementDescriptor;
-		body->Init(IsBody, GetBodyTitle, 0, true, L"Body");
-		CElementDescriptor* image = new CElementDescriptor;
-		image->Init(IsImage, GetImageTitle, 21, true, L"Image");
-		CElementDescriptor* annotation = new CElementDescriptor;
-		annotation->Init(IsAnnotation, GetAnnotationTitle, 12, true, L"Annotation");
-		CElementDescriptor* history = new CElementDescriptor;
-		history->Init(IsHistory, GetHistoryTitle, 15, true, L"History");
-		CElementDescriptor* poem = new CElementDescriptor;
-		poem->Init(IsPoem, GetPoemTitle, 3, true, L"Poem");
-		CElementDescriptor* stanza = new CElementDescriptor;
-		stanza->Init(IsStanza, GetStanzaTitle, 3, true, L"Stanza");
-		CElementDescriptor* title = new CElementDescriptor;
-		title->Init(IsTitle, GetTitleTitle, 27, false, L"Title");
-		CElementDescriptor* epigraph = new CElementDescriptor;
-		epigraph->Init(IsEpigraph, GetEpigraphTitle, 18, false, L"Epigraph");
-		CElementDescriptor* cite = new CElementDescriptor;
-		cite->Init(IsCite, GetCiteTitle, 9, false, L"Cite");
-		CElementDescriptor* code = new CElementDescriptor;
-		code->Init(IsCode, GetCodeTitle, 24, false, L"Code");
-		CElementDescriptor* subtitle = new CElementDescriptor;
-		subtitle->Init(IsSubtitle, GetSubtitleTitle, 6, true, L"Subtitle");
-		CElementDescriptor* table = new CElementDescriptor;
-		table->Init(IsTable, GetTableTitle, 30, true, L"Table");
-		CElementDescriptor* th = new CElementDescriptor;
-		th->Init(IsTH, GetTableTitle, 27, true, L"th");
-		CElementDescriptor* td = new CElementDescriptor;
-		td->Init(IsTD, GetTableTitle, 27, true, L"td");
-		CElementDescriptor* tr = new CElementDescriptor;
-		tr->Init(IsTR, GetTableTitle, 27, true, L"tr");
+	CElementDescriptor* section = new CElementDescriptor;
+	section->Init(IsSection, GetSectionTitle, 0, true, L"Section");
+	CElementDescriptor* body = new CElementDescriptor;
+	body->Init(IsBody, GetBodyTitle, 0, true, L"Body");
+	CElementDescriptor* image = new CElementDescriptor;
+	image->Init(IsImage, GetImageTitle, 3, true, L"Image");
+	CElementDescriptor* annotation = new CElementDescriptor;
+	annotation->Init(IsAnnotation, GetAnnotationTitle, 0, true, L"Annotation");
+	CElementDescriptor* history = new CElementDescriptor;
+	history->Init(IsHistory, GetHistoryTitle, 0, true, L"History");
+	CElementDescriptor* poem = new CElementDescriptor;
+	poem->Init(IsPoem, GetPoemTitle, 3, true, L"Poem");
+	CElementDescriptor* stanza = new CElementDescriptor;
+	stanza->Init(IsStanza, GetStanzaTitle, 3, true, L"Stanza");
+	CElementDescriptor* title = new CElementDescriptor;
+	title->Init(IsTitle, GetTitleTitle, 3, false, L"Title");
+	CElementDescriptor* epigraph = new CElementDescriptor;
+	epigraph->Init(IsEpigraph, GetEpigraphTitle, 0, false, L"Epigraph");
+	CElementDescriptor* cite = new CElementDescriptor;
+	cite->Init(IsCite, GetCiteTitle, 3, false, L"Cite");
+	CElementDescriptor* code = new CElementDescriptor;
+	code->Init(IsCode, GetCodeTitle, 3, false, L"Code");
+	CElementDescriptor* subtitle = new CElementDescriptor;
+	subtitle->Init(IsSubtitle, GetSubtitleTitle, 6, true, L"Code");
+	CElementDescriptor* table = new CElementDescriptor;
+	table->Init(IsTable, GetTableTitle, 3, true, L"Table");
+	CElementDescriptor* th = new CElementDescriptor;
+	th->Init(IsTH, GetTableTitle, 3, true, L"th");
+	CElementDescriptor* td = new CElementDescriptor;
+	td->Init(IsTD, GetTableTitle, 3, true, L"td");
+	CElementDescriptor* tr = new CElementDescriptor;
+	tr->Init(IsTR, GetTableTitle, 3, true, L"tr");
 
-		m_stEDs.Add(section);
-		m_stEDs.Add(body);
-		m_stEDs.Add(image);
-		m_stEDs.Add(annotation);
-		m_stEDs.Add(history);
-		m_stEDs.Add(poem);
-		m_stEDs.Add(stanza);
-		m_stEDs.Add(title);
-		m_stEDs.Add(epigraph);
-		m_stEDs.Add(cite);
-		m_stEDs.Add(code);
-		m_stEDs.Add(subtitle);
-		m_stEDs.Add(table);
-		m_stEDs.Add(th);
-		m_stEDs.Add(td);
-		m_stEDs.Add(tr);
-
-		m_initedStEDs = true;
-	}
+	m_stEDs.Add(section);
+	m_stEDs.Add(body);
+	m_stEDs.Add(image);
+	m_stEDs.Add(annotation);
+	m_stEDs.Add(history);
+	m_stEDs.Add(poem);
+	m_stEDs.Add(stanza);
+	m_stEDs.Add(title);
+	m_stEDs.Add(epigraph);
+	m_stEDs.Add(cite);
+	m_stEDs.Add(code);
+	m_stEDs.Add(subtitle);
+	m_stEDs.Add(table);
+	m_stEDs.Add(th);
+	m_stEDs.Add(td);
+	m_stEDs.Add(tr);
 
 	return true;
 }
@@ -265,7 +252,7 @@ bool CElementDescMnr::InitScriptEDs()
 	if(INVALID_HANDLE_VALUE != found)
 	{
 		do
-		{
+		{			
 			ED = new CElementDescriptor;
 			if(ED->Load(U::GetDocTReeScriptsDir() + L"\\" + fd.cFileName))
 			{
@@ -333,18 +320,5 @@ void CElementDescMnr::CleanUpAll()
 	for(int i = 0; i < m_EDs.GetSize(); i++)
 	{
 		m_EDs[i]->CleanUp();
-	}
-}
-
-void CElementDescMnr::CleanTree()
-{
-	for(int i = 0; i < m_EDs.GetSize(); i++)
-	{
-		m_EDs[i]->CleanUp();
-		m_EDs[i]->SetViewInTree(false);
-	}
-	for(int i = 0; i < m_stEDs.GetSize(); i++)
-	{
-		m_stEDs[i]->SetViewInTree(false);
 	}
 }

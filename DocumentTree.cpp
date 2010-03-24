@@ -6,9 +6,6 @@
 #include "DocumentTree.h"
 #include "ElementDescMnr.h"
 
-#include "Settings.h"
-extern CSettings _Settings;
-
 extern CElementDescMnr _EDMnr;
 
 BOOL CTreeWithToolBar::ModifyStyle(DWORD dwRemove, DWORD dwAdd, UINT nFlags) throw()
@@ -40,31 +37,29 @@ LRESULT CTreeWithToolBar::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL
 	m_tree.SetBkColor(::GetSysColor(COLOR_WINDOW));
 	m_rebar = CFrameWindowImplBase<>::CreateSimpleReBarCtrl(*this, WS_CHILD | WS_VISIBLE | WS_CLIPCHILDREN | WS_CLIPSIBLINGS | CCS_NODIVIDER | CCS_NOPARENTALIGN | CS_HREDRAW);
 	m_toolbar = CFrameWindowImplBase<>::CreateSimpleToolBarCtrl(*this, IDR_DOCUMENT_TREE, FALSE, ATL_SIMPLE_TOOLBAR_PANE_STYLE);
-	CFrameWindowImplBase<>::AddSimpleReBarBandCtrl(m_rebar, m_toolbar);
+	CFrameWindowImplBase<>::AddSimpleReBarBandCtrl(m_rebar , m_toolbar);
 
 	_EDMnr.InitStandartEDs();
-	int edsCount = _EDMnr.GetStEDsCount();
-	for(int i = 0; i < edsCount; ++i)
-	{
-		CElementDescriptor* eld = _EDMnr.GetStED(i);
-		eld->SetViewInTree(_Settings.GetDocTreeItemState(eld->GetCaption(), eld->ViewInTree()));
-	}
-	
 	_EDMnr.InitScriptEDs();
 	RECT rect;
 	SetRect(&rect, 0, 0, 500, 20);
 	this->ModifyStyle(0, WS_POPUP, 0);
-	HWND hWndCmdBar = m_view_bar.Create(*this, rect, NULL, ATL_SIMPLE_TOOLBAR_PANE_STYLE);	
-	m_view_bar.SetStyle(ATL_SIMPLE_TOOLBAR_PANE_STYLE);
+	HWND hWndCmdBar = m_view_bar.Create(*this, rect, NULL, ATL_SIMPLE_CMDBAR_PANE_STYLE);
 	FillViewBar();
 	this->ModifyStyle(WS_POPUP, 0, 0);
 
 	m_maxTbwidth = 1000;
 	::MoveWindow(m_rebar, 0, 0, m_maxTbwidth, 0, true);
 
+	m_toolbar.HideButton(ID_DT_RIGHT_WITH_CHILDREN);
+	m_toolbar.HideButton(ID_DT_RIGHT);
+	m_toolbar.HideButton(ID_DT_LEFT);
+	m_toolbar.HideButton(ID_DOCUMENT_TREE_CUT);
+	m_toolbar.HideButton(ID_DOCUMENT_TREE_PASTE);
 	m_toolbar.HideButton(ID_DT_DELETE);
-	bHandled = FALSE;
-	return lRet;
+
+    bHandled=FALSE;
+    return lRet;
 }
 
 
@@ -116,7 +111,7 @@ LRESULT CTreeWithToolBar::OnSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& 
 		viewBarRect.bottom = viewBarRect.top + viewBarHight;
 	}
 
-	// ?????? ????? ????? ???????????? ??????. ??? ???? ???????? ???????? ??? ????.
+	// врядли вверх будем перетягивать тулбар. Код Ниже нормално работает без меню.
 	/*if(m_toolbarOrientation == CTreeWithToolBar::top)
 	{
 		rebarRect.top = clientRect.top;
@@ -162,27 +157,20 @@ LRESULT CTreeWithToolBar::ForwardWMCommand(WORD wNotifyCode, WORD wID, HWND hWnd
 {
 	DWORD wParam = MAKELONG(wID, wNotifyCode);
 	DWORD lParam = (LPARAM)hWndCtl;
-	return ::SendMessage(m_tree, WM_COMMAND, wParam, lParam);
+	return ::SendMessage(m_tree, WM_COMMAND, wParam, lParam);	
 }
+
 
 void CTreeWithToolBar::FillViewBar()
 {
 	unsigned int st_count = _EDMnr.GetStEDsCount();
 	unsigned int count = _EDMnr.GetEDsCount();
 
-	m_st_menu = ::CreateMenu();	
+	m_st_menu = ::CreateMenu();
 	HMENU menu = ::CreateMenu();
 	HMENU bar = ::CreateMenu();
-
-
-	wchar_t elsMenuItem[MAX_LOAD_STRING + 1];
-	wchar_t scriptsMenuItem[MAX_LOAD_STRING + 1];
-
-	::LoadString(_Module.GetResourceInstance(), IDS_DOCTREE_MENU_ELEMENTS, elsMenuItem, MAX_LOAD_STRING);
-	::LoadString(_Module.GetResourceInstance(), IDS_DOCTREE_MENU_SCRIPTS, scriptsMenuItem, MAX_LOAD_STRING);
-
-	::AppendMenu(bar, MF_POPUP|MF_STRING, (UINT)(HMENU)m_st_menu, elsMenuItem);
-	::AppendMenu(bar, MF_POPUP|MF_STRING, (UINT)(HMENU)menu, scriptsMenuItem);
+	::AppendMenu(bar, MF_POPUP|MF_STRING, (UINT)(HMENU)m_st_menu, L"Elements");
+	::AppendMenu(bar, MF_POPUP|MF_STRING, (UINT)(HMENU)menu, L"Scripts");
 
 	int picType = 0;
 	HANDLE picHandle = 0;
@@ -190,11 +178,12 @@ void CTreeWithToolBar::FillViewBar()
 	for(unsigned int i = 0; i < st_count; ++i)
 	{
 		::AppendMenu(m_st_menu, MF_STRING, IDC_TREE_ST_BASE + i, _EDMnr.GetStED(i)->GetCaption());
+		
 		if(_EDMnr.GetStED(i)->ViewInTree())
 			::CheckMenuItem(m_st_menu, IDC_TREE_ST_BASE + i, MF_CHECKED);
-		/*if(_EDMnr.GetStED(i)->GetPic(picHandle, picType))
+/*		if(_EDMnr.GetStED(i)->GetPic(picHandle, picType))
 		{
-			switch(picType)
+			switch(pictType)
 			{
 			case 0:
 				m_view_bar.AddBitmap((HBITMAP)picHandle, IDC_TREE_ST_BASE + i);
@@ -238,33 +227,14 @@ void CTreeWithToolBar::FillViewBar()
 
 LRESULT CTreeWithToolBar::OnMenuCommand(WORD, WORD wID, HWND, BOOL&)
 {
-	bool ctrl_state = (GetKeyState(VK_CONTROL) & 0x8000) != 0x0;
 	unsigned int index = wID - IDC_TREE_BASE;
 	CElementDescriptor* ED = _EDMnr.GetED(index);
-
-	if(ctrl_state)
-	{
-		ClearTree();
-	}
-	else
-	{
-		ED->CleanUp();
-	}
-
+		
+	ED->CleanUp();
 	ED->ProcessScript();
 	ED->SetViewInTree(true);
 	m_tree.UpdateAll();
 	return 0;
-}
-
-void CTreeWithToolBar::ClearTree()
-{
-	_EDMnr.CleanTree();	
-	int st_menu_item_count = m_st_menu.GetMenuItemCount();
-	for(int i = 0; i < st_menu_item_count; ++i)
-	{
-		::CheckMenuItem(m_st_menu, IDC_TREE_ST_BASE + i, MF_UNCHECKED);
-	}
 }
 
 
@@ -299,8 +269,6 @@ LRESULT CDocumentTree::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& b
 
 	m_tree.Create(*this, rcDefault);
 	m_tree.m_tree.SetMainwindow(GetParent());
-	/*m_element_browser.Create(*this, rcDefault);
-	m_element_browser.m_tree.SetMainwindow(GetParent());*/
 	this->SetClient(m_tree);
 
 	wchar_t capt[MAX_LOAD_STRING + 1];

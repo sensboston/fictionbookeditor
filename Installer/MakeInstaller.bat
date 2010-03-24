@@ -10,7 +10,6 @@ md .\Input
     
 copy ..\Release\FBE.exe .\Input\
 copy ..\Release\res_rus.dll .\Input\
-copy ..\Release\res_ukr.dll .\Input\
 copy ..\Release\FBSHell.dll .\Input\
 xcopy ..\files\*.* .\Input\ /E /Y
 

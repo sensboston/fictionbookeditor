@@ -56,22 +56,20 @@ LRESULT CFBEView::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandl
   return 0;
 }
 
-CFBEView::~CFBEView()
-{
-	if(HasDoc())
-	{
-		DocumentEvents::DispEventUnadvise(Document(), &DIID_HTMLDocumentEvents2);
-		TextEvents::DispEventUnadvise(Document()->body, &DIID_HTMLTextContainerEvents2);
-		m_mkc->UnRegisterForDirtyRange(m_dirtyRangeCookie);
-	}
-	if(m_browser)
-		BrowserEvents::DispEventUnadvise(m_browser, &DIID_DWebBrowserEvents2);
+CFBEView::~CFBEView() {
+  if (HasDoc()) {
+    DocumentEvents::DispEventUnadvise(Document(),&DIID_HTMLDocumentEvents2);
+    TextEvents::DispEventUnadvise(Document()->body,&DIID_HTMLTextContainerEvents2);
+    m_mkc->UnRegisterForDirtyRange(m_dirtyRangeCookie);
+  }
+  if (m_browser)
+    BrowserEvents::DispEventUnadvise(m_browser,&DIID_DWebBrowserEvents2);
 
-	if(m_find_dlg)
-	{
-		CloseFindDialog(m_find_dlg);
-		delete m_find_dlg;
-	}
+  if(m_find_dlg)
+  {
+	  CloseFindDialog(m_find_dlg);
+	  delete m_find_dlg;
+  }
 }
 
 BOOL CFBEView::PreTranslateMessage(MSG* pMsg)
@@ -155,8 +153,6 @@ bool CFBEView::CheckCommand(WORD wID)
     return bCall(L"StyleTextAuthor",SelectionStructCon());
   case ID_EDIT_INS_IMAGE:
     return bCall(L"InsImage") && !SelectionStructCode() && !SelectionHasTags(L"SPAN");
-  case ID_EDIT_INS_INLINEIMAGE:
-    return bCall(L"InsInlineImage") && !SelectionStructCode();
   case ID_EDIT_ADD_IMAGE:
     return bCall(L"AddImage", SelectionStructCon()) && !SelectionStructCode() && !SelectionHasTags(L"SPAN");
   case ID_EDIT_ADD_EPIGRAPH:
@@ -166,9 +162,9 @@ bool CFBEView::CheckCommand(WORD wID)
   case ID_EDIT_SPLIT:
     return SplitContainer(true);
   case ID_EDIT_INS_POEM:
-    return InsertPoem(true);
+    return InsertPoemOrCite(false,true);
   case ID_EDIT_INS_CITE:
-    return InsertCite(true);
+    return InsertPoemOrCite(true,true);
 	case ID_EDIT_CODE:
 		{
 			_variant_t params[3] =
@@ -235,267 +231,98 @@ MSHTML::IHTMLDOMNodePtr	  CFBEView::GetChangedNode() {
   return e1;
 }
 
-static bool IsEmptyNode(MSHTML::IHTMLDOMNode *node) {
-	if (node->nodeType!=1)
-		return false;
+// splitting
+bool  CFBEView::SplitContainer(bool fCheck) {
+  try {
+    MSHTML::IHTMLTxtRangePtr	rng(Document()->selection->createRange());
+    if (!(bool)rng)
+      return false;
+    
+    MSHTML::IHTMLElementPtr	pe(rng->parentElement());
+    while ((bool)pe && U::scmp(pe->tagName,L"DIV"))
+      pe=pe->parentElement;
+    
+    if (!(bool)pe || (U::scmp(pe->className,L"section") && U::scmp(pe->className,L"stanza")))
+      return false;
+    
+    MSHTML::IHTMLTxtRangePtr	r2(rng->duplicate());
+    r2->moveToElementText(pe);
 
-	_bstr_t   name(node->nodeName);
+    if (rng->compareEndPoints(L"StartToStart",r2)==0)
+      return false;
 
-	if (U::scmp(name,L"BR")==0)
-		return false;
+    if (fCheck)
+      return true;
 
-	if (U::scmp(name,L"P")==0) // the editor uses empty Ps to represent empty lines
-		return false;
+    // at this point we are ready to split
 
-	/* if (U::scmp(name,L"EM")==0) // конвертеры иногда обрамляют пробелы тегами <emphasis> и <strong>
-	return false;
+    // * create & position markup pointers
+    MSHTML::IMarkupPointerPtr	selstart,selend,elemend;
+    m_mk_srv->CreateMarkupPointer(&selstart);
+    m_mk_srv->CreateMarkupPointer(&selend);
+    m_mk_srv->CreateMarkupPointer(&elemend);
+    m_mk_srv->MovePointersToRange(rng,selstart,selend);
+    elemend->MoveAdjacentToElement(pe,MSHTML::ELEM_ADJ_BeforeEnd);
 
-	if (U::scmp(name,L"STRONG")==0) // конвертеры иногда обрамляют пробелы тегами <emphasis> и <strong>
-	return false;*/
+    // * check if title needs to be created
+    bool  fTitle=rng->compareEndPoints(L"StartToEnd",rng)!=0;
+    bool  fContent=rng->compareEndPoints(L"EndToEnd",r2)!=0;
 
-	// images are always empty
-	if (U::scmp(name,L"DIV")==0 && U::scmp(MSHTML::IHTMLElementPtr(node)->className,L"image")==0)
-		return false;
-	if (U::scmp(name,L"IMG")==0)
-		return false;
+    // * create an undo unit
+    CString   name(L"split ");
+    name+=(const wchar_t *)pe->className;
+    m_mk_srv->BeginUndoUnit((TCHAR*)(const TCHAR *)name);
 
-	if (node->hasChildNodes()==VARIANT_FALSE)
-		return true;
+    // * create a new element
+    MSHTML::IHTMLElementPtr   ne(Document()->createElement(L"DIV"));
+    ne->className=pe->className;
 
-	if (U::scmp(name,L"A")==0) // links can be meaningful even if the contain only ws
-		return false;
+    // * insert it after pe
+    MSHTML::IHTMLElement2Ptr(pe)->insertAdjacentElement(L"afterEnd",ne);
 
-	if ((bool)node->firstChild->nextSibling)
-		return false;
+    // * move content or create new
+    if (fContent) {
+      // * create&position destination markup pointer
+      MSHTML::IMarkupPointerPtr	dest;
+      m_mk_srv->CreateMarkupPointer(&dest);
+      dest->MoveAdjacentToElement(ne,MSHTML::ELEM_ADJ_AfterBegin);
+      m_mk_srv->move(selend,elemend,dest);
+    } else {
+      MSHTML::IHTMLElementPtr	para(Document()->createElement(L"P"));
+      MSHTML::IHTMLElement3Ptr(para)->inflateBlock=VARIANT_TRUE;
+      MSHTML::IHTMLElement2Ptr(ne)->insertAdjacentElement(L"beforeEnd",para);
+    }
 
-	if (node->firstChild->nodeType!=3)
-		return false;
+    // * create and move title if needed
+    if (fTitle) {
+      MSHTML::IHTMLElementPtr title(Document()->createElement(L"DIV"));
+      title->className=L"title";
+      MSHTML::IHTMLElement2Ptr(ne)->insertAdjacentElement(L"afterBegin",title);
 
-	if (U::is_whitespace(node->firstChild->nodeValue.bstrVal))
-		return true;
+      // * create&position destination markup pointer
+      MSHTML::IMarkupPointerPtr	dest;
+      m_mk_srv->CreateMarkupPointer(&dest);
+      dest->MoveAdjacentToElement(title,MSHTML::ELEM_ADJ_AfterBegin);
+      m_mk_srv->move(selstart,selend,dest);
 
-	return false;
-}
+      // * delete all containers from title
+      KillDivs(title);
+      KillStyles(title);
+    }
 
-// Remove empty leaf nodes
-static void RemoveEmptyNodes(MSHTML::IHTMLDOMNode *node) {
-	if (node->nodeType!=1)
-		return;
+    // * ensure we have good html
+    PackText(ne,Document());
 
-	MSHTML::IHTMLDOMNodePtr cur(node->firstChild);
-	while (cur)
-	{
-		MSHTML::IHTMLDOMNodePtr next(cur->nextSibling);
-		RemoveEmptyNodes(cur);
-		if(IsEmptyNode(cur))
-			cur->removeNode(VARIANT_TRUE);
-		cur=next;
-	}
-}
+    // * close undo unit
+    m_mk_srv->EndUndoUnit();
 
-// Find parent DIV
-static MSHTML::IHTMLElementPtr GetHP(MSHTML::IHTMLElementPtr hp)
-{
-	while((bool)hp && U::scmp(hp->tagName,L"DIV"))
-		hp = hp->parentElement;
-	return hp;
-}
-
-// Splitting
-bool CFBEView::SplitContainer(bool fCheck)
-{
-	try
-	{
-		MSHTML::IHTMLTxtRangePtr rng(Document()->selection->createRange());
-		if(!(bool)rng)
-			return false;
-
-		MSHTML::IHTMLElementPtr pe(rng->parentElement());
-		while((bool)pe && U::scmp(pe->tagName, L"DIV"))
-			pe = pe->parentElement;
-
-		if(!(bool)pe || (U::scmp(pe->className, L"section") && U::scmp(pe->className, L"stanza")))
-			return false;
-
-		MSHTML::IHTMLTxtRangePtr r2(rng->duplicate());
-			r2->moveToElementText(pe);
-
-		if(rng->compareEndPoints(L"StartToStart", r2) == 0)
-			return false;
-
-		MSHTML::IHTMLTxtRangePtr r3(rng->duplicate());
-		r3->collapse(true);
-		MSHTML::IHTMLTxtRangePtr r4(rng->duplicate());
-		r4->collapse(false);
-
-		if(!(bool)pe || GetHP(r3->parentElement()) != pe || GetHP(r4->parentElement()) != pe)
-			return false;
-
-		if(fCheck)
-			return true;
-
-		// At this point we are ready to split
-
-		// Create an undo unit
-		CString name(L"split ");
-		name += (const wchar_t*)pe->className;
-		m_mk_srv->BeginUndoUnit((TCHAR*)(const TCHAR*)name);
-
-		//// Create a new element
-		MSHTML::IHTMLElementPtr ne(Document()->createElement(L"DIV"));
-		ne->className = pe->className;
-		_bstr_t className = pe->className;
-
-		MSHTML::IHTMLElementPtr peTitle(Document()->createElement(L"DIV"));
-		MSHTML::IHTMLElementCollectionPtr peColl = pe->children;
-		{
-			MSHTML::IHTMLElementPtr peChild = peColl->item(0);
-			if(!U::scmp(peChild->tagName, L"DIV") && !U::scmp(peChild->className, L"title"))
-				peTitle->innerHTML = peChild->outerHTML;
-			else
-				peTitle = NULL;
-		}
-
-		// Create and position markup pointers
-		MSHTML::IMarkupPointerPtr selstart, selend, elembeg, elemend;
-
-		m_mk_srv->CreateMarkupPointer(&selstart);
-		m_mk_srv->CreateMarkupPointer(&selend);
-		m_mk_srv->CreateMarkupPointer(&elembeg);
-		m_mk_srv->CreateMarkupPointer(&elemend);
-
-		MSHTML::IHTMLTxtRangePtr titleRng(rng->duplicate());
-		m_mk_srv->MovePointersToRange(titleRng, selstart, selend);
-		U::ElTextHTML title(titleRng->htmlText, titleRng->text);
-
-		MSHTML::IHTMLTxtRangePtr preRng(rng->duplicate());
-		elembeg->MoveAdjacentToElement(pe, MSHTML::ELEM_ADJ_AfterBegin);
-		m_mk_srv->MoveRangeToPointers(elembeg, selstart, preRng);
-		U::ElTextHTML pre(preRng->htmlText, preRng->text);
-
-		MSHTML::IHTMLElementCollectionPtr peChilds = pe->children;
-		MSHTML::IHTMLElementPtr elLast = peChilds->item(peChilds->length - 1);
-		if(U::scmp(elLast->innerText, L"") == 0)
-			elLast->innerText = L"123";
-
-		MSHTML::IHTMLTxtRangePtr postRng(rng->duplicate());
-		elemend->MoveAdjacentToElement(pe, MSHTML::ELEM_ADJ_BeforeEnd);
-		m_mk_srv->MoveRangeToPointers(selend, elemend, postRng);
-		U::ElTextHTML post(postRng->htmlText, postRng->text);
-
-		// Check if title needs to be created and further text to be copied
-		bool fTitle = !title.text.IsEmpty();
-		bool fContent = !post.html.IsEmpty();
-
-		if(fTitle && title.html.Find(L"<P") == -1)
-			title.html = CString(L"<P>") + title.html + CString(L"</P>");
-		if(fContent && post.html.Find(L"<P") == -1)
-			post.html = CString(L"<P>") + post.html + CString(L"</P>");
-
-		title.html.Remove(L'\r');
-		title.html.Remove(L'\n');
-		post.html.Remove(L'\r');
-		post.html.Remove(L'\n');
-
-		if(post.html.Find(L"<P>&nbsp;</P>") == 0
-			&& post.html.GetLength() > 13
-			&& fTitle
-			&& title.html.Find(L"<P>&nbsp;</P>") != title.html.GetLength() -14)
-			post.html.Delete(0, 13);
-		if(post.html.Find(L"<P>123</P>") != -1)
-			post.html.Replace(L"<P>123</P>", L"<P>&nbsp;</P>");
-
-		// Insert it after pe
-		MSHTML::IHTMLElement2Ptr(pe)->insertAdjacentElement(L"afterEnd", ne);
-
-		// Move content or create new
-		if(fContent)
-		{
-			// Create and position destination markup pointer
-			if(post.html == L"<P>&nbsp;</P>")
-				post.html += L"<P>&nbsp;</P>";
-			ne->innerHTML = post.html.AllocSysString();
-		}
-		else
-		{
-			MSHTML::IHTMLElementPtr para(Document()->createElement(L"P"));
-			MSHTML::IHTMLElement3Ptr(para)->inflateBlock = VARIANT_TRUE;
-			MSHTML::IHTMLElement2Ptr(ne)->insertAdjacentElement(L"beforeEnd", para);
-		}
-
-		// Create and move title if needed
-		if(fTitle)
-		{
-			MSHTML::IHTMLElementPtr elTitle(Document()->createElement(L"DIV"));
-			elTitle->className = L"title";
-			MSHTML::IHTMLElement2Ptr(ne)->insertAdjacentElement(L"afterBegin", elTitle);
-
-			// Create and position destination markup pointer
-			elTitle->innerHTML = title.html.AllocSysString();
-
-			// Delete all containers from title
-			KillDivs(elTitle);
-			KillStyles(elTitle);
-		}
-
-		if(pre.html.Find(L"<P") == -1)
-		{
-			if(pre.html == L"")
-				pre.html = L"<P>&nbsp;</P>";
-			else
-				pre.html = CString(L"<P>") + pre.html + CString(L"</P>");
-		}
-		pe->innerHTML = pre.html.AllocSysString();
-
-		// Ensure we have good html
-		FixupParagraphs(ne);
-		PackText(ne, Document());
-
-		peColl = pe->children;
-		if(peColl->length == 1)
-		{
-			MSHTML::IHTMLElementPtr peChild = peColl->item(0);
-			if(!U::scmp(peChild->tagName, L"DIV") && !U::scmp(peChild->className, className.GetBSTR()))
-				m_mk_srv->RemoveElement(peChild);
-		}
-
-		MSHTML::IHTMLElementCollectionPtr neColl = ne->children;
-		if(neColl->length == 1)
-		{
-			MSHTML::IHTMLElementPtr neChild = neColl->item(0);
-			if(!U::scmp(neChild->tagName, L"DIV") && !U::scmp(neChild->className, className.GetBSTR()))
-				m_mk_srv->RemoveElement(neChild);
-		}
-
-		CString peTitSect;
-		if(peTitle)
-		{
-			peTitSect = peTitle->innerHTML.GetBSTR();
-			peTitSect += L"<P>&nbsp;</P>";
-		}
-
-		CString b = pe->innerText;
-		b.Remove(L'\r');
-		b.Remove(L'\n');
-		CString c = peTitle ? peTitle->innerText : L"";
-		c.Remove(L'\r');
-		c.Remove(L'\n');
-
-		if(peTitle && !U::scmp(b, c))
-			pe->innerHTML = peTitSect.AllocSysString();
-
-		// Close undo unit
-		m_mk_srv->EndUndoUnit();
-
-		// Move cursor to newly created item
-		GoTo(ne, false);
-	}
-	catch (_com_error& e)
-	{
-		U::ReportError(e);
-	}
-
-	return false;
+    // * move cursor to newly created item
+    GoTo(ne,false);
+  }
+  catch (_com_error& e) {
+    U::ReportError(e);
+  }
+  return false;
 }
 
 // charge element's attribute
@@ -525,628 +352,116 @@ MSHTML::IHTMLDOMNodePtr	  CFBEView::ChangeAttribute(MSHTML::IHTMLElementPtr elem
 	return elem;
 }
 
-// cleaning up html
-static void KillDivs(MSHTML::IHTMLElement2Ptr elem) {
-	MSHTML::IHTMLElementCollectionPtr	  divs(elem->getElementsByTagName(L"DIV"));
-	while (divs->length>0)
-		MSHTML::IHTMLDOMNodePtr(divs->item(0L))->removeNode(VARIANT_FALSE);
+// find parent DIV
+static MSHTML::IHTMLElementPtr	GetHP(MSHTML::IHTMLElementPtr hp) {
+  while ((bool)hp && U::scmp(hp->tagName,L"DIV"))
+    hp=hp->parentElement;
+  return hp;
 }
 
-static void KillStyles(MSHTML::IHTMLElement2Ptr elem) {
-	MSHTML::IHTMLElementCollectionPtr	  ps(elem->getElementsByTagName(L"P"));
-	for (long l=0;l<ps->length;++l)
-		CheckError(MSHTML::IHTMLElementPtr(ps->item(l))->put_className(NULL));
-}
-
-//////////////////////////////////////////////////////////////////////////////
-/// @fn static bool	MergeEqualHTMLElements(MSHTML::IHTMLDOMNode *node)
-///
-/// функция объединяет стоящие рядом одинаковые HTML элементы
-///
-/// @params MSHTML::IHTMLDOMNode *node [in, out] - нода, внутри которой будет производиться преобразование
-///
-/// @note сливаются следующие элементы: EM, STRONG
-/// при этом пробельные символы, располагающиеся между закрывающем и открывающим тегами остаются, т.е. 
-/// '<EM>хороший</EM> <EM>пример</EM>' преобразуется в '<EM>хороший пример</EM>'
-///
-/// @author Ильин Иван @date 31.03.08
-//////////////////////////////////////////////////////////////////////////////
-static bool	MergeEqualHTMLElements(MSHTML::IHTMLDOMNode *node, MSHTML::IHTMLDocument2 *doc)
-{
-	if (node->nodeType != 1) // Element node
-		return false;
-
-	bool	fRet=false;
-
-
-	MSHTML::IHTMLDOMNodePtr   cur(node->firstChild);
-	while ((bool)cur) 
-	{
-		MSHTML::IHTMLDOMNodePtr next(cur->nextSibling);
-		if (MergeEqualHTMLElements(cur,doc))
-		{
-			cur = node->firstChild;
-			continue;
-		}
-
-		// если нет следующего элемента, то сливать будет несчем
-		if(!(bool)next)
-			return false;
-
-		_bstr_t	name(cur->nodeName);	
-		MSHTML::IHTMLElementPtr	curelem(cur);
-		MSHTML::IHTMLElementPtr	nextElem(next);
-
-		if (U::scmp(name,L"EM")==0 || U::scmp(name,L"STRONG")==0) 
-		{
-			// отлавливаем ситуацию с пробелом, обрамленным тегами EM т.д.
-			bstr_t curText = curelem->innerText;
-			if(curText.length() == 0 || U::is_whitespace(curelem->innerText))
-			{
-				// удаляем обрамляющие теги				
-				MSHTML::IHTMLDOMNodePtr prev = cur->previousSibling;
-				if((bool)prev)
-				{
-					if(prev->nodeType == 3)//text
-					{
-						prev->nodeValue = (bstr_t)prev->nodeValue.bstrVal + curelem->innerText;						
-					}
-					else
-					{
-						MSHTML::IHTMLElementPtr prevElem(prev);
-						prevElem->innerHTML = prevElem->innerHTML + curelem->innerText;
-					}
-					cur->removeNode(VARIANT_TRUE);
-					cur = prev;
-					continue;
-				}
-
-				if((bool)next)
-				{
-					MSHTML::IHTMLDOMNodePtr parent = cur->parentNode;
-					if(next->nodeType == 3)//text
-					{
-						next->nodeValue = (bstr_t)curelem->innerText + next->nodeValue.bstrVal;
-					}
-					else
-					{
-						MSHTML::IHTMLElementPtr nextElem(next);
-						nextElem->innerHTML = curelem->innerText + nextElem->innerHTML;
-					}
-					cur->removeNode(VARIANT_TRUE);
-					cur = parent->firstChild;
-					continue;
-				}
-			}
-
-			if(next->nodeType == 3) // TextNode
-			{
-				MSHTML::IHTMLDOMNodePtr afterNext(next->nextSibling);
-				if(!(bool)afterNext)
-				{
-					cur = next;
-					continue;
-				}
-
-				MSHTML::IHTMLElementPtr	afterNextElem(afterNext);
-
-				bstr_t afterNextName = afterNext->nodeName;
-				if(U::scmp(name, afterNextName))// если следующий элемент другого типа
-				{
-					cur = next;
-					continue;
-				}
-
-				// проверяем между одинаковыми элементами стоят одни пробелы
-				if(!U::is_whitespace(next->nodeValue.bstrVal))
-				{
-					cur = next;
-					continue; // <EM>123</EM>45<EM>678</EM> абсолютно нормальная ситуация
-				}
-
-				// объединяем элементы
-				MSHTML::IHTMLElementPtr	newelem(doc->createElement(name));
-				MSHTML::IHTMLDOMNodePtr	newnode(newelem);
-				newelem->innerHTML = curelem->innerHTML + next->nodeValue.bstrVal + afterNextElem->innerHTML;
-				cur->replaceNode(newnode);
-				afterNext->removeNode(VARIANT_TRUE);
-				next->removeNode(VARIANT_TRUE);
-				cur = newnode;
-				fRet=true;
-			}
-			else
-			{
-				bstr_t nextName(next->nodeName);
-				if(U::scmp(name, nextName))// если следующий элемент другого типа
-				{
-					cur = next;
-					continue;
-				}
-
-				// объединяем элементы
-				MSHTML::IHTMLElementPtr	newelem(doc->createElement(name));
-				MSHTML::IHTMLDOMNodePtr	newnode(newelem);
-				newelem->innerHTML = curelem->innerHTML + nextElem->innerHTML;
-				cur->replaceNode(newnode);
-				next->removeNode(VARIANT_TRUE);
-				cur = newnode;
-				fRet=true;
-				continue;
-			}
-		}
-		cur=next;
-	}
-	return fRet;
-}
-static bool   RemoveUnk(MSHTML::IHTMLDOMNode *node, MSHTML::IHTMLDocument2 *doc) {
-	if (node->nodeType!=1) // Element node
-		return false;
-
-	bool	fRet=false;
-
-restart:
-	MSHTML::IHTMLDOMNodePtr   cur(node->firstChild);
-	while ((bool)cur) {
-		MSHTML::IHTMLDOMNodePtr next(cur->nextSibling);
-
-		if (RemoveUnk(cur,doc))
-			goto restart;
-
-		_bstr_t			name(cur->nodeName);
-		MSHTML::IHTMLElementPtr	curelem(cur);
-
-		if (U::scmp(name,L"B")==0 || U::scmp(name,L"I")==0) {
-			const wchar_t		*newname=U::scmp(name,L"B")==0 ? L"STRONG" : L"EM";
-			MSHTML::IHTMLElementPtr	newelem(doc->createElement(newname));
-			MSHTML::IHTMLDOMNodePtr	newnode(newelem);
-			newelem->innerHTML=curelem->innerHTML;
-			cur->replaceNode(newnode);
-			cur=newnode;
-			fRet=true;
-			goto restart;
-		}
-
-		if (U::scmp(name,L"P") && U::scmp(name,L"STRONG") && 
-			U::scmp(name,L"STRIKE") && U::scmp(name,L"SUP") && U::scmp(name,L"SUB") && 
-			U::scmp(name,L"EM") && U::scmp(name,L"A") &&
-			(U::scmp(name,L"SPAN") || U::scmp(curelem->className, L"code")) &&
-			U::scmp(name,L"#text") && U::scmp(name,L"BR")
-			&& (U::scmp(name,L"IMG") || U::scmp(curelem->parentElement->className, L"image")))
-		{
-			if (U::scmp(name,L"DIV")==0) {
-				_bstr_t	  cls(curelem->className);
-				_bstr_t	  id(curelem->id);
-				if (!(U::scmp(cls,L"body") && U::scmp(cls,L"section") &&
-					U::scmp(cls,L"table") && U::scmp(cls,L"tr") && U::scmp(cls,L"th") && U::scmp(cls,L"td") && 
-					U::scmp(cls,L"output") && U::scmp(cls,L"part") && U::scmp(cls,L"output-document-class") &&
-
-					U::scmp(cls,L"annotation") && U::scmp(cls,L"title") && U::scmp(cls,L"epigraph") &&
-					U::scmp(cls,L"poem") && U::scmp(cls,L"stanza") && U::scmp(cls,L"cite") &&
-					U::scmp(cls,L"history") && U::scmp(cls,L"image")&&
-					U::scmp(cls,L"code") &&
-					U::scmp(id,L"fbw_desc") && U::scmp(id,L"fbw_body") && U::scmp(id,L"fbw_updater")))
-					goto ok;
-			}
-
-			CElementDescriptor* ED;
-			if(_EDMnr.GetElementDescriptor(cur, &ED))
-				goto ok;
-			MSHTML::IHTMLDOMNodePtr ce(cur->previousSibling);
-			cur->removeNode(VARIANT_FALSE);
-			if (ce)
-				next=ce->nextSibling;
-			else
-				next=node->firstChild;
-		}
-ok:
-
-		cur=next;
-	}
-	return fRet;
-}
-
-// move the paragraph up one level
-void MoveUp(bool fCopyFmt,MSHTML::IHTMLDOMNodePtr& node) {
-	MSHTML::IHTMLDOMNodePtr   parent(node->parentNode);
-	MSHTML::IHTMLElement2Ptr  elem(parent);
-
-	// clone parent (it can be A/EM/STRONG/SPAN)
-	if (fCopyFmt) {
-		MSHTML::IHTMLDOMNodePtr   clone(parent->cloneNode(VARIANT_FALSE));
-		while ((bool)node->firstChild)
-			clone->appendChild(node->firstChild);
-		node->appendChild(clone);
-	}
-
-	// clone parent once more and move siblings after node to it
-	if ((bool)node->nextSibling) {
-		MSHTML::IHTMLDOMNodePtr   clone(parent->cloneNode(VARIANT_FALSE));
-		while ((bool)node->nextSibling)
-			clone->appendChild(node->nextSibling);
-		elem->insertAdjacentElement(L"afterEnd",MSHTML::IHTMLElementPtr(clone));
-		if (U::scmp(parent->nodeName,L"P")==0)
-			MSHTML::IHTMLElement3Ptr(clone)->inflateBlock=VARIANT_TRUE;
-	}
-
-	// now move node to parent level, the tree may be in some weird state
-	node->removeNode(VARIANT_TRUE); // delete from tree
-	node=elem->insertAdjacentElement(L"afterEnd",MSHTML::IHTMLElementPtr(node));
-}
-
-void BubbleUp(MSHTML::IHTMLDOMNode *node,const wchar_t *name) {
-	MSHTML::IHTMLElement2Ptr	    elem(node);
-	MSHTML::IHTMLElementCollectionPtr elements(elem->getElementsByTagName(name));
-	long				    len=elements->length;
-	for (long i=0;i<len;++i) {
-		MSHTML::IHTMLDOMNodePtr	  ce(elements->item(i));
-		if (!(bool)ce)
-			break;
-		for (int ll=0;ce->parentNode!=node && ll<30;++ll)
-			MoveUp(true,ce);
-		MoveUp(false,ce);
-	}
-}
-
-// split paragraphs containing BR elements
-static void   SplitBRs(MSHTML::IHTMLElement2Ptr elem) {
-	MSHTML::IHTMLElementCollectionPtr BRs(elem->getElementsByTagName(L"BR"));
-	while (BRs->length>0) {
-		MSHTML::IHTMLDOMNodePtr	  ce(BRs->item(0L));
-		if (!(bool)ce)
-			break;
-		for (;;) {
-			MSHTML::IHTMLDOMNodePtr	parent(ce->parentNode);
-			if (!(bool)parent) // no parent? huh?
-				goto blowit;
-			_bstr_t	  name(parent->nodeName);
-			if (U::scmp(name,L"P")==0 || U::scmp(name,L"DIV")==0)
-				break;
-			if (U::scmp(name,L"BODY")==0)
-				goto blowit;
-			MoveUp(false,ce);
-		}
-		MoveUp(false,ce);
-blowit:
-		ce->removeNode(VARIANT_TRUE);
-	}
-}
-
-// this sub should locate any nested paragraphs and bubble them up
-static void RelocateParagraphs(MSHTML::IHTMLDOMNode *node) {
-	if (node->nodeType!=1)
-		return;
-
-	MSHTML::IHTMLDOMNodePtr   cur(node->firstChild);
-	while (cur) {
-		if (cur->nodeType==1) {
-			if (!U::scmp(cur->nodeName,L"P")) {
-				BubbleUp(cur,L"P");
-				BubbleUp(cur,L"DIV");
-			} else
-				RelocateParagraphs(cur);
-		}
-		cur=cur->nextSibling;
-	}
-}
-
-static bool IsStanza(MSHTML::IHTMLDOMNode *node) {
-	MSHTML::IHTMLElementPtr   elem(node);
-	return U::scmp(elem->className,L"stanza")==0;
-}
-
-// Move text content in DIV items to P elements, so DIVs can
-// contain P and DIV only
-static void PackText(MSHTML::IHTMLElement2Ptr elem, MSHTML::IHTMLDocument2* doc)
-{
-	MSHTML::IHTMLElementCollectionPtr elements(elem->getElementsByTagName(L"DIV"));
-	for(long i = 0; i < elements->length; ++i)
-	{
-		MSHTML::IHTMLDOMNodePtr div(elements->item(i));
-		if(U::scmp(MSHTML::IHTMLElementPtr(div)->className, L"image") == 0)
-			continue;
-		MSHTML::IHTMLDOMNodePtr cur(div->firstChild);
-		while((bool)cur)
-		{
-			_bstr_t cur_name(cur->nodeName);
-			if (U::scmp(cur_name, L"P") && U::scmp(cur_name, L"DIV"))
-			{
-				// create a paragraph from a run of !P && !DIV
-				MSHTML::IHTMLElementPtr newp(doc->createElement(L"P"));
-				MSHTML::IHTMLDOMNodePtr newn(newp);
-				cur->replaceNode(newn);
-				newn->appendChild(cur);
-				while ((bool)newn->nextSibling)
-				{
-					cur_name = newn->nextSibling->nodeName;
-					if (U::scmp(cur_name, L"P") == 0 || U::scmp(cur_name, L"DIV") == 0)
-						break;
-					newn->appendChild(newn->nextSibling);
-				}
-				cur = newn->nextSibling;
-			}
-			else
-				cur = cur->nextSibling;
-		}
-	}
-}
-
-static void FixupLinks(MSHTML::IHTMLDOMNode *dom) {
-	MSHTML::IHTMLElement2Ptr  elem(dom);
-
-	if (!(bool)elem)
-		return;
-
-	MSHTML::IHTMLElementCollectionPtr coll(elem->getElementsByTagName(L"A"));
-	if (!(bool)coll)
-		return;
-
-	for (long l=0;l<coll->length;++l) {
-		MSHTML::IHTMLElementPtr a(coll->item(l));
-		if (!(bool)a)
-			continue;
-
-		_variant_t	  href(a->getAttribute(L"href",2));
-		if (V_VT(&href)==VT_BSTR && V_BSTR(&href) &&
-			::SysStringLen(V_BSTR(&href))>11 &&
-			memcmp(V_BSTR(&href),L"file://",6*sizeof(wchar_t))==0)
-		{
-			wchar_t* pos = wcschr((wchar_t*)V_BSTR(&href), L'#'); 
-			if(!pos)
-				continue;
-			a->setAttribute(L"href",pos,0);
-		}
-	}
-}
-
-bool CFBEView::InsertPoem(bool fCheck)
+// conversion to poems or citations
+bool CFBEView::InsertPoemOrCite(bool fCite, bool fCheck)
 {
 	try
 	{
-		MSHTML::IHTMLTxtRangePtr rng(Document()->selection->createRange());
-		if(!(bool)rng)
+		MSHTML::IHTMLTxtRangePtr	rng(Document()->selection->createRange());
+		if (!(bool)rng)
 			return false;
 
-		MSHTML::IHTMLElementPtr pe(GetHP(rng->parentElement()));
-		if(!(bool)pe)
+		MSHTML::IHTMLElementPtr	pe(GetHP(rng->parentElement()));
+		if (!(bool)pe)
 			return false;
 
-		// Get parents for start and end ranges and ensure they are the same as pe
-		MSHTML::IHTMLTxtRangePtr tr(rng->duplicate());
+		// * get parents for start and end ranges and ensure they are the same as pe
+		MSHTML::IHTMLTxtRangePtr	tr(rng->duplicate());
 		tr->collapse(VARIANT_TRUE);
-		if (GetHP(tr->parentElement()) != pe)
+		if (GetHP(tr->parentElement())!=pe)
+			return false;	
+
+		// * check if it possible to insert a cite there
+		_bstr_t   cls(pe->className);
+		if (fCite && U::scmp(cls,L"section") && U::scmp(cls,L"epigraph") && U::scmp(cls,L"annotation") &&  U::scmp(cls,L"history"))
 			return false;
 
-		// Check if it possible to insert a poem there
-		_bstr_t cls(pe->className);
-		if(U::scmp(cls, L"section")
-			&& U::scmp(cls, L"epigraph")
-			&& U::scmp(cls, L"annotation")
-			&& U::scmp(cls, L"history")
-			&& U::scmp(cls, L"cite"))
+		// * check if it possible to insert a poem there
+		if (!fCite && U::scmp(cls,L"section") && U::scmp(cls,L"epigraph") && U::scmp(cls,L"annotation") &&  U::scmp(cls,L"history") && U::scmp(cls,L"cite"))
 			return false;
 
-		// Preventing double expanding whether checked or actual executed
-		MSHTML::IHTMLElementPtr elBegin, elEnd;
-		MSHTML::IHTMLDOMNodePtr begin, end;
-		if(!ExpandTxtRangeToParagraphs(rng, elBegin, elEnd))
-			return false;
-		else
-		{
-			begin = elBegin;
-			end = elEnd;
-		}
-
-		// All checks passed
-		if(fCheck)
+		// * ok, all checks passed
+		if (fCheck)
 			return true;
 
-		m_mk_srv->BeginUndoUnit(L"insert poem");
+		m_mk_srv->BeginUndoUnit(fCite ? L"insert cite" : L"insert poem");
 
-		CString rngHTML;
-		MSHTML::IHTMLDOMNodePtr sibling = begin;
-		do
+		MSHTML::IHTMLElementPtr begin, end;
+		if(!ExpandTxtRangeToParagraphs(rng, begin, end))
 		{
-			rngHTML += MSHTML::IHTMLElementPtr(sibling)->outerHTML.GetBSTR();
-			if(sibling == end)
-				break;
+			m_mk_srv->EndUndoUnit();
+			return false;
 		}
-		while((sibling = sibling->nextSibling));
-
-		MSHTML::IHTMLElementPtr ne(Document()->createElement(L"<DIV class=poem>"));
-
-		if(!U::scmp(rng->text.GetBSTR(), L""))
-		{
-			MSHTML::IHTMLElementPtr se(Document()->createElement(L"<DIV class=stanza>"));
-			se->innerHTML = L"<P>&nbsp;</P>";
-			ne->innerHTML = se->outerHTML;
+		 
+		MSHTML::IHTMLElementPtr	  ne(Document()->createElement(L"DIV"));
+		if(fCite)
+		{	
+			// * create cite
+			ne->className = L"cite";
+			if (rng->compareEndPoints(L"StartToEnd",rng)!=0)
+				ne->innerHTML=rng->htmlText;
+			else
+				ne->innerHTML=L"<P></P>";
 		}
 		else
 		{
-			MSHTML::IHTMLElementPtr acc(Document()->createElement(L"DIV"));
-			acc->innerHTML = rngHTML.AllocSysString();
+			// * create poem
+			MSHTML::IHTMLElementPtr	  se(Document()->createElement(L"DIV"));
+			se->className=L"stanza";
 
-			MSHTML::IHTMLElementCollectionPtr coll = acc->children;
-			bool trim = true;
-
-			CString stanzaHTML;
-			for(int i = 0; i < coll->length; ++i)
-			{
-				MSHTML::IHTMLElementPtr curr = coll->item(i);
-				if(!U::scmp(curr->innerText.GetBSTR(), L""))
-				{
-					if(trim)
-						continue;
-					else
-					{
-						MSHTML::IHTMLElementPtr se(Document()->createElement(L"<DIV class=stanza>"));
-						se->innerHTML = stanzaHTML.AllocSysString();
-						MSHTML::IHTMLElement2Ptr(ne)->insertAdjacentElement(L"beforeEnd", se);
-						stanzaHTML = L"";
-						trim = true;
-					}
-				}
-				else
-				{
-					if(!U::scmp(curr->tagName, L"DIV"))
-					{
-						if(curr->innerText.GetBSTR())
-						{
-							stanzaHTML += CString(L"<P>") + curr->innerText.GetBSTR() + CString(L"</P>");
-						}
-						else
-							continue;
-					}
-					else
-					{
-						stanzaHTML += curr->outerHTML.GetBSTR();
-					}
-
-					trim = false;
-				}
-			}
-
-			if(stanzaHTML != "")
-			{
-				MSHTML::IHTMLElementPtr se(Document()->createElement(L"<DIV class=stanza>"));
-				se->innerHTML = stanzaHTML.AllocSysString();
-				MSHTML::IHTMLElement2Ptr(ne)->insertAdjacentElement(L"beforeEnd", se);
-			}
+			if (rng->compareEndPoints(L"StartToEnd",rng)!=0)
+				se->innerHTML=rng->htmlText;
+			else
+				se->innerHTML=L"<P></P>";
+			
+			ne->className=L"poem";
+			MSHTML::IHTMLElement2Ptr(ne)->insertAdjacentElement(L"afterBegin",se);
 		}
 
-
-		MSHTML::IHTMLDOMNodePtr(pe)->insertBefore((MSHTML::IHTMLDOMNodePtr)ne, begin.GetInterfacePtr());
-
-		while(begin != end)
+		// * copy content
+		CString range_text = GetClearedRangeText(rng);
+		if(range_text.IsEmpty())
 		{
-			sibling = begin->nextSibling;
-			begin->removeNode(VARIANT_TRUE);
-			begin = sibling;
+			m_mk_srv->EndUndoUnit();
+			return false;
 		}
-		end->removeNode(VARIANT_TRUE);
+		
+		pe = GetHP(rng->parentElement());
+		CString parent_text = pe->innerHTML;
+		int pos = parent_text.Find(range_text);
+		if(pos == -1)
+		{
+			m_mk_srv->EndUndoUnit();
+			return false;
+		}
+
+		CString part1 = parent_text.Left(pos);
+		CString part2 = parent_text.Right(parent_text.GetLength() - pos - range_text.GetLength());
+		CString elem_text((wchar_t*)ne->outerHTML);
+
+		U::DomPath path;
+		path.CreatePathFromHTMLDOM(pe, begin);	
+		pe->innerHTML = (part1 + elem_text + part2).GetBuffer();
 
 		FixupParagraphs(pe);
 		PackText(pe, Document());
 
-		rng->moveToElementText(ne);
-		rng->collapse(false);
+		MSHTML::IHTMLDOMNode * node = path.GetNodeFromHTMLDOM(pe);		
+		rng->moveToElementText((MSHTML::IHTMLElement *)node);
+		rng->collapse(true);
 		rng->select();
-
 		m_mk_srv->EndUndoUnit();
 	}
-	catch (_com_error& err) 
+	catch (_com_error& e) 
 	{
-		U::ReportError(err);
-	}
-	return true;
-}
-
-bool CFBEView::InsertCite(bool fCheck)
-{
-	try
-	{
-		MSHTML::IHTMLTxtRangePtr rng(Document()->selection->createRange());
-		if(!(bool)rng)
-			return false;
-
-		MSHTML::IHTMLElementPtr pe(GetHP(rng->parentElement()));
-		if(!(bool)pe)
-			return false;
-
-		// Get parents for start and end ranges and ensure they are the same as pe
-		MSHTML::IHTMLTxtRangePtr tr(rng->duplicate());
-		tr->collapse(VARIANT_TRUE);
-		if (GetHP(tr->parentElement()) != pe)
-			return false;
-
-		// Check if it possible to insert a cite there
-		_bstr_t cls(pe->className);
-		if(U::scmp(cls, L"section")
-			&& U::scmp(cls, L"epigraph")
-			&& U::scmp(cls, L"annotation")
-			&&  U::scmp(cls, L"history"))
-			return false;
-
-		// Preventing double expanding whether checked or actual executed
-		MSHTML::IHTMLElementPtr elBegin, elEnd;
-		MSHTML::IHTMLDOMNodePtr begin, end;
-		if(!ExpandTxtRangeToParagraphs(rng, elBegin, elEnd))
-			return false;
-		else
-		{
-			begin = elBegin;
-			end = elEnd;
-		}
-
-		// All checks passed
-		if(fCheck)
-			return true;
-
-		m_mk_srv->BeginUndoUnit(L"insert cite");
-
-		CString rngHTML;
-		MSHTML::IHTMLDOMNodePtr sibling = begin;
-		do
-		{
-			rngHTML += MSHTML::IHTMLElementPtr(sibling)->outerHTML.GetBSTR();
-			if(sibling == end)
-				break;
-		}
-		while((sibling = sibling->nextSibling));
-
-		// Create cite
-		MSHTML::IHTMLElementPtr ne(Document()->createElement(L"DIV"));
-		ne->className = L"cite";
-
-		MSHTML::IHTMLElementPtr acc(Document()->createElement(L"DIV"));
-		acc->innerHTML = rngHTML.AllocSysString();
-
-		MSHTML::IHTMLElementCollectionPtr coll = acc->children;
-
-		CString citeHTML;
-		for(int i = 0; i < coll->length; ++i)
-		{
-			MSHTML::IHTMLElementPtr curr = coll->item(i);
-			if(!U::scmp(curr->tagName, L"DIV")
-				&& U::scmp(curr->className, L"table")
-				&& U::scmp(curr->className, L"poem"))
-			{
-				if(curr->innerText.GetBSTR())
-				{
-					citeHTML += CString(L"<P>") + curr->innerText.GetBSTR() + CString(L"</P>");
-				}
-				else
-					continue;
-			}
-			else
-			{
-				citeHTML += curr->outerHTML.GetBSTR();
-			}
-		}
-
-		ne->innerHTML = citeHTML.AllocSysString();
-
-		MSHTML::IHTMLDOMNodePtr(pe)->insertBefore((MSHTML::IHTMLDOMNodePtr)ne, begin.GetInterfacePtr());
-
-		while(begin != end)
-		{
-			sibling = begin->nextSibling;
-			begin->removeNode(VARIANT_TRUE);
-			begin = sibling;
-		}
-		end->removeNode(VARIANT_TRUE);
-
-		FixupParagraphs(pe);
-		PackText(pe, Document());
-
-		rng->moveToElementText(ne);
-		rng->collapse(false);
-		rng->select();
-
-		m_mk_srv->EndUndoUnit();
-	}
-	catch (_com_error& err) 
-	{
-		U::ReportError(err);
+		U::ReportError(e);
 	}
 	return true;
 }
@@ -1695,6 +1010,431 @@ MSHTML::IHTMLElementPtr	  CFBEView::SelectionsVAlignB(_bstr_t& valign) {
   return MSHTML::IHTMLElementPtr();
 }
 
+// cleaning up html
+static void KillDivs(MSHTML::IHTMLElement2Ptr elem) {
+  MSHTML::IHTMLElementCollectionPtr	  divs(elem->getElementsByTagName(L"DIV"));
+  while (divs->length>0)
+    MSHTML::IHTMLDOMNodePtr(divs->item(0L))->removeNode(VARIANT_FALSE);
+}
+
+static void KillStyles(MSHTML::IHTMLElement2Ptr elem) {
+  MSHTML::IHTMLElementCollectionPtr	  ps(elem->getElementsByTagName(L"P"));
+  for (long l=0;l<ps->length;++l)
+    CheckError(MSHTML::IHTMLElementPtr(ps->item(l))->put_className(NULL));
+}
+
+//////////////////////////////////////////////////////////////////////////////
+/// @fn static bool	MergeEqualHTMLElements(MSHTML::IHTMLDOMNode *node)
+///
+/// функция объединяет стоящие рядом одинаковые HTML элементы
+///
+/// @params MSHTML::IHTMLDOMNode *node [in, out] - нода, внутри которой будет производиться преобразование
+///
+/// @note сливаются следующие элементы: EM, STRONG
+/// при этом пробельные символы, располагающиеся между закрывающем и открывающим тегами остаются, т.е. 
+/// '<EM>хороший</EM> <EM>пример</EM>' преобразуется в '<EM>хороший пример</EM>'
+///
+/// @author Ильин Иван @date 31.03.08
+//////////////////////////////////////////////////////////////////////////////
+static bool	MergeEqualHTMLElements(MSHTML::IHTMLDOMNode *node, MSHTML::IHTMLDocument2 *doc)
+{
+	if (node->nodeType != 1) // Element node
+		return false;
+
+	 bool	fRet=false;
+
+
+	MSHTML::IHTMLDOMNodePtr   cur(node->firstChild);
+	while ((bool)cur) 
+	{
+		MSHTML::IHTMLDOMNodePtr next(cur->nextSibling);
+		if (MergeEqualHTMLElements(cur,doc))
+		{
+			cur = node->firstChild;
+			continue;
+		}
+
+		// если нет следующего элемента, то сливать будет несчем
+		if(!(bool)next)
+			return false;
+
+		_bstr_t	name(cur->nodeName);	
+		MSHTML::IHTMLElementPtr	curelem(cur);
+		MSHTML::IHTMLElementPtr	nextElem(next);
+ 
+		if (U::scmp(name,L"EM")==0 || U::scmp(name,L"STRONG")==0) 
+		{
+			// отлавливаем ситуацию с пробелом, обрамленным тегами EM т.д.
+			bstr_t curText = curelem->innerText;
+			if(curText.length() == 0 || U::is_whitespace(curelem->innerText))
+			{
+				// удаляем обрамляющие теги				
+				MSHTML::IHTMLDOMNodePtr prev = cur->previousSibling;
+				if((bool)prev)
+				{
+					if(prev->nodeType == 3)//text
+					{
+						prev->nodeValue = (bstr_t)prev->nodeValue.bstrVal + curelem->innerText;						
+					}
+					else
+					{
+						MSHTML::IHTMLElementPtr prevElem(prev);
+						prevElem->innerHTML = prevElem->innerHTML + curelem->innerText;						
+					}
+					cur->removeNode(VARIANT_TRUE);
+					cur = prev;
+					continue;
+				}
+
+				if((bool)next)
+				{
+					MSHTML::IHTMLDOMNodePtr parent;
+					if(next->nodeType == 3)//text
+					{
+						next->nodeValue = (bstr_t)curelem->innerText + next->nodeValue.bstrVal;						
+					}
+					else
+					{
+						MSHTML::IHTMLElementPtr nextElem(next);
+						nextElem->innerHTML = curelem->innerText + nextElem->innerHTML;						
+					}
+					cur->removeNode(VARIANT_TRUE);
+					cur = parent->firstChild;
+					continue;
+				}
+			}
+
+			if(next->nodeType == 3) // TextNode
+			{
+				MSHTML::IHTMLDOMNodePtr afterNext(next->nextSibling);
+				if(!(bool)afterNext)
+				{
+					cur = next;
+					continue;
+				}
+
+				MSHTML::IHTMLElementPtr	afterNextElem(afterNext);
+				
+				bstr_t afterNextName = afterNext->nodeName;
+				if(U::scmp(name, afterNextName))// если следующий элемент другого типа
+				{
+					cur = next;
+					continue;
+				}
+
+				// проверяем между одинаковыми элементами стоят одни пробелы
+				if(!U::is_whitespace(next->nodeValue.bstrVal))
+				{
+					cur = next;
+					continue; // <EM>123</EM>45<EM>678</EM> абсолютно нормальная ситуация
+				}
+
+				// объединяем элементы
+				MSHTML::IHTMLElementPtr	newelem(doc->createElement(name));
+				MSHTML::IHTMLDOMNodePtr	newnode(newelem);
+				newelem->innerHTML = curelem->innerHTML + next->nodeValue.bstrVal + afterNextElem->innerHTML;
+				cur->replaceNode(newnode);
+				afterNext->removeNode(VARIANT_TRUE);
+				next->removeNode(VARIANT_TRUE);
+				cur = newnode;
+				fRet=true;
+			}
+			else
+			{
+				bstr_t nextName(next->nodeName);
+				if(U::scmp(name, nextName))// если следующий элемент другого типа
+				{
+					cur = next;
+					continue;
+				}
+
+				// объединяем элементы
+				MSHTML::IHTMLElementPtr	newelem(doc->createElement(name));
+				MSHTML::IHTMLDOMNodePtr	newnode(newelem);
+				newelem->innerHTML = curelem->innerHTML + nextElem->innerHTML;
+				cur->replaceNode(newnode);
+				next->removeNode(VARIANT_TRUE);
+				cur = newnode;
+				fRet=true;
+				continue;
+			}
+		}
+		cur=next;
+	}
+	return fRet;
+}
+static bool   RemoveUnk(MSHTML::IHTMLDOMNode *node, MSHTML::IHTMLDocument2 *doc) {
+  if (node->nodeType!=1) // Element node
+    return false;
+
+  bool	fRet=false;
+
+restart:
+  MSHTML::IHTMLDOMNodePtr   cur(node->firstChild);
+  while ((bool)cur) {
+    MSHTML::IHTMLDOMNodePtr next(cur->nextSibling);
+
+    if (RemoveUnk(cur,doc))
+      goto restart;
+
+    _bstr_t			name(cur->nodeName);
+    MSHTML::IHTMLElementPtr	curelem(cur);
+    
+    if (U::scmp(name,L"B")==0 || U::scmp(name,L"I")==0) {
+      const wchar_t		*newname=U::scmp(name,L"B")==0 ? L"STRONG" : L"EM";
+      MSHTML::IHTMLElementPtr	newelem(doc->createElement(newname));
+      MSHTML::IHTMLDOMNodePtr	newnode(newelem);
+      newelem->innerHTML=curelem->innerHTML;
+      cur->replaceNode(newnode);
+      cur=newnode;
+      fRet=true;
+      goto restart;
+    }
+    
+	if (U::scmp(name,L"P") && U::scmp(name,L"STRONG") && 
+		U::scmp(name,L"STRIKE") && U::scmp(name,L"SUP") && U::scmp(name,L"SUB") && 
+		U::scmp(name,L"EM") && U::scmp(name,L"A") &&
+		(U::scmp(name,L"SPAN") || U::scmp(curelem->className, L"code")) &&
+		U::scmp(name,L"#text") && U::scmp(name,L"BR")
+		&& (U::scmp(name,L"IMG") || U::scmp(curelem->parentElement->className, L"image")))
+		{
+      if (U::scmp(name,L"DIV")==0) {
+	_bstr_t	  cls(curelem->className);
+	_bstr_t	  id(curelem->id);
+	if (!(U::scmp(cls,L"body") && U::scmp(cls,L"section") &&
+	  U::scmp(cls,L"table") && U::scmp(cls,L"tr") && U::scmp(cls,L"th") && U::scmp(cls,L"td") && 
+	  U::scmp(cls,L"output") && U::scmp(cls,L"part") && U::scmp(cls,L"output-document-class") &&
+
+	  U::scmp(cls,L"annotation") && U::scmp(cls,L"title") && U::scmp(cls,L"epigraph") &&
+	  U::scmp(cls,L"poem") && U::scmp(cls,L"stanza") && U::scmp(cls,L"cite") &&
+	  U::scmp(cls,L"history") && U::scmp(cls,L"image")&&
+	  U::scmp(cls,L"code") &&
+	  U::scmp(id,L"fbw_desc") && U::scmp(id,L"fbw_body") && U::scmp(id,L"fbw_updater")))
+	  goto ok;
+      }
+
+	  CElementDescriptor* ED;
+	  if(_EDMnr.GetElementDescriptor(cur, &ED))
+		  goto ok;
+      MSHTML::IHTMLDOMNodePtr ce(cur->previousSibling);
+      cur->removeNode(VARIANT_FALSE);
+      if (ce)
+	next=ce->nextSibling;
+      else
+	next=node->firstChild;
+    }
+ok:
+
+    cur=next;
+  }
+  return fRet;
+}
+
+// move the paragraph up one level
+void MoveUp(bool fCopyFmt,MSHTML::IHTMLDOMNodePtr& node) {
+  MSHTML::IHTMLDOMNodePtr   parent(node->parentNode);
+  MSHTML::IHTMLElement2Ptr  elem(parent);
+
+  // clone parent (it can be A/EM/STRONG/SPAN)
+  if (fCopyFmt) {
+    MSHTML::IHTMLDOMNodePtr   clone(parent->cloneNode(VARIANT_FALSE));
+    while ((bool)node->firstChild)
+      clone->appendChild(node->firstChild);
+    node->appendChild(clone);
+  }
+
+  // clone parent once more and move siblings after node to it
+  if ((bool)node->nextSibling) {
+    MSHTML::IHTMLDOMNodePtr   clone(parent->cloneNode(VARIANT_FALSE));
+    while ((bool)node->nextSibling)
+      clone->appendChild(node->nextSibling);
+    elem->insertAdjacentElement(L"afterEnd",MSHTML::IHTMLElementPtr(clone));
+    if (U::scmp(parent->nodeName,L"P")==0)
+      MSHTML::IHTMLElement3Ptr(clone)->inflateBlock=VARIANT_TRUE;
+  }
+
+  // now move node to parent level, the tree may be in some weird state
+  node->removeNode(VARIANT_TRUE); // delete from tree
+  node=elem->insertAdjacentElement(L"afterEnd",MSHTML::IHTMLElementPtr(node));
+}
+
+void BubbleUp(MSHTML::IHTMLDOMNode *node,const wchar_t *name) {
+  MSHTML::IHTMLElement2Ptr	    elem(node);
+  MSHTML::IHTMLElementCollectionPtr elements(elem->getElementsByTagName(name));
+  long				    len=elements->length;
+  for (long i=0;i<len;++i) {
+    MSHTML::IHTMLDOMNodePtr	  ce(elements->item(i));
+    if (!(bool)ce)
+      break;
+    for (int ll=0;ce->parentNode!=node && ll<30;++ll)
+      MoveUp(true,ce);
+    MoveUp(false,ce);
+  }
+}
+
+// split paragraphs containing BR elements
+static void   SplitBRs(MSHTML::IHTMLElement2Ptr elem) {
+  MSHTML::IHTMLElementCollectionPtr BRs(elem->getElementsByTagName(L"BR"));
+  while (BRs->length>0) {
+    MSHTML::IHTMLDOMNodePtr	  ce(BRs->item(0L));
+    if (!(bool)ce)
+      break;
+    for (;;) {
+      MSHTML::IHTMLDOMNodePtr	parent(ce->parentNode);
+      if (!(bool)parent) // no parent? huh?
+	goto blowit;
+      _bstr_t	  name(parent->nodeName);
+      if (U::scmp(name,L"P")==0 || U::scmp(name,L"DIV")==0)
+	break;
+      if (U::scmp(name,L"BODY")==0)
+	goto blowit;
+      MoveUp(false,ce);
+    }
+    MoveUp(false,ce);
+blowit:
+    ce->removeNode(VARIANT_TRUE);
+  }
+}
+
+// this sub should locate any nested paragraphs and bubble them up
+static void RelocateParagraphs(MSHTML::IHTMLDOMNode *node) {
+  if (node->nodeType!=1)
+    return;
+
+  MSHTML::IHTMLDOMNodePtr   cur(node->firstChild);
+  while (cur) {
+    if (cur->nodeType==1) {
+      if (!U::scmp(cur->nodeName,L"P")) {
+	BubbleUp(cur,L"P");
+	BubbleUp(cur,L"DIV");
+      } else
+	RelocateParagraphs(cur);
+    }
+    cur=cur->nextSibling;
+  }
+}
+
+static bool IsEmptyNode(MSHTML::IHTMLDOMNode *node) {
+  if (node->nodeType!=1)
+    return false;
+
+  _bstr_t   name(node->nodeName);
+
+  if (U::scmp(name,L"BR")==0)
+    return false;
+
+  if (U::scmp(name,L"P")==0) // the editor uses empty Ps to represent empty lines
+    return false;
+
+ /* if (U::scmp(name,L"EM")==0) // конвертеры иногда обрамляют пробелы тегами <emphasis> и <strong>
+    return false;
+
+  if (U::scmp(name,L"STRONG")==0) // конвертеры иногда обрамляют пробелы тегами <emphasis> и <strong>
+    return false;*/
+
+  // images are always empty
+  if (U::scmp(name,L"DIV")==0 && U::scmp(MSHTML::IHTMLElementPtr(node)->className,L"image")==0)
+    return false;
+  if (U::scmp(name,L"IMG")==0)
+    return false;
+
+  if (node->hasChildNodes()==VARIANT_FALSE)
+    return true;
+
+  if (U::scmp(name,L"A")==0) // links can be meaningful even if the contain only ws
+    return false;
+
+  if ((bool)node->firstChild->nextSibling)
+    return false;
+
+  if (node->firstChild->nodeType!=3)
+    return false;
+
+  if (U::is_whitespace(node->firstChild->nodeValue.bstrVal))
+    return true;
+
+  return false;
+}
+
+// remove empty leaf nodes
+static void RemoveEmptyNodes(MSHTML::IHTMLDOMNode *node) {
+  if (node->nodeType!=1)
+    return;
+
+  MSHTML::IHTMLDOMNodePtr cur(node->firstChild);
+  while (cur) {
+    MSHTML::IHTMLDOMNodePtr next(cur->nextSibling);
+    RemoveEmptyNodes(cur);
+    if (IsEmptyNode(cur))
+      cur->removeNode(VARIANT_TRUE);
+    cur=next;
+  }
+}
+
+static bool IsStanza(MSHTML::IHTMLDOMNode *node) {
+  MSHTML::IHTMLElementPtr   elem(node);
+  return U::scmp(elem->className,L"stanza")==0;
+}
+
+// move text content in DIV items to P elements, so DIVs can
+// contain P and DIV _only_
+static void PackText(MSHTML::IHTMLElement2Ptr elem,MSHTML::IHTMLDocument2 *doc) {
+  MSHTML::IHTMLElementCollectionPtr elements(elem->getElementsByTagName(L"DIV"));
+  long				    len=elements->length;
+  for (long i=0;i<len;++i) {
+    MSHTML::IHTMLDOMNodePtr	div(elements->item(i));
+    if (U::scmp(MSHTML::IHTMLElementPtr(div)->className,L"image")==0)
+      continue;
+    MSHTML::IHTMLDOMNodePtr	cur(div->firstChild);
+    while ((bool)cur) {
+      _bstr_t	  cur_name(cur->nodeName);
+      if (U::scmp(cur_name,L"P") && U::scmp(cur_name,L"DIV")) {
+		// create a paragraph from a run of !P && !DIV
+		MSHTML::IHTMLElementPtr	newp(doc->createElement(L"P"));
+		MSHTML::IHTMLDOMNodePtr	newn(newp);
+		cur->replaceNode(newn);
+		newn->appendChild(cur);
+		while ((bool)newn->nextSibling) {
+		  cur_name=newn->nextSibling->nodeName;
+		if (U::scmp(cur_name,L"P")==0 || U::scmp(cur_name,L"DIV")==0)
+		 break;
+		newn->appendChild(newn->nextSibling);
+		}
+		cur=newn->nextSibling;
+      } else
+		cur=cur->nextSibling;
+    }
+  }
+}
+
+static void FixupLinks(MSHTML::IHTMLDOMNode *dom) {
+  MSHTML::IHTMLElement2Ptr  elem(dom);
+
+  if (!(bool)elem)
+    return;
+  
+  MSHTML::IHTMLElementCollectionPtr coll(elem->getElementsByTagName(L"A"));
+  if (!(bool)coll)
+    return;
+
+  for (long l=0;l<coll->length;++l) {
+    MSHTML::IHTMLElementPtr a(coll->item(l));
+    if (!(bool)a)
+      continue;
+
+    _variant_t	  href(a->getAttribute(L"href",2));
+    if (V_VT(&href)==VT_BSTR && V_BSTR(&href) &&
+	::SysStringLen(V_BSTR(&href))>11 &&
+	memcmp(V_BSTR(&href),L"file://",6*sizeof(wchar_t))==0)
+    {
+	  wchar_t* pos = wcschr((wchar_t*)V_BSTR(&href), L'#'); 
+	  if(!pos)
+		  continue;
+      a->setAttribute(L"href",pos,0);
+    }
+  }
+}
+
 void  CFBEView::Normalize(MSHTML::IHTMLDOMNodePtr dom) {
   try {
 	//MSHTML::IHTMLElementCollectionPtr col = dom->childNodes;
@@ -1749,75 +1489,36 @@ void  CFBEView::Normalize(MSHTML::IHTMLDOMNodePtr dom) {
   }
 }
 
-static void FixupParagraphs(MSHTML::IHTMLElement2Ptr elem)
-{
-	MSHTML::IHTMLElementCollectionPtr pp(elem->getElementsByTagName(L"P"));
-	for(long l = 0; l < pp->length; ++l)
-		MSHTML::IHTMLElement3Ptr(pp->item(l))->inflateBlock = VARIANT_TRUE;
+static void FixupParagraphs(MSHTML::IHTMLElement2Ptr elem) {
+  MSHTML::IHTMLElementCollectionPtr   pp(elem->getElementsByTagName(L"P"));
+  for (long l=0;l<pp->length;++l)
+	MSHTML::IHTMLElement3Ptr(pp->item(l))->inflateBlock=VARIANT_TRUE;
 }
 
-LRESULT CFBEView::OnPaste(WORD, WORD, HWND, BOOL&)
-{
-	try
-	{
-		m_mk_srv->BeginUndoUnit(L"Paste");
-		++m_enable_paste;
-		
-		// added by SeNS: process clipboard and change nbsp
-		if (_Settings.GetNBSPChar().Compare(L"\u00A0") != 0)
-			if (OpenClipboard())
-			{
-				if ( IsClipboardFormatAvailable(CF_TEXT) || IsClipboardFormatAvailable(CF_UNICODETEXT))
-				{
-					HANDLE hData = GetClipboardData( CF_UNICODETEXT );
-					TCHAR *buffer = (TCHAR*)GlobalLock( hData );
-					CString fromClipboard(buffer);
-					GlobalUnlock( hData );
-
-					fromClipboard.Replace( L"\u00A0", _Settings.GetNBSPChar());
-//					EmptyClipboard();
-
-					HGLOBAL clipbuffer = GlobalAlloc(GMEM_DDESHARE, (fromClipboard.GetLength()+1)*sizeof(TCHAR));
-					buffer = (TCHAR*)GlobalLock(clipbuffer);
-					wcscpy(buffer, fromClipboard);
-					GlobalUnlock( clipbuffer );
-					SetClipboardData(CF_UNICODETEXT, clipbuffer);
-				}
-
-				CloseClipboard();
-			}
-
-		IOleCommandTargetPtr(m_browser)->Exec(&CGID_MSHTML, IDM_PASTE, 0, NULL, NULL);
-		--m_enable_paste;
-		if(m_normalize)
-			Normalize(Document()->body);
-		m_mk_srv->EndUndoUnit();
-	}
-	catch(_com_error& err)
-	{
-		U::ReportError(err);
-	}
-
-	return 0;
+LRESULT CFBEView::OnPaste(WORD, WORD, HWND, BOOL&) {
+  try {
+    m_mk_srv->BeginUndoUnit(L"Paste");
+    ++m_enable_paste;
+    IOleCommandTargetPtr(m_browser)->Exec(&CGID_MSHTML, IDM_PASTE, 0, NULL, NULL);
+    --m_enable_paste;
+    if (m_normalize)
+      Normalize(Document()->body);
+    m_mk_srv->EndUndoUnit();
+  }
+  catch (_com_error&) { }
+  return 0;
 }
 
 // searching
-bool CFBEView::DoSearch(bool fMore)
-{
-	if(m_fo.match)
-		m_fo.match.Release();
-	if(m_fo.pattern.IsEmpty())
-	{
-		if(m_is_start)
-			m_is_start->raw_select();
-		return true;
-	}
-
-	// added by SeNS
-	if (_Settings.GetNBSPChar().Compare(L"\u00A0") != 0)
-		m_fo.pattern.Replace( L"\u00A0", _Settings.GetNBSPChar());
-
-	return m_fo.fRegexp ? DoSearchRegexp(fMore) : DoSearchStd(fMore);
+bool  CFBEView::DoSearch(bool fMore) {
+  if (m_fo.match)
+    m_fo.match.Release();
+  if (m_fo.pattern.IsEmpty()) {
+    if (m_is_start)
+      m_is_start->raw_select();
+    return true;
+  }
+  return m_fo.fRegexp ? DoSearchRegexp(fMore) : DoSearchStd(fMore);
 }
 
 void CFBEView::SelMatch(MSHTML::IHTMLTxtRange *tr,AU::ReMatch rm) {
@@ -1830,365 +1531,293 @@ void CFBEView::SelMatch(MSHTML::IHTMLTxtRange *tr,AU::ReMatch rm) {
   m_fo.match=rm;
 }
 
-bool CFBEView::DoSearchRegexp(bool fMore)
-{
-	try
-	{
-		// well, try to compile it first
-		AU::RegExp re;
-		CheckError(re.CreateInstance(L"VBScript.RegExp"));
-		re->IgnoreCase = m_fo.flags & 4 ? VARIANT_FALSE : VARIANT_TRUE;
-		re->Global = VARIANT_TRUE;
-		re->Pattern = (const wchar_t*)m_fo.pattern;
+bool  CFBEView::DoSearchRegexp(bool fMore) {
+  try {
+    // well, try to compile it first
+    AU::RegExp	    re;
+    CheckError(re.CreateInstance(L"VBScript.RegExp"));
+    re->IgnoreCase=m_fo.flags&4 ? VARIANT_FALSE : VARIANT_TRUE;
+    re->Global=VARIANT_TRUE;
+    re->Pattern=(const wchar_t *)m_fo.pattern;
 
-		// locate starting paragraph
-		MSHTML::IHTMLTxtRangePtr sel(Document()->selection->createRange());
-			if(!fMore && (bool)m_is_start)
-				sel= m_is_start->duplicate();
-			if(!(bool)sel)
-				return false;
+    // locate starting paragraph
+    MSHTML::IHTMLTxtRangePtr  sel(Document()->selection->createRange());
+    if (!fMore && (bool)m_is_start)
+      sel=m_is_start->duplicate();
+    if (!(bool)sel)
+      return false;
 
-		MSHTML::IHTMLElementPtr sc(SelectionStructCon());
-		long s_idx = 0;
-		long s_off1 = 0;
-		long s_off2 = 0;
-		if((bool)sc)
-		{
-			s_idx = sc->sourceIndex;
-			if(U::scmp(sc->tagName,L"P") == 0 && (bool)sel)
-			{
-				s_off2 = sel->text.length();
-				MSHTML::IHTMLTxtRangePtr pr(sel->duplicate());
-				pr->moveToElementText(sc);
-				pr->setEndPoint(L"EndToStart", sel);
-				s_off1 = pr->text.length();
-				s_off2 += s_off1;
-			}
-		}
+    MSHTML::IHTMLElementPtr   sc(SelectionStructCon());
+    long		      s_idx=0;
+    long		      s_off1=0;
+    long		      s_off2=0;
+    if ((bool)sc) {
+      s_idx=sc->sourceIndex;
+      if (U::scmp(sc->tagName,L"P")==0 && (bool)sel) {
+	s_off2=sel->text.length();
+	MSHTML::IHTMLTxtRangePtr  pr(sel->duplicate());
+	pr->moveToElementText(sc);
+	pr->setEndPoint(L"EndToStart",sel);
+	s_off1=pr->text.length();
+	s_off2+=s_off1;
+      }
+    }
+    // walk the all collection now, looking for the next P
+    MSHTML::IHTMLElementCollectionPtr all(Document()->all);
+    long			      all_len=all->length;
+    long			      incr=m_fo.flags&1 ? -1 : 1;
+    bool			      fWrapped=false;
 
-		// walk the all collection now, looking for the next P
-		MSHTML::IHTMLElementCollectionPtr all(Document()->all);
-		long all_len = all->length;
-		long incr = m_fo.flags &1 ? -1 : 1;
-		bool fWrapped = false;
-
-		// * search in starting element
-		if ((bool)sc && U::scmp(sc->tagName, L"P") == 0)
-		{
-			sel->moveToElementText(sc);
-			AU::ReMatches rm(re->Execute(sel->text));
-			if(rm->Count > 0)
-			{
-				if(incr > 0)
-				{
-					for(long l = 0;l < rm->Count; ++l)
-					{
-						AU::ReMatch crm(rm->Item[l]);
-						if(crm->FirstIndex >= s_off2)
-						{
-							SelMatch(sel, crm);
-							return true;
-						}
-					}
-				}
-				else
-				{
-					for(long l = rm->Count - 1; l >= 0; --l)
-					{
-						AU::ReMatch crm(rm->Item[l]);
-						if(crm->FirstIndex < s_off1)
-						{
-							SelMatch(sel, crm);
-							return true;
-						}
-					}
-				}
-			}
-		}
-
-		// search all others
-		for(long cur = s_idx + incr; ; cur += incr)
-		{
-			// adjust out of bounds indices
-			if(cur < 0)
-			{
-				cur = all_len - 1;
-				fWrapped = true;
-			}
-			else if(cur >= all_len)
-			{
-				cur = 0;
-				fWrapped = true;
-			}
-
-			// check for wraparound
-			if(cur == s_idx)
-				break;
-			
-			// check current element type
-			MSHTML::IHTMLElementPtr elem(all->item(cur));
-			if(!(bool)elem || U::scmp(elem->tagName,L"P"))
-				continue;
-
-			// search inside current element
-			sel->moveToElementText(elem);
-			AU::ReMatches rm(re->Execute(sel->text));
-			if(rm->Count <= 0)
-				continue;
-			if(incr > 0)
-				SelMatch(sel, rm->Item[0]);
-			else
-				SelMatch(sel, rm->Item[rm->Count - 1]);
-			if(fWrapped)
-				::MessageBeep(MB_ICONASTERISK);
-			
-			return true;
-		}
-
-		// search again in starting element
-		if ((bool)sc && U::scmp(sc->tagName, L"P") == 0)
-		{
-			sel->moveToElementText(sc);
-			AU::ReMatches rm(re->Execute(sel->text));
-			if(rm->Count > 0)
-			{
-				if(incr > 0)
-				{
-					for(long l = 0; l < rm->Count; ++l)
-					{
-						AU::ReMatch crm(rm->Item[l]);
-						if(crm->FirstIndex < s_off1)
-						{
-							SelMatch(sel, crm);
-							if(fWrapped)
-								::MessageBeep(MB_ICONASTERISK);
-							
-							return true;
-						}
-					}
-				}
-				else
-				{
-					for(long l = rm->Count - 1; l >= 0; --l)
-					{
-						AU::ReMatch crm(rm->Item[l]);
-						if(crm->FirstIndex >= s_off2)
-						{
-							SelMatch(sel, crm);
-							if(fWrapped)
-								::MessageBeep(MB_ICONASTERISK);
-							return true;
-						}
-					}
-				}
-			}
-		}
+    // * search in starting element
+    if ((bool)sc && U::scmp(sc->tagName,L"P")==0) {
+      sel->moveToElementText(sc);
+      AU::ReMatches  rm(re->Execute(sel->text));
+      if (rm->Count > 0) {
+	if (incr>0) {
+	  for (long l=0;l<rm->Count;++l) {
+	    AU::ReMatch	crm(rm->Item[l]);
+	    if (crm->FirstIndex >= s_off2) {
+	      SelMatch(sel,crm);
+	      return true;
+	    }
+	  }
+	} else {
+	  for (long l=rm->Count-1;l>=0;--l) {
+	    AU::ReMatch	crm(rm->Item[l]);
+	    if (crm->FirstIndex < s_off1) {
+	      SelMatch(sel,crm);
+	      return true;
+	    }
+	  }
 	}
-	catch (_com_error& err)
-	{
-		U::ReportError(err);
-	}
+      }
+    }
 
-	return false;
+    // search all others
+    for (long cur=s_idx+incr;;cur+=incr) {
+      // adjust out of bounds indices
+      if (cur<0) {
+	cur=all_len-1;
+	fWrapped=true;
+      } else if (cur>=all_len) {
+	cur=0;
+	fWrapped=true;
+      }
+      // check for wraparound
+      if (cur==s_idx)
+	break;
+      // check current element type
+      MSHTML::IHTMLElementPtr	  elem(all->item(cur));
+      if (!(bool)elem || U::scmp(elem->tagName,L"P"))
+	continue;
+      // search inside current element
+      sel->moveToElementText(elem);
+      AU::ReMatches  rm(re->Execute(sel->text));
+      if (rm->Count <= 0)
+	continue;
+      if (incr>0)
+	SelMatch(sel,rm->Item[0]);
+      else
+	SelMatch(sel,rm->Item[rm->Count-1]);
+      if (fWrapped)
+	::MessageBeep(MB_ICONASTERISK);
+      return true;
+    }
+    // search again in starting element
+    if ((bool)sc && U::scmp(sc->tagName,L"P")==0) {
+      sel->moveToElementText(sc);
+      AU::ReMatches  rm(re->Execute(sel->text));
+      if (rm->Count > 0) {
+	if (incr>0) {
+	  for (long l=0;l<rm->Count;++l) {
+	    AU::ReMatch	crm(rm->Item[l]);
+	    if (crm->FirstIndex < s_off1) {
+	      SelMatch(sel,crm);
+	      if (fWrapped)
+		::MessageBeep(MB_ICONASTERISK);
+	      return true;
+	    }
+	  }
+	} else {
+	  for (long l=rm->Count-1;l>=0;--l) {
+	    AU::ReMatch	crm(rm->Item[l]);
+	    if (crm->FirstIndex >= s_off2) {
+	      SelMatch(sel,crm);
+	      if (fWrapped)
+		::MessageBeep(MB_ICONASTERISK);
+	      return true;
+	    }
+	  }
+	}
+      }
+    }
+  }
+  catch (_com_error& e) {
+    U::ReportError(e);
+  }
+  return false;
 }
 
-bool CFBEView::DoSearchStd(bool fMore)
-{
-	try
-	{
-		// fetch selection
-		MSHTML::IHTMLTxtRangePtr sel(Document()->selection->createRange());
-		if(!fMore && (bool)m_is_start)
-			sel = m_is_start->duplicate();
-		if(!(bool)sel)
-			return false;
-		
-		MSHTML::IHTMLTxtRangePtr org(sel->duplicate());
-		// check if it is collapsed
-		if(sel->compareEndPoints(L"StartToEnd", sel) != 0)
-		{
-			// collapse and advance
-			if(m_fo.flags & FRF_REVERSE)
-				sel->collapse(VARIANT_TRUE);
-			else
-				sel->collapse(VARIANT_FALSE);
-		}
-
-		// search for text
-		if(sel->findText((const wchar_t*)m_fo.pattern, 1073741824, m_fo.flags) == VARIANT_TRUE)
-		{
-			// ok, found
-			sel->select();
-			return true;
-		}
-
-		// not found, try searching from start to sel
-		sel = MSHTML::IHTMLBodyElementPtr(Document()->body)->createTextRange();
-		sel->collapse(m_fo.flags & 1 ? VARIANT_FALSE : VARIANT_TRUE);
-		if(sel->findText((const wchar_t*)m_fo.pattern, 1073741824, m_fo.flags) == VARIANT_TRUE
-			&& org->compareEndPoints("StartToStart", sel)*(m_fo.flags & 1 ? -1 : 1) > 0)
-		{
-			// found
-			sel->select();
-			MessageBeep(MB_ICONASTERISK);
-			return true;
-		}
-	}
-	catch (_com_error&)
-	{
-		//U::ReportError(err);
-	}
-
-	return false;
+bool  CFBEView::DoSearchStd(bool fMore) {
+  try {
+    // fetch selection
+    MSHTML::IHTMLTxtRangePtr  sel(Document()->selection->createRange());
+    if (!fMore && (bool)m_is_start)
+      sel=m_is_start->duplicate();
+    if (!(bool)sel)
+      return false;
+    MSHTML::IHTMLTxtRangePtr  org(sel->duplicate());
+    // check if it is collapsed
+    if (sel->compareEndPoints(L"StartToEnd",sel)!=0) {
+      // collapse and advance
+      if (m_fo.flags&FRF_REVERSE)
+	sel->collapse(VARIANT_TRUE);
+      else
+	sel->collapse(VARIANT_FALSE);
+    }
+    // search for text
+    if (sel->findText((const wchar_t *)m_fo.pattern,1073741824,m_fo.flags)==VARIANT_TRUE) {
+      // ok, found
+      sel->select();
+      return true;
+    }
+    // not found, try searching from start to sel
+    sel=MSHTML::IHTMLBodyElementPtr(Document()->body)->createTextRange();
+    sel->collapse(m_fo.flags&1 ? VARIANT_FALSE : VARIANT_TRUE);
+    if (sel->findText((const wchar_t *)m_fo.pattern,1073741824,m_fo.flags)==VARIANT_TRUE &&
+      org->compareEndPoints("StartToStart",sel)*(m_fo.flags&1 ? -1 : 1)>0)
+    { // found
+      sel->select();
+      MessageBeep(MB_ICONASTERISK);
+      return true;
+    }
+  }
+  catch (_com_error&) { }
+  return false;
 }
 
-static CString GetSM(VBScript_RegExp_55::ISubMatches *sm, int idx)
-{
-	if(!sm)
-		return CString();
-
-	if(idx < 0 || idx >= sm->Count)
-		return CString();
-
-	_variant_t vt(sm->Item[idx]);
-
-	if(V_VT(&vt) == VT_BSTR)
-		return V_BSTR(&vt);
-
-	return CString();
+static CString	GetSM(VBScript_RegExp_55::ISubMatches *sm,int idx) {
+  if (!sm)
+    return CString();
+  if (idx<0 || idx>=sm->Count)
+    return CString();
+  _variant_t  vt(sm->Item[idx]);
+  if (V_VT(&vt)==VT_BSTR)
+    return V_BSTR(&vt);
+  return CString();
 }
 
-struct RR
-{
-	enum
-	{
-		STRONG = 1,
-		EMPHASIS = 2,
-		UPPER = 4,
-		LOWER = 8,
-		TITLE = 16
-	};
-
-	int flags;
-	int start;
-	int len;
+struct RR {
+  enum {
+    STRONG=1,
+    EMPHASIS=2,
+    UPPER=4,
+    LOWER=8,
+    TITLE=16
+  };
+  int	    flags;
+  int	    start;
+  int	    len;
 };
+typedef CSimpleValArray<RR>  RRList;
 
-typedef CSimpleValArray<RR> RRList;
-
-static CString GetReplStr(const CString& rstr, VBScript_RegExp_55::IMatch2* rm, RRList& rl)
+static CString GetReplStr(const CString& rstr,VBScript_RegExp_55::IMatch2 *rm,RRList& rl)
 {
-	CString rep;
-	rep.GetBuffer(rstr.GetLength());
-	rep.ReleaseBuffer(0);
+  CString	  rep;
+  rep.GetBuffer(rstr.GetLength());
+  rep.ReleaseBuffer(0);
 
-	AU::ReSubMatches rs(rm->SubMatches);
+  AU::ReSubMatches rs(rm->SubMatches);
 
-	RR cr;
-	memset(&cr, 0, sizeof(cr));
-	int flags=0;
+  RR		  cr;
+  memset(&cr,0,sizeof(cr));
+  int		  flags=0;
 
-	CString rv;
+  CString  rv;
 
-	for(int i = 0; i < rstr.GetLength(); ++i)
-	{
-		if(rstr[i] == _T('$') && i < rstr.GetLength() - 1)
-		{
-			switch(rstr[++i])
-			{
-				case _T('&'): // whole match
-					rv=(const wchar_t *)rm->Value;
-					break;
-				case _T('+'): // last submatch
-					rv = GetSM(rs, rs->Count - 1);
-					break;
-				case _T('1'):
-				case _T('2'):
-				case _T('3'):
-				case _T('4'):
-				case _T('5'):
-				case _T('6'):
-				case _T('7'):
-				case _T('8'):
-				case _T('9'):
-					rv = GetSM(rs, rstr[i] - _T('0') - 1);
-					break;
-				case _T('T'): // title case
-					flags |= RR::TITLE;
-					continue;
-				case _T('U'): // uppercase
-					flags |= RR::UPPER;
-					continue;
-				case _T('L'): // lowercase
-					flags |= RR::LOWER;
-					continue;
-				case _T('S'): // strong
-					flags |= RR::STRONG;
-					continue;
-				case _T('E'): // emphasis
-					flags |= RR::EMPHASIS;
-					continue;
-				case _T('Q'): // turn off flags
-					flags = 0;
-					continue;
-				default: // ignore
-					continue;
-			}
-		}
+  for (int i=0;i<rstr.GetLength();++i) {
+    if (rstr[i]==_T('$') && i<rstr.GetLength()-1) {
+      switch (rstr[++i]) {
+      case _T('&'): // whole match
+	rv=(const wchar_t *)rm->Value;
+	break;
 
-		if(cr.flags != flags && cr.flags && cr.start < rep.GetLength())
-		{
-			cr.len = rep.GetLength() - cr.start;
-			rl.Add(cr);
-			cr.flags = 0;
-		}
+      case _T('+'): // last submatch
+	rv=GetSM(rs,rs->Count-1);
+	break;
 
-		if(flags)
-		{
-			cr.flags = flags;
-			cr.start = rep.GetLength();
-		}
+      case _T('1'): case _T('2'): case _T('3'): case _T('4'):
+      case _T('5'): case _T('6'): case _T('7'): case _T('8'): case _T('9'):
+	rv=GetSM(rs,rstr[i]-_T('0')-1);
+	break;
 
-		if(!rv.IsEmpty())
-		{
-			rep += rv;
-			rv.Empty();
-		}
-		else
-			rep += rstr[i];
-	}
+      case _T('T'): // title case
+	flags|=RR::TITLE;
+	continue;
 
-		if(cr.flags && cr.start < rep.GetLength())
-		{
-			cr.len = rep.GetLength() - cr.start;
-			rl.Add(cr);
-		}
+      case _T('U'): // uppercase
+	flags|=RR::UPPER;
+	continue;
 
-		// process case conversions here
-		int tl = rep.GetLength();
-		TCHAR* cp = rep.GetBuffer(tl);
-		for(int j = 0; j < rl.GetSize();)
-		{
-			RR rr = rl[j];
-			if(rr.flags & RR::UPPER)
-				LCMapString(CP_ACP, LCMAP_UPPERCASE, cp + rr.start, rr.len, cp + rr.start, rr.len);
-			else if(rr.flags & RR::LOWER)
-				LCMapString(CP_ACP, LCMAP_LOWERCASE, cp + rr.start, rr.len, cp + rr.start, rr.len);
-			else if(rr.flags & RR::TITLE && rr.len > 0)
-			{
-				LCMapString(CP_ACP, LCMAP_UPPERCASE, cp + rr.start, 1, cp + rr.start, 1);
-				LCMapString(CP_ACP, LCMAP_LOWERCASE, cp + rr.start + 1, rr.len - 1, cp + rr.start + 1, rr.len - 1);
-			}
-	
-			if((rr.flags &~ (RR::UPPER | RR::LOWER | RR::TITLE)) == 0)
-				rl.RemoveAt(j);
-			else
-				++j;
-		}
+      case _T('L'): // lowercase
+	flags|=RR::LOWER;
+	continue;
 
-		rep.ReleaseBuffer(tl);
+      case _T('S'): // strong
+	flags|=RR::STRONG;
+	continue;
 
-	return rep;
+      case _T('E'): // emphasis
+	flags|=RR::EMPHASIS;
+	continue;
+
+      case _T('Q'): // turn off flags
+	flags=0;
+	continue;
+
+      default: // ignore
+	continue;
+      }
+    }
+    if (cr.flags!=flags && cr.flags && cr.start<rep.GetLength()) {
+      cr.len=rep.GetLength()-cr.start;
+      rl.Add(cr);
+      cr.flags=0;
+    }
+    if (flags) {
+      cr.flags=flags;
+      cr.start=rep.GetLength();
+    }
+    if (!rv.IsEmpty()) {
+      rep+=rv;
+      rv.Empty();
+    } else
+      rep+=rstr[i];
+  }
+  if (cr.flags && cr.start<rep.GetLength()) {
+    cr.len=rep.GetLength()-cr.start;
+    rl.Add(cr);
+  }
+  // process case conversions here
+  int	  tl=rep.GetLength();
+  TCHAR	  *cp=rep.GetBuffer(tl);
+  for (int j=0;j<rl.GetSize();) {
+    RR	  rr=rl[j];
+    if (rr.flags&RR::UPPER)
+      LCMapString(CP_ACP,LCMAP_UPPERCASE,cp+rr.start,rr.len,cp+rr.start,rr.len);
+    else if (rr.flags&RR::LOWER)
+      LCMapString(CP_ACP,LCMAP_LOWERCASE,cp+rr.start,rr.len,cp+rr.start,rr.len);
+    else if (rr.flags&RR::TITLE && rr.len>0) {
+      LCMapString(CP_ACP,LCMAP_UPPERCASE,cp+rr.start,1,cp+rr.start,1);
+      LCMapString(CP_ACP,LCMAP_LOWERCASE,cp+rr.start+1,rr.len-1,cp+rr.start+1,rr.len-1);
+    }
+    if ((rr.flags&~(RR::UPPER|RR::LOWER|RR::TITLE))==0)
+      rl.RemoveAt(j);
+    else
+      ++j;
+  }
+  rep.ReleaseBuffer(tl);
+  return rep;
 }
 
 void  CFBEView::DoReplace() {
@@ -2227,327 +1856,89 @@ void  CFBEView::DoReplace() {
   }
 }
 
-int CFBEView::GlobalReplace(MSHTML::IHTMLElementPtr elem, CString cntTag)
-{
-	if(m_fo.pattern.IsEmpty())
-		return 0;
+int  CFBEView::GlobalReplace() {
+  if (m_fo.pattern.IsEmpty())
+    return 0;
+  try {
+    MSHTML::IHTMLTxtRangePtr  sel(MSHTML::IHTMLBodyElementPtr(Document()->body)->createTextRange());
+    if (!(bool)sel)
+      return 0;
 
-	try
-	{
-		MSHTML::IHTMLTxtRangePtr sel(MSHTML::IHTMLBodyElementPtr(Document()->body)->createTextRange());
-		if(elem)
-			sel->moveToElementText(elem);
-		if(!(bool)sel)
-			return 0;
+    AU::RegExp	    re;
+    CheckError(re.CreateInstance(L"VBScript.RegExp"));
+    re->IgnoreCase=m_fo.flags&4 ? VARIANT_FALSE : VARIANT_TRUE;
+    re->Global=VARIANT_TRUE;
+    re->Pattern=(const wchar_t *)m_fo.pattern;
 
-		AU::RegExp re;
-		CheckError(re.CreateInstance(L"VBScript.RegExp"));
-		re->IgnoreCase = m_fo.flags & 4 ? VARIANT_FALSE : VARIANT_TRUE;
-		re->Global = VARIANT_TRUE;
-		re->Pattern = (const wchar_t*)m_fo.pattern;
+    m_mk_srv->BeginUndoUnit(L"replace");
 
-		m_mk_srv->BeginUndoUnit(L"replace");
+    sel->collapse(VARIANT_TRUE);
 
+    int	  nRepl=0;
+
+    if (m_fo.fRegexp) {
+      MSHTML::IHTMLTxtRangePtr  s3;
+      MSHTML::IHTMLElementCollectionPtr all(Document()->all);
+      _bstr_t	charstr(L"character");
+      RRList	rl;
+      CString	repl;
+
+      for (long l=0;l<all->length;++l) {
+		MSHTML::IHTMLElementPtr	  elem(all->item(l));
+		if (!(bool)elem || U::scmp(elem->tagName,L"P"))
+		continue;
+		sel->moveToElementText(elem);
+		AU::ReMatches  rm(re->Execute(sel->text));
+		if (rm->Count <= 0)
+		 continue;
+		// replace
 		sel->collapse(VARIANT_TRUE);
-
-		int nRepl = 0;
-
-		if(m_fo.fRegexp)
-		{
-			MSHTML::IHTMLTxtRangePtr s3;
-			MSHTML::IHTMLElementCollectionPtr all;
-			if(elem)
-				all = MSHTML::IHTMLElement2Ptr(elem)->getElementsByTagName(cntTag.AllocSysString());
-			else
-				all = MSHTML::IHTMLDocument3Ptr(Document())->getElementsByTagName(cntTag.AllocSysString());
-			_bstr_t charstr(L"character");
-			RRList rl;
-			CString repl;
-
-			for(long l = 0;l < all->length; ++l)
-			{
-				MSHTML::IHTMLElementPtr elem(all->item(l));
-				sel->moveToElementText(elem);;
-				AU::ReMatches rm(re->Execute(sel->text));
-				if(rm->Count <= 0)
-					continue;
-
-				// Replace
-				sel->collapse(VARIANT_TRUE);
-				long last = 0;
-				for(long i = 0; i < rm->Count; ++i)
-				{
-					AU::ReMatch cur(rm->Item[i]);
-					long delta = cur->FirstIndex - last;
-					if(delta)
-					{
-						sel->move(charstr, delta);
-						last += delta;
-					}
-					if(sel->moveStart(charstr, 1) == 1)
-						sel->move(charstr, -1);
-					delta = cur->Length;
-					last += cur->Length;
-					sel->moveEnd(charstr, delta);
-					rl.RemoveAll();
-					repl = GetReplStr(m_fo.replacement, cur, rl);
-					sel->text = (const wchar_t*)repl;
-					for(int k = 0; k < rl.GetSize(); ++k)
-					{
-						RR rr = rl[k];
-						s3 = sel->duplicate();
-						s3->move(L"character", rr.start - repl.GetLength());
-						s3->moveEnd(L"character", rr.len);
-						if(rr.flags & RR::STRONG)
-							s3->execCommand(L"Bold", VARIANT_FALSE);
-						if(rr.flags & RR::EMPHASIS)
-							s3->execCommand(L"Italic", VARIANT_FALSE);
-					}
-					++nRepl;
-				}
+		long	  last=0;
+		for (long i=0;i<rm->Count;++i) {
+			AU::ReMatch  cur(rm->Item[i]);
+			long	      delta=cur->FirstIndex - last;
+			if (delta) {
+				sel->move(charstr,delta);
+				last+=delta;
 			}
+			if (sel->moveStart(charstr,1)==1)
+				sel->move(charstr,-1);
+			delta=cur->Length;
+			last+=cur->Length;
+			sel->moveEnd(charstr,delta);
+			rl.RemoveAll();
+			repl=GetReplStr(m_fo.replacement,cur,rl);
+			sel->text=(const wchar_t *)repl;
+			for (int k=0;k<rl.GetSize();++k) {
+				RR  rr=rl[k];
+				s3=sel->duplicate();
+				s3->move(L"character",rr.start-repl.GetLength());
+				s3->moveEnd(L"character",rr.len);
+				if (rr.flags&RR::STRONG)
+					s3->execCommand(L"Bold",VARIANT_FALSE);
+				if (rr.flags&RR::EMPHASIS)
+					s3->execCommand(L"Italic",VARIANT_FALSE);
+			}
+			++nRepl;
 		}
-		else
-		{
-			DWORD flags = m_fo.flags & ~FRF_REVERSE;
-			_bstr_t pattern((const wchar_t*)m_fo.pattern);
-			_bstr_t repl((const wchar_t*)m_fo.replacement);
-				while(sel->findText(pattern, 1073741824, flags) == VARIANT_TRUE)
-				{
-					sel->text = repl;
-					++nRepl;
-				}
-		}
+      }
+    } else {
+      DWORD   flags=m_fo.flags&~FRF_REVERSE;
+      _bstr_t pattern((const wchar_t *)m_fo.pattern);
+      _bstr_t repl((const wchar_t *)m_fo.replacement);
+      while (sel->findText(pattern,1073741824,flags)==VARIANT_TRUE) {
+		sel->text=repl;
+		++nRepl;
+      }
+    }
 
-		m_mk_srv->EndUndoUnit();
-		return nRepl;
-	}
-	catch (_com_error& err)
-	{
-		U::ReportError(err);
-	}
-
-	return 0;
-}
-
-int CFBEView::ToolWordsGlobalReplace(	MSHTML::IHTMLElementPtr fbw_body,
-										int* pIndex,
-										int* globIndex,
-										bool find,
-										CString cntTag)
-{
-	if(m_fo.pattern.IsEmpty())
-		return 0;
-
-	int nRepl = 0;
-
-	try
-	{
-		AU::RegExp re;
-		CheckError(re.CreateInstance(L"VBScript.RegExp", NULL, CLSCTX_INPROC_SERVER));
-
-		re->IgnoreCase = m_fo.flags & FRF_CASE ? VARIANT_FALSE : VARIANT_TRUE;
-		re->Global = m_fo.flags & FRF_WHOLE ? VARIANT_TRUE : VARIANT_FALSE;
-		re->Multiline = VARIANT_TRUE;
-		re->Pattern = (const wchar_t*)m_fo.pattern;
-
-		MSHTML::IHTMLElementCollectionPtr paras = MSHTML::IHTMLElement2Ptr(fbw_body)->getElementsByTagName(cntTag.AllocSysString());
-		if(!paras->length)
-			return 0;
-
-		int iNextElem = pIndex != NULL ? *pIndex : 0;
-		CSimpleArray<CFBEView::pElAdjacent> pAdjElems;
-
-		while(iNextElem < paras->length)
-		{
-			pAdjElems.RemoveAll();
-
-			MSHTML::IHTMLElementPtr currElem(paras->item(iNextElem));
-			CString innerText = currElem->innerText;
-			pAdjElems.Add(pElAdjacent(currElem));
-
-			if(pIndex != NULL)
-				*pIndex = iNextElem;
-
-			MSHTML::IHTMLDOMNodePtr currNode(currElem);
-			if(MSHTML::IHTMLElementPtr siblElem = currNode->nextSibling)
-			{
-				int jNextElem = iNextElem + 1;
-				for(int i = jNextElem; i < paras->length; ++i)
-				{
-					MSHTML::IHTMLElementPtr nextElem = paras->item(i);
-					if(siblElem == nextElem)
-					{
-						pAdjElems.Add(pElAdjacent(siblElem));
-						innerText += L"\n";
-						innerText += siblElem->innerText.GetBSTR();
-						iNextElem++;
-						siblElem = MSHTML::IHTMLDOMNodePtr(nextElem)->nextSibling;
-					}
-					else
-					{
-						break;
-					}
-				}
-			}
-			innerText += L"\n";
-
-			if(innerText.IsEmpty())
-			{
-				iNextElem++;
-				continue;
-			}
-
-			// Replace
-			AU::ReMatches rm(re->Execute(innerText.AllocSysString()));
-			
-			if(rm->Count <= 0)
-			{
-				iNextElem++;
-				continue;
-			}
-
-			for(long i = 0; i < rm->Count; ++i)
-			{
-				AU::ReMatch cur(rm->Item[i]);
-
-				long matchIdx = cur->FirstIndex;
-				long matchLen = cur->Length - 1;
-
-				long pAdjLen = 0;
-				bool begin = false, end = false;
-				int first = 0, last = 0;
-
-				for(int b = 0; b < pAdjElems.GetSize(); ++b)
-				{
-					int pElemLen = pAdjElems[b].innerText.length() + 1;
-
-					if(!pElemLen)
-						continue;
-
-					pAdjLen += pElemLen;
-
-					if(matchIdx < pAdjLen && !begin)
-					{
-						begin = true;
-						first = b;
-					}
-
-					if(matchIdx + (matchLen - 1) < pAdjLen && !end)
-					{
-						end = true;
-						last = b;
-						break;
-					}
-				}
-
-				int skip = 0;
-				while(skip < first)
-				{
-					matchIdx -= (pAdjElems[skip].innerText.length() + 1);
-					skip++;
-				}
-
-				CString newCont;
-				int icat = first;
-				while(icat <= last)
-				{
-					newCont += pAdjElems[icat].innerText.GetBSTR();
-					icat++;
-				}
-
-				if(find)
-				{
-					if(i == rm->Count - 1)
-					{
-						(*globIndex) = -1;
-						(*pIndex) += (pAdjElems.GetSize());
-					}
-					else
-						(*globIndex)++;
-
-					if(*globIndex > i)
-					{
-						(*globIndex)--;
-						continue;
-					}
-
-					MSHTML::IHTMLTxtRangePtr found(Document()->selection->createRange());
-					found->moveToElementText(pAdjElems[first].elem);
-					found->moveStart(L"character", matchIdx);
-					found->collapse(TRUE);
-					int diff = last - first;
-					found->moveEnd(L"character", matchLen);
-					found->select();
-
-					return 0;
-				}
-				else
-				{
-					MSHTML::IHTMLTxtRangePtr found(Document()->selection->createRange());
-					found->moveToElementText(pAdjElems[first].elem);
-					found->moveStart(L"character", matchIdx);
-					found->collapse(TRUE);
-					int diff = last - first;
-					found->moveEnd(L"character", matchLen);
-					found->select();
-					CString strRepl;
-					GetDlgItem(IDC_WORDS_FR_EDIT_REPL).GetWindowText(strRepl);
-
-					found->text = L"";
-					found->text = m_fo.replacement.AllocSysString();
-
-					newCont.Delete(matchIdx, matchLen - (last - first));
-					newCont.Insert(matchIdx, m_fo.replacement);
-
-					pAdjElems[first].innerText = newCont.AllocSysString();
-					//pAdjElems[first].elem->innerText = pAdjElems[first].innerText;
-
-					for(int c = first + 1; c <= last; ++c)
-					{
-					//	MSHTML::IHTMLDOMNodePtr(pAdjElems[c].elem)->removeNode(VARIANT_TRUE);
-						iNextElem--;
-					}
-
-					for(int c = first + 1; c < last; ++c)
-						pAdjElems.RemoveAt(c);
-
-					if(nRepl >= m_fo.replNum)
-						goto stop;
-
-					CString again;
-					for(int c = 0; c < pAdjElems.GetSize(); ++c)
-					{
-						//pAdjElems[c].innerText = pAdjElems[c].elem->innerText;
-						again += pAdjElems[c].innerText.GetBSTR();
-						again += L"\n";
-					}
-
-					rm = re->Execute(again.AllocSysString());
-					i--;
-
-					nRepl++;
-				}
-			}
-
-			iNextElem++;
-		}
-
-stop:
-		re.Release();
-
-		if(find)
-		{
-			Document()->selection->empty();
-			return -1;
-		}
-	}
-	catch (_com_error& err)
-	{
-		U::ReportError(err);
-	}
-
-	return nRepl;
+    m_mk_srv->EndUndoUnit();
+    return nRepl;
+  }
+  catch (_com_error& e) {
+    U::ReportError(e);
+  }
+  return 0;
 }
 
 class CViewReplaceDlg : public CReplaceDlgBase {
@@ -2595,33 +1986,31 @@ public:
 		wchar_t msg[MAX_LOAD_STRING + 1];
 		::LoadString(_Module.GetResourceInstance(), IDR_MAINFRAME, cpt, MAX_LOAD_STRING);
 		::LoadString(_Module.GetResourceInstance(), IDS_SEARCH_END_MSG, msg, MAX_LOAD_STRING);
-		U::MessageBox(MB_OK|MB_ICONEXCLAMATION, cpt, msg, m_view->m_fo.pattern);
+		U::MessageBox(MB_OK|MB_ICONEXCLAMATION, cpt, msg, m_view->m_fo.pattern);	
 	}
   }
 };
 
-LRESULT CFBEView::OnFind(WORD, WORD, HWND, BOOL&)
-{
-	m_fo.pattern = (const wchar_t*)Selection();
-	if(!m_find_dlg)
-		m_find_dlg = new CViewFindDlg(this);
+LRESULT  CFBEView::OnFind(WORD, WORD, HWND, BOOL&) {
+  m_fo.pattern=(const wchar_t *)Selection();
+  if(!m_find_dlg)
+	m_find_dlg = new CViewFindDlg(this);
 
-	if(m_find_dlg->IsValid())
-		return 0;
+  if(m_find_dlg->IsValid())
+	  return 0;
 
-	m_find_dlg->ShowDialog(*this); // show modeless
-	return 0;
+  m_find_dlg->ShowDialog(*this); // показать как немодальный
+  return 0;
 }
 
-LRESULT CFBEView::OnReplace(WORD, WORD, HWND, BOOL&)
-{
-	m_fo.pattern = (const wchar_t *)Selection();
-	if(!m_replace_dlg)
-		m_replace_dlg = new CViewReplaceDlg(this);
+LRESULT  CFBEView::OnReplace(WORD, WORD, HWND, BOOL&) {
+  m_fo.pattern=(const wchar_t *)Selection();
+  if(!m_replace_dlg)
+	  m_replace_dlg = new CViewReplaceDlg(this);
 
-	if(!m_replace_dlg->IsValid())
-		m_replace_dlg->ShowDialog(*this);
-	return 0;
+  if(!m_replace_dlg->IsValid())
+	  m_replace_dlg->ShowDialog(*this);
+  return 0;
 }
 
 LRESULT  CFBEView::OnFindNext(WORD, WORD, HWND, BOOL&) {
@@ -2724,11 +2113,9 @@ void  CFBEView::Init() {
       ii->value=L"FB Tools";
   }
 
-  // added by SeNS
-  m_elementsNum = Document()->all->length;
-
   // turn off browser's d&d
   m_browser->RegisterAsDropTarget=VARIANT_FALSE;
+
   m_initialized=true;
 }
 
@@ -2760,73 +2147,44 @@ void  CFBEView::OnSelChange(IDispatch *evt) {
     m_cur_sel.Release();
 }
 
-VARIANT_BOOL  CFBEView::OnContextMenu(IDispatch *evt)
-{
-	MSHTML::IHTMLEventObjPtr oe(evt);
-	oe->cancelBubble = VARIANT_TRUE;
-	oe->returnValue = VARIANT_FALSE;
-	if(!m_normalize)
-	{
-		MSHTML::IHTMLElementPtr elem(oe->srcElement);
-		if(!(bool)elem)
-			return VARIANT_TRUE;
-		if(U::scmp(elem->tagName,L"INPUT") && U::scmp(elem->tagName, L"TEXTAREA"))
-			return VARIANT_TRUE;
-	}
+VARIANT_BOOL  CFBEView::OnContextMenu(IDispatch *evt) {
+  MSHTML::IHTMLEventObjPtr    oe(evt);
+  oe->cancelBubble=VARIANT_TRUE;
+  oe->returnValue=VARIANT_FALSE;
+  if (!m_normalize) {
+    MSHTML::IHTMLElementPtr   elem(oe->srcElement);
+    if (!(bool)elem)
+      return VARIANT_TRUE;
+    if (U::scmp(elem->tagName,L"INPUT") && U::scmp(elem->tagName,L"TEXTAREA"))
+      return VARIANT_TRUE;
+  }
+  // display custom context menu here
+  CMenu	  menu;
+  menu.CreatePopupMenu();
+  menu.AppendMenu(MF_STRING,ID_EDIT_UNDO,_T("&Undo"));
+  menu.AppendMenu(MF_SEPARATOR);
+  menu.AppendMenu(MF_STRING,ID_EDIT_CUT,_T("Cu&t"));
+  menu.AppendMenu(MF_STRING,ID_EDIT_COPY,_T("&Copy"));
+  menu.AppendMenu(MF_STRING,ID_EDIT_PASTE,_T("&Paste"));
+  if (m_normalize) {
+    menu.AppendMenu(MF_SEPARATOR);
+    MSHTML::IHTMLElementPtr   cur(SelectionContainer());
+    int			      cmd=ID_SEL_BASE;
+	while ((bool)cur && U::scmp(cur->tagName,L"BODY") && U::scmp(cur->id, L"fbw_body")) {
+      menu.AppendMenu(MF_STRING,cmd,_T("Select ")+GetPath(cur));
+      cur=cur->parentElement;
+      ++cmd;
+    }
+  }
 
-	// display custom context menu here
-	CMenu menu;
-	CString itemName;
+  AU::TRACKPARAMS   tp;
+  tp.hMenu=menu;
+  tp.uFlags=TPM_LEFTALIGN|TPM_TOPALIGN|TPM_RIGHTBUTTON;
+  tp.x=oe->screenX;
+  tp.y=oe->screenY;
+  ::SendMessage(m_frame,AU::WM_TRACKPOPUPMENU,0,(LPARAM)&tp);
 
-	menu.CreatePopupMenu();
-	menu.AppendMenu(MF_STRING,ID_EDIT_UNDO,_T("&Undo"));
-	menu.AppendMenu(MF_SEPARATOR);
-
-	itemName.LoadString(IDS_CTXMENU_CUT);
-	menu.AppendMenu(MF_STRING, ID_EDIT_CUT, itemName);
-
-	itemName.LoadString(IDS_CTXMENU_COPY);
-	menu.AppendMenu(MF_STRING, ID_EDIT_COPY, itemName);
-
-	itemName.LoadString(IDS_CTXMENU_PASTE);
-	menu.AppendMenu(MF_STRING, ID_EDIT_PASTE, itemName);
-
-	if(m_normalize)
-	{
-		menu.AppendMenu(MF_SEPARATOR);
-		MSHTML::IHTMLElementPtr cur(SelectionContainer());
-		MSHTML::IHTMLElementPtr initial(cur);
-		int cmd = ID_SEL_BASE;
-		itemName.LoadString(IDS_CTXMENU_SELECT);
-
-		while((bool)cur && U::scmp(cur->tagName,L"BODY") && U::scmp(cur->id, L"fbw_body"))
-		{
-			menu.AppendMenu(MF_STRING, cmd, itemName + L" " + GetPath(cur));
-			cur = cur->parentElement;
-			++cmd;
-		}
-		if(U::scmp(initial->className, L"image") == 0)
-		{
-			MSHTML::IHTMLImgElementPtr image = MSHTML::IHTMLDOMNodePtr(initial)->firstChild;
-			CString src = image->src.GetBSTR();
-			src.Delete(src.Find(L"fbw-internal:"), 13);
-			if(src != L"#undefined")
-			{
-				menu.AppendMenu(MF_SEPARATOR);
-				itemName.LoadString(IDS_CTXMENU_IMG_SAVEAS);
-				menu.AppendMenu(MF_STRING, ID_SAVEIMG_AS, itemName);
-			}
-		}
-	}
-
-	AU::TRACKPARAMS tp;
-	tp.hMenu = menu;
-	tp.uFlags = TPM_LEFTALIGN | TPM_TOPALIGN | TPM_RIGHTBUTTON;
-	tp.x = oe->screenX;
-	tp.y = oe->screenY;
-	::SendMessage(m_frame, AU::WM_TRACKPOPUPMENU, 0, (LPARAM)&tp);
-
-	return VARIANT_TRUE;
+  return VARIANT_TRUE;
 }
 
 LRESULT CFBEView::OnSelectElement(WORD, WORD wID, HWND, BOOL&) {
@@ -2863,12 +2221,7 @@ VARIANT_BOOL  CFBEView::OnClick(IDispatch *evt)
 	if(!(bool)elem)
 		return VARIANT_FALSE;
 
-	MSHTML::IHTMLElementPtr parent_element = elem->parentElement;
-
-	if(!(bool)parent_element)
-		return VARIANT_FALSE;
-
-	bstr_t pc = parent_element->className;
+	bstr_t pc = elem->parentElement->className;
 
 	if(!U::scmp(pc, L"image"))
 	{
@@ -2876,7 +2229,7 @@ VARIANT_BOOL  CFBEView::OnClick(IDispatch *evt)
 		IHTMLControlRangePtr r(((MSHTML::IHTMLElement2Ptr)(Document()->body))->createControlRange());
 		HRESULT hr = r->add((IHTMLControlElementPtr)elem->parentElement);
 		hr = r->select();
-		//::SendMessage(m_frame, WM_COMMAND, MAKELONG(IDC_HREF, IDN_WANTFOCUS), (LPARAM)m_hWnd);
+		::SendMessage(m_frame, WM_COMMAND, MAKELONG(IDC_HREF, IDN_WANTFOCUS), (LPARAM)m_hWnd);
 
 		return VARIANT_TRUE;
 	}
@@ -2885,11 +2238,11 @@ VARIANT_BOOL  CFBEView::OnClick(IDispatch *evt)
 	{
 		return VARIANT_FALSE;
 	}
-	/*else
+	else
 	{
 	  ::SendMessage(m_frame, WM_COMMAND, MAKELONG(IDC_HREF, IDN_WANTFOCUS), (LPARAM)m_hWnd);
 	  return VARIANT_FALSE;
-	}*/
+	}
 
 	if(oe->altKey!=VARIANT_TRUE || oe->shiftKey==VARIANT_TRUE || oe->ctrlKey==VARIANT_TRUE)
 		return VARIANT_FALSE;
@@ -2913,22 +2266,15 @@ VARIANT_BOOL  CFBEView::OnClick(IDispatch *evt)
 	return VARIANT_TRUE;
 }
 
-VARIANT_BOOL  CFBEView::OnRealPaste(IDispatch* evt)
-{
-	MSHTML::IHTMLEventObjPtr oe(evt);
-	oe->cancelBubble = VARIANT_TRUE;
-	if(!m_enable_paste)
-	{
-		// Blocks first OnRealPaste to stop double-insertion
-		SendMessage(WM_COMMAND, MAKELONG(ID_EDIT_PASTE, 0), 0);
-		oe->returnValue = VARIANT_FALSE;
-	}
-	else
-	{
-		oe->returnValue = VARIANT_TRUE;
-	}
-
-	return VARIANT_TRUE;
+VARIANT_BOOL  CFBEView::OnRealPaste(IDispatch *evt) {
+  MSHTML::IHTMLEventObjPtr    oe(evt);
+  oe->cancelBubble=VARIANT_TRUE;
+  if (!m_enable_paste) {
+    oe->returnValue=VARIANT_FALSE;
+    PostMessage(WM_COMMAND,MAKELONG(ID_EDIT_PASTE,0),0);
+  } else
+    oe->returnValue=VARIANT_TRUE;
+  return VARIANT_TRUE;
 }
 
 bool  CFBEView::IsFormChanged() {
@@ -3061,36 +2407,31 @@ bool CFBEView::SciFindNext(HWND src,bool fFwdOnly,bool fBarf) {
   return false;
 }
 
-_bstr_t CFBEView::Selection()
-{
-	try
-	{
-		MSHTML::IHTMLTxtRangePtr rng(Document()->selection->createRange());
-		if(!(bool)rng)
-			return _bstr_t();
+_bstr_t	  CFBEView::Selection() {
+  try {
+    MSHTML::IHTMLTxtRangePtr	rng(Document()->selection->createRange());
+    if (!(bool)rng)
+      return _bstr_t();
 
-		MSHTML::IHTMLTxtRangePtr dup(rng->duplicate());
-		dup->collapse(VARIANT_TRUE);
+    MSHTML::IHTMLTxtRangePtr	dup(rng->duplicate());
+    dup->collapse(VARIANT_TRUE);
 
-		MSHTML::IHTMLElementPtr elem(dup->parentElement());
-		while ((bool)elem && U::scmp(elem->tagName, L"P") && U::scmp(elem->tagName, L"DIV"))
-			elem = elem->parentElement;
+    MSHTML::IHTMLElementPtr	elem(dup->parentElement());
+    while ((bool)elem && U::scmp(elem->tagName,L"P") && U::scmp(elem->tagName,L"DIV"))
+      elem=elem->parentElement;
 
-		if(elem)
-		{
-			dup->moveToElementText(elem);
-			if(rng->compareEndPoints(L"EndToEnd", dup) > 0)
-				rng->setEndPoint(L"EndToEnd", dup);
-		}
+    if (elem) {
+      dup->moveToElementText(elem);
+      if (rng->compareEndPoints(L"EndToEnd",dup)>0)
+	rng->setEndPoint(L"EndToEnd",dup);
+    }
 
-		return rng->text;
-	}
-	catch (_com_error& err)
-	{
-		U::ReportError(err);
-	}
+    return rng->text;
+  }
+  catch (_com_error) {
+  }
 
-	return _bstr_t();
+  return _bstr_t();
 }
 
 // Modification by Pilgrim
@@ -3239,57 +2580,6 @@ LRESULT CFBEView::OnEditInsertTable(WORD wNotifyCode, WORD wID, HWND hWndCtl)
 		bool bTitle = dlg.m_bTitle;
 		InsertTable(false,bTitle,nRows);
 	}
-	return 0;
-}
-
-LRESULT CFBEView::OnEditInsImage(WORD, WORD cmdID, HWND, BOOL&)
-{
-	bool bInline = (cmdID != ID_EDIT_INS_IMAGE);
-	
-	if(_Settings.GetInsImageAsking())
-	{
-		CAddImageDlg imgDialog;
-		imgDialog.DoModal(*this);
-	}
-
-	if(!_Settings.GetIsInsClearImage())
-	{
-		CFileDialogEx dlg(
-			TRUE,
-			NULL,
-			NULL,
-			OFN_FILEMUSTEXIST | OFN_HIDEREADONLY | OFN_PATHMUSTEXIST | OFN_NOCHANGEDIR,
-			L"FBE supported (*.jpg;*.jpeg;*.png)\0*.jpg;*.jpeg;*.png\0JPEG (*.jpg)\0*.jpg\0PNG (*.png)\0*.png\0Bitmap (*.bmp"\
-			L")\0*.bmp\0GIF (*.gif)\0*.gif\0TIFF (*.tif)\0*.tif\0\0"
-			);
-
-		wchar_t dlgTitle[MAX_LOAD_STRING + 1];
-		::LoadString(_Module.GetResourceInstance(), IDS_ADD_IMAGE_FILEDLG, dlgTitle, MAX_LOAD_STRING);
-		dlg.m_ofn.lpstrTitle = dlgTitle;
-		dlg.m_ofn.nFilterIndex = 1;
-
-		if(dlg.DoModal(*this) == IDOK)
-		{
-			AddImage(dlg.m_szFileName, bInline);
-		}
-	}
-	else
-	{
-		try {
-			if (bInline)
-			{
-				MSHTML::IHTMLDOMNodePtr node(Call(L"InsInlineImage"));
-			}
-			else
-			{
-				MSHTML::IHTMLDOMNodePtr node(Call(L"InsImage"));
-				if (node)
-					BubbleUp(node,L"DIV");
-			}
-		}
-		catch (_com_error&) { }
-	}
-
 	return 0;
 }
 
@@ -3803,15 +3093,13 @@ bool CFBEView::CloseFindDialog(CReplaceDlgBase* dlg)
 	return true;
 }
 
-bool CFBEView::ExpandTxtRangeToParagraphs(MSHTML::IHTMLTxtRangePtr& rng,
-											MSHTML::IHTMLElementPtr& begin,
-											MSHTML::IHTMLElementPtr& end) const
+bool CFBEView::ExpandTxtRangeToParagraphs(MSHTML::IHTMLTxtRangePtr &rng, MSHTML::IHTMLElementPtr& begin, MSHTML::IHTMLElementPtr& end)const
 {
-	MSHTML::IHTMLTxtRangePtr tr1 = rng->duplicate(); 
+	MSHTML::IHTMLTxtRangePtr tr1=rng->duplicate(); 
 	tr1->collapse(true);
 
 	MSHTML::IHTMLElementPtr te = GetHP(tr1->parentElement());
-
+	
 	if(!(bool)te)
 		return false;
 
@@ -3819,30 +3107,22 @@ bool CFBEView::ExpandTxtRangeToParagraphs(MSHTML::IHTMLTxtRangePtr& rng,
 	tr2->collapse(false);
 
 	begin = tr1->parentElement(); 
-	while((bool)begin && U::scmp(begin->tagName, L"P"))
+	while((bool)begin && U::scmp(begin->tagName, L"P")) 
 		begin = begin->parentElement;
 
 	if(!(bool)begin)
 		return false;
 
-	end = tr2->parentElement();
+	end = tr2->parentElement(); 
 	while((bool)end && U::scmp(end->tagName, L"P"))
 		end = end->parentElement;
 
 	if(!(bool)end)
 		return false;
 
-	if(begin == end)
-		rng->moveToElementText(begin);
-	else
-	{
-		MSHTML::IMarkupPointerPtr pBegin, pEnd;
-		m_mk_srv->CreateMarkupPointer(&pBegin);
-		m_mk_srv->CreateMarkupPointer(&pEnd);
-		pBegin->MoveAdjacentToElement(begin, MSHTML::ELEM_ADJ_AfterBegin);
-		pEnd->MoveAdjacentToElement(end, MSHTML::ELEM_ADJ_BeforeEnd);
-		m_mk_srv->MoveRangeToPointers(pBegin, pEnd, rng);
-	}
+	tr2->moveToElementText(end); 	
+	rng->moveToElementText(begin);
+	rng->setEndPoint(L"EndToEnd", tr2);
 
 	return true;
 }
@@ -3871,92 +3151,4 @@ bool CFBEView::SelectionHasTags(wchar_t* elem)
 	}
 
 	return false;
-}
-
-BSTR CFBEView::PrepareDefaultId(const CString& filename){
-
-	// prepare a default id
-	int cp = filename.ReverseFind(_T('\\'));
-	if (cp < 0)
-		cp = 0;
-	else
-		++cp;
-	CString   newid;
-	TCHAR	    *ncp=newid.GetBuffer(filename.GetLength()-cp);
-	int	    newlen=0;
-	while (cp<filename.GetLength()) {
-		TCHAR   c=filename[cp];
-		if ((c>=_T('0') && c<=_T('9')) ||
-			(c>=_T('A') && c<=_T('Z')) ||
-			(c>=_T('a') && c<=_T('z')) ||
-			c==_T('_') || c==_T('.'))
-			ncp[newlen++]=c;
-		++cp;
-	}
-	newid.ReleaseBuffer(newlen);
-	if (!newid.IsEmpty() && !(
-		(newid[0]>=_T('A') && newid[0]<=_T('Z')) ||
-		(newid[0]>=_T('a') && newid[0]<=_T('z')) ||
-		newid[0]==_T('_')))
-		newid.Insert(0,_T('_'));
-	return newid.AllocSysString();
-}
-
-// images
-void CFBEView::AddImage(const CString& filename, bool bInline)
-{
-	_variant_t args[4];
-
-	V_BSTR(&args[3]) = filename.AllocSysString();
-	V_VT(&args[3]) = VT_BSTR;
-
-	HRESULT hr;
-	if(FAILED(hr = U::LoadFile(filename, &args[0])))
-	{
-		U::ReportError(hr);
-		return;
-	}
-
-	// Prepare a default ID
-	int cp = filename.ReverseFind(_T('\\'));
-	if (cp < 0)
-		cp = 0;
-	else
-		++cp;
-
-	V_BSTR(&args[2]) = PrepareDefaultId(filename);
-	V_VT(&args[2]) = VT_BSTR;
-
-	// Try to find out mime type
-	V_BSTR(&args[1]) = U::GetMimeType(filename).AllocSysString();
-	V_VT(&args[1]) = VT_BSTR;
-
-	// Stuff the thing into JavaScript
-	try
-	{
-		CComDispatchDriver body(Script());
-		_variant_t checkedId;
-		hr = body.InvokeN(L"apiAddBinary", args, 4, &checkedId);
-
-		if(FAILED(hr))
-			U::ReportError(hr);
-
-		hr = body.Invoke0(L"FillCoverList");
-
-		if(FAILED(hr))
-			U::ReportError(hr);
-
-		_variant_t check(false);
-		if (bInline)
-			hr = body.Invoke2(L"InsInlineImage", &check, &checkedId);
-		else
-			hr = body.Invoke2(L"InsImage", &check, &checkedId);
-		if (FAILED(hr))
-			U::ReportError(hr);
-
-		MSHTML::IHTMLDOMNodePtr node(NULL);
-		if(node)
-			BubbleUp(node, L"DIV");
-	}
-	catch (_com_error&) { }
 }

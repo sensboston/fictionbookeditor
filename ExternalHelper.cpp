@@ -8,34 +8,32 @@
 #include "FBE.h"
 #include "ExternalHelper.h"
 
-#define MENU_BASE 5000
+#define	MENU_BASE   5000
 
-struct Genre
-{
-	int		groupid;
-	CString	id;
-	CString	text;
+struct Genre {
+  int	      groupid;
+  CString     id;
+  CString     text;
 };
 
-static CSimpleArray<CString> g_genre_groups;
-static CSimpleArray<Genre> g_genres;
+static CSimpleArray<CString>	g_genre_groups;
+static CSimpleArray<Genre>	g_genres;
 
 struct DescElement
 {
-	int groupid;
-	CString text;
+	int			groupid;
+	CString		text;
 };
 
 static CSimpleMap<CString, DescElement> g_desc_elements;
 
-struct Lang
-{
-	CString id;
-	CString text;
+struct Lang {
+	CString     id;
+	CString     text;
 };
 
-static CSimpleArray<CString> g_lang_groups;
-static CSimpleArray<Lang> g_langs;
+static CSimpleArray<CString>	g_lang_groups;
+static CSimpleArray<Lang>	g_langs;
 
 static void FillDescElements()
 {
@@ -48,20 +46,20 @@ static void FillDescElements()
 	g_desc_elements.Add(L"ti_group", elem);
 	if(::LoadString(_Module.GetResourceInstance(), IDS_DMS_GENRE_M, buf, MAX_LOAD_STRING))
 		elem.text = buf;
-	g_desc_elements.Add(L"ti_genre_match", elem);
+	g_desc_elements.Add(L"ti_genre_match", elem);	
 	if(::LoadString(_Module.GetResourceInstance(), IDS_DMS_KW, buf, MAX_LOAD_STRING))
 		elem.text = buf;
-	g_desc_elements.Add(L"ti_kw", elem);
+	g_desc_elements.Add(L"ti_kw", elem);	
 	if(::LoadString(_Module.GetResourceInstance(), IDS_DMS_AUTHOR, buf, MAX_LOAD_STRING))
 		elem.text = buf;
 	g_desc_elements.Add(L"ti_nic_mail_web", elem);
 	elem.groupid = 2;
 	if(::LoadString(_Module.GetResourceInstance(), IDS_DMS_DI, buf, MAX_LOAD_STRING))
 		elem.text = buf;
-	g_desc_elements.Add(L"di_group", elem);
+	g_desc_elements.Add(L"di_group", elem);	
 	if(::LoadString(_Module.GetResourceInstance(), IDS_DMS_ID, buf, MAX_LOAD_STRING))
 		elem.text = buf;
-	g_desc_elements.Add(L"di_id", elem);
+	g_desc_elements.Add(L"di_id", elem);	
 	elem.groupid = 0;
 	if(::LoadString(_Module.GetResourceInstance(), IDS_DMS_STI, buf, MAX_LOAD_STRING))
 		elem.text = buf;
@@ -71,10 +69,10 @@ static void FillDescElements()
 	g_desc_elements.Add(L"ci_all", elem);
 }
 
+
 // genre list helper
-static void LoadGenres()
-{
-	FILE *fp;
+static void	    LoadGenres() {
+  FILE	  *fp;
   CString file_name = _Settings.GetLocalizedGenresFileName();
   // Modification by Pilgrim 
   try{
@@ -119,39 +117,35 @@ static void LoadGenres()
       g_genres.Add(g);
     }
   }
-	fclose(fp);
+  fclose(fp);
 }
 
-static CMenu MakeGenresMenu()
-{
-	CMenu ret;
-	ret.CreatePopupMenu();
+static CMenu	  MakeGenresMenu() {
+  CMenu	  ret;
+  ret.CreatePopupMenu();
 
-	CMenu cur;
-	int g=-1;
-	for(int i=0; i < g_genres.GetSize(); ++i)
-	{
-		if(g_genres[i].groupid != g)
-		{
-			g = g_genres[i].groupid;
-			cur.Detach();
-			cur.CreatePopupMenu();
-			ret.AppendMenu(MF_POPUP | MF_STRING, (UINT)(HMENU)cur, g_genre_groups[g]);
-		}
-	cur.AppendMenu(MF_STRING, i + MENU_BASE, g_genres[i].text);
-	}
-	cur.Detach();
+  CMenu	  cur;
+  int	  g=-1;
+  for (int i=0;i<g_genres.GetSize();++i) {
+    if (g_genres[i].groupid!=g) {
+      g=g_genres[i].groupid;
+      cur.Detach();
+      cur.CreatePopupMenu();
+      ret.AppendMenu(MF_POPUP|MF_STRING,(UINT)(HMENU)cur,g_genre_groups[g]);
+    }
+    cur.AppendMenu(MF_STRING,i+MENU_BASE,g_genres[i].text);
+  }
+  cur.Detach();
 
-	return ret.Detach();
+  return ret.Detach();
 }
 
-static CMenu MakeDescComponentsMenu()
-{
-	CMenu ret;
+static CMenu	  MakeDescComponentsMenu() {
+	CMenu	  ret;
 	ret.CreatePopupMenu();
 
-	CMenu cur;
-	int g=-1;
+	CMenu	  cur;
+	int	  g=-1;
 	for (int i=0;i<g_desc_elements.GetSize();++i) 
 	{
 		if(g_desc_elements.GetValueAt(i).groupid==0)
@@ -181,11 +175,11 @@ static CMenu MakeDescComponentsMenu()
 		bool ext = _Settings.GetExtElementStyle(g_desc_elements.GetKeyAt(i));
 		if(ext)
 		{
-			cur.CheckMenuItem(i + MENU_BASE, MF_CHECKED);
+			cur.CheckMenuItem(i+MENU_BASE, MF_CHECKED);
 		}
 		else
 		{
-			cur.CheckMenuItem(i + MENU_BASE, MF_UNCHECKED);
+			cur.CheckMenuItem(i+MENU_BASE, MF_UNCHECKED);
 		}
 	}
 	cur.Detach();
@@ -193,24 +187,26 @@ static CMenu MakeDescComponentsMenu()
 	return ret.Detach();
 }
 
-HRESULT ExternalHelper::GenrePopup(IDispatch *obj,LONG x,LONG y,BSTR *name)
-{
-	LoadGenres();
-	CMenu popup = MakeGenresMenu();
-	if(popup)
-	{
-		UINT cmd = popup.TrackPopupMenu(TPM_RETURNCMD | TPM_LEFTALIGN | TPM_TOPALIGN, x, y, ::GetActiveWindow());
-		popup.DestroyMenu();
-		cmd -= MENU_BASE;
-		if(cmd < (UINT)g_genres.GetSize())
-		{
-			*name = g_genres[cmd].id.AllocSysString();
-			return S_OK;
-		}
-	}
-	*name = NULL;
-	return S_OK;
+HRESULT	ExternalHelper::GenrePopup(IDispatch *obj,LONG x,LONG y,BSTR *name) {
+  LoadGenres();
+  CMenu	  popup=MakeGenresMenu();
+  if (popup) {
+    UINT  cmd=popup.TrackPopupMenu(
+      TPM_RETURNCMD|TPM_LEFTALIGN|TPM_TOPALIGN,
+      x,y,::GetActiveWindow()
+    );
+    popup.DestroyMenu();
+    cmd-=MENU_BASE;
+    if (cmd<(UINT)g_genres.GetSize()) {
+      *name=g_genres[cmd].id.AllocSysString();
+      return S_OK;
+    }
+  }
+  *name=NULL;
+  return S_OK;
 }
+
+
 
 // Modification by Pilgrim
 
@@ -252,31 +248,28 @@ HRESULT ExternalHelper::GenrePopup(IDispatch *obj,LONG x,LONG y,BSTR *name)
 	fclose(fp);
 }*/
 
-static CMenu MakeLangsMenu()
-{
-	CMenu cur;
+static CMenu	  MakeLangsMenu() {
+	CMenu	  cur;
 	cur.CreatePopupMenu();
 
-	for(int i = 0;i < g_langs.GetSize(); ++i)
-	{
-		cur.AppendMenu(MF_STRING, i + MENU_BASE, g_langs[i].text);
+	for (int i=0;i<g_langs.GetSize();++i) {
+		cur.AppendMenu(MF_STRING,i+MENU_BASE,g_langs[i].text);
 	}
 
 	return cur.Detach();
 }
 
-static CMenu MakeExtendMenu()
-{
-	CMenu cur;
+static CMenu	  MakeExtendMenu() {
+	CMenu	  cur;
 	cur.CreatePopupMenu();
 
-	for (int i = 0; i < g_langs.GetSize(); ++i)
-	{
-		cur.AppendMenu(MF_STRING, i + MENU_BASE, g_langs[i].text);
+	for (int i=0;i<g_langs.GetSize();++i) {
+		cur.AppendMenu(MF_STRING,i+MENU_BASE,g_langs[i].text);
 	}
 
 	return cur.Detach();
 }
+
 
 /*HRESULT	ExternalHelper::LangPopup(IDispatch *obj,LONG x,LONG y,BSTR *name) {
 	LoadLangs();
@@ -354,27 +347,26 @@ HRESULT	ExternalHelper::STISrcLangPopup(IDispatch *obj,LONG x,LONG y,BSTR *name)
 	return S_OK;
 }*/
 
-HRESULT ExternalHelper::DescShowMenu(IDispatch *obj, LONG x,LONG y, BSTR* element_id)
+HRESULT	ExternalHelper::DescShowMenu(IDispatch *obj,LONG x,LONG y, BSTR *element_id) 
 {
 	FillDescElements();
-	CMenu popup = MakeDescComponentsMenu();
-	if(popup)
+	CMenu	  popup=MakeDescComponentsMenu();
+	if (popup) 
 	{
-		UINT cmd = popup.TrackPopupMenu(TPM_RETURNCMD | TPM_LEFTALIGN | TPM_TOPALIGN, x, y, ::GetActiveWindow());
+		UINT  cmd=popup.TrackPopupMenu(TPM_RETURNCMD|TPM_LEFTALIGN|TPM_TOPALIGN, x,y,::GetActiveWindow());		
 		if(!cmd)
 		{
 			return S_OK;
 		}
 		
 		popup.DestroyMenu();
-		cmd -= MENU_BASE;
-		if(cmd < (UINT)g_desc_elements.GetSize()) 
+		cmd-=MENU_BASE;
+		if (cmd<(UINT)g_desc_elements.GetSize()) 
 		{
-			DescElement elem = g_desc_elements.GetValueAt(cmd);
+			DescElement elem = g_desc_elements.GetValueAt(cmd);	
 			*element_id = g_desc_elements.GetKeyAt(cmd).AllocSysString();
 			return S_OK;
 		}
 	}
-
 	return S_OK;
 }

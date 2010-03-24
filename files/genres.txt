@@ -137,7 +137,6 @@ Home, Family
  home_sport Sports
  home_sex Erotica, Sex
  home Home: Other
- geo_guides, Geo guides
 Economy, Business
  job_hunting Job Hunting
  management Management

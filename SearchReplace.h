@@ -6,29 +6,28 @@
 
 extern CSettings _Settings;
 
-class FRBase: public CWinDataExchange<FRBase>
-{
+class FRBase: public CWinDataExchange<FRBase> {
 public:
-	CRegKey		m_fh,m_rh;
+  CRegKey	  m_fh,m_rh;
 
-	CFBEView*	m_view;
-	int			m_whole;
-	int			m_case;
-	int			m_regexp;
-	int			m_dir;
+  CFBEView	  *m_view;
+  int		  m_whole;
+  int		  m_case;
+  int		  m_regexp;
+  int		  m_dir;
 
-	FRBase(CFBEView* view) : m_view(view) { }
+  FRBase(CFBEView *view) : m_view(view) { }
 
   HWND	GetDlgItem(int id) { return X_GetDlgItem(id); }
   virtual HWND X_GetDlgItem(int id) = 0;
   BOOL	SetDlgItemText(int id,const TCHAR *str) { return ::SetWindowText(GetDlgItem(id),str); }
 
-	BEGIN_MSG_MAP(FRBase)
-		ALT_MSG_MAP(1)
-		MESSAGE_HANDLER(WM_INITDIALOG, OnInitDialog)
+  BEGIN_MSG_MAP(FRBase)
+  ALT_MSG_MAP(1)
+    MESSAGE_HANDLER(WM_INITDIALOG, OnInitDialog)
 
-		COMMAND_HANDLER(IDC_TEXT,CBN_EDITCHANGE, OnTextChanged)
-	END_MSG_MAP()
+    COMMAND_HANDLER(IDC_TEXT,CBN_EDITCHANGE, OnTextChanged)
+  END_MSG_MAP()
 
   BEGIN_DDX_MAP(FRBase)
     DDX_TEXT(IDC_TEXT, m_view->m_fo.pattern)
@@ -41,30 +40,25 @@ public:
       DDX_RADIO(IDC_UP, m_dir);
   END_DDX_MAP()
 
-	void GetData()
-	{
-		DoDataExchange(TRUE);
-
-		int flags = 0;
-		if(m_case)
-			flags |= CFBEView::FRF_CASE;
-		if(m_whole)
-			flags |= CFBEView::FRF_WHOLE;
-		if(m_dir == 0)
-			flags |= CFBEView::FRF_REVERSE;
-
-		m_view->m_fo.flags = flags;
-		m_view->m_fo.fRegexp = m_regexp != 0;
-	}
-
-	void PutData()
-	{
-		m_case = (m_view->m_fo.flags & CFBEView::FRF_CASE) != 0;
-		m_whole = (m_view->m_fo.flags & CFBEView::FRF_WHOLE) != 0;
-		m_dir = (m_view->m_fo.flags & CFBEView::FRF_REVERSE) == 0;
-		m_regexp = m_view->m_fo.fRegexp;
-		DoDataExchange(FALSE);
-	}
+  void	GetData() {
+    DoDataExchange(TRUE);
+    int flags=0;
+    if (m_case)
+      flags|=CFBEView::FRF_CASE;
+    if (m_whole)
+      flags|=CFBEView::FRF_WHOLE;
+    if (m_dir==0)
+      flags|=CFBEView::FRF_REVERSE;
+    m_view->m_fo.flags=flags;
+    m_view->m_fo.fRegexp=m_regexp!=0;
+  }
+  void	PutData() {
+    m_case=(m_view->m_fo.flags&CFBEView::FRF_CASE)!=0;
+    m_whole=(m_view->m_fo.flags&CFBEView::FRF_WHOLE)!=0;
+    m_dir=(m_view->m_fo.flags&CFBEView::FRF_REVERSE)==0;
+    m_regexp=m_view->m_fo.fRegexp;
+    DoDataExchange(FALSE);
+  }
 
   void	LoadHistoryImp(const TCHAR *path,CRegKey& rk,HWND hCB,CString& first) {
     if (!hCB)
@@ -94,122 +88,105 @@ public:
       }
     }
   }
+  LRESULT OnInitDialog(UINT, WPARAM, LPARAM, BOOL& bHandled) {
+    bHandled=FALSE;
 
-	LRESULT OnInitDialog(UINT, WPARAM, LPARAM, BOOL& bHandled)
-	{
-		bHandled = FALSE;
+    LoadHistoryImp(_T("SearchHistory"),m_fh,GetDlgItem(IDC_TEXT),m_view->m_fo.pattern);
+    LoadHistoryImp(_T("ReplaceHistory"),m_rh,GetDlgItem(IDC_REPLACE),m_view->m_fo.replacement);
 
-		LoadHistoryImp(_T("SearchHistory"), m_fh, GetDlgItem(IDC_TEXT), m_view->m_fo.pattern);
-		LoadHistoryImp(_T("ReplaceHistory"), m_rh, GetDlgItem(IDC_REPLACE), m_view->m_fo.replacement);
+    // load options
+	DWORD flags = _Settings.GetSearchOptions();
+    m_view->m_fo.fRegexp=(flags&CFBEView::FRF_REGEX)!=0;
+    m_view->m_fo.flags=flags&~CFBEView::FRF_REGEX;
 
-		// Load options
-		DWORD flags = _Settings.GetSearchOptions();
-		m_view->m_fo.fRegexp = (flags & CFBEView::FRF_REGEX) != 0;
-		m_view->m_fo.flags = flags & ~CFBEView::FRF_REGEX;
+    // set fields
+    PutData();
 
-		// Set fields
-		PutData();
+    return 0;
+  }
 
-		return 0;
-	}
-
-	LRESULT OnTextChanged(WORD, WORD wID, HWND, BOOL&)
-	{
-		CheckInput();
-		return 0;
-	}
+  LRESULT OnTextChanged(WORD, WORD wID, HWND, BOOL&) {
+    CheckInput();
+    return 0;
+  }
 
   void	CheckInput() {
     ::EnableWindow(GetDlgItem(IDOK),::GetWindowTextLength(GetDlgItem(IDC_TEXT))>0);
   }
 
-	void SaveStringImp(HWND hCB)
-	{
-		if(!hCB)
-			return;
+  void	SaveStringImp(HWND hCB) {
+    if (!hCB)
+      return;
 
-		CString cur = U::GetWindowText(hCB);
+    CString cur=U::GetWindowText(hCB);
+    if (cur.IsEmpty())
+      return;
+    LRESULT Idx=::SendMessage(hCB,CB_FINDSTRINGEXACT,-1,(LPARAM)(const TCHAR *)cur);
+    if (Idx==0)
+      return;
+    if (Idx!=CB_ERR)
+      ::SendMessage(hCB,CB_DELETESTRING,Idx,0);
+    ::SendMessage(hCB,CB_INSERTSTRING,0,(LPARAM)(const TCHAR *)cur);
+  }
+  void	SaveString() {
+    SaveStringImp(GetDlgItem(IDC_TEXT));
+    SaveStringImp(GetDlgItem(IDC_REPLACE));
+  }
 
-		if(cur.IsEmpty())
-			return;
+  void	SaveHistoryImp(CRegKey& rk,HWND hCB) {
+    if (!rk && !hCB)
+      return;
 
-		LRESULT Idx = ::SendMessage(hCB, CB_FINDSTRINGEXACT, -1, (LPARAM)(const TCHAR*)cur);
-		if(Idx == 0)
-			return;
-		if(Idx != CB_ERR)
-			::SendMessage(hCB, CB_DELETESTRING, Idx, 0);
+    LRESULT lCount=::SendMessage(hCB,CB_GETCOUNT,0,0);
+    if (lCount>100)
+      lCount=100;
 
-		::SendMessage(hCB, CB_INSERTSTRING, 0,(LPARAM)(const TCHAR*)cur);
-	}
+    CString   path;
+    for (int i=0;i<lCount;++i) {
+      CString	cur(U::GetCBString(hCB,i));
+      if (cur.IsEmpty())
+	continue;
+      path.Format(_T("%d"),i);
+      rk.SetStringValue(path,cur);
+    }
 
-	void SaveString()
-	{
-		SaveStringImp(GetDlgItem(IDC_TEXT));
-		SaveStringImp(GetDlgItem(IDC_REPLACE));
-	}
-
-	void SaveHistoryImp(CRegKey& rk,HWND hCB)
-	{
-		if(!rk && !hCB)
-			return;
-
-		LRESULT lCount = ::SendMessage(hCB, CB_GETCOUNT, 0, 0);
-		if(lCount > 100)
-			lCount = 100;
-
-		CString path;
-		for (int i = 0; i < lCount; ++i)
-		{
-			CString cur(U::GetCBString(hCB, i));
-			if(cur.IsEmpty())
-				continue;
-			path.Format(L"%d", i);
-			rk.SetStringValue(path, cur);
-		}
-
-		rk.SetDWORDValue(L"", lCount);
-	}
-
-	void SaveHistory() 
-	{
-		_Settings.SetSearchOptions(m_view->m_fo.flags | (m_view->m_fo.fRegexp ? CFBEView::FRF_REGEX : 0), true);
-		SaveHistoryImp(m_fh,GetDlgItem(IDC_TEXT));
-		SaveHistoryImp(m_rh,GetDlgItem(IDC_REPLACE));
-	}
+    rk.SetDWORDValue(_T(""),lCount);
+  }
+  void	SaveHistory() 
+  {
+	_Settings.SetSearchOptions(m_view->m_fo.flags|(m_view->m_fo.fRegexp ? CFBEView::FRF_REGEX : 0), true);
+    SaveHistoryImp(m_fh,GetDlgItem(IDC_TEXT));
+    SaveHistoryImp(m_rh,GetDlgItem(IDC_REPLACE));
+  }
 };
 
-class CFindDlgBase: public CModelessDialogImpl<CFindDlgBase>, public FRBase
+class CFindDlgBase: public CModelessDialogImpl<CFindDlgBase>,
+		    public FRBase
 {
 public:
-	enum { IDD = IDD_FIND };
+  enum { IDD = IDD_FIND };
 
-	CFindDlgBase(CFBEView *view) : FRBase(view){ }
+  CFindDlgBase(CFBEView *view) : FRBase(view){ }
 
-	BEGIN_MSG_MAP(CFindDlgBase)
-		COMMAND_ID_HANDLER(IDOK, OnDoFind)
-		COMMAND_ID_HANDLER(IDCANCEL, OnCancel)
+  BEGIN_MSG_MAP(CFindDlgBase)
+    COMMAND_ID_HANDLER(IDOK, OnDoFind)
+    COMMAND_ID_HANDLER(IDCANCEL, OnCancel)
 
-		CHAIN_MSG_MAP_ALT(FRBase, 1)
-	END_MSG_MAP()
+    CHAIN_MSG_MAP_ALT(FRBase, 1)
+  END_MSG_MAP()
 
 
-	LRESULT OnCancel(WORD, WORD wID, HWND, BOOL&)
-	{
-		m_view->CloseFindDialog(this);
-		return 0;
-	}
+  LRESULT OnCancel(WORD, WORD wID, HWND, BOOL&) {
+    m_view->CloseFindDialog(this);
+	return 0;
+  }
+  LRESULT OnDoFind(WORD, WORD, HWND, BOOL&) {
+    DoFind();
+    return 0;
+  }
 
-	LRESULT OnDoFind(WORD, WORD, HWND, BOOL&)
-	{
-		DoFind();
-		return 0;
-	}
-
-	virtual void DoFind() = 0;
-	virtual HWND X_GetDlgItem(int id)
-	{
-		return CModelessDialogImpl<CFindDlgBase>::GetDlgItem(id);
-	}
+  virtual void	DoFind() = 0;
+  virtual HWND	X_GetDlgItem(int id) { return CModelessDialogImpl<CFindDlgBase>::GetDlgItem(id); }
 };
 
 class CReplaceDlgBase: public CModelessDialogImpl<CReplaceDlgBase>,
@@ -275,28 +252,26 @@ public:
   virtual HWND	X_GetDlgItem(int id) { return CModelessDialogImpl<CReplaceDlgBase>::GetDlgItem(id); }
 };
 
-class CViewFindDlg: public CFindDlgBase
-{
+class CViewFindDlg : public CFindDlgBase {
 public:
-	CViewFindDlg(CFBEView* view) : CFindDlgBase(view) { }
+  CViewFindDlg(CFBEView *view) : CFindDlgBase(view) { }
 
-	virtual void DoFind()
+  virtual void	DoFind() {
+    GetData();
+    if (!m_view->DoSearch())
 	{
-		GetData();
-		if(!m_view->DoSearch())
-		{
-			wchar_t cpt[MAX_LOAD_STRING + 1];
-			wchar_t msg[MAX_LOAD_STRING + 1];
-			::LoadString(_Module.GetResourceInstance(), IDR_MAINFRAME, cpt, MAX_LOAD_STRING);
-			::LoadString(_Module.GetResourceInstance(), IDS_SEARCH_FAIL_MSG, msg, MAX_LOAD_STRING);
-			U::MessageBox(MB_OK | MB_ICONEXCLAMATION, cpt, msg, m_view->m_fo.pattern);
-		}
-		else
-		{
-			SaveString();
-			SaveHistory();
-		}
+	  wchar_t cpt[MAX_LOAD_STRING + 1];
+	  wchar_t msg[MAX_LOAD_STRING + 1];
+	  ::LoadString(_Module.GetResourceInstance(), IDR_MAINFRAME, cpt, MAX_LOAD_STRING);
+	  ::LoadString(_Module.GetResourceInstance(), IDS_SEARCH_FAIL_MSG, msg, MAX_LOAD_STRING);
+	  U::MessageBox(MB_OK|MB_ICONEXCLAMATION, cpt, msg, m_view->m_fo.pattern);
 	}
+    else {
+      SaveString();
+      SaveHistory();
+    }
+  }
 };
+
 
 #endif
