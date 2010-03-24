@@ -706,12 +706,22 @@ restart:
 			goto restart;
 		}
 
+		CString s, s2;
+
+		if (curelem)
+		{
+			s.SetString(curelem->innerHTML);
+			s2.SetString(curelem->className);
+		}
+
 		if (U::scmp(name,L"P") && U::scmp(name,L"STRONG") && 
 			U::scmp(name,L"STRIKE") && U::scmp(name,L"SUP") && U::scmp(name,L"SUB") && 
 			U::scmp(name,L"EM") && U::scmp(name,L"A") &&
 			(U::scmp(name,L"SPAN") || U::scmp(curelem->className, L"code")) &&
-			U::scmp(name,L"#text") && U::scmp(name,L"BR")
-			&& (U::scmp(name,L"IMG") || U::scmp(curelem->parentElement->className, L"image")))
+			U::scmp(name,L"#text") && U::scmp(name,L"BR") &&
+			(U::scmp(name,L"IMG") || U::scmp(curelem->parentElement->className, L"image") &&
+			// Added by SeNS: inline images support
+			(U::scmp(name,L"SPAN") || U::scmp(curelem->className, L"image"))))
 		{
 			if (U::scmp(name,L"DIV")==0) {
 				_bstr_t	  cls(curelem->className);
@@ -1361,6 +1371,9 @@ MSHTML::IHTMLElementPtr CFBEView::SelectionAnchor() {
     while (cur) {
       _bstr_t	tn(cur->tagName);
       if (U::scmp(tn,L"A")==0 || (U::scmp(tn,L"DIV")==0 && U::scmp(cur->className,L"image")==0))
+		return cur;
+	  // Added by SeNS - inline images
+      if (U::scmp(tn,L"A")==0 || (U::scmp(tn,L"SPAN")==0 && U::scmp(cur->className,L"image")==0))
 		return cur;
       cur=cur->parentElement;
     }
