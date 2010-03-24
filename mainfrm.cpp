@@ -592,7 +592,8 @@ BOOL CMainFrame::OnIdle()
 
 					m_ignore_cb_changes = false;
 
-					bool img = U::scmp(an->tagName, L"DIV") == 0;
+					// SeNS - inline images
+					bool img = (U::scmp(an->tagName, L"DIV") == 0) || (U::scmp(an->tagName, L"SPAN") == 0);
 					if(img != m_cb_last_images)
 						m_cb_updated = false;
 					m_cb_last_images = img;
@@ -3355,7 +3356,7 @@ bool  CMainFrame::SourceToHTML()
 		}
 	}while(root = root->nextSibling);
 	
-	free(buffer);
+	delete buffer;
 	m_doc->m_body.GoTo(selectedHTMLElementBegin);		
 	m_body_selection =  m_doc->m_body.SetSelection(selectedHTMLElementBegin, selectedHTMLElementEnd, begin_char, end_char);	
 	m_doc->MarkDocCP(); // document is in sync with source

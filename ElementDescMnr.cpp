@@ -32,6 +32,17 @@ bool IsP(MSHTML::IHTMLElementPtr elem, CString className)
 	return false;
 }
 
+// SeNS
+bool IsStylesheet(MSHTML::IHTMLElementPtr elem)
+{
+	return IsDiv(elem, L"stylesheet");
+}
+
+CString GetStylesheetTitle(const MSHTML::IHTMLElementPtr elem)
+{
+	return L"";
+}
+
 bool IsSection(MSHTML::IHTMLElementPtr elem)
 {
 	return IsDiv(elem, L"section");
@@ -59,7 +70,8 @@ CString GetBodyTitle(const MSHTML::IHTMLElementPtr elem)
 
 bool IsImage(MSHTML::IHTMLElementPtr elem)
 {
-	return IsDiv(elem, L"image");
+//	return IsDiv(elem, L"image");
+	return (U::scmp(elem->className, L"image") == 0);
 }
 
 CString GetImageTitle(const MSHTML::IHTMLElementPtr elem)
@@ -198,6 +210,10 @@ bool CElementDescMnr::InitStandartEDs()
 {
 	if(!m_initedStEDs)
 	{
+		// SeNS
+		CElementDescriptor* stylesheet = new CElementDescriptor;
+		stylesheet->Init(IsStylesheet, GetStylesheetTitle, 0, false, L"Stylesheet");
+
 		CElementDescriptor* section = new CElementDescriptor;
 		section->Init(IsSection, GetSectionTitle, 0, true, L"Section");
 		CElementDescriptor* body = new CElementDescriptor;
@@ -231,6 +247,7 @@ bool CElementDescMnr::InitStandartEDs()
 		CElementDescriptor* tr = new CElementDescriptor;
 		tr->Init(IsTR, GetTableTitle, 27, true, L"tr");
 
+		m_stEDs.Add(stylesheet);	// SeNS
 		m_stEDs.Add(section);
 		m_stEDs.Add(body);
 		m_stEDs.Add(image);

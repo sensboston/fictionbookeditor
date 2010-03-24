@@ -782,10 +782,13 @@ public:
 		if (elem)
 		{
 			MSHTML::IDisplayServicesPtr ids (MSHTML::IDisplayServicesPtr(m_doc->m_body.Document()));
-			MSHTML::IHTMLCaretPtr caret;
+			MSHTML::IHTMLCaretPtr caret = 0;
 			MSHTML::tagPOINT point;
-			ids->GetCaret(&caret);
-			if (caret) caret->GetLocation(&point, true);
+			if (ids)
+			{
+				ids->GetCaret(&caret);
+				if (caret) try { caret->GetLocation(&point, true); } catch(...) {caret = 0; }
+			}
 
 			CString txt = elem->innerHTML;
 			if (txt.Find(L"<DIV") < 0)
@@ -796,7 +799,7 @@ public:
 					elem->innerHTML = txt.AllocSysString();
 					m_doc->AdvanceDocVersion(n);
 					if (caret) 
-					{
+					try {
 						MSHTML::IDisplayPointerPtr disptr;
 						ids->CreateDisplayPointer(&disptr);
 						// shift to left - will positioning to the next char
@@ -804,6 +807,7 @@ public:
 						disptr->moveToPoint(point, MSHTML::COORD_SYSTEM_GLOBAL, elem, 0, 0);
 						caret->MoveCaretToPointer(disptr, true, MSHTML::CARET_DIRECTION_SAME);
 					}
+					catch (...) {};
 				}
 			}
 		}
