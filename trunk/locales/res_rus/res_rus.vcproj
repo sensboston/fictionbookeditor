@@ -5,6 +5,10 @@
 	Name="Russian"
 	ProjectGUID="{1BC3F431-9672-4191-9FC5-A8B1C9C08E36}"
 	RootNamespace="res_rus"
+	SccProjectName="Svn"
+	SccAuxPath="Svn"
+	SccLocalPath="Svn"
+	SccProvider="SubversionScc"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="131072"
 	>

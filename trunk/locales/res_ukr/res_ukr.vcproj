@@ -5,6 +5,10 @@
 	Name="Ukrainian"
 	ProjectGUID="{B0D6E5EB-56C0-4DC2-A98F-98EFE5158B8B}"
 	RootNamespace="res_ukr"
+	SccProjectName="Svn"
+	SccAuxPath="Svn"
+	SccLocalPath="Svn"
+	SccProvider="SubversionScc"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="131072"
 	>
