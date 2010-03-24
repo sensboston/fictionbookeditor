@@ -1,0 +1,1 @@
+const char *build_timestamp=__DATE__ " " __TIME__;

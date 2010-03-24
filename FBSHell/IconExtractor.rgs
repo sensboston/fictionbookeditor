@@ -1,0 +1,49 @@
+HKCR
+{
+  NoRemove CLSID
+  {
+    ForceRemove {E4D8441D-F89C-4b5c-90AC-A857E1768F1F} = s 'FictionBook Icon Extractor'
+    {
+      ForceRemove 'Programmable'
+      InprocServer32 = s '%MODULE%'
+      {
+        val ThreadingModel = s 'Apartment'
+      }
+    }
+  }
+}
+
+HKCR
+{
+  NoRemove FictionBook.2
+  {
+    ForceRemove DefaultIcon = s '%MODULE%'
+    NoRemove shellex
+    {
+      ForceRemove {BB2E617C-0920-11d1-9A0B-00C04FC2D6C1} = s '{E4D8441D-F89C-4b5c-90AC-A857E1768F1F}'      
+    }
+  }
+}
+
+HKLM
+{
+  NoRemove Software
+  {
+    NoRemove Microsoft
+    {
+      NoRemove Windows
+      {
+	NoRemove CurrentVersion
+	{
+	  NoRemove 'Shell Extensions'
+	  {
+	    NoRemove Approved
+	    {
+	      val {E4D8441D-F89C-4b5c-90AC-A857E1768F1F} = s 'FictionBook Icon Exctractor'
+	    }
+	  }
+	}
+      }
+    }
+  }
+}

@@ -1,0 +1,555 @@
+<html>
+<head>
+ <meta http-equiv="Content-Type" content="text/html; charset=windows-1251">
+ <meta http-equiv="MSThemeCompatible" content="yes">
+ <title>Интерактивное удаление разрывов абзацев</title>
+ <link rel=stylesheet href="css/удаление разрывов_main.css">
+ <link rel=stylesheet href="css/удаление разрывов_add.css">
+ <script language=JavaScript type="text/javascript">
+  window.returnValue=0;
+  var nbspChar=window.dialogArguments["nbspChar"];
+  var nbspEntity=window.dialogArguments["nbspEntity"];  
+
+  var resultColl=new Array();
+  var n,i,myDoc;
+  var changesApplied=false;
+  var changesCnt=0;
+  var otstupSverhu=60;
+  var elementToGo=null;
+  var elementToView=null;
+
+  function myOnClick() {
+   if (event.srcElement.nodeName=="INPUT" && event.srcElement.getAttribute("type")=="radio") {
+    if (event.srcElement.parentNode.nodeName=="DIV" && event.srcElement.parentNode.getAttribute("id").indexOf("rd")==0) {
+     n=eval(event.srcElement.parentNode.getAttribute("id").substr(2));
+     resultColl[n]=event.srcElement.value;
+    }
+   }
+   if (event.srcElement.nodeName=="A" && event.srcElement.getAttribute("name")=="go") {
+    if (event.srcElement.parentNode.nodeName=="DIV" && event.srcElement.parentNode.getAttribute("id").indexOf("rd")==0) {
+     n=eval(event.srcElement.parentNode.getAttribute("id").substr(2));
+     elementToGo=params[n+"_2"];
+     elementToView=params[n+"_3"];
+     applyChanges();     
+     var myRange=myDoc.body.createTextRange();
+     myRange.moveToElementText(elementToGo);
+     myRange.collapse(false);
+     myRange.move("character",-1);
+     myRange.moveStart("character",-1);
+     myRange.select();
+     elementToView.scrollIntoView();
+     params["window"].scrollBy(0,-otstupSverhu);     
+     window.close();
+    }   
+   }
+  }
+
+ var tagStr2;
+
+ function getStrOfOpeningTag(tmpPtr) {
+   tagStr2="<"+tmpPtr.nodeName;
+   if (tmpPtr.className!=undefined && tmpPtr.className!="") 
+    tagStr2+=" class="+tmpPtr.className;
+   tagStr2+=">"; 
+   return tagStr2;
+ } 
+
+ function addPointToP(ptr) {
+  var myPtr=ptr.lastChild;
+  while (myPtr!=ptr) {
+   if (myPtr.nodeType==3) break;
+   if (myPtr.lastChild!=null) {
+    myPtr=myPtr.lastChild;
+   } else {
+    while (myPtr.previousSibling==null) {
+     myPtr=myPtr.parentNode;
+     if (myPtr==ptr) break;
+    }
+    myPtr=myPtr.previousSibling;
+   }
+  }
+  myPtr.nodeValue+="."
+ }
+
+ var commaOntoPointRegExp=new RegExp(",?$","");
+ var commaOntoPointRegExp_=".";
+
+ function changeCommaOntoPoint(ptr) {
+  var myPtr=ptr.lastChild;
+  while (myPtr!=ptr) {
+   if (myPtr.nodeType==3) {
+    myPtr.nodeValue=myPtr.nodeValue.replace(commaOntoPointRegExp,commaOntoPointRegExp_);
+    break;
+   }
+   if (myPtr.lastChild!=null) {
+    myPtr=myPtr.lastChild;
+   } else {
+    while (myPtr.previousSibling==null) {
+     myPtr=myPtr.parentNode;
+     if (myPtr==ptr) break;
+    }
+    myPtr=myPtr.previousSibling;
+   }
+  }
+ }
+
+ var hyphenOntoShortDashRegExp=new RegExp("-$","");
+ var hyphenOntoShortDashRegExp_="–";
+
+ function changeHyphenOntoShortDash(ptr) {
+  var myPtr=ptr.lastChild;
+  while (myPtr!=ptr) {
+   if (myPtr.nodeType==3) {
+    if (myPtr.nodeValue.length!=0) {
+     myPtr.nodeValue=myPtr.nodeValue.replace(hyphenOntoShortDashRegExp,hyphenOntoShortDashRegExp_);
+     break;
+    }
+   }
+   if (myPtr.lastChild!=null) {
+    myPtr=myPtr.lastChild;
+   } else {
+    while (myPtr.previousSibling==null) {
+     myPtr=myPtr.parentNode;
+     if (myPtr==ptr) break;
+    }
+    myPtr=myPtr.previousSibling;
+   }
+  }
+ }
+
+ var hyphenOntoLongDashRegExp=new RegExp("-$","");
+ var hyphenOntoLongDashRegExp_="—";
+
+ function changeHyphenOntoLongDash(ptr) {
+  var myPtr=ptr.lastChild;
+  while (myPtr!=ptr) {
+   if (myPtr.nodeType==3) {
+    if (myPtr.nodeValue.length!=0) {
+     myPtr.nodeValue=myPtr.nodeValue.replace(hyphenOntoLongDashRegExp,hyphenOntoLongDashRegExp_);
+     break;
+    }
+   }
+   if (myPtr.lastChild!=null) {
+    myPtr=myPtr.lastChild;
+   } else {
+    while (myPtr.previousSibling==null) {
+     myPtr=myPtr.parentNode;
+     if (myPtr==ptr) break;
+    }
+    myPtr=myPtr.previousSibling;
+   }
+  }
+ }
+
+ var dashOntoHyphenRegExp=new RegExp("(–|—|-)$","");
+ var dashOntoHyphenRegExp_="-";
+
+ function changeDashOntoHyphenLongDash(ptr) {
+  var myPtr=ptr.lastChild;
+  while (myPtr!=ptr) {
+   if (myPtr.nodeType==3) {
+    if (myPtr.nodeValue.length!=0) {
+     myPtr.nodeValue=myPtr.nodeValue.replace(dashOntoHyphenRegExp,dashOntoHyphenRegExp_);
+     break;
+    }
+   }
+   if (myPtr.lastChild!=null) {
+    myPtr=myPtr.lastChild;
+   } else {
+    while (myPtr.previousSibling==null) {
+     myPtr=myPtr.parentNode;
+     if (myPtr==ptr) break;
+    }
+    myPtr=myPtr.previousSibling;
+   }
+  }
+ }
+
+ var killHyphenRegExp=new RegExp("(-|–|—)$","");
+ var killHyphenRegExp_="";
+
+ function killHyphen(ptr) {
+  var myPtr=ptr.lastChild;
+  while (myPtr!=ptr) {
+   if (myPtr.nodeType==3) {
+    if (myPtr.nodeValue.length!=0) {
+     myPtr.nodeValue=myPtr.nodeValue.replace(killHyphenRegExp,killHyphenRegExp_);
+     return;
+    }
+   }
+   if (myPtr.lastChild!=null) {
+    myPtr=myPtr.lastChild;
+   } else {
+    while (myPtr.previousSibling==null) {
+     myPtr=myPtr.parentNode;
+     if (myPtr==ptr) return;
+    }
+    myPtr=myPtr.previousSibling;
+   }
+  }
+ }
+
+ function trimRight(ptr) {
+  var SavePtr=ptr;
+  ptr=ptr;
+  while (true) {
+   if (ptr.nodeType==3) {
+    var s=ptr.nodeValue;
+    var i2=s.length-1;
+    while (i2>=0 && (s.substr(i2,1)==" " || s.substr(i2,1)==nbspChar)) i2--;
+    if (i2>=0) ptr.nodeValue=s.substr(0,i2+1)
+    else ptr.nodeValue="";
+    if (i2>0) return;
+   }
+   if (ptr.lastChild!=null) {
+    ptr=ptr.lastChild;
+   } else {
+    while (ptr.previousSibling==null) {
+     ptr=ptr.parentNode;
+     if (ptr==SavePtr) return false;
+    }
+    if (ptr) {ptr=ptr.previousSibling}
+   }
+  }
+ }
+ 
+ function trimLeft(ptr2) {
+  var SavePtr=ptr;
+  ptr=ptr2;
+  while (true) {
+   if (ptr.nodeType==3) {
+    var s=ptr.nodeValue;
+    var i1=0;
+    while (i1<s.length && (s.substr(i1,1)==" " || s.substr(i1,1)==nsbpChar)) i1++;
+    if (i1<s.length) ptr.nodeValue=s.substring(i1,s.length)
+    else ptr.nodeValue="";
+    if (i1<s.length) return;
+   }
+   if (ptr.firstChild!=null) {
+    ptr=ptr.firstChild;
+   } else {
+    while (ptr.nextSibling==null) {
+     ptr=ptr.parentNode;
+     }
+    if (ptr) {ptr=ptr.nextSibling}
+   }
+  }
+ }
+
+ function MoveTree(a1,a2) {
+  while (a2.childNodes[0]!=null) {
+   var tmp_node=a2.childNodes[0].cloneNode(true);
+   a1.appendChild(tmp_node);
+   a2.removeChild(a2.childNodes[0]);
+  }
+ }
+
+ var saveNext,myPtr;
+
+ function JustAddP(PrevP,ptr,delP,addSpace) {
+  if (addSpace!=false) {
+   var spaceNode=myDoc.createTextNode(" ");
+   PrevP.appendChild(spaceNode);
+  }
+  MoveTree(PrevP,ptr);
+  var i;
+  if (delP!=undefined && delP!=null) {
+   saveNext=delP;
+   if (saveNext.firstChild!=null && saveNext.nodeName!="P" &&
+       !(saveNext.nodeName=="DIV" &&
+         (saveNext.className=="title" || saveNext.className=="table" ||
+         saveNext.className=="history" || saveNext.className=="annotation" ||
+         saveNext.className=="poem"))) {
+     saveNext=saveNext.firstChild; // либо углубляемся...
+   } else {
+     while (saveNext.nextSibling==null) {
+      saveNext=saveNext.parentNode; // ...либо поднимаемся (если уже сходили вглубь)
+     }
+    saveNext=saveNext.nextSibling; //и переходим на соседний элемент
+   }
+   delP.removeNode(true);
+   delP=saveNext;
+  }  
+  ptr.parentNode.removeChild(ptr);
+ }
+  
+  function applyChanges() {
+   changesApplied=true;
+   var lastPtr=null;
+   var lastPrevP;
+   var prevP;
+   for (i=1;i<=collCnt;i++) {
+    k=resultColl[i];
+    if (k==1) {
+     //соединяем абзацы через пробел
+     prevP=params[i+"_2"];
+     if (prevP==lastPtr) prevP=lastPrevP;
+     lastPtr=params[i+"_3"];
+     trimRight(prevP);
+     trimLeft(lastPtr);
+     if (elementToGo==lastPtr) elementToGo=prevP;
+     if (elementToView==lastPtr) elementToView=prevP;     
+     JustAddP(prevP,lastPtr,params[i+"_4"]);
+     lastPrevP=prevP;
+    } else if (k==2) {  
+     //добавляем точку
+     prevP=params[i+"_2"];    
+     if (prevP==lastPtr) prevP=lastPrevP;         
+     trimRight(prevP);
+     addPointToP(prevP);
+    } else if (k==3) { 
+     //точка вместо запятой
+     prevP=params[i+"_2"];    
+     if (prevP==lastPtr) prevP=lastPrevP;
+     trimRight(prevP);
+     changeCommaOntoPoint(prevP);
+    } else if (k==4) {
+     //короткое тире вместо дефиса и соединить
+     prevP=params[i+"_2"];    
+     if (prevP==lastPtr) prevP=lastPrevP;     
+     lastPtr=params[i+"_3"];
+     trimRight(prevP);
+     changeHyphenOntoShortDash(prevP);
+     trimLeft(lastPtr);
+     if (elementToGo==lastPtr) elementToGo=prevP;
+     if (elementToView==lastPtr) elementToView=prevP;          
+     JustAddP(prevP,lastPtr,params[i+"_4"]);
+     lastPrevP=prevP;
+    } else if (k==5) { 
+     //длинное тире вместо дефиса и соединить
+     prevP=params[i+"_2"];    
+     if (prevP==lastPtr) prevP=lastPrevP;     
+     lastPtr=params[i+"_3"];
+     trimRight(prevP);
+     changeHyphenOntoLongDash(prevP);
+     trimLeft(lastPtr);
+     if (elementToGo==lastPtr) elementToGo=prevP;
+     if (elementToView==lastPtr) elementToView=prevP;          
+     JustAddP(prevP,lastPtr,params[i+"_4"]);
+     lastPrevP=prevP;
+    } else if (k==6) { 
+     //соединить, удалив тире или дефис
+     prevP=params[i+"_2"];    
+     if (prevP==lastPtr) prevP=lastPrevP;     
+     lastPtr=params[i+"_3"];
+     trimRight(prevP);
+     killHyphen(prevP);
+     trimRight(prevP);
+     trimLeft(lastPtr);
+     if (elementToGo==lastPtr) elementToGo=prevP;
+     if (elementToView==lastPtr) elementToView=prevP;          
+     JustAddP(prevP,lastPtr,params[i+"_4"],false);
+     lastPrevP=prevP;
+    } else if (k==7) {
+     //соединить через дефис, или заменив тире на дефис
+     prevP=params[i+"_2"];    
+     if (prevP==lastPtr) prevP=lastPrevP;     
+     lastPtr=params[i+"_3"];
+     trimRight(prevP);
+     changeDashOntoHyphenLongDash(prevP);
+     trimLeft(lastPtr);
+     if (elementToGo==lastPtr) elementToGo=prevP;
+     if (elementToView==lastPtr) elementToView=prevP;          
+     JustAddP(prevP,lastPtr,params[i+"_4"],false);
+     lastPrevP=prevP;
+    } else if (k==8) {
+     prevP=params[i+"_2"];    
+     if (prevP==lastPtr) prevP=lastPrevP;     
+     lastPtr=params[i+"_3"];    
+     trimRight(prevP);
+     trimLeft(lastPtr);
+     if (elementToGo==lastPtr) elementToGo=prevP;
+     if (elementToView==lastPtr) elementToView=prevP;          
+     JustAddP(prevP,lastPtr,params[i+"_4"],false);
+     lastPrevP=prevP;     
+    } else if (k==9) {
+     prevP=params[i+"_2"];    
+     if (prevP==lastPtr) prevP=lastPrevP;     
+     lastPtr=params[i+"_3"];    
+     trimRight(prevP);
+     killHyphen(prevP);
+     trimRight(prevP);
+     trimLeft(lastPtr);
+     if (elementToGo==lastPtr) elementToGo=prevP;
+     if (elementToView==lastPtr) elementToView=prevP;          
+     JustAddP(prevP,lastPtr,params[i+"_4"],false);
+     lastPrevP=prevP;     
+    }
+
+    if (k!=0) changesCnt++;
+   }
+   window.returnValue=changesCnt;
+  }
+  
+  function myOnClose() {
+   if (changesApplied==false) if (confirm('Произвести выбранные правки?')) applyChanges();
+  }
+ </script>
+</head>
+ <body onunload="myOnClose();">
+  <div id=fbw_body onclick="myOnClick();">
+  </div>
+<script language=JavaScript type="text/javascript">
+ var tmpPtr,inOneTag;
+ var numberOfSymbolsToShow=80;
+ var re1=new RegExp("([а-яёa-z0-9])(((<a( +[a-z0-9]+=([\"\'][^\"\']*[\"\']|[^ >]*))* +class=[\"\']?note[\"\']?( +[a-z0-9]+=([\"\'][^\"\']*[\"\']|[^ >]*))* *>.*?</a>)*(</?[a-z0-9]+( [^>]*)?>| |"+nsbpChar+")?)*)(([^а-яёa-z0-9>< "+nsbpChar+"])(((<a( +[a-z0-9]+=([\"\'][^\"\']*[\"\']|[^ >]*))* +class=[\"\']?note[\"\']?( +[a-z0-9]+=([\"\'][^\"\']*[\"\']|[^ >]*))* *>.*?</a>)*(</?[a-z0-9]+( [^>]*)?>| |"+nsbpChar+")?)*))?$","i");
+ var re1_="<SPAN class=ac>$1</SPAN>$2<SPAN class=ac>$12</SPAN>$13";
+ var re2=new RegExp("^((((<a( +[a-z0-9]+=([\"\'][^\"\']*[\"\']|[^ >]*))* +class=[\"\']?note[\"\']?( +[a-z0-9]+=([\"\'][^\"\']*[\"\']|[^ >]*))* *>.*?</a>)*(</?[a-z0-9]+( [^>]*)?>| |"+nsbpChar+")?)*)([^а-яёa-z0-9< "+nsbpChar+"]))?(((<a( +[a-z0-9]+=([\"\'][^\"\']*[\"\']|[^ >]*))* +class=[\"\']?note[\"\']?( +[a-z0-9]+=([\"\'][^\"\']*[\"\']|[^ >]*))* *>.*?</a>)*(</?[a-z0-9]+( [^>]*)?>| |"+nsbpChar+")?)*)([а-яёa-z0-9])","i");
+ var re2_="$2<SPAN class=ac>$11</SPAN>$12<SPAN class=ac>$21</SPAN>";
+ var re3=new RegExp("(,)(((<a( +[a-z0-9]+=([\"\'][^\"\']*[\"\']|[^ >]*))* +class=[\"\']?note[\"\']?( +[a-z0-9]+=([\"\'][^\"\']*[\"\']|[^ >]*))* *>.*?</a>)*(</?[a-z0-9]+( [^>]*)?>| |"+nsbpChar+")?)*)$","i");
+ var re3_="<SPAN class=ac>,</SPAN>$2";
+ var re4=new RegExp("<SPAN class=ac></SPAN>","");
+ var re4_="";
+ var params=window.dialogArguments;
+ var htmlStr="";
+ var tmpStr,tagStr,letterCnt,myNodeValue,len;
+ var collCnt=params["collCnt"];
+ document.title="Случаев: "+collCnt+". Интерактивное удаление разрывов абзацев "+params["versionStr"];
+ myDoc=params["document"];
+ var my_fbw_body=myDoc.getElementById("fbw_body");
+ var range1, range2, prevP, ptr, cnt;
+ for (i=1;i<=collCnt;i++) {
+  htmlStr+="<DIV sclexType=1 id=rd"+i+" style='border:none; border-left:0px;'>";
+  prevP=params[i+"_2"];
+  ptr=params[i+"_3"];
+
+  inOneTag=prevP.parentNode==ptr.parentNode ? true : false;
+  //соберем часть первого абзаца
+  tmpPtr=prevP;
+  tmpStr="";
+  while (tmpPtr!=my_fbw_body && !(inOneTag && tmpPtr==prevP.parentNode)) {
+   if (tmpPtr.nodeType==1) tmpStr+="</"+tmpPtr.nodeName+">"; 
+   tmpPtr=tmpPtr.parentNode;
+  }
+  var tmpPtr=prevP;
+  var letterCnt=0;
+  while (letterCnt<numberOfSymbolsToShow && tmpPtr!=my_fbw_body) {
+   if (tmpPtr.nodeType==3) {
+    myNodeValue=tmpPtr.nodeValue;
+    len=myNodeValue.length;
+    if (numberOfSymbolsToShow-letterCnt<=len) {
+     tmpStr=myNodeValue.substr(len-(numberOfSymbolsToShow-letterCnt))+tmpStr;
+     break;
+    } 
+    else {
+     tmpStr=myNodeValue+tmpStr;
+     letterCnt+=len;
+    }
+   }
+   //переход на следующий узел
+   if (tmpPtr.lastChild) {
+    tmpPtr=tmpPtr.lastChild;
+    if (tmpPtr.nodeType==1) tmpStr="</"+tmpPtr.nodeName+">"+tmpStr;     
+   } else {
+    while (tmpPtr!=my_fbw_body && tmpPtr.previousSibling==null) {
+     if (tmpPtr.nodeType==1 && tmpPtr!=my_fbw_body) tmpStr=getStrOfOpeningTag(tmpPtr)+tmpStr;             
+     tmpPtr=tmpPtr.parentNode;
+    }
+    if (tmpPtr.nodeType==1 && tmpPtr!=my_fbw_body) tmpStr=getStrOfOpeningTag(tmpPtr)+tmpStr;
+    if (tmpPtr!=my_fbw_body) {
+     tmpPtr=tmpPtr.previousSibling;
+     if (tmpPtr.nodeType==1) tmpStr="</"+tmpPtr.nodeName+">"+tmpStr;          
+    } 
+   }
+  }
+  while (tmpPtr!=my_fbw_body) {
+   //alert("tmpPtr при подъеме:\n"+tmpPtr.outerHTML);
+   if (tmpPtr.nodeType==1) tmpStr=getStrOfOpeningTag(tmpPtr)+tmpStr;
+   tmpPtr=tmpPtr.parentNode;
+  }
+  //alert("tmpStr для первого абзаца:\n"+tmpStr);
+  if (params[i+"_1"]=="3") htmlStr+=tmpStr.replace(re3,re3_).replace(re4,re4_);
+  else htmlStr+=tmpStr.replace(re1,re1_).replace(re4,re4_);
+
+  //соберем часть второго абзаца
+  tmpPtr=ptr;
+  tmpStr="";
+  while (tmpPtr!=my_fbw_body && !(inOneTag && tmpPtr==ptr.parentNode)) {
+   if (tmpPtr.nodeType==1) tmpStr=getStrOfOpeningTag(tmpPtr)+tmpStr; 
+   tmpPtr=tmpPtr.parentNode;
+  }
+  var tmpPtr=ptr;
+  var letterCnt=0;
+  while (letterCnt<numberOfSymbolsToShow && tmpPtr!=my_fbw_body) {
+   if (tmpPtr.nodeType==3) {
+    myNodeValue=tmpPtr.nodeValue;
+    len=myNodeValue.length;
+    if (numberOfSymbolsToShow-letterCnt<=len) {
+     tmpStr+=myNodeValue.substr(0,numberOfSymbolsToShow-letterCnt);
+     break;
+    } 
+    else {
+     tmpStr+=myNodeValue;
+     letterCnt+=len;
+    }
+   }
+   //переход на следующий узел
+   if (tmpPtr.firstChild) {
+    tmpPtr=tmpPtr.firstChild;
+    if (tmpPtr.nodeType==1) tmpStr+=getStrOfOpeningTag(tmpPtr);     
+   } else {
+    while (tmpPtr!=my_fbw_body && tmpPtr.nextSibling==null) {
+     //alert("tmpPtr.outerHTML: "+tmpPtr.outerHTML+"\ntmpPtr.nextSibling: "+tmpPtr.nextSibling);
+     if (tmpPtr.nodeType==1) tmpStr+="</"+tmpPtr.nodeName+">";                    
+     tmpPtr=tmpPtr.parentNode;
+    }
+    if (tmpPtr!=my_fbw_body && tmpPtr.nodeType==1) tmpStr+="</"+tmpPtr.nodeName+">";
+    if (tmpPtr!=my_fbw_body) {
+     tmpPtr=tmpPtr.nextSibling;
+     if (tmpPtr.nodeType==1) tmpStr+=getStrOfOpeningTag(tmpPtr);          
+    } 
+   }
+  }
+  while (tmpPtr!=my_fbw_body) {
+   //alert("tmpPtr при подъеме:\n"+tmpPtr.outerHTML);
+   if (tmpPtr.nodeType==1) tmpStr+="</"+tmpPtr.nodeName+">";
+   tmpPtr=tmpPtr.parentNode;
+  }  
+  var modes=params["modes"];
+  //alert("tmpStr для второго абзаца:\n"+tmpStr);
+  htmlStr+=tmpStr.replace(re2,re2_).replace(re4,re4_);
+  switch(params[i+"_1"]) {
+   case "1": {
+    htmlStr+="<INPUT"+(modes["1_"]==0?" checked":"")+" type=radio name=r"+i+" value=0>Не трогать</INPUT><INPUT"+(modes["1_"]==1?" checked":"")+" type=radio name=r"+i+" value=1>Соединить через пробел</INPUT><INPUT"+(modes["1_"]==8?" checked":"")+" type=radio name=r"+i+" value=8>Соединить без пробела</INPUT>";
+    resultColl[i]=modes["1_"];
+    break;
+   } 
+   case "2": {
+    htmlStr+="<INPUT"+(modes["2_"]==0?" checked":"")+" type=radio name=r"+i+" value=0>Не трогать</INPUT><INPUT"+(modes["2_"]==1?" checked":"")+" type=radio name=r"+i+" value=1>Соединить через пробел</INPUT><INPUT"+(modes["2_"]==2?" checked":"")+" type=radio name=r"+i+" value=2>Добавить точку</INPUT>";   
+    resultColl[i]=modes["2_"];
+    break;
+   } 
+   case "3": {
+    htmlStr+="<INPUT"+(modes["3_"]==0?" checked":"")+" type=radio name=r"+i+" value=0>Не трогать</INPUT><INPUT"+(modes["3_"]==1?" checked":"")+" type=radio name=r"+i+" value=1>Соединить через пробел</INPUT><INPUT"+(modes["3_"]==3?" checked":"")+" type=radio name=r"+i+" value=3>Точку вместо запятой</INPUT>";   
+    resultColl[i]=modes["3_"];
+    break;
+   } 
+   case "4": {
+    htmlStr+="<INPUT"+(modes["4_"]==0?" checked":"")+" type=radio name=r"+i+" value=0>Не трогать</INPUT><INPUT"+(modes["4_"]==4?" checked":"")+" type=radio name=r"+i+" value=4>Соединить через короткое тире и пробел</INPUT><INPUT"+(modes["4_"]==5?" checked":"")+" type=radio name=r"+i+" value=5>Соединить через длинное тире и пробел</INPUT><INPUT"+(modes["4_"]==8?" checked":"")+" type=radio name=r"+i+" value=9>Считать дефис переносом</INPUT>";   
+    resultColl[i]=modes["4_"];
+    break;
+   } 
+   case "5": {
+    htmlStr+="<INPUT"+(modes["5_"]==0?" checked":"")+" type=radio name=r"+i+" value=0>Не трогать</INPUT><INPUT"+(modes["5_"]==6?" checked":"")+" type=radio name=r"+i+" value=6>Соединить, удалив дефис</INPUT><INPUT"+(modes["5_"]==7?" checked":"")+" type=radio name=r"+i+" value=7>Соединить через дефис без пробела</INPUT><INPUT"+(modes["5_"]==8?" checked":"")+" type=radio name=r"+i+" value=8>Соединить без пробела, сохранив тире/дефис</INPUT>";
+    resultColl[i]=modes["5_"];
+    break;
+   } 
+   case "6": {
+    htmlStr+="<INPUT"+(modes["6_"]==0?" checked":"")+" type=radio name=r"+i+" value=0>Не трогать</INPUT><INPUT"+(modes["6_"]==1?" checked":"")+" type=radio name=r"+i+" value=1>Соединить через пробел</INPUT><INPUT"+(modes["6_"]==8?" checked":"")+" type=radio name=r"+i+" value=8>Соединить без пробела</INPUT>";
+    resultColl[i]=modes["6_"];
+    break;
+   } 
+  }
+  htmlStr+=" <A name=go>ОК и перейти</A>";
+  htmlStr+="<HR>";
+  htmlStr+="</DIV>";
+ }
+ htmlStr="Всего найдено случаев: "+collCnt+"<HR>"+htmlStr;
+ //alert("htmlStr после всего:\n"+htmlStr);
+ //window.clipboardData.setData("text",htmlStr);
+ fbw_body.innerHTML=htmlStr;
+ //alert("htmlStr после обработки браузером:\n"+fbw_body.innerHTML); 
+</script>  
+<DIV style="text-align:center;"><input type=button value="Отмена" onclick="window.close();"><input type=button value=OK onclick="applyChanges(); window.close();"></DIV>
+ </body>
+</html>

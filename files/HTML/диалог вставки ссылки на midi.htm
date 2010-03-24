@@ -1,0 +1,31 @@
+<head>
+ <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+ <meta http-equiv="MSThemeCompatible" content="yes">
+ <title>Вставка ссылки на midi</title>
+ <style>
+  * {font-family:tahoma; font-size:15px;}
+  body {padding:2px; margin:0;}
+ </style>
+ <script>
+  function selectFile() {
+   inputFile.click();
+   var fullPath=document.getElementById("inputFile")["value"];
+   var k=fullPath.lastIndexOf("\\");
+   document.getElementById("selectedFile")["value"]=fullPath.substr(k+1);
+  }
+  function insertLink() {
+   var fb2doc=window.dialogArguments["document"];
+   var rng=fb2doc.selection.createRange();
+   var regExForSupRemove=new RegExp("<\\s*?/?\\s*?sup(\\s[^>]*?)?>","gi");
+   var regExForSupRemove_="";
+   rng.pasteHTML('<A href="file:'+document.getElementById("selectedFile")["value"]+'"><SUP>'+rng.htmlText.replace(regExForSupRemove,regExForSupRemove_)+'</SUP></A>');
+   window.close();
+  }
+ </script>
+</head>
+<body>
+<input type=text maxlength=1000 style="width:500px;" value="file:" id=selectedFile><input type=button value="Обзор..." onclick="selectFile();">
+<input type=file value="Обзор..." style="display:none;" id=inputFile>
+<input type=hidden id=selectedPath value=""><br>
+<input type=button value="Вставить ссылку" onclick="insertLink();"><input type=button value="Закрыть" onclick="window.close();">
+</body>
