@@ -38,10 +38,6 @@ LRESULT COptDlg::OnInitDialog(UINT, WPARAM, LPARAM, BOOL&)
   m_fontsize=GetDlgItem(IDC_FONT_SIZE);
   m_fast_mode = GetDlgItem(IDC_FAST_MODE); 
   m_lang = GetDlgItem(IDC_LANG);
-  // SeNS
-  m_usespell_check = GetDlgItem(IDC_USESPELLCHECKER);
-  m_highlight_check = GetDlgItem(IDC_BACKGROUNDSPELLCHECK);
-  m_custom_dict = GetDlgItem(IDC_CUSTOM_DICT);
 
   // init color controls
   m_bg.SetDefaultColor(::GetSysColor(COLOR_WINDOW));
@@ -54,13 +50,9 @@ LRESULT COptDlg::OnInitDialog(UINT, WPARAM, LPARAM, BOOL&)
  	m_lang.AddString(buf);
   if(::LoadString(_Module.GetResourceInstance(), IDS_LANG_RUSSIAN, buf, MAX_LOAD_STRING))
 	m_lang.AddString(buf);
-  if(::LoadString(_Module.GetResourceInstance(), IDS_LANG_UKRAINIAN, buf, MAX_LOAD_STRING))
-	m_lang.AddString(buf);
 
   if(LANG_RUSSIAN == _Settings.GetInterfaceLanguageID())
 	m_lang.SetCurSel(1);
-  else if(LANG_UKRAINIAN == _Settings.GetInterfaceLanguageID())
-	m_lang.SetCurSel(2);
   else
 	m_lang.SetCurSel(0);
 
@@ -103,24 +95,6 @@ LRESULT COptDlg::OnInitDialog(UINT, WPARAM, LPARAM, BOOL&)
   else
     m_fast_mode.SetCheck(BST_UNCHECKED);
 
-  // SeNS
-  if (_Settings.GetUseSpellChecker())
-  {
-	  m_usespell_check.SetCheck(BST_CHECKED);
-	  m_highlight_check.EnableWindow(TRUE);
-  }
-  else
-  {
-	  m_usespell_check.SetCheck(BST_UNCHECKED);
-	  m_highlight_check.EnableWindow(FALSE);
-  }
-  if(_Settings.GetHighlightMisspells())
-	m_highlight_check.SetCheck(BST_CHECKED);
-  else
-	m_highlight_check.SetCheck(BST_UNCHECKED);
-
-  m_custom_dict.SetWindowText (_Settings.GetCustomDict());
-
   return 0;
 }
 
@@ -150,20 +124,12 @@ LRESULT COptDlg::OnOK(WORD, WORD wID, HWND, BOOL&)
   _Settings.SetXmlSrcSyntaxHL(m_src_hl.GetCheck() != 0);
   _Settings.SetXmlSrcShowEOL(m_src_eol.GetCheck() != 0);
   _Settings.SetFastMode(m_fast_mode.GetCheck() != 0);  
-  _Settings.SetUseSpellChecker(m_usespell_check.GetCheck() != 0); // SeNS
-  _Settings.SetHighlightMisspells(m_highlight_check.GetCheck() != 0); // SeNS
-
-  CString s;
-  m_custom_dict.GetWindowText(s);
-  _Settings.SetCustomDict(s);
 
   DWORD new_lang;
-  switch (m_lang.GetCurSel())
-  {
-	case 0: new_lang = LANG_ENGLISH; break;
-	case 1: new_lang = LANG_RUSSIAN; break;
-	case 2: new_lang = LANG_UKRAINIAN; break;
-  }
+  if(0 == m_lang.GetCurSel())
+	new_lang = LANG_ENGLISH;	
+  else
+	new_lang = LANG_RUSSIAN;	
 
   // если пользователь сменил язык интерфейса....
   if(new_lang != _Settings.GetInterfaceLanguageID())
@@ -181,28 +147,4 @@ LRESULT COptDlg::OnOK(WORD, WORD wID, HWND, BOOL&)
 LRESULT COptDlg::OnCancel(WORD, WORD wID, HWND, BOOL&)
 {
   return 0;
-}
-
-TCHAR FileNameBuffer[_MAX_PATH];
-
-LRESULT COptDlg::OnShowFileDialog(WORD, WORD, HWND, BOOL&)
-{
-	OPENFILENAME ofn;
-	memset (&ofn, 0, sizeof (OPENFILENAME));
-	ofn.lStructSize = sizeof(OPENFILENAME);
-	ofn.hInstance = _Module.m_hInst;
-	ofn.hwndOwner = m_hWnd;
-	ofn.lpstrDefExt = L"dic";
-	ofn.lpstrFilter = L"Dictionaries (*.dic)\0*.dic\0All files (*.*)\0*.*\0\0";
-	m_custom_dict.GetWindowText(FileNameBuffer, _MAX_PATH);
-	ofn.lpstrFile = FileNameBuffer;
-    ofn.nFilterIndex = 0;
-    ofn.nMaxFile = _MAX_PATH;
-    ofn.nMaxFileTitle = _MAX_PATH;
-    ofn.Flags = OFN_EXPLORER | OFN_ENABLESIZING | OFN_HIDEREADONLY;
-	if (GetOpenFileName(&ofn))
-	{
-		m_custom_dict.SetWindowText(ofn.lpstrFile);
-	}
-    return 0;	
 }

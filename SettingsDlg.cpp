@@ -4,8 +4,6 @@
 #include "Settings.h"
 #include "SettingsDlg.h"
 #include "SettingsOtherDlg.h"
-#include "SettingsHotkeysDlg.h"
-#include "SettingsWordsDlg.h"
 #include "res1.h"
 
 extern CSettings _Settings;
@@ -37,34 +35,20 @@ LRESULT CSettingsDlg::OnInitDialog(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL
 	if(::LoadString(_Module.GetResourceInstance(), IDS_SETTINGS_OTHER_CAPTION, buf, MAX_LOAD_STRING))
 		TabItem.pszText = buf;
 	m_tab_ctrl.InsertItem(1, &TabItem);
-	if(::LoadString(_Module.GetResourceInstance(), IDS_SETTINGS_HOTKEYS_CAPTION, buf, MAX_LOAD_STRING))
-		TabItem.pszText = buf;
-	m_tab_ctrl.InsertItem(2, &TabItem);
-	if(::LoadString(_Module.GetResourceInstance(), IDS_SETTINGS_WORDS_CAPTION, buf, MAX_LOAD_STRING))
-		TabItem.pszText = buf;
-	m_tab_ctrl.InsertItem(3, &TabItem);
 
 	CRect rect;
 	m_tab_ctrl.GetWindowRect(rect);
 	m_tab_ctrl.ScreenToClient(rect);
-	m_tab_ctrl.AdjustRect(FALSE, rect);
+	m_tab_ctrl.AdjustRect(FALSE, rect);	 
 	
-	COptDlg* pPage1;
-	pPage1 = new COptDlg;
-	pPage1->ShowDialog(m_tab_ctrl);
-	this->AddTabPage(0, pPage1, rect);
+	COptDlg* pPage1;	
+	pPage1 = new COptDlg; 		
+	pPage1->ShowDialog(m_tab_ctrl); 	
+	this->AddTabPage(0, pPage1, rect);	
 
 	CSettingsOtherDlg* pPage2 = new CSettingsOtherDlg;
 	pPage2->Create(m_tab_ctrl);
 	this->AddTabPage(1, pPage2, rect);
-
-	CSettingsHotkeysDlg* pPage3 = new CSettingsHotkeysDlg;
-	pPage3->Create(m_tab_ctrl);
-	this->AddTabPage(2, pPage3, rect);
-
-	CSettingsWordsDlg* pPage4 = new CSettingsWordsDlg;
-	pPage4->Create(m_tab_ctrl);
-	this->AddTabPage(3, pPage4, rect);
 
 	HMODULE hThemeDll = LoadLibrary(_T("UxTheme.dll"));
 	if (hThemeDll != NULL)
@@ -83,82 +67,32 @@ LRESULT CSettingsDlg::OnInitDialog(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL
 
 LRESULT CSettingsDlg::OnClickedOK(WORD wNotifyCode, WORD wID, HWND hWndCtl, BOOL& bHandled)
 {
-	if(GetFocus() == GetDlgItem(IDOK))
-	{
-		CWindow* pWnd;
-		TC_ITEM tci;
-		tci.mask = TCIF_PARAM;
-		int cnt = m_tab_ctrl.GetItemCount();
-		for (int i = cnt - 1; i >= 0; i--)
-		{ 
-			m_tab_ctrl.GetItem(i, &tci);
-			pWnd = (CWindow*)tci.lParam;
-			if(pWnd)
-			{
-				pWnd->SendMessage(WM_COMMAND, MAKELONG(IDOK, 0), 0);
-			}
-		}	
-		EndDialog(wID);
-	}
-	else
-	{
-		int nTab = m_tab_ctrl.GetCurSel(); 
-		TC_ITEM tci; 
-		tci.mask = TCIF_PARAM; 
-		m_tab_ctrl.GetItem(nTab, &tci); 
-		CWindow* pWnd = (CWindow*)tci.lParam; 
+	CWindow* pWnd;		
+	TC_ITEM tci; 
+	tci.mask = TCIF_PARAM; 
+	int cnt = m_tab_ctrl.GetItemCount();
+	for (int i = cnt - 1; i>=0; i--) 
+	{ 
+		m_tab_ctrl.GetItem(i, &tci);
+		pWnd = (CWindow*)tci.lParam;		
 		if(pWnd)
 		{
 			pWnd->SendMessage(WM_COMMAND, MAKELONG(IDOK, 0), 0);
-			pWnd->ShowWindow(SW_SHOW);
 		}
 	}
 
+	EndDialog(wID);
 	return 0;
 }
 
 LRESULT CSettingsDlg::OnClickedCancel(WORD wNotifyCode, WORD wID, HWND hWndCtl, BOOL& bHandled)
 {
-	int nTab = m_tab_ctrl.GetCurSel();
-	int lres = 1;
-
-	if(nTab != 3)
+	if(_Settings.m_initial_scripts_folder != _Settings.GetScriptsFolder())
 	{
-		if(_Settings.m_initial_scripts_folder != _Settings.GetScriptsFolder())
-		{
-			_Settings.SetScriptsFolder(_Settings.m_initial_scripts_folder, true);
-		}
-
-		CWindow* pWnd;
-		TC_ITEM tci;
-		tci.mask = TCIF_PARAM;
-		int cnt = m_tab_ctrl.GetItemCount();
-		for (int i = cnt - 1; i >= 0; i--)
-		{ 
-			m_tab_ctrl.GetItem(i, &tci);
-			pWnd = (CWindow*)tci.lParam;
-			if(pWnd)
-			{
-				pWnd->SendMessage(WM_COMMAND, MAKELONG(IDCANCEL, 0), 0);
-			}
-		}
-	}
-	else
-	{
-		TC_ITEM tci; 
-		tci.mask = TCIF_PARAM;
-
-		m_tab_ctrl.GetItem(nTab, &tci); 
-		CWindow* pWnd = (CWindow*)tci.lParam; 
-		if(pWnd)
-		{
-			lres = pWnd->SendMessage(WM_COMMAND, MAKELONG(IDCANCEL, 0), 0);
-		}
+		_Settings.SetScriptsFolder(_Settings.m_initial_scripts_folder, true);
 	}
 
-	if(lres)
-		EndDialog(wID);
-
+	EndDialog(wID);
 	return 0;
 }
 
@@ -214,6 +148,6 @@ void CSettingsDlg::AddTabPage(const int index, CWindow* pDialog, const CRect& re
 	TC_ITEM TabItem;
 	TabItem.mask = TCIF_PARAM; 	
 	TabItem.lParam = (LPARAM)(CWindow*)pDialog; 
-	m_tab_ctrl.SetItem(index, &TabItem);
+	m_tab_ctrl.SetItem(index, &TabItem); 		
 	pDialog->MoveWindow(rect.left, rect.top, rect.Width(), rect.Height(), SWP_NOSIZE | SWP_NOZORDER); 
 }

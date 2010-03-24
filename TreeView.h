@@ -1,8 +1,6 @@
 #ifndef LTREEVIEW_H
 #define	LTREEVIEW_H
 
-#include "ElementDescMnr.h"
-
 typedef CWinTraits<WS_CHILD|WS_VISIBLE|
 		   TVS_HASBUTTONS|TVS_LINESATROOT|TVS_SHOWSELALWAYS,0>
 		  CLPTVWinTraits;
@@ -48,7 +46,7 @@ public:
 	MESSAGE_HANDLER(WM_RBUTTONDOWN, OnRClick)
     MESSAGE_HANDLER(WM_LBUTTONDBLCLK, OnDblClick)
     MESSAGE_HANDLER(WM_KEYDOWN, OnKeyDown)
-	MESSAGE_HANDLER(WM_CHAR, OnChar)
+	MESSAGE_HANDLER(WM_CHAR, OnChar)	
 	MESSAGE_HANDLER(WM_LBUTTONUP, OnLButtonUp)
 	MESSAGE_HANDLER(WM_CONTEXTMENU, OnContextMenu)
 
@@ -56,13 +54,13 @@ public:
 	COMMAND_ID_HANDLER(ID_DOCUMENT_TREE_PASTE, OnPaste)
 	COMMAND_ID_HANDLER(ID_DT_VIEW, OnView)
 	COMMAND_ID_HANDLER(ID_DT_VIEWSOURCE, OnViewSource)
-
-	// Tree toolbar commands
-	COMMAND_ID_HANDLER(ID_DT_RIGHT_ONE, OnRightOne)
-	COMMAND_ID_HANDLER(ID_DT_RIGHT_SMART, OnRightSmart)
-	COMMAND_ID_HANDLER(ID_DT_LEFT, OnLeft)
-	COMMAND_ID_HANDLER(ID_DT_MERGE, OnMerge)
 	COMMAND_ID_HANDLER(ID_DT_DELETE, OnDelete)
+	COMMAND_ID_HANDLER(ID_DT_RIGHT, OnRight)
+	COMMAND_ID_HANDLER(ID_DT_LEFT, OnLeft)
+	COMMAND_ID_HANDLER(ID_DT_RIGHT_ONE, OnRightOne)
+	COMMAND_ID_HANDLER(ID_DT_RIGHT_SMART, OnRightSmart)	
+	COMMAND_ID_HANDLER(ID_DT_LEFT_ONE, OnRightOne)
+	COMMAND_ID_HANDLER(ID_DT_MERGE, OnMerge)	
 
 	REFLECTED_NOTIFY_CODE_HANDLER(TVN_BEGINDRAG, OnBegindrag)
     REFLECTED_NOTIFY_CODE_HANDLER(TVN_DELETEITEM, OnDeleteItem)
@@ -104,7 +102,6 @@ public:
   // get document structure from view
   void GetDocumentStructure(MSHTML::IHTMLDocument2Ptr& v);
   void UpdateDocumentStructure(MSHTML::IHTMLDocument2Ptr& v,MSHTML::IHTMLDOMNodePtr node);
-  void UpdateAll();
   void HighlightItemAtPos(MSHTML::IHTMLElement *p);
   void SetMainwindow(HWND hwnd){m_main_window = hwnd;}
 
@@ -116,7 +113,6 @@ public:
 	LRESULT OnBegindrag(int idCtrl, LPNMHDR mhdr, BOOL& bHandled);
 
 	CTreeItem GetFirstSelectedItem();
-	CTreeItem GetLastSelectedItem();
 	CTreeItem GetNextSelectedItem(CTreeItem item);
 	CTreeItem GetPrevSelectedItem(CTreeItem	item);
 
@@ -125,9 +121,6 @@ public:
 	void SelectElement(MSHTML::IHTMLElement *p);
 	void ExpandElem(MSHTML::IHTMLElement *p, UINT mode);
 	void Collapse(CTreeItem item, int level2Collapse, bool mode);
-
-	int AddImage(HANDLE img);
-	int AddIcon(HANDLE icon);
  
 protected:
   CTreeItem LocatePosition(MSHTML::IHTMLElement *p);
@@ -146,17 +139,9 @@ protected:
   bool MoveLeftOne(HTREEITEM hitem);
   bool MoveLeftWithChildren(HTREEITEM hitem);
   bool MoveLeftWithAllNext(HTREEITEM hitem);
-  void FillEDMnr();
-
   //bool MoveRightOne(HTREEITEM hitem);
   //bool MoveRightWithChildren(HTREEITEM hitem);
   //bool MoveRightSmart(HTREEITEM hitem);  
-
-  private:
-	CElementDescriptor* m_bodyED;
-	CElementDescriptor* m_sectionED;
-	CElementDescriptor* m_imageED;
-	CElementDescriptor* m_poemED;
 };
 
 #endif

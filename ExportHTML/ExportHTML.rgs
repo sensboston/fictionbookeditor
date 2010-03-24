@@ -16,9 +16,9 @@ HKLM
 {
 	NoRemove Software
 	{
-		NoRemove LitRes
+		NoRemove Haali
 		{
-			NoRemove 'FictionBook Editor'
+			NoRemove FBE
 			{
 				NoRemove Plugins
 				{

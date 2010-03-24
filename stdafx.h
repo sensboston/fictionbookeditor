@@ -17,9 +17,9 @@
 #define _WIN32_IE		0x0501
 
 // Insert your headers here
-//#define WIN32_LEAN_AND_MEAN		// Exclude rarely-used stuff from Windows headers
+#define WIN32_LEAN_AND_MEAN		// Exclude rarely-used stuff from Windows headers
 
-#define _ATL_FREE_THREADED
+#define _ATL_APARTMENT_THREADED
 
 #define _ATL_CSTRING_EXPLICIT_CONSTRUCTORS	// some CString constructors will be explicit
 
@@ -34,8 +34,7 @@
 #include <atlctl.h>
 #include <atlhost.h>
 #include <atlstr.h>
-#include <atlimage.h>
-#include <atlpath.h>
+
 
 #include <shellapi.h>
 
@@ -63,7 +62,7 @@ extern CAppModule _Module;
 #include <ctype.h>
 #include <time.h>
 
-// MSXML
+// msxml
 #import <msxml4.dll>
 
 // vb regexps
@@ -98,9 +97,6 @@ using namespace _com_util;
 
 // scripting support
 #include <activscp.h>
-
-// XML serialization
-#include "XMLSerializer/XMLSerializer.h"
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.

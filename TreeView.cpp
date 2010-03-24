@@ -9,8 +9,6 @@
 #include "FBDoc.h"
 #include "TreeView.h"
 
-extern CElementDescMnr _EDMnr;
-
 // redrawing the tree is _very_ ugly visually, so we first build a copy and compare them
 struct TreeNode {
   TreeNode    *parent,*next,*last,*child;
@@ -78,19 +76,57 @@ void  CTreeView::HighlightItemAtPos(MSHTML::IHTMLElement *p) {
  
   if (ii!=TVI_ROOT) {
     SelectItem(ii);	
-   // EnsureVisible(ii);
+    EnsureVisible(ii);
   } else
     SelectItem(0);
 }
 
+static MSHTML::IHTMLElementPtr	FindTitleNode(MSHTML::IHTMLDOMNodePtr elem) {
+  MSHTML::IHTMLDOMNodePtr node(elem->firstChild);
 
-static void MakeNode(TreeNode* parent, MSHTML::IHTMLDOMNodePtr elem)
+
+  _bstr_t   cls(MSHTML::IHTMLElementPtr(elem)->className);
+
+  if ((bool)node && node->nodeType==1 && U::scmp(node->nodeName,L"DIV")==0) {
+    _bstr_t   cls(MSHTML::IHTMLElementPtr(node)->className);
+    if (U::scmp(cls,L"image")==0) {
+      node=node->nextSibling;
+      if (node->nodeType!=1 || U::scmp(node->nodeName,L"DIV"))
+	return NULL;
+      cls=MSHTML::IHTMLElementPtr(node)->className;
+    }
+    if (U::scmp(cls,L"title")==0)
+      return MSHTML::IHTMLElementPtr(node);
+  }
+  return NULL;
+}
+
+static CString	FindTitle(MSHTML::IHTMLDOMNodePtr elem) {
+  MSHTML::IHTMLElementPtr tn(FindTitleNode(elem));
+  if (tn)
+    return (const wchar_t *)tn->innerText;
+  return CString();
+}
+
+static CString GetImageFileName(MSHTML::IHTMLDOMNodePtr elem)
 {
-	if (elem->nodeType != 1)
-		return;
+	_bstr_t   cls(MSHTML::IHTMLElementPtr(elem)->className);
+	if (U::scmp(cls,L"image") != 0)
+		return L"";
 
-	MSHTML::IHTMLElementPtr he(elem);
-  /*_bstr_t		    nn(he->tagName);
+	CString href(MSHTML::IHTMLElementPtr(elem)->getAttribute(L"href", 0));
+	if(!href.GetLength())
+		return L"";
+
+	CString	name = href.Right(href.GetLength() - 1);
+	return name;	
+}
+
+static void MakeNode(TreeNode *parent,MSHTML::IHTMLDOMNodePtr elem) {
+  if (elem->nodeType!=1)
+    return;
+  MSHTML::IHTMLElementPtr   he(elem);
+  _bstr_t		    nn(he->tagName);
   _bstr_t		    cn(he->className);
   if (U::scmp(nn,L"DIV")==0) {
     // at this point we are interested only in sections/subtitles/poems/stanzas
@@ -128,7 +164,6 @@ static void MakeNode(TreeNode* parent, MSHTML::IHTMLDOMNodePtr elem)
 		elem=elem->firstChild;
 		while ((bool)elem) 
 		{
-
 			MakeNode(parent,elem);
 			elem=elem->nextSibling;
 		}
@@ -144,31 +179,16 @@ static void MakeNode(TreeNode* parent, MSHTML::IHTMLDOMNodePtr elem)
     if (txt.IsEmpty())
       txt=_T("<subtitle>");
     parent=parent->Append(txt,6,he);
-  }*/
-
-	_bstr_t cn(he->className);
-	CElementDescriptor* ED = 0;
-	if(_EDMnr.GetElementDescriptor(he, &ED) && ED->ViewInTree())
-	{
-		CString txt = ED->GetTitle(he);
-		U::NormalizeInplace(txt);
-		if(txt.IsEmpty())
-			txt.Format(_T("<%s>"), (const TCHAR*)cn);
-		parent = parent->Append(txt, ED->GetDTImageID(), he);
-	}
-
-	elem = elem->firstChild;
-	while((bool)elem)
-	{
-		MakeNode(parent, elem);
-		elem = elem->nextSibling;
-	}
-
-	return;
+  }
+  elem=elem->firstChild;
+  while ((bool)elem) {
+    MakeNode(parent,elem);
+    elem=elem->nextSibling;
+  }
+  return;
 }
 
-static TreeNode  *GetDocTree(MSHTML::IHTMLDocument2Ptr& view)
-{
+static TreeNode  *GetDocTree(MSHTML::IHTMLDocument2Ptr& view) {
   TreeNode	*root=new TreeNode();
   try {
     MakeNode(root,view->body);
@@ -249,11 +269,6 @@ void  CTreeView::GetDocumentStructure(MSHTML::IHTMLDocument2Ptr& view) {
   delete root;
 }
 
-void CTreeView::UpdateAll()
-{
-	::SendMessage(m_main_window, WM_COMMAND, MAKELONG(0,IDN_TREE_UPDATE_ME), (LPARAM)m_hWnd);
-}
-
 void  CTreeView::UpdateDocumentStructure(MSHTML::IHTMLDocument2Ptr& v,MSHTML::IHTMLDOMNodePtr node) {
   MSHTML::IHTMLElementPtr     ce(node);
 
@@ -276,11 +291,11 @@ void  CTreeView::UpdateDocumentStructure(MSHTML::IHTMLDocument2Ptr& v,MSHTML::IH
   // shortcut for the most common situation
   // all changes confined to a P, which is not in the title
   if (U::scmp(jj->tagName,L"DIV")==0 && U::scmp(node->nodeName,L"P")==0) {
-	  MSHTML::IHTMLElementPtr   tn(U::FindTitleNode(jj));
+    MSHTML::IHTMLElementPtr   tn(FindTitleNode(jj));
     if (!(bool)tn || (tn!=ce && tn->contains(ce)!=VARIANT_TRUE))
       return;
 
-	// ???? ???????? ????????? ?????? ? ?????????, ?? ?????? ?????? ????? ?????????
+	// если измнения произошли только в заголовке, то просто меняем текст заголовка
 	bool b1 = tn==ce;
 	VARIANT_BOOL b2 = tn->contains(ce);
 	if ((bool)tn && (tn==ce || tn->contains(ce)==VARIANT_TRUE))
@@ -341,9 +356,7 @@ LRESULT CTreeView::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHand
   SetImageList(m_ImageList,TVSIL_NORMAL);
 
   SetScrollTime(1);
-  FillEDMnr();
 
-  
   bHandled = TRUE;
   
   return lRet;
@@ -353,10 +366,6 @@ LRESULT CTreeView::OnDestroy(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHan
 {
   SetImageList(NULL,TVSIL_NORMAL);
   m_ImageList.Destroy();
-/*  delete m_bodyED;
-  delete m_sectionED;
-  delete m_imageED;
-  delete m_poemED;*/
   
   // Say that we didn't handle it so that the treeview and anyone else
   //  interested gets to handle the message
@@ -585,7 +594,7 @@ LRESULT CTreeView::OnContextMenu(UINT /*uMsg*/, WPARAM wParam, LPARAM lParam, BO
 {
 	CPoint ptMousePos = (CPoint)lParam;
 		
-	// i	f Shift-F10
+	// if Shift-F10
 	if (ptMousePos.x == -1 && ptMousePos.y == -1)
 	{
 		ptMousePos = (CPoint)GetMessagePos();		
@@ -729,7 +738,7 @@ LRESULT CTreeView::OnRight(WORD wNotifyCode, WORD wID, HWND hWndCtl, BOOL& bHand
 {
 	//m_move_from = GetSelectedItem();
 	
-	// ???? ????????? ??????? ?????? ?????? ????????
+	// всех следующих братьев делаем своими чайлдами
 	HTREEITEM from = GetSelectedItem();
 	HTREEITEM item = GetSelectedItem();// = TreeView_GetNextSibling(*this, m_move_from);
 	HTREEITEM prevItem = 0;
@@ -821,7 +830,7 @@ LRESULT CTreeView::OnLeftWithChildren(WORD wNotifyCode, WORD wID, HWND hWndCtl, 
 }
 LRESULT CTreeView::OnMerge(WORD wNotifyCode, WORD wID, HWND hWndCtl, BOOL& bHandled)
 {
-	::SendMessage(m_main_window, WM_COMMAND, MAKELONG(0, IDN_TREE_MERGE), (LPARAM)m_hWnd);
+	::SendMessage(m_main_window,WM_COMMAND,MAKELONG(0,IDN_TREE_MERGE),(LPARAM)m_hWnd);
 	return 0;
 }
 
@@ -983,18 +992,6 @@ CTreeItem CTreeView::GetFirstSelectedItem()
 	return NULL;
 }
 
-CTreeItem CTreeView::GetLastSelectedItem()
-{
-	CTreeItem ret;
-	for ( CTreeItem hItem(GetRootItem(), this); !hItem.IsNull(); hItem = GetNextItem( hItem ) )
-		if ( GetItemState( hItem, TVIS_SELECTED ) & TVIS_SELECTED )
-		{
-			ret = hItem;
-		}
-
-	return ret;
-}
-
 CTreeItem CTreeView::GetNextSelectedItem( CTreeItem hItem )
 {
 	for ( hItem = GetNextItem( hItem ); !hItem.IsNull(); hItem = GetNextItem( hItem ) )
@@ -1015,17 +1012,17 @@ CTreeItem CTreeView::GetPrevSelectedItem( CTreeItem hItem )
 
 CTreeItem CTreeView::GetNextItem(CTreeItem hitem)
 {
-	//????????? ???? ?? child
+	//проверяем есть ли child
 	CTreeItem child = hitem.GetChild();
 	if(!child.IsNull())
 		return child;
 
-	// ????????? ???? ?? sibling
+	// проверяем есть ли sibling
 	CTreeItem sibling = hitem.GetNextSibling();
 	if(!sibling.IsNull())
 		return sibling;
 	
-	// ???? ?????? sibling parent'?
+	// ищем первый sibling parent'а
 	CTreeItem parent = hitem;
 	while(parent = parent.GetParent())
 	{
@@ -1041,11 +1038,11 @@ CTreeItem CTreeView::GetNextItem(CTreeItem hitem)
 
 CTreeItem CTreeView::GetPrevItem(CTreeItem hitem)
 {
-	// ????????? ???? ?? prev sibling
+	// проверяем есть ли prev sibling
 	CTreeItem sibling = hitem.GetPrevSibling();
 	if(!sibling.IsNull())
 	{
-		// ?????????? ?????? ?????????? ??????
+		// возвращаем самого последнего предка
 		CTreeItem next_item = sibling;
 		CTreeItem ret = sibling;
 		while(next_item = GetNextItem(next_item))
@@ -1058,7 +1055,7 @@ CTreeItem CTreeView::GetPrevItem(CTreeItem hitem)
 		return 0;
 	}
 
-	// ????????? ???? ?? parent
+	// проверяем есть ли parent
 	CTreeItem parent = hitem.GetParent();
 	if(!parent.IsNull())
 	{
@@ -1070,16 +1067,16 @@ CTreeItem CTreeView::GetPrevItem(CTreeItem hitem)
 
 /*bool CTreeView::MoveRightOne(HTREEITEM item)
 {
-	// ?????? ???? ???????? ?????? ??????????? ?????
-	// ????? ???? ????? ????? ?????? ?????? ????????
+	// делаем себя ребенком своего предыдущего брата
+	// потом всех своих детей делаем своими братьями
 
-	// ???? ?? ????? ??????????? ????, ?? ?? ?????? ??????
+	// если не можем переместить себя, то не дклаем ничего
 	HTREEITEM prev_sibling = GetPrevSiblingItem(item);
 	HTREEITEM child = GetChildItem(prev_sibling);
 	if(!prev_sibling)
 		return false;
 
-	// ?????? ???? ????????? ???????? ?????? ??????????? ?????
+	// делаем себя последним ребенком своего предыдущего брата
 	if(!child)
 	{
 		m_move_to = prev_sibling;
@@ -1158,7 +1155,7 @@ void CTreeView::ExpandElem(MSHTML::IHTMLElement *p, UINT mode)
 void CTreeView::Collapse(CTreeItem item, int level2Collapse, bool mode)
 {
 	if(item.IsNull())
-		item = GetRootItem();// root ? ??? ??? 0 - ?? ???????
+		item = GetRootItem();// root у нас это 0 - ой уровень
     
 	do
 	{
@@ -1174,26 +1171,4 @@ void CTreeView::Collapse(CTreeItem item, int level2Collapse, bool mode)
 		}
 		item = item.GetNextSibling();
 	}while(!item.IsNull());
-}
-
-void CTreeView::FillEDMnr()
-{
-	/*m_bodyED = new CBodyED;
-	m_sectionED = new CSectionED;
-	m_imageED =new CImageED;
-	m_poemED = new CPoemED;
-	_EDMnr.AddElementDescriptor(m_bodyED);
-	_EDMnr.AddElementDescriptor(m_sectionED);
-	_EDMnr.AddElementDescriptor(m_imageED);
-	_EDMnr.AddElementDescriptor(m_poemED);*/
-}
-
-int CTreeView::AddImage(HANDLE img)
-{
-	return m_ImageList.Add((HBITMAP)img);
-}
-
-int CTreeView::AddIcon(HANDLE icon)
-{
-	return m_ImageList.AddIcon((HICON)icon);
 }

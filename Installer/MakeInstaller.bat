@@ -1,17 +1,17 @@
-@ECHO OFF
+@ECHO ON
 
 del .\*.exe
-rd .\Input /S /Q
+rd .\input /S /Q
 
 devenv ..\FBE.sln /clean Release
 devenv ..\FBE.sln /build Release
 
-md .\Input
+md .\input
     
-copy ..\Release\FBE.exe .\Input\
-copy ..\Release\res_rus.dll .\Input\
-copy ..\Release\res_ukr.dll .\Input\
-copy ..\Release\FBSHell.dll .\Input\
-xcopy ..\files\*.* .\Input\ /E /Y
+copy ..\Release\FBE.exe .\input\
+copy ..\Release\res_rus.dll .\input\
+xcopy ..\files\*.* .\input\ /E /Y
 
-makensis MakeInstaller.nsi
+ECHO ==========================
+
+makensis makeinstaller.nsi

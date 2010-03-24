@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="windows-1251"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="9.00"
+	Version="9,00"
 	Name="Russian"
 	ProjectGUID="{1BC3F431-9672-4191-9FC5-A8B1C9C08E36}"
 	RootNamespace="res_rus"
@@ -228,6 +228,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\res\ExtraIcons.bmp"
+				>
+			</File>
+			<File
 				RelativePath=".\res\Fb2-shema.bmp"
 				>
 			</File>
@@ -278,6 +282,10 @@
 		</File>
 		<File
 			RelativePath=".\res\imgph.png"
+			>
+		</File>
+		<File
+			RelativePath=".\ReadMe.txt"
 			>
 		</File>
 	</Files>

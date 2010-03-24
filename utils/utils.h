@@ -1,28 +1,9 @@
 #ifndef UTILS_H
-#define UTILS_H
+#define	UTILS_H
 
 #include <deque>
 
-namespace U // place all utilities into their own namespace
-{
-	struct ElTextHTML
-	{
-		CString html;
-		CString text;
-
-		ElTextHTML(BSTR html, BSTR text)
-		{
-			this->html = html;
-			this->text = text;
-		}
-	};
-
-	void InitKeycodes();
-
-	void ChangeAttribute(MSHTML::IHTMLElementPtr elem,
-		const wchar_t* attrib,
-		const wchar_t* value,
-		MSHTML::IMarkupServicesPtr mk_srv);
+namespace U { // place all utilities into their own namespace
 
   // loading data into array
   HRESULT   LoadFile(const TCHAR *filename, VARIANT *vt);
@@ -87,8 +68,6 @@ namespace U // place all utilities into their own namespace
   // strings
   int		scmp(const wchar_t *s1,const wchar_t *s2);
   CString	GetMimeType(const CString& filename);
-  bool		GetImageDimsByPath(const wchar_t* pszFileName, int* nWidth, int* nHeight);
-  bool		GetImageDimsByData(SAFEARRAY* data, ULONG length, int* nWidth, int* nHeight);
   bool		is_whitespace(const wchar_t *spc);
   void		NormalizeInplace(CString& s);
   void		RemoveSpaces(wchar_t *zstr);
@@ -105,30 +84,7 @@ namespace U // place all utilities into their own namespace
   // settings in the registry
   CString	QuerySV(HKEY hKey,const TCHAR *name,const TCHAR *def=NULL);
   DWORD		QueryIV(HKEY hKey,const TCHAR *name,DWORD defval=0);
-
-  template <class T>
-  T QueryBV(HKEY hKey, const TCHAR* name, T def)
-  {
-	  BYTE* buff = new BYTE[sizeof(T)];
-	  ZeroMemory(buff, sizeof(T));
-	  DWORD type = REG_BINARY;
-	  DWORD len = 0;
-
-	  if(::RegQueryValueEx(hKey, name, NULL, &type, NULL, &len ) != ERROR_SUCCESS || (type != REG_BINARY))
-		  return def;
-	  if(::RegQueryValueEx(hKey,name, NULL, &type, buff, &len) != ERROR_SUCCESS)
-		  return def;
-
-	  T ret;
-	  ZeroMemory(&ret, sizeof(T));
-	  CopyMemory(&ret, buff, sizeof(T));
-	  delete[] buff;
-
-	  return ret;
-  }
-
   void		InitSettings();
-  void		InitSettingsHotkeyGroups();
 /*  extern inline DWORD	GetSettingI(const TCHAR *name,DWORD defval=0) {
     return U::QueryIV(_Settings,name,defval);
   }
@@ -146,19 +102,12 @@ namespace U // place all utilities into their own namespace
   void	  ReportError(_com_error& e);
   UINT	  MessageBox(UINT type,const TCHAR *title,const TCHAR *msg,...);
   CString GetProgDir();
-  CString GetSettingsDir();
-  CString GetDocTReeScriptsDir();
   CString GetProgDirFile(const CString& filename);
   CString GetCBString(HWND hCB,int idx);
   bool    HasSubFolders(const CString);
   bool    HasFilesWithExt(const CString, const TCHAR*);
   bool    HasScriptsEndpoint(const CString, TCHAR*);
   bool    CheckScriptsVersion(const wchar_t*);
-  CString GetResString(int StringID);
-  WORD    StringToKeycode(CString);
-  WORD    VKToFVirt(WORD);
-  CString KeycodeToString(WORD);
-  CString AccelToString(ACCEL);
 
   // unicode char names (win2k/xp only)
   CString GetCharName(int ch);
@@ -216,10 +165,6 @@ namespace U // place all utilities into their own namespace
 
 	bool IsParentElement(MSHTML::IHTMLDOMNodePtr elem, MSHTML::IHTMLDOMNodePtr parent);
 	bool IsParentElement(MSXML2::IXMLDOMNodePtr elem, MSXML2::IXMLDOMNodePtr parent);
-
-	MSHTML::IHTMLElementPtr	FindTitleNode(MSHTML::IHTMLDOMNodePtr elem);
-	CString	FindTitle(MSHTML::IHTMLDOMNodePtr elem);
-	CString GetImageFileName(MSHTML::IHTMLDOMNodePtr elem);
 } // namespace
 
 #endif
