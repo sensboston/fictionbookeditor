@@ -119,8 +119,6 @@ BEGIN
     BEGIN
         MENUITEM "&Слова...",                   ID_TOOLS_WORDS
         MENUITEM "&Настройки",                  ID_VIEW_OPTIONS
-        MENUITEM SEPARATOR
-        MENUITEM "Орфография...",               ID_TOOLS_SPELLCHECK
     END
     POPUP "С&крипты"
     BEGIN
@@ -182,7 +180,7 @@ END
 // Dialog
 //
 
-IDD_SETTING_OTHER DIALOGEX 0, 0, 228, 204
+IDD_SETTING_OTHER DIALOGEX 0, 0, 255, 233
 STYLE DS_SETFONT | WS_CHILD | WS_SYSMENU
 FONT 9, "Tahoma", 400, 0, 0xCC
 BEGIN
@@ -196,17 +194,12 @@ BEGIN
     CONTROL         "Папка по-умолчанию",IDC_DEFAULT_SCRIPTS_FOLDER,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,11,91,80,10
     EDITTEXT        IDC_SCRIPTS_FOLDER_PATH,10,104,170,14,ES_AUTOHSCROLL
     PUSHBUTTON      "...",IDC_SELECT_SCRIPTS_FOLDER_BUTTON,188,104,17,14
-    GROUPBOX        "Диалоги",IDC_STATIC,7,127,116,34
+    GROUPBOX        "Диалоги",IDC_STATIC,7,127,208,28
     CONTROL         "Спрашивать о вставке непустого изображения",IDC_SETTINGS_ASKIMAGE,
-                    "Button",BS_AUTOCHECKBOX | BS_VCENTER | BS_MULTILINE | WS_TABSTOP,15,138,99,17
-    GROUPBOX        "Изображения",IDC_STATIC,127,127,88,34
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,12,139,180,10
+    GROUPBOX        "Изображения",IDC_STATIC,7,156,208,26
     CONTROL         "Вставлять пустые изображения",IDC_OPTIONS_CLEARIMGS,
-                    "Button",BS_AUTOCHECKBOX | BS_MULTILINE | WS_TABSTOP,133,139,76,16
-    GROUPBOX        "Неразрывные пробелы",IDC_STATIC,7,162,116,27
-    LTEXT           "Использовать символ:",IDC_STATIC,13,174,73,8
-    COMBOBOX        IDC_NBSP_CHAR,90,172,27,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
-    GROUPBOX        "Раскладка клавиатуры",IDC_STATIC,126,162,88,27
-    CONTROL         "Менять при старте",IDC_CHANGE_KEYB,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,133,174,76,8
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,12,167,119,10
 END
 
 IDD_TABLE DIALOGEX 0, 0, 260, 46
@@ -240,16 +233,16 @@ CAPTION "О программе"
 FONT 9, "Tahoma", 0, 0, 0x0
 BEGIN
     DEFPUSHBUTTON   "OK",IDOK,105,114,50,14
-    CONTROL         "FictionBook Editor v2.0 BETA",IDC_STATIC_AB_APPNAMEVER,
+    CONTROL         "FictionBook Editor v. 2.0 beta",IDC_STATIC_AB_APPNAMEVER,
                     "Static",SS_LEFTNOWORDWRAP | WS_GROUP,94,14,95,9
     ICON            IDR_MAINFRAME,IDC_STATIC_AB_APPICON,72,14,20,20
     RTEXT           "Build",IDC_STATIC,93,24,16,8
     LTEXT           "",IDC_BUILDSTAMP,112,24,85,8
-    LTEXT           "© 2003 Mike Matsnev\n© 2008 LitRes\n© 2010 SeNS\n\nИзменения: Pilgrim, Hose, SeNS\nПоддерживается: SeNS, Sclex",IDC_STATIC_AB_CONTRIBUTORS,94,37,110,48
+    LTEXT           "© 2003 Mike Matsnev\n© 2008 LitRes\n\nИзменения: Pilgrim, Hose\nПоддерживается: Hose, KVS",IDC_STATIC_AB_CONTRIBUTORS,94,42,116,43
     CONTROL         248,IDC_AB_BANNER,"Static",SS_BITMAP | SS_REALSIZEIMAGE,7,7,56,123,WS_EX_CLIENTEDGE
     CONTROL         "<a href=""http://fbe.litres.ru/"">http://fbe.litres.ru/</a>\n<a href=""mailto:fbe@litres.ru"">fbe@litres.ru</a>",IDC_SYSLINK_AB_LINKS,
-                    "SysLink",WS_TABSTOP,116,92,61,19
-    LTEXT           "Сайт:\nСвязь:",IDC_STATIC_AB_LINKS,94,92,20,18
+                    "SysLink",WS_TABSTOP,116,89,61,19
+    LTEXT           "Сайт:\nСвязь:",IDC_STATIC_AB_LINKS,94,89,20,18
 END
 
 IDD_INPUTBOX DIALOGEX 0, 0, 288, 46
@@ -263,33 +256,27 @@ BEGIN
     PUSHBUTTON      "Отмена",IDCANCEL,231,24,50,14
 END
 
-IDD_OPTIONS DIALOGEX 0, 0, 252, 219
+IDD_OPTIONS DIALOGEX 0, 0, 255, 203
 STYLE DS_SETFONT | WS_CHILD | WS_SYSMENU
 FONT 9, "Tahoma", 0, 0, 0x0
 BEGIN
-    LTEXT           "Цвет текста:",IDC_STATIC,13,73,42,8
-    PUSHBUTTON      "",IDC_FG,57,72,27,11
-    LTEXT           "Цвет фона:",IDC_STATIC,135,74,42,8
-    LTEXT           "Шрифт:",IDC_STATIC,13,58,42,8
-    COMBOBOX        IDC_FONT,70,55,141,70,CBS_DROPDOWNLIST | CBS_SORT | WS_VSCROLL | WS_TABSTOP
-    LTEXT           "Размер шрифта:",IDC_STATIC,13,31,57,8
-    COMBOBOX        IDC_FONT_SIZE,71,28,58,70,CBS_DROPDOWN | WS_VSCROLL | WS_TABSTOP
-    GROUPBOX        "Общее",IDC_STATIC,7,4,209,40
-    GROUPBOX        "Тело",IDC_STATIC,7,45,209,56
-    GROUPBOX        "Редактор кода",IDC_STATIC,7,102,209,52
-    CONTROL         "Перенос строк",IDC_WRAP,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,13,113,125,10
-    CONTROL         "Подсветка синтаксиса",IDC_SYNTAXHL,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,13,127,125,10
-    CONTROL         "Показывать символы конца строк",IDC_SHOWEOL,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,13,140,125,10
-    CONTROL         "Ускоренный режим",IDC_FAST_MODE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,13,88,87,10
+    LTEXT           "Цвет текста:",IDC_STATIC,13,62,42,8
+    PUSHBUTTON      "",IDC_FG,57,59,27,11
+    LTEXT           "Цвет фона:",IDC_STATIC,13,72,42,8
+    PUSHBUTTON      "",IDC_BG,57,71,27,11
+    LTEXT           "Шрифт:",IDC_STATIC,13,51,42,8
+    COMBOBOX        IDC_FONT,57,46,120,70,CBS_DROPDOWNLIST | CBS_SORT | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Размер шрифта:",IDC_STATIC,13,27,57,8
+    COMBOBOX        IDC_FONT_SIZE,72,26,49,70,CBS_DROPDOWN | WS_VSCROLL | WS_TABSTOP
+    GROUPBOX        "Общее",IDC_STATIC,7,4,205,37
+    GROUPBOX        "Тело",IDC_STATIC,7,39,205,65
+    GROUPBOX        "Редактор кода",IDC_STATIC,7,105,205,43
+    CONTROL         "Перенос строк",IDC_WRAP,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,13,114,65,10
+    CONTROL         "Подсветка синтаксиса",IDC_SYNTAXHL,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,13,124,88,10
+    CONTROL         "Показывать символы конца строк",IDC_SHOWEOL,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,13,134,125,10
+    CONTROL         "Ускоренный режим",IDC_FAST_MODE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,13,90,87,10
     LTEXT           "Язык:",IDC_STATIC,14,15,41,8
-    COMBOBOX        IDC_LANG,71,13,139,30,CBS_DROPDOWNLIST | CBS_SORT | WS_VSCROLL | WS_TABSTOP
-    GROUPBOX        "Проверка орфографии",IDC_STATIC,7,156,209,56
-    CONTROL         "Выделять ошибки",IDC_BACKGROUNDSPELLCHECK,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,124,173,77,10
-    CONTROL         "Проверять орфографию",IDC_USESPELLCHECKER,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,15,170,98,14
-    EDITTEXT        IDC_CUSTOM_DICT,83,192,117,12,ES_AUTOHSCROLL
-    LTEXT           "Пользовательский словарь:",IDS_SPELL_CUSTOM_DICT,15,189,61,17
-    PUSHBUTTON      "..",IDC_DICTPATH,201,192,12,12
-    PUSHBUTTON      "",IDC_BG,180,72,31,12
+    COMBOBOX        IDC_LANG,36,13,84,30,CBS_DROPDOWNLIST | CBS_SORT | WS_VSCROLL | WS_TABSTOP
 END
 
 IDD_REPLACE DIALOGEX 0, 0, 295, 87
@@ -382,12 +369,12 @@ BEGIN
     EDITTEXT        IDC_EDIT_LV,183,7,43,14,ES_AUTOHSCROLL | NOT WS_VISIBLE | NOT WS_TABSTOP,WS_EX_CLIENTEDGE | WS_EX_STATICEDGE
 END
 
-IDD_WORDS DIALOGEX 0, 0, 366, 323
-STYLE DS_SETFONT | DS_CENTER | WS_POPUP | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME
+IDD_WORDS DIALOGEX 0, 0, 367, 289
+STYLE DS_SETFONT | DS_MODALFRAME | DS_CENTER | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Слова"
 FONT 9, "Tahoma", 0, 0, 0x1
 BEGIN
-    CONTROL         "List1",IDC_WLIST,"SysListView32",LVS_REPORT | LVS_OWNERDATA | WS_TABSTOP,7,7,354,208,WS_EX_CLIENTEDGE
+    CONTROL         "List1",IDC_WLIST,"SysListView32",LVS_REPORT | LVS_OWNERDATA | WS_TABSTOP,7,7,355,208,WS_EX_CLIENTEDGE
     DEFPUSHBUTTON   "OK",IDOK,301,233,40,14
     PUSHBUTTON      "Cancel",IDCANCEL,301,253,40,14
     EDITTEXT        IDC_REDIT,7,270,41,12,NOT WS_VISIBLE | NOT WS_TABSTOP
@@ -401,34 +388,6 @@ BEGIN
     PUSHBUTTON      "Выбрать все",IDC_BUTTON_SELALL,133,221,51,14
     PUSHBUTTON      "В заменяемые",IDC_BUTTON_SETHLREPL,77,251,53,14
     PUSHBUTTON      "Замена для всех",IDC_BUTTON_SELALLREPL,192,221,61,14
-    GROUPBOX        "Текущее слово",IDC_WORDS_FR_GBOX_CURWORD,14,282,343,34
-    EDITTEXT        IDC_WORDS_FR_EDIT_WORD,46,296,67,14,ES_AUTOHSCROLL | ES_READONLY
-    EDITTEXT        IDC_WORDS_FR_EDIT_REPL,154,296,67,14,ES_AUTOHSCROLL | ES_READONLY
-    LTEXT           "Слово:",IDC_WORDS_FR_TEXT_WORD,19,298,26,8
-    LTEXT           "Замена:",IDC_WORDS_FR_TEXT_REPL,124,298,29,8
-    PUSHBUTTON      "Найти",IDC_WORDS_FR_BTN_FIND,245,296,42,14
-    PUSHBUTTON      "Заменить",IDC_WORDS_FR_BTN_REPL,299,296,43,14,WS_DISABLED
-END
-
-IDD_SPELL_CHECK DIALOGEX 0, 0, 273, 135
-STYLE DS_SETFONT | DS_MODALFRAME | DS_CENTER | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Орфография"
-FONT 8, "Tahoma", 400, 0, 0x1
-BEGIN
-    DEFPUSHBUTTON   "Отмена",IDCANCEL,216,112,50,14
-    LTEXT           "Нет в словаре:",IDC_STATIC,7,14,64,8
-    EDITTEXT        IDC_SPELL_BEDWORD,72,12,194,12,ES_AUTOHSCROLL
-    LTEXT           "Изменить на:",IDC_STATIC,8,30,46,8
-    EDITTEXT        IDC_SPELL_REPLACEMENT,72,29,194,12,ES_AUTOHSCROLL
-    LTEXT           "Варианты:",IDC_STATIC,7,47,46,8
-    LISTBOX         IDC_SPELL_SUGG_LIST,7,58,145,68,LBS_SORT | LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
-    PUSHBUTTON      "Пропустить",IDC_SPELL_IGNORE,159,58,50,14
-    PUSHBUTTON      "Пропуск всех",IDC_SPELL_IGNOREALL,216,58,50,14
-    PUSHBUTTON      "Заменить",IDC_SPELL_CHANGE,159,76,50,14
-    PUSHBUTTON      "Замена всех",IDC_SPELL_CHANGEALL,216,76,50,14
-    PUSHBUTTON      "Добавить",IDC_SPELL_ADD,159,94,50,14
-    PUSHBUTTON      "Вариант",IDC_SPELL_SUGGEST,216,94,50,14,WS_DISABLED
-    PUSHBUTTON      "Undo last",IDC_SPELL_UNDO,159,112,50,14,WS_DISABLED
 END
 
 
@@ -478,9 +437,9 @@ BEGIN
     IDD_OPTIONS, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 216
+        RIGHTMARGIN, 212
         TOPMARGIN, 7
-        BOTTOMMARGIN, 218
+        BOTTOMMARGIN, 183
     END
 
     IDD_FIND, DIALOG
@@ -510,9 +469,9 @@ BEGIN
     IDD_WORDS, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 361
+        RIGHTMARGIN, 362
         TOPMARGIN, 7
-        BOTTOMMARGIN, 316
+        BOTTOMMARGIN, 282
     END
 END
 #endif    // APSTUDIO_INVOKED
@@ -564,8 +523,6 @@ BEGIN
     BUTTON      ID_STYLE_NORMAL
     BUTTON      ID_STYLE_SUBTITLE
     BUTTON      ID_STYLE_TEXTAUTHOR
-    SEPARATOR
-    BUTTON      ID_TOOLS_SPELLCHECK
 END
 
 IDR_MAINFRAME_SMALL TOOLBAR  16, 16
@@ -604,7 +561,6 @@ BEGIN
     BUTTON      ID_EDIT_INS_POEM
     BUTTON      ID_EDIT_INS_CITE
     BUTTON      ID_INSERT_TABLE
-    BUTTON      ID_TOOLS_SPELLCHECK
 END
 
 IDR_DOCUMENT_TREE TOOLBAR  24, 24
@@ -707,11 +663,6 @@ BEGIN
     IDS_SETTINGS_OTHER_CAPTION "Другое"
     IDS_TB_CAPT_ID          "ID:"
     IDS_TB_CAPT_HREF        "Ссылка:"
-END
-
-STRINGTABLE 
-BEGIN
-    IDS_LANG_UKRAINIAN      "Украинский"
 END
 
 STRINGTABLE 
@@ -993,17 +944,10 @@ BEGIN
     IDS_WORDS_WLIST_WORD    "Слово"
     IDS_WORDS_WLIST_REPLACEMENT "Замена"
     IDS_WORDS_WLIST_COUNTED "Количество"
-    IDS_WORDS_FR_BTN_FIND0  "Найти"
-    IDS_WORDS_FR_BTN_FIND1  "Далее"
-    IDS_CTXMENU_CUT         "Вырезать"
 END
 
 STRINGTABLE 
 BEGIN
-    IDS_CTXMENU_COPY        "Копировать"
-    IDS_CTXMENU_PASTE       "Вставить"
-    IDS_CTXMENU_SELECT      "Выделить"
-    IDS_CTXMENU_IMG_SAVEAS  "Сохранить изображение как..."
     IDS_HOTKEY_WRONG        "Неправильное сочетание!"
     IDS_HOTKEY_DEFAULT_COLLISION 
                             "Сочетание по умолчанию для этой команды было зарезервировано для ""%s""! Заменить?"
@@ -1021,17 +965,7 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDC_SPELL_IGNORE        "Пропустить"
-END
-
-STRINGTABLE 
-BEGIN
     IDS_HOTKEY_PLUGINS_LAST_PLUGIN "Последний плагин"
-    IDS_HOTKEY_TOOLS_SPELL  "Орфография"
-    IDC_SPELL_ADD2DICT      "Добавить в словарь"
-    IDS_SPELL_CHECK_COMPLETED "Проверка орфографии завершена."
-    IDC_SPELL_IGNOREALL     "Пропустить все"
-    IDS_SPELL_CONTINUE      "Продолжить"
 END
 
 STRINGTABLE 
@@ -1041,16 +975,6 @@ BEGIN
     ID_DT_RIGHT_ONE         "\nПеренести узел вправо"
     ID_DT_RIGHT_SMART       "\nПеренести узел вправо в smart режиме"
     ID_DT_MERGE             "\nСлить контейнеры"
-END
-
-STRINGTABLE 
-BEGIN
-    ID_TOOLS_SPELLCHECK     "Проверка орфографии документа...\nПроверка орфографии"
-END
-
-STRINGTABLE 
-BEGIN
-    IDC_SPELL_REPLACE       "Заменить слово"
 END
 
 #endif    // Russian resources

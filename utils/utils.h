@@ -87,8 +87,6 @@ namespace U // place all utilities into their own namespace
   // strings
   int		scmp(const wchar_t *s1,const wchar_t *s2);
   CString	GetMimeType(const CString& filename);
-  bool		GetImageDimsByPath(const wchar_t* pszFileName, int* nWidth, int* nHeight);
-  bool		GetImageDimsByData(SAFEARRAY* data, ULONG length, int* nWidth, int* nHeight);
   bool		is_whitespace(const wchar_t *spc);
   void		NormalizeInplace(CString& s);
   void		RemoveSpaces(wchar_t *zstr);
@@ -146,7 +144,6 @@ namespace U // place all utilities into their own namespace
   void	  ReportError(_com_error& e);
   UINT	  MessageBox(UINT type,const TCHAR *title,const TCHAR *msg,...);
   CString GetProgDir();
-  CString GetSettingsDir();
   CString GetDocTReeScriptsDir();
   CString GetProgDirFile(const CString& filename);
   CString GetCBString(HWND hCB,int idx);

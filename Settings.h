@@ -459,14 +459,6 @@ class CSettings : public ISerializable, public IObjectFactory
 	bool		m_view_status_bar;
 	bool		m_view_doc_tree;
 
-	// added by SeNS
-	bool		m_usespell_check;
-	bool		m_highlght_check;
-	CString		m_custom_dict;
-	CString		m_nbsp_char;
-	bool		m_change_kbd_layout_check;
-	///
-
 	DWORD		m_splitter_pos;
 	CString		m_toolbars_settings;
 
@@ -483,7 +475,6 @@ class CSettings : public ISerializable, public IObjectFactory
 
 	bool		m_show_words_excls;
 
-	WINDOWPLACEMENT m_words_dlg_placement;
 	WINDOWPLACEMENT m_wnd_placement;
 
 	DESCSHOWINFO m_desc;
@@ -549,14 +540,6 @@ public:
 	DWORD	GetSplitterPos()const;	
 	CString GetToolbarsSettings()const;
 	const CRegKey& GetKey()const;
-
-	// added by SeNS
-	bool    GetUseSpellChecker()const;
-	bool	GetHighlightMisspells()const;
-	CString GetCustomDict()const;
-	CString GetNBSPChar()const;
-	bool	GetChangeKeybLayout()const;
-
 	bool	GetExtElementStyle(const CString& elem)const;
 	bool	GetWindowPosition(WINDOWPLACEMENT& wpl)const;
 	DWORD	GetInterfaceLanguageID()const;
@@ -569,7 +552,6 @@ public:
 	bool	GetInsImageAsking()const;
 	bool	GetIsInsClearImage()const;
 	bool	GetShowWordsExcls()const;
-	bool	GetWordsDlgPosition(WINDOWPLACEMENT &wpl)const;
 
 	bool	GetDocTreeItemState(const CString& item, bool default_state);
 
@@ -597,16 +579,8 @@ public:
 	void	SetIsInsClearImage(const bool value, bool apply = false);
 	void	SetDocTreeItemState(const CString& item, bool state);
 	void	SetShowWordsExcls(const bool value, bool apply = false);
-	void	SetWordsDlgPosition(const WINDOWPLACEMENT& wpl,  bool apply = false);
 
 	void	SetNeedRestart();
 
 	CString	m_initial_scripts_folder;
-
-	// added by SeNS
-	void	SetUseSpellChecker(const bool value, bool apply = false);
-	void	SetHighlightMisspells(const bool value, bool apply = false);
-	void	SetCustomDict(const ATL::CString &value, bool apply = false);
-	void	SetNBSPChar(const ATL::CString &value, bool apply = false);
-	void	SetChangeKeybLayout(const bool value, bool apply = false);
 };

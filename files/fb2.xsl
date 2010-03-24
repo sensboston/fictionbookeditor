@@ -1,86 +1,82 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 
 <xsl:stylesheet version="1.0"
-	xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-	xmlns:f="http://www.gribuser.ru/xml/fictionbook/2.0"
-	xmlns:l="http://www.w3.org/1999/xlink">
+  xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+  xmlns:f="http://www.gribuser.ru/xml/fictionbook/2.0"
+  xmlns:l="http://www.w3.org/1999/xlink">
+  
+  <xsl:import href="eng.xsl"/>
+  
+  <xsl:output method="html" indent="no"/>
 
-	<xsl:import href="eng.xsl"/>
+  <xsl:param name="dlgFG"/>
+  <xsl:param name="dlgBG"/>
+  <xsl:param name="descscript"/>
 
-	<xsl:output method="html" indent="no"/>
+  <!-- colors and fonts -->
+  <xsl:param name="font" select="'Trebuchet MS'"/>
+  <xsl:param name="fontSize" select="'12'"/>
+  <xsl:param name="colorFG"/>
+  <xsl:param name="colorBG"/>
 
-	<xsl:param name="dlgFG"/>
-	<xsl:param name="dlgBG"/>
-	<xsl:param name="descscript"/>
 
-	<!-- colors and fonts -->
-	<xsl:param name="font" select="'Trebuchet MS'"/>
-	<xsl:param name="fontSize" select="'12'"/>
-	<xsl:param name="colorFG"/>
-	<xsl:param name="colorBG"/>
-
-	<xsl:template match="/" mode="description">
-		<div class="float" id="prevImgPanel">
-			<img id="prevImg"/>
-		</div>
-		<fieldset style="border:none">
-			<button id="tiShowBtn" onclick="ShowElementsMenu(this)" unselectable="on" style="font-family: Tahoma; float: left;">
-				<xsl:value-of select="$IDS_VIEW_BTN"/>
-			</button>
-		</fieldset>
-		<br/>
-
+ <xsl:template match="/" mode="description">
+	<fieldset style="border:none">
+		<button id="tiShowBtn" onclick="ShowElementsMenu(this)" unselectable="on" style="font-family : Tahoma; float: left;"><xsl:value-of select="$IDS_VIEW_BTN"/></button>
+	</fieldset>
+   <br/>
 	<!-- title-info -->
 	<xsl:call-template name="ti">
-		<xsl:with-param name="cur" select="/f:FictionBook/f:description/f:title-info"/>
+	  <xsl:with-param name="cur" select="/f:FictionBook/f:description/f:title-info"/>
 	</xsl:call-template>
-
-	<!-- source-title-info -->
+		<!-- source-title-info -->
 	<xsl:if test="not(/f:FictionBook/f:description/f:src-title-info)">
-		<span id = "sti_all" block="true">
+		<span id = "sti_all" block="true">	
 			<xsl:call-template name="sti">
-				<xsl:with-param name="cur" select="/f:FictionBook/f:description/f:src-title-info"/>
-			</xsl:call-template>
+			  <xsl:with-param name="cur" select="/f:FictionBook/f:description/f:src-title-info"/>
+			</xsl:call-template>	
 		</span>
 	</xsl:if>
 	<xsl:if test="(/f:FictionBook/f:description/f:src-title-info)">
 		<xsl:call-template name="sti">
 			<xsl:with-param name="cur" select="/f:FictionBook/f:description/f:src-title-info"/>
-		</xsl:call-template>
+		</xsl:call-template>	
 	</xsl:if>
-
 	<!-- document-info -->
 	<xsl:call-template name="di">
-		<xsl:with-param name="cur" select="/f:FictionBook/f:description/f:document-info"/>
+	  <xsl:with-param name="cur" select="/f:FictionBook/f:description/f:document-info"/>
 	</xsl:call-template>
-
 	<!-- publish-info -->
 	<xsl:call-template name="pi">
-		<xsl:with-param name="cur" select="/f:FictionBook/f:description/f:publish-info"/>
+	  <xsl:with-param name="cur" select="/f:FictionBook/f:description/f:publish-info"/>
 	</xsl:call-template>
-
 	<!-- custom-info -->
 	<xsl:if test="not(/f:FictionBook/f:description/f:custom-info)">
 		<span id = "ci_all" block="true">
 			<xsl:call-template name="custom-info">
-				<xsl:with-param name="items" select="/f:FictionBook/f:description/f:custom-info"/>
+			  <xsl:with-param name="items" select="/f:FictionBook/f:description/f:custom-info"/>
 			</xsl:call-template>
 		</span>
 	</xsl:if>
 	<xsl:if test="/f:FictionBook/f:description/f:custom-info">
 		<xsl:call-template name="custom-info">
-				<xsl:with-param name="items" select="/f:FictionBook/f:description/f:custom-info"/>
+			  <xsl:with-param name="items" select="/f:FictionBook/f:description/f:custom-info"/>
 		</xsl:call-template>
 	</xsl:if>
-
-		<!-- binary objects -->
-		<fieldset id="binobj" unselectable="on">
-			<legend unselectable="on" class="top"><xsl:value-of select="$IDS_BINARY_OBJ"/></legend>
-			<br/>
-		</fieldset>
-	</xsl:template>
+	<!-- binary objects -->
+	<fieldset id="binobj" unselectable="on">
+	  <legend unselectable="on" class="top"><xsl:value-of select="$IDS_BINARY_OBJ"/></legend>
+	  <br/><br/>
+	</fieldset>
+  <br/><br/><br/>
+  <div class="float" id="prevImgPanel">
+    <img id="prevImg" align="center"/>
+  </div>
+  <br/><br/><br/>  
+ </xsl:template>
 
   <xsl:template match="/" mode="body">
+
 	<!-- book annotation -->
 	  <div class="annotation">
 	    <xsl:apply-templates select="/f:FictionBook/f:description/f:title-info/f:annotation/*"/>
@@ -135,8 +131,7 @@
 
      <!-- table -->
       
-  
-  <xsl:template match="f:table">
+  <xsl:template match="f:table">  
     <div class="table">
       <xsl:call-template name="id"/>
       <xsl:call-template name="style"/>
@@ -147,11 +142,19 @@
     <xsl:template match="f:tr">
     <div class="tr">
       <xsl:call-template name="id"/>
-      <xsl:call-template name="align"/>
+      <xsl:call-template name="align"/>  
       <xsl:apply-templates/>
     </div>
   </xsl:template>   
  
+  <!-- images -->
+  <xsl:template match="f:image">
+   <div onresizestart="return false" class='image' contentEditable='false' href="{@l:href}">
+	<xsl:call-template name="image_title"/>
+	<img src="fbw-internal:{@l:href}"/>
+   </div>
+  </xsl:template>
+
   <!-- text -->
   <xsl:template match="f:p | f:v">
     <p><xsl:call-template name="id"/><xsl:call-template name="style"/><xsl:apply-templates/></p>
@@ -202,25 +205,10 @@
   </xsl:template>
   <xsl:template match="f:code">
     <span class="code"><xsl:apply-templates/></span>
-  </xsl:template>
-  <!-- Added by SeNS -->
-  <!-- images -->
-  <xsl:template match="f:p//f:image">
-   <span onresizestart="return false" class='image' contentEditable='false' href="{@l:href}">
-	<xsl:call-template name="image_title"/>
-	<img src="fbw-internal:{@l:href}"/>
-   </span>
-  </xsl:template>
+  </xsl:template> 
 
-  <!-- images -->
-  <xsl:template match="f:image">
-   <div onresizestart="return false" class='image' contentEditable='false' href="{@l:href}">
-	<xsl:call-template name="image_title"/>
-	<img src="fbw-internal:{@l:href}"/>
-   </div>
-  </xsl:template>      
-  
-  <xsl:template match="*">
+
+<xsl:template match="*">
     <span class="unknown_element" source_class="{local-name()}">
 		<xsl:for-each select="@*">
 			<xsl:attribute name="unknown_attribute_{name()}"><xsl:value-of select="."/></xsl:attribute>
@@ -276,41 +264,40 @@
     </xsl:if>
   </xsl:template>
 
-	<!-- title-info -->
-	<xsl:template name="ti">
-		<xsl:param name="cur"/>
-		<fieldset unselectable="on">
-			<legend unselectable="on" class="top"><xsl:value-of select="$IDS_BOOK"/></legend>
-			<fieldset id="tiGenre" unselectable="on" class="kid">
-				<legend unselectable="on"><xsl:value-of select="$IDS_GENRES"/></legend>
-				<xsl:for-each select="$cur/f:genre">
-					<div unselectable="on">
-						<button id="del" onclick="Remove(this.parentNode)" unselectable="on">&#x72;</button>
-						<button onclick="Clone(this.parentNode)" unselectable="on">&#x32;</button>
-						<label unselectable="on" class="hl"><xsl:value-of select="$IDS_GENRE"/></label><input type="text" maxlength="25" id="genre" value="{.}" disabled="1"/>
-						<button class="popup_btn" onclick="GetGenre(this)" unselectable="on">&#x34;</button>
-						<xsl:if test="not(@match)">
-							<span id = "ti_genre_match" unselectable="on">
-								<button onclick="ShowElement(this.parentNode.id, false)" unselectable="on" style="font-family : Tahoma;">-</button>
-								<label unselectable="on"><xsl:value-of select="$IDS_MATCH"/></label><input type="text" maxlength="3" id="match" value="{@match}" class="short"/>
-							</span>
-						</xsl:if>
-						<xsl:if test="@match">
-							<label unselectable="on"><xsl:value-of select="$IDS_MATCH"/></label><input type="text" maxlength="3" id="match" value="{@match}" class="short"/>
-						</xsl:if>
-					</div>
-				</xsl:for-each>
-				<xsl:if test="not($cur/f:genre)">
-					<div unselectable="on">
-						<button id="del" onclick="Remove(this.parentNode)" unselectable="on">&#x72;</button>
-						<button onclick="Clone(this.parentNode)" unselectable="on">&#x32;</button>
-						<label unselectable="on" class="hl"><xsl:value-of select="$IDS_GENRE"/></label>
-						<input type="text" maxlength="25" id="genre" value="" disabled="1"/>
-						<button onclick="GetGenre(this)" unselectable="on">&#x34;</button>			
-					</div>
-				</xsl:if>
-			</fieldset>
-			<br/>
+  <!-- title-info -->
+  <xsl:template name="ti">
+    <xsl:param name="cur"/>
+
+    <fieldset unselectable="on">
+      <legend unselectable="on" class="top"><xsl:value-of select="$IDS_BOOK"/></legend>
+      <fieldset id="tiGenre" unselectable="on" class="kid">
+		<legend unselectable="on"><xsl:value-of select="$IDS_GENRES"/></legend>
+		<xsl:for-each select="$cur/f:genre">
+		  <div unselectable="on">
+		    <button id="del" onclick="Remove(this.parentNode)" unselectable="on">&#x72;</button>
+		    <button onclick="Clone(this.parentNode)" unselectable="on">&#x32;</button>
+		    <label unselectable="on" class="hl"><xsl:value-of select="$IDS_GENRE"/></label><input type="text" maxlength="25" id="genre" value="{.}" disabled="1"/>
+		    <button class="popup_btn" onclick="GetGenre(this)" unselectable="on">&#x34;</button>				
+			<xsl:if test="not(@match)">
+				<span id = "ti_genre_match" unselectable="on">
+					<button onclick="ShowElement(this.parentNode.id, false)" unselectable="on" style="font-family : Tahoma;">-</button>
+					<label unselectable="on"><xsl:value-of select="$IDS_MATCH"/></label><input type="text" maxlength="3" id="match" value="{@match}" class="short"/>
+				</span>
+			</xsl:if>
+			<xsl:if test="@match">
+				<label unselectable="on"><xsl:value-of select="$IDS_MATCH"/></label><input type="text" maxlength="3" id="match" value="{@match}" class="short"/>
+			</xsl:if>
+		  </div>
+		</xsl:for-each>
+		<xsl:if test="not($cur/f:genre)">
+		  <div unselectable="on">
+		    <button id="del" onclick="Remove(this.parentNode)" unselectable="on">&#x72;</button>
+		    <button onclick="Clone(this.parentNode)" unselectable="on">&#x32;</button>
+		    <label unselectable="on" class="hl"><xsl:value-of select="$IDS_GENRE"/></label><input type="text" maxlength="25" id="genre" value="" disabled="1"/>
+		    <button onclick="GetGenre(this)" unselectable="on">&#x34;</button>			
+		  </div>
+		</xsl:if>
+      </fieldset>
       <fieldset id="tiAuthor" unselectable="on" class="kid">
 		<legend unselectable="on"><xsl:value-of select="$IDS_AUTHORS"/></legend>
 		<xsl:call-template name="authors_main">
@@ -322,9 +309,9 @@
 	  <input type="text" maxlength="256" id="tiTitle" class="wide" value="{$cur/f:book-title}"/><br/>
 	  <xsl:if test="not($cur/f:keywords)">
 		  <span id = "ti_kw" unselectable="on">
-				<!--<button id="kwCollapse" onclick="ShowElement(this.parentNode.id, false)" unselectable="on" style="font-family : Tahoma;">-</button>-->
-				<label unselectable="on" desc_extended="true"><xsl:value-of select="$IDS_KEYWORDS"/></label>
-				<input type="text" maxlength="256" id="tiKwd" class="wide" value="{$cur/f:keywords}"/><br/>
+			  <button id="kwCollapse" onclick="ShowElement(this.parentNode.id, false)" unselectable="on" style="font-family : Tahoma;">-</button>
+			  <label unselectable="on" desc_extended="true"><xsl:value-of select="$IDS_KEYWORDS"/></label>
+			  <input type="text" maxlength="256" id="tiKwd" class="wide" value="{$cur/f:keywords}"/><br/>
 		  </span>
 	  </xsl:if>
 	  <xsl:if test="$cur/f:keywords">
@@ -373,6 +360,7 @@
 			<xsl:with-param name="lang" select="$cur/f:src-lang"/>
 		</xsl:call-template>
       </select>
+      
       <br/>
       <fieldset id="tiTrans" unselectable="on" class="kid">
 	<legend unselectable="on"><xsl:value-of select="$IDS_TRANSLATORS"/></legend>
@@ -380,7 +368,6 @@
 	  <xsl:with-param name="items" select="$cur/f:translator"/>
 	</xsl:call-template>
       </fieldset>
-			<br/>
       <fieldset id="tiSeq" unselectable="on" class="kid">
       <br/>
 	<legend unselectable="on"><xsl:value-of select="$IDS_SEQUENCE"/></legend>
@@ -476,7 +463,7 @@
 	    <label unselectable="on" style="width: 10em"><xsl:value-of select="$IDS_SOURCE_LANG"/></label>
 	    <!--input type="text" maxlength="2" id="tiSrcLang" class="short" value="{$cur/f:src-lang}"/-->
 
-	    <select id="stiSrcLang" title="Original language">
+	    <select id="stiSrcLang" title="Original language">			
 			<xsl:call-template name="fill_languages_combo">
 				<xsl:with-param name="lang" select="$cur/f:src-lang"/>
 			</xsl:call-template>
@@ -507,36 +494,29 @@
     <br/>
   </xsl:template>
 
-	<!-- document-info -->
-	<xsl:template name="di">
-		<xsl:param name="cur"/>
-		<fieldset unselectable="on">
-			<legend unselectable="on" class="top"><xsl:value-of select="$IDS_DOCUMENT"/></legend>
-			<fieldset id="diAuthor" unselectable="on" class="kid">
-				<label unselectable="on" class="hl">
-					<xsl:value-of select="$IDS_VERSION"/>
-				</label>
-				<input type="text" maxlength="10" id="diVersion" class="short" value="{$cur/f:version}"/>
-				<span id = "di_id" unselectable="on">
-					<button onclick="NewDocumentID()" style="font-family:Tahoma,Arial;margin-right:0.6em;" unselectable="on">
-						<xsl:value-of select="$IDS_NEW"/>
-					</button>
-					<button onclick="ShowElement(this.parentNode.id, false)" unselectable="on" style="font-family : Tahoma;">-</button>
-					<label unselectable="on" class="hl" style="width:4em;">
-						<xsl:value-of select="$IDS_ID"/>
-					</label>
-					<input type="text" maxlength="256" id="diID" style="width:40em;" disabled="1" value="{$cur/f:id}"/>
-				</span>
-				<br/>
-				<legend unselectable="on"><xsl:value-of select="$IDS_AUTHORS"/></legend>
-				<xsl:call-template name="authors">
-					<xsl:with-param name="items" select="$cur/f:author"/>
-				</xsl:call-template>
-			</fieldset>
+  <!-- document-info -->
+  <xsl:template name="di">
+    <xsl:param name="cur"/>
+    <fieldset unselectable="on">
+      <legend unselectable="on" class="top"><xsl:value-of select="$IDS_DOCUMENT"/></legend>
+      <fieldset id="diAuthor" unselectable="on" class="kid">
+      <label unselectable="on" class="hl"><xsl:value-of select="$IDS_VERSION"/></label>
+      <input type="text" maxlength="10" id="diVersion" class="short" value="{$cur/f:version}"/>
+	  <span id = "di_id" unselectable="on">				
+		<button onclick="NewDocumentID()" style="font-family:Tahoma,Arial;margin-right:0.6em;" unselectable="on"><xsl:value-of select="$IDS_NEW"/></button>
+		<button onclick="ShowElement(this.parentNode.id, false)" unselectable="on" style="font-family : Tahoma;">-</button>		
+		<label unselectable="on" class="hl" style="width:4em;"><xsl:value-of select="$IDS_ID"/></label>
+		<input type="text" maxlength="256" id="diID" style="width:40em;" disabled="1" value="{$cur/f:id}"/>
+	  </span>			  	  
+      <br/>
+	<legend unselectable="on"><xsl:value-of select="$IDS_AUTHORS"/></legend>
+	<xsl:call-template name="authors">
+	  <xsl:with-param name="items" select="$cur/f:author"/>
+	</xsl:call-template>
+      </fieldset>
       <br/><br/>
       <label unselectable="on"><xsl:value-of select="$IDS_TOOLS_USED"/></label>
-      <input type="text" maxlength="256" id="diProgs" class="middle" value="{$cur/f:program-used}"/>
-			<br/>
+      <input type="text" maxlength="256" id="diProgs" class="wide" value="{$cur/f:program-used}"/><br/>
       <label unselectable="on"><xsl:value-of select="$IDS_DATE_TEXT"/></label>
       <input type="text" maxlength="256" id="diDate" value="{$cur/f:date}"/>
       <label unselectable="on" style="width:6.4em"><xsl:value-of select="$IDS_DATE_VALUE"/></label>

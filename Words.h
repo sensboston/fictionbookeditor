@@ -1,6 +1,10 @@
 #ifndef WORDS_H
 #define WORDS_H
 
-bool ShowWordsDialog(FB::Doc& document, HWND parent = ::GetActiveWindow());
+#include "Settings.h"
+
+extern CSettings _Settings;
+
+bool ShowWordsDialog(FB::Doc& document);
 
 #endif

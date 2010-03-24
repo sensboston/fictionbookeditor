@@ -23,35 +23,36 @@
 #include "Words.h"
 #include "SearchReplace.h"
 #include "DocumentTree.h"
-#include "Speller.h"
+
 
 #if _MSC_VER >= 1000
 #pragma once
 #pragma warning(disable : 4996)
 #endif // _MSC_VER >= 1000
 
-typedef CWinTraits<WS_CHILD|WS_VISIBLE|ES_AUTOHSCROLL|ES_LEFT,WS_EX_CLIENTEDGE> CCustomEditWinTraits;
+typedef CWinTraits<WS_CHILD|WS_VISIBLE|ES_AUTOHSCROLL|ES_LEFT,WS_EX_CLIENTEDGE>
+		  CCustomEditWinTraits;
 
-class CCustomEdit : public CWindowImpl<CCustomEdit,CEdit,CCustomEditWinTraits>, public CEditCommands<CCustomEdit>
+class CCustomEdit : public CWindowImpl<CCustomEdit,CEdit,CCustomEditWinTraits>,
+		    public CEditCommands<CCustomEdit>
 {
 public:
-	DECLARE_WND_SUPERCLASS(NULL, CEdit::GetWndClassName())
+  DECLARE_WND_SUPERCLASS(NULL, CEdit::GetWndClassName())
 
-	CCustomEdit() { }
+  CCustomEdit() { }
 
-	BEGIN_MSG_MAP(CCustomEdit)
-		MESSAGE_HANDLER(WM_CHAR, OnChar)
-		CHAIN_MSG_MAP_ALT(CEditCommands<CCustomEdit>, 1)
-	END_MSG_MAP()
+  BEGIN_MSG_MAP(CCustomEdit)
+    MESSAGE_HANDLER(WM_CHAR, OnChar)
+    CHAIN_MSG_MAP_ALT(CEditCommands<CCustomEdit>,1)
+  END_MSG_MAP()
 
-	LRESULT OnChar(UINT, WPARAM wParam, LPARAM, BOOL& bHandled)
-	{
-		if(wParam == VK_RETURN)
-			::PostMessage(::GetParent(GetParent()), WM_COMMAND,MAKELONG(GetDlgCtrlID(), IDN_ED_RETURN), (LPARAM)m_hWnd);
-
-		bHandled = FALSE;
-		return 0;
-	}
+  LRESULT OnChar(UINT, WPARAM wParam, LPARAM, BOOL& bHandled)
+  {
+    if (wParam==VK_RETURN)
+      ::PostMessage(::GetParent(GetParent()),WM_COMMAND,MAKELONG(GetDlgCtrlID(),IDN_ED_RETURN),(LPARAM)m_hWnd);
+    bHandled=FALSE;
+    return 0;
+  }
 };
 
 class CCustomStatic : public CWindowImpl<CCustomStatic,CStatic/*,CCustomStaticWinTraits*/>
@@ -176,14 +177,14 @@ public:
 	//bool			m_save_sp_mode;
 
   CComboBox		  m_section_box;
-  CCustomEdit	  m_section;	// ID ??? <section>
-  // ???????? ?????? ??????
+  CCustomEdit	  m_section;	// ID для <section>
+  // контролы панели таблиц
   CComboBox		  m_id_table_id_box;
   CCustomEdit	  m_id_table_id;	  // Table ID
   CComboBox		  m_id_table_box;
   CCustomEdit	  m_id_table;		  // ID
   CComboBox		  m_styleT_table_box;
-  CCustomEdit	  m_styleT_table;     // style ??? <table>
+  CCustomEdit	  m_styleT_table;     // style для <table>
   CComboBox		  m_style_table_box;
   CCustomEdit	  m_style_table;      // style
   CComboBox		  m_colspan_table_box;
@@ -191,7 +192,7 @@ public:
   CComboBox		  m_rowspan_table_box;
   CCustomEdit	  m_rowspan_table;    // rowspan
   CComboBox		  m_align_table_box;
-  CCustomEdit	  m_alignTR_table;    // align ??? <tr>
+  CCustomEdit	  m_alignTR_table;    // align для <tr>
   CComboBox		  m_alignTR_table_box;
   CCustomEdit	  m_align_table;      // align
   CComboBox		  m_valign_table_box;
@@ -281,20 +282,7 @@ public:
     m_ignore_cb_changes(false), m_incsearch(0), m_cb_last_images(false),
     m_last_ie_ovr(true), m_last_sci_ovr(true), m_saved_xml(0), m_sci_find_dlg(0), m_sci_replace_dlg(0),
 	m_last_script(0), m_last_plugin(0)
-	// added by SeNS
-	{ 
-		TCHAR prgPath[MAX_PATH];
-		DWORD pathlen = ::GetModuleFileName(_Module.GetModuleInstance(), prgPath, MAX_PATH);
-		PathRemoveFileSpec(prgPath);
-		if (_Settings.GetUseSpellChecker())
-		{
-			m_Speller = new CSpeller(CString(prgPath)+L"\\dict\\");
-		}
-		else
-		{
-			m_Speller = NULL;
-		}
-	}
+	{ }
   ~CMainFrame(); 
   // toolbars
   bool	  IsBandVisible(int id);
@@ -421,7 +409,6 @@ public:
 		UPDATE_ELEMENT(ID_STYLE_NORMAL, UPDUI_MENUPOPUP|UPDUI_TOOLBAR)
 		UPDATE_ELEMENT(ID_STYLE_SUBTITLE, UPDUI_MENUPOPUP|UPDUI_TOOLBAR)
 		UPDATE_ELEMENT(ID_STYLE_TEXTAUTHOR, UPDUI_MENUPOPUP|UPDUI_TOOLBAR)
-		UPDATE_ELEMENT(ID_TOOLS_SPELLCHECK, UPDUI_MENUPOPUP|UPDUI_TOOLBAR)
 		UPDATE_ELEMENT(ID_STYLE_LINK, UPDUI_MENUPOPUP|UPDUI_TOOLBAR)
 		UPDATE_ELEMENT(ID_STYLE_NOTE, UPDUI_MENUPOPUP|UPDUI_TOOLBAR)
 		UPDATE_ELEMENT(ID_STYLE_NOLINK, UPDUI_MENUPOPUP|UPDUI_TOOLBAR)
@@ -430,7 +417,6 @@ public:
 		UPDATE_ELEMENT(ID_EDIT_ADD_TA, UPDUI_MENUPOPUP|UPDUI_TOOLBAR)
 		UPDATE_ELEMENT(ID_EDIT_CLONE, UPDUI_MENUPOPUP|UPDUI_TOOLBAR)
 		UPDATE_ELEMENT(ID_EDIT_INS_IMAGE, UPDUI_MENUPOPUP|UPDUI_TOOLBAR)
-		UPDATE_ELEMENT(ID_EDIT_INS_INLINEIMAGE, UPDUI_MENUPOPUP|UPDUI_TOOLBAR)
 		UPDATE_ELEMENT(ID_EDIT_ADD_IMAGE, UPDUI_MENUPOPUP|UPDUI_TOOLBAR)
 		UPDATE_ELEMENT(ID_EDIT_ADD_EPIGRAPH, UPDUI_MENUPOPUP|UPDUI_TOOLBAR)
 		UPDATE_ELEMENT(ID_EDIT_ADD_ANN, UPDUI_MENUPOPUP|UPDUI_TOOLBAR)
@@ -501,22 +487,8 @@ public:
 		COMMAND_ID_HANDLER(ID_EDIT_FIND, OnEditFind)
 		COMMAND_ID_HANDLER(ID_EDIT_FINDNEXT, OnEditFind)
 		COMMAND_ID_HANDLER(ID_EDIT_REPLACE, OnEditFind)
+		COMMAND_ID_HANDLER(ID_EDIT_INS_IMAGE, OnEditInsImage)
 		COMMAND_RANGE_HANDLER(ID_EDIT_INS_SYMBOL, ID_EDIT_INS_SYMBOL + 100, OnEditInsSymbol)
-
-		// added by SeNS
-		// popup menu (speller addons)
-		COMMAND_ID_HANDLER(IDC_SPELL_IGNOREALL, OnSpellIgnoreAll)
-		COMMAND_ID_HANDLER(IDC_SPELL_ADD2DICT, OnSpellAddToDict)
-		COMMAND_ID_HANDLER(IDC_SPELL_REPLACE, OnSpellReplace)
-		COMMAND_ID_HANDLER(IDC_SPELL_REPLACE+1, OnSpellReplace)
-		COMMAND_ID_HANDLER(IDC_SPELL_REPLACE+2, OnSpellReplace)
-		COMMAND_ID_HANDLER(IDC_SPELL_REPLACE+3, OnSpellReplace)
-		COMMAND_ID_HANDLER(IDC_SPELL_REPLACE+4, OnSpellReplace)
-		COMMAND_ID_HANDLER(IDC_SPELL_REPLACE+5, OnSpellReplace)
-		COMMAND_ID_HANDLER(IDC_SPELL_REPLACE+6, OnSpellReplace)
-		COMMAND_ID_HANDLER(IDC_SPELL_REPLACE+7, OnSpellReplace)
-
-		COMMAND_ID_HANDLER(ID_VER_ADVANCE, OnVersionAdvance)
 
 		// view menu
 		COMMAND_ID_HANDLER(ATL_IDW_BAND_FIRST, OnViewToolBar)
@@ -540,8 +512,6 @@ public:
 		COMMAND_ID_HANDLER(ID_TOOLS_OPTIONS, OnToolsOptions)
 		COMMAND_RANGE_HANDLER(ID_SCRIPT_BASE, ID_SCRIPT_BASE + 999, OnToolsScript)
 		COMMAND_ID_HANDLER(ID_LAST_SCRIPT, OnLastScript)
-
-		COMMAND_ID_HANDLER(ID_TOOLS_SPELLCHECK, OnSpellCheck);
 
 		// help menu
 		COMMAND_ID_HANDLER(ID_APP_ABOUT, OnAppAbout)
@@ -613,24 +583,19 @@ public:
     m_status_msg=(const TCHAR *)lParam;
     return 0;
   }
+  LRESULT OnTrackPopupMenu(UINT, WPARAM, LPARAM lParam, BOOL&) {
+    AU::TRACKPARAMS   *tp=(AU::TRACKPARAMS *)lParam;
+    m_CmdBar.TrackPopupMenu(tp->hMenu,tp->uFlags,tp->x,tp->y);
+    return 0;
+  }
 
-	LRESULT OnTrackPopupMenu(UINT, WPARAM, LPARAM lParam, BOOL&)
-	{
-		AU::TRACKPARAMS* tp = (AU::TRACKPARAMS*)lParam;
-		// added by SeNS
-		if (m_Speller) m_Speller->AppendSpellMenu(tp->hMenu);
-		m_CmdBar.TrackPopupMenu(tp->hMenu, tp->uFlags, tp->x, tp->y);
-		return 0;
-	}
-
-	LRESULT OnChar(UINT, WPARAM, LPARAM, BOOL&);
-	LRESULT OnPreCommand(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
-	{
-		bHandled = FALSE;
-		if((HIWORD(wParam) == 0 || HIWORD(wParam) == 1) && LOWORD(wParam) != ID_EDIT_INCSEARCH)
-		StopIncSearch(true);
-		return 0;
-	}
+  LRESULT OnChar(UINT, WPARAM, LPARAM, BOOL&);
+  LRESULT OnPreCommand(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) {
+    bHandled=FALSE;
+    if ((HIWORD(wParam)==0 || HIWORD(wParam)==1) && LOWORD(wParam)!=ID_EDIT_INCSEARCH)
+      StopIncSearch(true);
+    return 0;
+  }
 
 	LRESULT OnFileExit(WORD, WORD, HWND, BOOL&)
 	{
@@ -657,35 +622,8 @@ public:
 		bHandled = FALSE;
 		return 0;
 	}
+	LRESULT OnEditInsImage(WORD, WORD, HWND, BOOL&);
 	LRESULT OnEditInsSymbol(WORD, WORD, HWND, BOOL&);
-
-	// added by SeNS
-	LRESULT OnSpellReplace(WORD wNotifyCode, WORD wID, HWND hWndCtl, BOOL& bHandled)
-	{ 
-		if (m_Speller)
-		{
-			m_doc->m_body.BeginUndoUnit(L"replace word");
-			m_Speller->Replace (wID - IDC_SPELL_REPLACE);
-			m_doc->m_body.EndUndoUnit();
-		}
-		return 0; 
-	}
-	LRESULT OnSpellIgnoreAll(WORD, WORD, HWND, BOOL&) 
-	{ 
-		if (m_Speller) m_Speller->IgnoreAll();
-		return 0; 
-	}
-	LRESULT OnSpellAddToDict(WORD, WORD, HWND, BOOL&) 
-	{ 
-		if (m_Speller) m_Speller->AddToDictionary();
-		return 0; 
-	}
-
-	LRESULT OnVersionAdvance(WORD delta, WORD, HWND, BOOL&)
-	{
-		m_doc->AdvanceDocVersion(delta);
-		return 0;
-	}
 
   LRESULT OnViewToolBar(WORD, WORD, HWND, BOOL&);
   LRESULT OnViewStatusBar(WORD, WORD, HWND, BOOL&);
@@ -709,14 +647,14 @@ public:
   LRESULT OnToolsOptions(WORD, WORD, HWND, BOOL&);
   LRESULT OnToolsScript(WORD, WORD, HWND, BOOL&);
 
-	LRESULT OnLastScript(WORD, WORD, HWND, BOOL&)
-	{
-		if(m_last_script != 0 && !IsSourceActive())
-		{
-			m_doc->RunScript((*m_last_script).path.GetBuffer());
-		}
-		return 0;
-	}
+  LRESULT OnLastScript(WORD, WORD, HWND, BOOL&)
+  {
+	  if(m_last_script != 0)
+	  {
+		  m_doc->RunScript((*m_last_script).path.GetBuffer());
+	  }
+	return 0;
+  }
 
   LRESULT OnAppAbout(WORD, WORD, HWND, BOOL&);
 
@@ -775,44 +713,7 @@ public:
     StopIncSearch(true);
     m_doc_changed=true;
     m_cb_updated=false;
-	// added by SeNS - process nbsp
-	if (_Settings.GetNBSPChar().Compare(L"\u00A0") != 0)
-	{
-		MSHTML::IHTMLElementPtr elem = m_doc->m_body.SelectionContainer();
-		if (elem)
-		{
-			MSHTML::IDisplayServicesPtr ids (MSHTML::IDisplayServicesPtr(m_doc->m_body.Document()));
-			MSHTML::IHTMLCaretPtr caret;
-			MSHTML::tagPOINT point;
-			ids->GetCaret(&caret);
-			if (caret) caret->GetLocation(&point, true);
-
-			CString txt = elem->innerHTML;
-			if (txt.Find(L"<DIV") < 0)
-			{
-				int n = txt.Replace( L"&nbsp;", _Settings.GetNBSPChar());
-				if (n)
-				{
-					elem->innerHTML = txt.AllocSysString();
-					m_doc->AdvanceDocVersion(n);
-					if (caret) 
-					{
-						MSHTML::IDisplayPointerPtr disptr;
-						ids->CreateDisplayPointer(&disptr);
-						// shift to left - will positioning to the next char
-						point.x += _Settings.GetFontSize() / 2;
-						disptr->moveToPoint(point, MSHTML::COORD_SYSTEM_GLOBAL, elem, 0, 0);
-						caret->MoveCaretToPointer(disptr, true, MSHTML::CARET_DIRECTION_SAME);
-					}
-				}
-			}
-		}
-	}
-
-	// added by SeNS - do spellcheck
-	if (m_Speller && m_Speller->Enabled() && m_current_view == BODY) 
-		m_Speller->CheckElement(m_doc->m_body.SelectionContainer(), -1, m_doc->m_body.IsHTMLChanged());
-	return 0;
+    return 0;
   }
   LRESULT OnCbEdChange(WORD, WORD, HWND, BOOL&);
   LRESULT OnCbSelEndOk(WORD code, WORD wID, HWND hWnd, BOOL&) {
@@ -879,10 +780,10 @@ public:
 	void SciCollapse(int level2Collapse, bool mode);
 
 	void GoToSelectedTreeItem();
-	MSHTML::IHTMLDOMNodePtr MoveRightElementWithoutChildren(MSHTML::IHTMLDOMNodePtr node);
-	MSHTML::IHTMLDOMNodePtr MoveRightElement(MSHTML::IHTMLDOMNodePtr node);
-	MSHTML::IHTMLDOMNodePtr MoveLeftElement(MSHTML::IHTMLDOMNodePtr node);
-	MSHTML::IHTMLDOMNodePtr RecoursiveMoveRightElement(CTreeItem item);
+	bool MoveRightElementWithoutChildren(MSHTML::IHTMLDOMNodePtr node);
+	bool MoveRightElement(MSHTML::IHTMLDOMNodePtr node);
+	bool MoveLeftElement(MSHTML::IHTMLDOMNodePtr node);
+	bool RecoursiveMoveRightElement(CTreeItem item);
 
 	MSHTML::IHTMLDOMNodePtr GetFirstChildSection(MSHTML::IHTMLDOMNodePtr node);
 	MSHTML::IHTMLDOMNodePtr GetNextSiblingSection(MSHTML::IHTMLDOMNodePtr node);
@@ -897,21 +798,10 @@ public:
 	bool CheckFileTimeStamp();
 	bool ReloadFile();
 	void UpdateFileTimeStamp();
-	bool ShowSettingsDialog(HWND parent = ::GetActiveWindow());
+	bool ShowSettingsDialog();
 	void ApplyConfChanges();
 	void RestartProgram();
 	void FillMenuWithHkeys(HMENU);
-
-	// added by SeNS
-    CSpeller *m_Speller;
-	LRESULT OnSpellCheck(WORD, WORD, HWND, BOOL&)
-	{
-		if (m_Speller)
-		{
-			m_Speller->StartDocumentCheck(m_doc->m_body.m_mk_srv);
-		}
-		return S_OK;
-	}
 };
 
 int	StartScript(CMainFrame* mainframe);

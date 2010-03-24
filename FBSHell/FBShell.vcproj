@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="windows-1251"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="9.00"
+	Version="9,00"
 	Name="FBShell"
 	ProjectGUID="{856C10BA-254C-4FA0-B45B-00F4B5A6DEB2}"
 	RootNamespace="FBShell"

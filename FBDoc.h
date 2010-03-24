@@ -44,7 +44,7 @@ public:
   void		DeleteSaveMarker();
   long		GetSavedPos(bstr_t& dom, bool deleteMarker = true);
 
-  // loading and savingaa
+  // loading and saving
   void	  CreateBlank(HWND hWndParent);
   bool	  Load(HWND hWndParent,const CString& filename);
   //bool	  LoadFromDOM(HWND hWndParent,MSXML2::IXMLDOMDocument2 *dom);
@@ -71,12 +71,6 @@ public:
 	  return m_body_ver!=m_body.GetVersionNumber() || 
 		  //m_desc_ver!=m_desc.GetVersionNumber() || 
 		  m_body.IsFormChanged(); }
-
-  // added by SeNS
-  void	  AdvanceDocVersion (int delta) {
-	  m_body_ver += delta;
-  }
-
   void	  MarkSavePoint() { 
 	  m_body_ver=m_body.GetVersionNumber();
 	  //m_desc_ver=m_desc.GetVersionNumber(); 
@@ -102,6 +96,9 @@ public:
   BSTR PrepareDefaultId(const CString& filename);
   void AddBinary(const CString& filename);
 
+  //images
+  void AddImage(const CString& filename);
+
   // config
   void	  ApplyConfChanges();
 
@@ -110,7 +107,7 @@ public:
   static Doc* m_active_doc;
 
   // binary objects
-  bool GetBinary(const wchar_t *id,_variant_t& vt);
+  bool      GetBinary(const wchar_t *id,_variant_t& vt);
   
 	// Word lists
 	struct Word
@@ -152,7 +149,7 @@ private:
   static CSimpleMap<Doc*,Doc*>	m_active_docs;  
 
 public:
-	MSHTML::IHTMLDOMNodePtr MoveNode(MSHTML::IHTMLDOMNodePtr from, MSHTML::IHTMLDOMNodePtr to, MSHTML::IHTMLDOMNodePtr insertBefore);
+	void MoveNode(MSHTML::IHTMLDOMNodePtr from, MSHTML::IHTMLDOMNodePtr to, MSHTML::IHTMLDOMNodePtr insertBefore);
 	void SetFastMode(bool fast);
 	bool GetFastMode();
 	int GetSelectedPos();

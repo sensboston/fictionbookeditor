@@ -26,10 +26,6 @@ public:
 
   CButton	    m_fast_mode;
 
-  CButton		m_usespell_check;	// SeNS
-  CButton		m_highlight_check;	// SeNS
-  CEdit			m_custom_dict;		// SeNS
-
   CButton	    m_src_wrap;
   CButton	    m_src_hl;
   CButton	    m_src_eol;
@@ -37,8 +33,6 @@ public:
   BEGIN_MSG_MAP(COptDlg)
     COMMAND_ID_HANDLER(IDOK, OnOK)
     COMMAND_ID_HANDLER(IDCANCEL, OnCancel)
-	COMMAND_HANDLER(IDC_USESPELLCHECKER, BN_CLICKED, OnUseSpellChecker)
-	COMMAND_HANDLER(IDC_DICTPATH, BN_CLICKED, OnShowFileDialog)
     MESSAGE_HANDLER(WM_INITDIALOG, OnInitDialog)
     REFLECT_NOTIFICATIONS()
   END_MSG_MAP()
@@ -49,21 +43,5 @@ public:
   LRESULT OnCancel(WORD, WORD wID, HWND, BOOL&);
 
   LRESULT OnTcnSelchangeTab3(int /*idCtrl*/, LPNMHDR pNMHDR, BOOL& /*bHandled*/);
-  // SeNS
-  LRESULT OnShowFileDialog(WORD, WORD, HWND, BOOL&);
-  LRESULT OnUseSpellChecker(WORD, WORD, HWND, BOOL&)
-  {
-	  if (m_usespell_check.GetCheck())
-	  {
-		  m_highlight_check.EnableWindow(TRUE);
-		  m_custom_dict.EnableWindow(TRUE);
-	  }
-	  else
-	  {
-		  m_highlight_check.EnableWindow(FALSE);
-		  m_custom_dict.EnableWindow(FALSE);
-	  }
-	  return 0;
-  }
 };
 #endif

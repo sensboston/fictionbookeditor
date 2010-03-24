@@ -99,18 +99,22 @@ public:
 private:
 	BOOL ModifyStyle(DWORD dwRemove, DWORD dwAdd, UINT nFlags = 0) throw();
 	void FillViewBar();
-	void ClearTree();
 	//ViewElements(unsigned)
 };
 
 class CDocumentTree : public CPaneContainer
 {
-private:	
-	int m_current_tab;
-
+private:
+//	CTreeView m_tree;
+//	CSplitterWindow m_dummy_pane;
+	WTL::CToolBarCtrl m_toolbar;
+	WTL::CReBarCtrl m_rebar;
+//	WTL::CToolBarCtrl m_title;
 
 public:
 	CTreeWithToolBar m_tree;
+	//CTreeView m_tree;
+
 public:
 	CDocumentTree(){};
 

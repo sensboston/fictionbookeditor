@@ -26,23 +26,21 @@ protected:
 	{
 		LPMSG lpMsg = (LPMSG)lParam;
 
-		if(nCode >= 0 && PM_REMOVE == wParam)
+		if(nCode >= 0 && PM_REMOVE == wParam )
 		{
-			if(lpMsg->message == WM_KEYDOWN &&
-				lpMsg->wParam == VK_RETURN ||
-				lpMsg->wParam == VK_ESCAPE ||
-				lpMsg->wParam == VK_TAB)
+			/*if(lpMsg->message >= WM_KEYFIRST && lpMsg->message <= WM_KEYLAST)
 			{
 				for(int i = 0, m = windows().GetSize(); i < m; ++i)
 				{
 					if(::IsDialogMessage(windows()[i], lpMsg))
 					{
 						lpMsg->message = WM_NULL;
+						lpMsg->message = WM_NULL;
 						lpMsg->lParam  = 0;
 						lpMsg->wParam  = 0;
 					}
 				}
-			}
+			}*/
 		}
 
 		HHOOK hook = (HHOOK)(DWORD_PTR)LODWORD(table().Lookup(::GetCurrentThreadId()));
@@ -94,7 +92,6 @@ public:
 										hWndParent,
 										T::StartDialogProc,
 										dwInitParam);
-
 		ATLASSERT(m_hWnd == hWnd);
 		DWORD threadId = ::GetCurrentThreadId();
 		if(-1 == table().FindKey(threadId))

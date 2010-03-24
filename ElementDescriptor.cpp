@@ -38,7 +38,6 @@ bool CElementDescriptor::Init(FN_IsMe fn1, FN_GetTitle fn2, int imageID, bool de
 	m_imageID = imageID;
 	m_viewInTree = _Settings.GetDocTreeItemState(caption, default_state);
 	m_caption = caption;
-	m_title_from_script = false;
 	return true;
 }
 
@@ -55,7 +54,6 @@ bool CElementDescriptor::Load(CString path)
 	m_getTitle = (FN_GetTitle)GetTitleSc;
 	m_picture = 0;
 	m_imageID = 9;
-
 	if(m_class_name.GetLength() == 0)
 		return false;
 	
@@ -127,21 +125,7 @@ bool CElementDescriptor::IsMe(const MSHTML::IHTMLElementPtr elem)
 
 CString CElementDescriptor::GetTitle(const MSHTML::IHTMLElementPtr elem)
 {
-	if(m_script)
-	{
-		// ??????? ?????? title ????? ??????
-		CComVariant vtResult;
-		CComVariant params(m_script_path);
-		FB::Doc::m_active_doc->InvokeFunc(L"apiGetTitle", &params, 1, vtResult);
-		if(vtResult.bstrVal != L"")
-			return vtResult.bstrVal;
-		else
-			return m_getTitle(elem);
-	}
-	else
-	{
-		return m_getTitle(elem);
-	}
+	return m_getTitle(elem);
 }
 
 CString CElementDescriptor::GetCaption()
@@ -152,8 +136,7 @@ CString CElementDescriptor::GetCaption()
 void CElementDescriptor::SetViewInTree(bool view)
 {
 	m_viewInTree = view;
-	if(!m_script)
-		_Settings.SetDocTreeItemState(m_caption, view);
+	_Settings.SetDocTreeItemState(m_caption, view);
 }
 
 void CElementDescriptor::ProcessScript()
@@ -288,7 +271,7 @@ int CPoemED::GetDTImageID()
 }
 
 ///=====================================================================================
-// ??????????????? ???????
+// вспомогательные функции
 
 MSHTML::IHTMLElementPtr	CElementDescriptor::FindTitleNode(MSHTML::IHTMLDOMNodePtr elem) 
 {

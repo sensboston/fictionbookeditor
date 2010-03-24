@@ -3,7 +3,6 @@
 
 #include "stdafx.h"
 #include <locale.h>
-#include <sys/stat.h>
 
 #include "resource.h"
 
@@ -167,7 +166,7 @@ bool LoadEditor()
 
 int WINAPI _tWinMain(HINSTANCE hInstance, HINSTANCE /*hPrevInstance*/, LPTSTR lpstrCmdLine, int nCmdShow)
 {
-	int nRet=1;
+  int nRet=1;
 
 #if 1
 #ifdef _DEBUG

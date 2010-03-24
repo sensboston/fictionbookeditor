@@ -17,9 +17,9 @@
 #define _WIN32_IE		0x0501
 
 // Insert your headers here
-//#define WIN32_LEAN_AND_MEAN		// Exclude rarely-used stuff from Windows headers
+#define WIN32_LEAN_AND_MEAN		// Exclude rarely-used stuff from Windows headers
 
-#define _ATL_FREE_THREADED
+#define _ATL_APARTMENT_THREADED
 
 #define _ATL_CSTRING_EXPLICIT_CONSTRUCTORS	// some CString constructors will be explicit
 
@@ -34,8 +34,6 @@
 #include <atlctl.h>
 #include <atlhost.h>
 #include <atlstr.h>
-#include <atlimage.h>
-#include <atlpath.h>
 
 #include <shellapi.h>
 

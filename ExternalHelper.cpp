@@ -8,17 +8,16 @@
 #include "FBE.h"
 #include "ExternalHelper.h"
 
-#define MENU_BASE 5000
+#define	MENU_BASE   5000
 
-struct Genre
-{
-	int		groupid;
-	CString	id;
-	CString	text;
+struct Genre {
+  int	      groupid;
+  CString     id;
+  CString     text;
 };
 
-static CSimpleArray<CString> g_genre_groups;
-static CSimpleArray<Genre> g_genres;
+static CSimpleArray<CString>	g_genre_groups;
+static CSimpleArray<Genre>	g_genres;
 
 struct DescElement
 {
@@ -354,13 +353,13 @@ HRESULT	ExternalHelper::STISrcLangPopup(IDispatch *obj,LONG x,LONG y,BSTR *name)
 	return S_OK;
 }*/
 
-HRESULT ExternalHelper::DescShowMenu(IDispatch *obj, LONG x,LONG y, BSTR* element_id)
+HRESULT	ExternalHelper::DescShowMenu(IDispatch *obj,LONG x,LONG y, BSTR *element_id) 
 {
 	FillDescElements();
 	CMenu popup = MakeDescComponentsMenu();
 	if(popup)
 	{
-		UINT cmd = popup.TrackPopupMenu(TPM_RETURNCMD | TPM_LEFTALIGN | TPM_TOPALIGN, x, y, ::GetActiveWindow());
+		UINT cmd = popup.TrackPopupMenu(TPM_RETURNCMD|TPM_LEFTALIGN|TPM_TOPALIGN, x,y,::GetActiveWindow());
 		if(!cmd)
 		{
 			return S_OK;

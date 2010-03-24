@@ -19,10 +19,6 @@ class CSettingsOtherDlg :
 	CEdit		m_scripts_folder;
 	CButton		m_scripts_folder_sel;
 
-	// added by SeNS
-	CComboBox   m_nbsp_char;
-	CButton		m_change_keyb;
-
 	bool		m_scripts_switched;
 	CString		m_scripts_fld_dlg_msg;
 

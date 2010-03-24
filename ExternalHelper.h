@@ -100,30 +100,20 @@ public:
 			}
 			return S_OK;
 	}
-
 	STDMETHOD(GetUUID)(BSTR *uid)
 	{
-		UUID	      uuid;
-		unsigned char *str;
-		if (UuidCreate(&uuid)==RPC_S_OK && UuidToStringA(&uuid,&str)==RPC_S_OK) 
-		{
-			CString     us(str);
-			RpcStringFreeA(&str);
-			us.MakeUpper();
-			*uid = us.AllocSysString();
-			return S_OK;
-		}
-		return S_FALSE;
+			UUID	      uuid;
+			unsigned char *str;
+			if (UuidCreate(&uuid)==RPC_S_OK && UuidToStringA(&uuid,&str)==RPC_S_OK) 
+			{
+				CString     us(str);
+				RpcStringFreeA(&str);
+				us.MakeUpper();
+				*uid = us.AllocSysString();
+				return S_OK;
+			}
+			return S_FALSE;
 	}
-
-
-	STDMETHOD(GetNBSP)(BSTR *nbsp)
-	{
-		CString s_nbsp = _Settings.GetNBSPChar();
-		*nbsp = s_nbsp.AllocSysString();
-		return S_OK;
-	}
-
 	STDMETHOD(MsgBox)(BSTR message)
 	{
 		wchar_t cpt[MAX_LOAD_STRING + 1];
@@ -189,38 +179,6 @@ public:
 		return S_OK;
 	}
 
-	STDMETHOD(GetImageDimsByPath)(BSTR path, BSTR* dims)
-	{
-		int nWidth, nHeight;
-
-		if(U::GetImageDimsByPath(path, &nWidth, &nHeight))
-		{
-			CString format;
-			format.Format(L"%dx%d", nWidth, nHeight);
-			*dims = format.AllocSysString();
-		}
-		else *dims = L"";
-
-		return S_OK;
-	}
-
-	STDMETHOD(GetImageDimsByData)(VARIANT* data, BSTR* dims)
-	{
-		int nWidth, nHeight;
-
-		SAFEARRAY* psa = data->parray;
-		long lUbound;
-
-		if(SafeArrayGetUBound(psa, 1, &lUbound) == S_OK && U::GetImageDimsByData(psa, lUbound, &nWidth, &nHeight))
-		{
-			CString format;
-			format.Format(L"%dx%d", nWidth, nHeight);
-			*dims = format.AllocSysString();
-		}
-		else *dims = L"";
-
-		return S_OK;
-	}
 };
 
 #endif

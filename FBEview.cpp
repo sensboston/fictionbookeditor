@@ -155,8 +155,6 @@ bool CFBEView::CheckCommand(WORD wID)
     return bCall(L"StyleTextAuthor",SelectionStructCon());
   case ID_EDIT_INS_IMAGE:
     return bCall(L"InsImage") && !SelectionStructCode() && !SelectionHasTags(L"SPAN");
-  case ID_EDIT_INS_INLINEIMAGE:
-    return bCall(L"InsInlineImage") && !SelectionStructCode();
   case ID_EDIT_ADD_IMAGE:
     return bCall(L"AddImage", SelectionStructCon()) && !SelectionStructCode() && !SelectionHasTags(L"SPAN");
   case ID_EDIT_ADD_EPIGRAPH:
@@ -394,9 +392,9 @@ bool CFBEView::SplitContainer(bool fCheck)
 
 		title.html.Remove(L'\r');
 		title.html.Remove(L'\n');
+
 		post.html.Remove(L'\r');
 		post.html.Remove(L'\n');
-
 		if(post.html.Find(L"<P>&nbsp;</P>") == 0
 			&& post.html.GetLength() > 13
 			&& fTitle
@@ -594,7 +592,7 @@ static bool	MergeEqualHTMLElements(MSHTML::IHTMLDOMNode *node, MSHTML::IHTMLDocu
 					else
 					{
 						MSHTML::IHTMLElementPtr prevElem(prev);
-						prevElem->innerHTML = prevElem->innerHTML + curelem->innerText;
+						prevElem->innerHTML = prevElem->innerHTML + curelem->innerText;						
 					}
 					cur->removeNode(VARIANT_TRUE);
 					cur = prev;
@@ -603,15 +601,15 @@ static bool	MergeEqualHTMLElements(MSHTML::IHTMLDOMNode *node, MSHTML::IHTMLDocu
 
 				if((bool)next)
 				{
-					MSHTML::IHTMLDOMNodePtr parent = cur->parentNode;
+					MSHTML::IHTMLDOMNodePtr parent;
 					if(next->nodeType == 3)//text
 					{
-						next->nodeValue = (bstr_t)curelem->innerText + next->nodeValue.bstrVal;
+						next->nodeValue = (bstr_t)curelem->innerText + next->nodeValue.bstrVal;						
 					}
 					else
 					{
 						MSHTML::IHTMLElementPtr nextElem(next);
-						nextElem->innerHTML = curelem->innerText + nextElem->innerHTML;
+						nextElem->innerHTML = curelem->innerText + nextElem->innerHTML;						
 					}
 					cur->removeNode(VARIANT_TRUE);
 					cur = parent->firstChild;
@@ -1762,31 +1760,6 @@ LRESULT CFBEView::OnPaste(WORD, WORD, HWND, BOOL&)
 	{
 		m_mk_srv->BeginUndoUnit(L"Paste");
 		++m_enable_paste;
-		
-		// added by SeNS: process clipboard and change nbsp
-		if (_Settings.GetNBSPChar().Compare(L"\u00A0") != 0)
-			if (OpenClipboard())
-			{
-				if ( IsClipboardFormatAvailable(CF_TEXT) || IsClipboardFormatAvailable(CF_UNICODETEXT))
-				{
-					HANDLE hData = GetClipboardData( CF_UNICODETEXT );
-					TCHAR *buffer = (TCHAR*)GlobalLock( hData );
-					CString fromClipboard(buffer);
-					GlobalUnlock( hData );
-
-					fromClipboard.Replace( L"\u00A0", _Settings.GetNBSPChar());
-//					EmptyClipboard();
-
-					HGLOBAL clipbuffer = GlobalAlloc(GMEM_DDESHARE, (fromClipboard.GetLength()+1)*sizeof(TCHAR));
-					buffer = (TCHAR*)GlobalLock(clipbuffer);
-					wcscpy(buffer, fromClipboard);
-					GlobalUnlock( clipbuffer );
-					SetClipboardData(CF_UNICODETEXT, clipbuffer);
-				}
-
-				CloseClipboard();
-			}
-
 		IOleCommandTargetPtr(m_browser)->Exec(&CGID_MSHTML, IDM_PASTE, 0, NULL, NULL);
 		--m_enable_paste;
 		if(m_normalize)
@@ -1812,10 +1785,6 @@ bool CFBEView::DoSearch(bool fMore)
 			m_is_start->raw_select();
 		return true;
 	}
-
-	// added by SeNS
-	if (_Settings.GetNBSPChar().Compare(L"\u00A0") != 0)
-		m_fo.pattern.Replace( L"\u00A0", _Settings.GetNBSPChar());
 
 	return m_fo.fRegexp ? DoSearchRegexp(fMore) : DoSearchStd(fMore);
 }
@@ -2330,12 +2299,20 @@ int CFBEView::GlobalReplace(MSHTML::IHTMLElementPtr elem, CString cntTag)
 	return 0;
 }
 
-int CFBEView::ToolWordsGlobalReplace(	MSHTML::IHTMLElementPtr fbw_body,
-										int* pIndex,
-										int* globIndex,
-										bool find,
-										CString cntTag)
+int CFBEView::ToolWordsGlobalReplace(MSHTML::IHTMLElementPtr fbw_body, CString cntTag)
 {
+	struct pElAdjacent
+	{
+		MSHTML::IHTMLElementPtr elem;
+		_bstr_t innerText;
+
+		pElAdjacent(MSHTML::IHTMLElementPtr pElem)
+		{
+			elem = pElem;
+			innerText = pElem->innerText;
+		}
+	};
+
 	if(m_fo.pattern.IsEmpty())
 		return 0;
 
@@ -2344,19 +2321,18 @@ int CFBEView::ToolWordsGlobalReplace(	MSHTML::IHTMLElementPtr fbw_body,
 	try
 	{
 		AU::RegExp re;
-		CheckError(re.CreateInstance(L"VBScript.RegExp", NULL, CLSCTX_INPROC_SERVER));
+		CheckError(re.CreateInstance(L"VBScript.RegExp"));
 
 		re->IgnoreCase = m_fo.flags & FRF_CASE ? VARIANT_FALSE : VARIANT_TRUE;
 		re->Global = m_fo.flags & FRF_WHOLE ? VARIANT_TRUE : VARIANT_FALSE;
-		re->Multiline = VARIANT_TRUE;
 		re->Pattern = (const wchar_t*)m_fo.pattern;
 
 		MSHTML::IHTMLElementCollectionPtr paras = MSHTML::IHTMLElement2Ptr(fbw_body)->getElementsByTagName(cntTag.AllocSysString());
 		if(!paras->length)
 			return 0;
 
-		int iNextElem = pIndex != NULL ? *pIndex : 0;
-		CSimpleArray<CFBEView::pElAdjacent> pAdjElems;
+		int iNextElem = 0;
+		CSimpleArray<pElAdjacent> pAdjElems;
 
 		while(iNextElem < paras->length)
 		{
@@ -2365,9 +2341,6 @@ int CFBEView::ToolWordsGlobalReplace(	MSHTML::IHTMLElementPtr fbw_body,
 			MSHTML::IHTMLElementPtr currElem(paras->item(iNextElem));
 			CString innerText = currElem->innerText;
 			pAdjElems.Add(pElAdjacent(currElem));
-
-			if(pIndex != NULL)
-				*pIndex = iNextElem;
 
 			MSHTML::IHTMLDOMNodePtr currNode(currElem);
 			if(MSHTML::IHTMLElementPtr siblElem = currNode->nextSibling)
@@ -2379,7 +2352,6 @@ int CFBEView::ToolWordsGlobalReplace(	MSHTML::IHTMLElementPtr fbw_body,
 					if(siblElem == nextElem)
 					{
 						pAdjElems.Add(pElAdjacent(siblElem));
-						innerText += L"\n";
 						innerText += siblElem->innerText.GetBSTR();
 						iNextElem++;
 						siblElem = MSHTML::IHTMLDOMNodePtr(nextElem)->nextSibling;
@@ -2390,7 +2362,6 @@ int CFBEView::ToolWordsGlobalReplace(	MSHTML::IHTMLElementPtr fbw_body,
 					}
 				}
 			}
-			innerText += L"\n";
 
 			if(innerText.IsEmpty())
 			{
@@ -2412,7 +2383,7 @@ int CFBEView::ToolWordsGlobalReplace(	MSHTML::IHTMLElementPtr fbw_body,
 				AU::ReMatch cur(rm->Item[i]);
 
 				long matchIdx = cur->FirstIndex;
-				long matchLen = cur->Length - 1;
+				long matchLen = cur->Length;
 
 				long pAdjLen = 0;
 				bool begin = false, end = false;
@@ -2420,7 +2391,7 @@ int CFBEView::ToolWordsGlobalReplace(	MSHTML::IHTMLElementPtr fbw_body,
 
 				for(int b = 0; b < pAdjElems.GetSize(); ++b)
 				{
-					int pElemLen = pAdjElems[b].innerText.length() + 1;
+					int pElemLen = pAdjElems[b].innerText.length();
 
 					if(!pElemLen)
 						continue;
@@ -2444,7 +2415,7 @@ int CFBEView::ToolWordsGlobalReplace(	MSHTML::IHTMLElementPtr fbw_body,
 				int skip = 0;
 				while(skip < first)
 				{
-					matchIdx -= (pAdjElems[skip].innerText.length() + 1);
+					matchIdx -= (pAdjElems[skip].innerText.length());
 					skip++;
 				}
 
@@ -2456,91 +2427,39 @@ int CFBEView::ToolWordsGlobalReplace(	MSHTML::IHTMLElementPtr fbw_body,
 					icat++;
 				}
 
-				if(find)
+				newCont.Delete(matchIdx, matchLen);
+				newCont.Insert(matchIdx, m_fo.replacement);
+
+				pAdjElems[first].innerText = newCont.AllocSysString();
+				pAdjElems[first].elem->innerText = pAdjElems[first].innerText;
+
+				for(int c = first + 1; c <= last; ++c)
 				{
-					if(i == rm->Count - 1)
-					{
-						(*globIndex) = -1;
-						(*pIndex) += (pAdjElems.GetSize());
-					}
-					else
-						(*globIndex)++;
-
-					if(*globIndex > i)
-					{
-						(*globIndex)--;
-						continue;
-					}
-
-					MSHTML::IHTMLTxtRangePtr found(Document()->selection->createRange());
-					found->moveToElementText(pAdjElems[first].elem);
-					found->moveStart(L"character", matchIdx);
-					found->collapse(TRUE);
-					int diff = last - first;
-					found->moveEnd(L"character", matchLen);
-					found->select();
-
-					return 0;
+					MSHTML::IHTMLDOMNodePtr(pAdjElems[c].elem)->removeNode(VARIANT_TRUE);
+					iNextElem--;
 				}
-				else
+
+				for(int c = first + 1; c < last; ++c)
+					pAdjElems.RemoveAt(c);
+
+
+				CString again;
+				for(int c = 0; c < pAdjElems.GetSize(); ++c)
 				{
-					MSHTML::IHTMLTxtRangePtr found(Document()->selection->createRange());
-					found->moveToElementText(pAdjElems[first].elem);
-					found->moveStart(L"character", matchIdx);
-					found->collapse(TRUE);
-					int diff = last - first;
-					found->moveEnd(L"character", matchLen);
-					found->select();
-					CString strRepl;
-					GetDlgItem(IDC_WORDS_FR_EDIT_REPL).GetWindowText(strRepl);
-
-					found->text = L"";
-					found->text = m_fo.replacement.AllocSysString();
-
-					newCont.Delete(matchIdx, matchLen - (last - first));
-					newCont.Insert(matchIdx, m_fo.replacement);
-
-					pAdjElems[first].innerText = newCont.AllocSysString();
-					//pAdjElems[first].elem->innerText = pAdjElems[first].innerText;
-
-					for(int c = first + 1; c <= last; ++c)
-					{
-					//	MSHTML::IHTMLDOMNodePtr(pAdjElems[c].elem)->removeNode(VARIANT_TRUE);
-						iNextElem--;
-					}
-
-					for(int c = first + 1; c < last; ++c)
-						pAdjElems.RemoveAt(c);
-
-					if(nRepl >= m_fo.replNum)
-						goto stop;
-
-					CString again;
-					for(int c = 0; c < pAdjElems.GetSize(); ++c)
-					{
-						//pAdjElems[c].innerText = pAdjElems[c].elem->innerText;
-						again += pAdjElems[c].innerText.GetBSTR();
-						again += L"\n";
-					}
-
-					rm = re->Execute(again.AllocSysString());
-					i--;
-
-					nRepl++;
+					//pAdjElems[c].innerText = pAdjElems[c].elem->innerText;
+					again += pAdjElems[c].innerText.GetBSTR();
 				}
+
+				rm = re->Execute(again.AllocSysString());
+				i--;
+
+				nRepl++;
 			}
 
 			iNextElem++;
 		}
 
-stop:
 		re.Release();
-
-		if(find)
-		{
-			Document()->selection->empty();
-			return -1;
-		}
 	}
 	catch (_com_error& err)
 	{
@@ -2613,15 +2532,14 @@ LRESULT CFBEView::OnFind(WORD, WORD, HWND, BOOL&)
 	return 0;
 }
 
-LRESULT CFBEView::OnReplace(WORD, WORD, HWND, BOOL&)
-{
-	m_fo.pattern = (const wchar_t *)Selection();
-	if(!m_replace_dlg)
-		m_replace_dlg = new CViewReplaceDlg(this);
+LRESULT  CFBEView::OnReplace(WORD, WORD, HWND, BOOL&) {
+  m_fo.pattern=(const wchar_t *)Selection();
+  if(!m_replace_dlg)
+	  m_replace_dlg = new CViewReplaceDlg(this);
 
-	if(!m_replace_dlg->IsValid())
-		m_replace_dlg->ShowDialog(*this);
-	return 0;
+  if(!m_replace_dlg->IsValid())
+	  m_replace_dlg->ShowDialog(*this);
+  return 0;
 }
 
 LRESULT  CFBEView::OnFindNext(WORD, WORD, HWND, BOOL&) {
@@ -2724,11 +2642,9 @@ void  CFBEView::Init() {
       ii->value=L"FB Tools";
   }
 
-  // added by SeNS
-  m_elementsNum = Document()->all->length;
-
   // turn off browser's d&d
   m_browser->RegisterAsDropTarget=VARIANT_FALSE;
+
   m_initialized=true;
 }
 
@@ -2760,73 +2676,44 @@ void  CFBEView::OnSelChange(IDispatch *evt) {
     m_cur_sel.Release();
 }
 
-VARIANT_BOOL  CFBEView::OnContextMenu(IDispatch *evt)
-{
-	MSHTML::IHTMLEventObjPtr oe(evt);
-	oe->cancelBubble = VARIANT_TRUE;
-	oe->returnValue = VARIANT_FALSE;
-	if(!m_normalize)
-	{
-		MSHTML::IHTMLElementPtr elem(oe->srcElement);
-		if(!(bool)elem)
-			return VARIANT_TRUE;
-		if(U::scmp(elem->tagName,L"INPUT") && U::scmp(elem->tagName, L"TEXTAREA"))
-			return VARIANT_TRUE;
-	}
+VARIANT_BOOL  CFBEView::OnContextMenu(IDispatch *evt) {
+  MSHTML::IHTMLEventObjPtr    oe(evt);
+  oe->cancelBubble=VARIANT_TRUE;
+  oe->returnValue=VARIANT_FALSE;
+  if (!m_normalize) {
+    MSHTML::IHTMLElementPtr   elem(oe->srcElement);
+    if (!(bool)elem)
+      return VARIANT_TRUE;
+    if (U::scmp(elem->tagName,L"INPUT") && U::scmp(elem->tagName,L"TEXTAREA"))
+      return VARIANT_TRUE;
+  }
+  // display custom context menu here
+  CMenu	  menu;
+  menu.CreatePopupMenu();
+  menu.AppendMenu(MF_STRING,ID_EDIT_UNDO,_T("&Undo"));
+  menu.AppendMenu(MF_SEPARATOR);
+  menu.AppendMenu(MF_STRING,ID_EDIT_CUT,_T("Cu&t"));
+  menu.AppendMenu(MF_STRING,ID_EDIT_COPY,_T("&Copy"));
+  menu.AppendMenu(MF_STRING,ID_EDIT_PASTE,_T("&Paste"));
+  if (m_normalize) {
+    menu.AppendMenu(MF_SEPARATOR);
+    MSHTML::IHTMLElementPtr   cur(SelectionContainer());
+    int			      cmd=ID_SEL_BASE;
+	while ((bool)cur && U::scmp(cur->tagName,L"BODY") && U::scmp(cur->id, L"fbw_body")) {
+      menu.AppendMenu(MF_STRING,cmd,_T("Select ")+GetPath(cur));
+      cur=cur->parentElement;
+      ++cmd;
+    }
+  }
 
-	// display custom context menu here
-	CMenu menu;
-	CString itemName;
+  AU::TRACKPARAMS   tp;
+  tp.hMenu=menu;
+  tp.uFlags=TPM_LEFTALIGN|TPM_TOPALIGN|TPM_RIGHTBUTTON;
+  tp.x=oe->screenX;
+  tp.y=oe->screenY;
+  ::SendMessage(m_frame,AU::WM_TRACKPOPUPMENU,0,(LPARAM)&tp);
 
-	menu.CreatePopupMenu();
-	menu.AppendMenu(MF_STRING,ID_EDIT_UNDO,_T("&Undo"));
-	menu.AppendMenu(MF_SEPARATOR);
-
-	itemName.LoadString(IDS_CTXMENU_CUT);
-	menu.AppendMenu(MF_STRING, ID_EDIT_CUT, itemName);
-
-	itemName.LoadString(IDS_CTXMENU_COPY);
-	menu.AppendMenu(MF_STRING, ID_EDIT_COPY, itemName);
-
-	itemName.LoadString(IDS_CTXMENU_PASTE);
-	menu.AppendMenu(MF_STRING, ID_EDIT_PASTE, itemName);
-
-	if(m_normalize)
-	{
-		menu.AppendMenu(MF_SEPARATOR);
-		MSHTML::IHTMLElementPtr cur(SelectionContainer());
-		MSHTML::IHTMLElementPtr initial(cur);
-		int cmd = ID_SEL_BASE;
-		itemName.LoadString(IDS_CTXMENU_SELECT);
-
-		while((bool)cur && U::scmp(cur->tagName,L"BODY") && U::scmp(cur->id, L"fbw_body"))
-		{
-			menu.AppendMenu(MF_STRING, cmd, itemName + L" " + GetPath(cur));
-			cur = cur->parentElement;
-			++cmd;
-		}
-		if(U::scmp(initial->className, L"image") == 0)
-		{
-			MSHTML::IHTMLImgElementPtr image = MSHTML::IHTMLDOMNodePtr(initial)->firstChild;
-			CString src = image->src.GetBSTR();
-			src.Delete(src.Find(L"fbw-internal:"), 13);
-			if(src != L"#undefined")
-			{
-				menu.AppendMenu(MF_SEPARATOR);
-				itemName.LoadString(IDS_CTXMENU_IMG_SAVEAS);
-				menu.AppendMenu(MF_STRING, ID_SAVEIMG_AS, itemName);
-			}
-		}
-	}
-
-	AU::TRACKPARAMS tp;
-	tp.hMenu = menu;
-	tp.uFlags = TPM_LEFTALIGN | TPM_TOPALIGN | TPM_RIGHTBUTTON;
-	tp.x = oe->screenX;
-	tp.y = oe->screenY;
-	::SendMessage(m_frame, AU::WM_TRACKPOPUPMENU, 0, (LPARAM)&tp);
-
-	return VARIANT_TRUE;
+  return VARIANT_TRUE;
 }
 
 LRESULT CFBEView::OnSelectElement(WORD, WORD wID, HWND, BOOL&) {
@@ -3239,57 +3126,6 @@ LRESULT CFBEView::OnEditInsertTable(WORD wNotifyCode, WORD wID, HWND hWndCtl)
 		bool bTitle = dlg.m_bTitle;
 		InsertTable(false,bTitle,nRows);
 	}
-	return 0;
-}
-
-LRESULT CFBEView::OnEditInsImage(WORD, WORD cmdID, HWND, BOOL&)
-{
-	bool bInline = (cmdID != ID_EDIT_INS_IMAGE);
-	
-	if(_Settings.GetInsImageAsking())
-	{
-		CAddImageDlg imgDialog;
-		imgDialog.DoModal(*this);
-	}
-
-	if(!_Settings.GetIsInsClearImage())
-	{
-		CFileDialogEx dlg(
-			TRUE,
-			NULL,
-			NULL,
-			OFN_FILEMUSTEXIST | OFN_HIDEREADONLY | OFN_PATHMUSTEXIST | OFN_NOCHANGEDIR,
-			L"FBE supported (*.jpg;*.jpeg;*.png)\0*.jpg;*.jpeg;*.png\0JPEG (*.jpg)\0*.jpg\0PNG (*.png)\0*.png\0Bitmap (*.bmp"\
-			L")\0*.bmp\0GIF (*.gif)\0*.gif\0TIFF (*.tif)\0*.tif\0\0"
-			);
-
-		wchar_t dlgTitle[MAX_LOAD_STRING + 1];
-		::LoadString(_Module.GetResourceInstance(), IDS_ADD_IMAGE_FILEDLG, dlgTitle, MAX_LOAD_STRING);
-		dlg.m_ofn.lpstrTitle = dlgTitle;
-		dlg.m_ofn.nFilterIndex = 1;
-
-		if(dlg.DoModal(*this) == IDOK)
-		{
-			AddImage(dlg.m_szFileName, bInline);
-		}
-	}
-	else
-	{
-		try {
-			if (bInline)
-			{
-				MSHTML::IHTMLDOMNodePtr node(Call(L"InsInlineImage"));
-			}
-			else
-			{
-				MSHTML::IHTMLDOMNodePtr node(Call(L"InsImage"));
-				if (node)
-					BubbleUp(node,L"DIV");
-			}
-		}
-		catch (_com_error&) { }
-	}
-
 	return 0;
 }
 
@@ -3871,92 +3707,4 @@ bool CFBEView::SelectionHasTags(wchar_t* elem)
 	}
 
 	return false;
-}
-
-BSTR CFBEView::PrepareDefaultId(const CString& filename){
-
-	// prepare a default id
-	int cp = filename.ReverseFind(_T('\\'));
-	if (cp < 0)
-		cp = 0;
-	else
-		++cp;
-	CString   newid;
-	TCHAR	    *ncp=newid.GetBuffer(filename.GetLength()-cp);
-	int	    newlen=0;
-	while (cp<filename.GetLength()) {
-		TCHAR   c=filename[cp];
-		if ((c>=_T('0') && c<=_T('9')) ||
-			(c>=_T('A') && c<=_T('Z')) ||
-			(c>=_T('a') && c<=_T('z')) ||
-			c==_T('_') || c==_T('.'))
-			ncp[newlen++]=c;
-		++cp;
-	}
-	newid.ReleaseBuffer(newlen);
-	if (!newid.IsEmpty() && !(
-		(newid[0]>=_T('A') && newid[0]<=_T('Z')) ||
-		(newid[0]>=_T('a') && newid[0]<=_T('z')) ||
-		newid[0]==_T('_')))
-		newid.Insert(0,_T('_'));
-	return newid.AllocSysString();
-}
-
-// images
-void CFBEView::AddImage(const CString& filename, bool bInline)
-{
-	_variant_t args[4];
-
-	V_BSTR(&args[3]) = filename.AllocSysString();
-	V_VT(&args[3]) = VT_BSTR;
-
-	HRESULT hr;
-	if(FAILED(hr = U::LoadFile(filename, &args[0])))
-	{
-		U::ReportError(hr);
-		return;
-	}
-
-	// Prepare a default ID
-	int cp = filename.ReverseFind(_T('\\'));
-	if (cp < 0)
-		cp = 0;
-	else
-		++cp;
-
-	V_BSTR(&args[2]) = PrepareDefaultId(filename);
-	V_VT(&args[2]) = VT_BSTR;
-
-	// Try to find out mime type
-	V_BSTR(&args[1]) = U::GetMimeType(filename).AllocSysString();
-	V_VT(&args[1]) = VT_BSTR;
-
-	// Stuff the thing into JavaScript
-	try
-	{
-		CComDispatchDriver body(Script());
-		_variant_t checkedId;
-		hr = body.InvokeN(L"apiAddBinary", args, 4, &checkedId);
-
-		if(FAILED(hr))
-			U::ReportError(hr);
-
-		hr = body.Invoke0(L"FillCoverList");
-
-		if(FAILED(hr))
-			U::ReportError(hr);
-
-		_variant_t check(false);
-		if (bInline)
-			hr = body.Invoke2(L"InsInlineImage", &check, &checkedId);
-		else
-			hr = body.Invoke2(L"InsImage", &check, &checkedId);
-		if (FAILED(hr))
-			U::ReportError(hr);
-
-		MSHTML::IHTMLDOMNodePtr node(NULL);
-		if(node)
-			BubbleUp(node, L"DIV");
-	}
-	catch (_com_error&) { }
 }

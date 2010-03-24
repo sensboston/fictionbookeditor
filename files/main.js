@@ -1,6 +1,5 @@
 
-window.onerror = errorHandler; // document.lvl=0;
-var ImagesInfo = new Array();
+ window.onerror = errorHandler; // document.lvl=0;
 
 //======================================
 // Public API
@@ -27,178 +26,113 @@ function apiGetBinary(id)
 // Adds a binary object.
 // Don't forget to call FillCoverList() when you have finished adding objects!
 
-function apiAddBinary(fullpath, id, type, data)
+function apiAddBinary(id, type, data)
 {
-	// check if this id already exists
-	var idx = 0;
-	var curid = id;
-	var bo = document.all.binobj.getElementsByTagName("DIV");
+  // check if this id already exists
+  var idx=0;
+  var curid = id;
+  var bo = document.all.binobj.getElementsByTagName("DIV");
 
-	for(;;)
-	{
-		var found = false;
-		for(var i = 0; i < bo.length; i++)
-			if(bo[i].all.id.value == curid)
-			{
-				found = true;
-				break;
-			}
+  for(;;)
+  {
+    var found = false;
+    for(var i=0; i < bo.length; i++)
+      if (bo[i].all.id.value == curid)
+      {
+        found = true;
+        break;
+      }
 
-		if(!found) break;
+    if (!found) break;
 
-		curid = id + "_" + idx;
-		idx++;
-	}
+    curid = id + "_" + idx;
+    idx++;
+  }
 
-	var div = document.createElement("DIV");
+  var div = document.createElement("DIV");
 
-	div.innerHTML = '<button id="del" ' +
-					'onmouseover="HighlightBorder(this.parentNode, true, \'solid\', \'2px\', \'#FF0000\');" ' +
-					'onmouseout="HighlightBorder(this.parentNode, false);" ' +
-					'onclick="Remove(this.parentNode);" unselectable="on">&#x72;</button>';
-	if(type.search("image") != -1)
-	{
-		imghref = "fbw-internal:#" + curid;
-		div.innerHTML += '<button id="show"' +
-		'onmouseover="ShowPrevImage(\'' + imghref + '\');"' +
-		'onmouseout="HidePrevImage();"' +
-		'onclick="ShowFullImage(\'' + imghref + '\');"' +
-		'unselectable="on">&#x4e;</button>';
-	}
+  div.innerHTML = '<button id="del" onclick="Remove(this.parentNode)" unselectable="on">&#x72;</button>';
+  if (type.search("image") != -1)
+  {
+    imghref = "fbw-internal:#" + curid;
+    div.innerHTML += '<button ' +
+                    'onmouseover="showPrevImage(\'' + imghref + '\');" ' + 
+                    /*'onmousemove="showPrevImage(\'' + imghref + '\');" ' +*/
+                    'onmouseout="hidePrevImage();" ' +
+                    'onclick="ShowFullImage(\'' + imghref + '\');"' +
+                    'unselectable="on">&#x4e;</button>';   
+  }
+  div.innerHTML += '<label unselectable="on">ID:</label><input type="text" maxlength="256" id="id" style="width:20em;"><label unselectable="on">Type:</label><input type="text" style="width:8em;" maxlength="256" id="type" value="">';
+  div.innerHTML += '<label unselectable="on">Size:</label><input type="text" disabled id="size" style="width:5em;" value="' + window.external.GetBinarySize(data) + '">';
 
-	div.innerHTML += '<label unselectable="on">ID:</label><input type="text" maxlength="256" id="id" style="width:20em;"><label unselectable="on">Type:</label><input type="text" style="width:8em;" maxlength="256" id="type" value="">';
-	div.innerHTML += '<label unselectable="on">Size:</label><input type="text" disabled id="size" style="width:5em;" value="' + window.external.GetBinarySize(data) + '">';
+  div.all.id.value = curid;
+  div.all.type.value = type;
+  div.base64data = data;
 
-	if(type.search("image") != -1)
-	{
-		var Dims;
+  document.all.binobj.appendChild(div);
+  // PutSpacers(document.all.binobj);
 
-		if(fullpath != "")
-			Dims = window.external.GetImageDimsByPath(fullpath);
-		else
-			Dims = window.external.GetImageDimsByData(data);
-
-		if(Dims != "")
-			{
-				var imgWidth = Dims.substring(0, Dims.search("x"));
-				var imgHeight = Dims.substring(Dims.search("x") + 1, Dims.length);
-				div.innerHTML += '<label unselectable="on">w*h:</label><input type="text" disabled id="dims" style="width:6em;" value="' + imgWidth +'x' + imgHeight + '">';
-				
-				var ImageInfo = new Object();
-				ImageInfo.src = imghref;
-				ImageInfo.id = curid;
-				ImageInfo.width = imgWidth;
-				ImageInfo.height = imgHeight;
-				
-				ImagesInfo.push(ImageInfo);
-			}
-	}
-
-	div.all.id.value = curid;
-	div.all.type.value = type;
-	div.base64data = data;
-
-	document.all.binobj.appendChild(div);
-	// PutSpacers(document.all.binobj);
-
-	return curid;
+  return curid;
 }
 
-function GetImageData(id)
-{
-	var bo = document.all.binobj.getElementsByTagName("DIV");
-	for(var i = 0; i < bo.length; i++)
-	{
-		if(bo[i].all.id.value == id)
-			return bo[i].base64data;
-	}
+function showPrevImage(source)
+{  
+  var prevImgPanel = document.getElementById("prevImgPanel");
+  var prevImg = document.getElementById("prevImg");
 
-	return;
-}
+  if(!prevImgPanel || !prevImg) return;
 
-function HighlightBorder(element, override, style, width, color)
-{
-	if(!element ||!element.style)
-		return;
+  /*if(window.external.IsFastMode())
+  {    
+    return;
+  }*/
+  
+  image = new Image();
+  image.src = "";
+  image.src = source;    
+    
+  coordX = event.clientX;
+  coordY = event.clientY;
+  
+  var scrollX = 0;
+  var scrollY = 0;
+  if ( document.body && ( document.body.scrollTop || document.body.scrollLeft ))
+  {
+    scrollX += document.body.scrollLeft;
+    scrollY += document.body.scrollTop;
+  }
 
-	if(override)
-	{
-		element.style.border = style + " " + width + " " + color;
-	}
-	else
-		element.style.border = "";
-}
-
-function ShowPrevImage(source)
-{
-	var prevImgPanel = document.getElementById("prevImgPanel");
-	var prevImg = document.getElementById("prevImg");
-
-	if(!prevImgPanel || !prevImg) return;
-
-	// Shouldn't be shown in Fast mode.
-	/*if(window.external.IsFastMode())
-		return;
-	}*/
-
-	var idx = -1;
-	for(i = 0; i < ImagesInfo.length; ++i)
-	{
-		if(ImagesInfo[i].src == source)
-		{
-			idx = i;
-			break;
-		}
-	}
-
-	if(idx == -1)
-		return;
-
-	var imgWidth = ImagesInfo[idx].width;
-	var imgHeight = ImagesInfo[idx].height;
-
-	var btnHeight = event.srcElement.offsetHeight;
-	
-	coordX = event.clientX;
-	coordY = event.clientY;
-
-	var scrollX = 0;
-	var scrollY = 0;
-	if(document.documentElement && (document.documentElement.scrollTop || document.documentElement.scrollLeft))
-	{
-		scrollX += document.documentElement.scrollLeft;
-		scrollY += document.documentElement.scrollTop;
-	}
-
-	var winWidth = 0;;
-	var winHeight = 0;
-	if (document.documentElement && document.documentElement.clientWidth && document.documentElement.clientHeight)
-	{
-		winWidth = document.documentElement.clientWidth;
-		winHeight = document.documentElement.clientHeight;
-	}
-
-	var place = "top";
-	var baseWidth = coordX;
-	if(baseWidth > (winWidth - coordX))
-		baseWidth = winWidth - coordX;
-
-	baseWidth = baseWidth*2;
-
-	var baseHeight = coordY;
-	if(baseHeight < (winHeight - coordY))
-	{
-		baseHeight =  winHeight - coordY;
-		place = "bottom";
-	}
-	
-	baseHeight -= btnHeight;
-
+  var winWidth = 0;
+  var winHeight = 0;
+  if (document.body && document.body.clientWidth && document.body.clientHeight)
+  {
+    winWidth = document.body.clientWidth;
+    winHeight = document.body.clientHeight;
+  }
+  
+  var place = "top";
+  var baseWidth = coordX;
+  if(baseWidth > (winWidth - coordX))
+    baseWidth =  winWidth - coordX;
+    
+  baseWidth = baseWidth*2 - 20;
+  
+  var baseHeight = coordY;
+  if(baseHeight < (winHeight - coordY))
+  {
+    baseHeight =  winHeight - coordY;
+    place = "bottom";
+  }
+  baseHeight -= 10;
+    
+  var imgWidth = image.width;
+  var imgHeight = image.height;
+  
   var ratio;
   if (baseWidth < 200)
   {
     ratio = 200/baseWidth;
-    baseWidth = 200;
+    baseWidth = 200;    
     baseHeight *= ratio;
   }
     
@@ -209,7 +143,7 @@ function ShowPrevImage(source)
      scaleTo = "height";
      ratio = baseHeight/imgHeight;
   }
-
+      
   if(imgWidth > baseWidth || imgHeight > baseHeight)
   {
     switch (scaleTo)
@@ -222,8 +156,8 @@ function ShowPrevImage(source)
           ratio = baseHeight/imgHeight;
           imgHeight = baseHeight;
           imgWidth = ratio * imgWidth;
-        }
-      break;
+        }    
+      break;      
       case "height":
         imgHeight = baseHeight;
         imgWidth = ratio * imgWidth;
@@ -231,41 +165,44 @@ function ShowPrevImage(source)
         {
           ratio = baseWidth/imgWidth;
           imgWidth = baseWidth;
-          imgHeight = ratio * imgHeight;
-        }
+          imgHeight = ratio * imgHeight; 
+        }           
       break;
     }
   }
 
-	prevImg.src = source;
-	prevImg.width = imgWidth ;
-	prevImg.height = imgHeight;
-
-	prevImgPanel.style.left = (coordX + scrollX - Math.round(imgWidth/2)) + "px";
-	switch(place)
-	{
-	case "top":
-		prevImgPanel.style.top = (coordY + scrollY - Math.round(imgHeight) - btnHeight) + "px";
-		break;
-	case "bottom":
-		prevImgPanel.style.top = (coordY + scrollY + btnHeight) + "px";
-		break;
-	}
-
-	setTimeout('prevImgPanel.style.visibility = "visible"', 500);
+  prevImg.src = source;
+  prevImg.width = imgWidth ;
+  prevImg.height = imgHeight;
+    
+  prevImgPanel.style.left = (coordX + scrollX - Math.round(imgWidth/2)) + "px";
+  switch(place)
+  {
+    case "top":
+      prevImgPanel.style.top = (coordY + scrollY - Math.round(imgHeight) - 10) + "px";
+    break;   
+    case "bottom":
+      prevImgPanel.style.top = (coordY + scrollY + 10) + "px";
+    break;
+  }  
+    
+  // That let image to be loaded into rendered <img> (for huge images).
+  setTimeout('prevImgPanel.style.visibility = "visible";', 500);
 }
 
-function HidePrevImage()
+function hidePrevImage()
 {
-	var prevImgPanel = document.getElementById("prevImgPanel");
-	var prevImg = document.getElementById("prevImg");
+  var prevImgPanel = document.getElementById("prevImgPanel");
+  var prevImg = document.getElementById("prevImg");
 
-	if(!prevImgPanel || !prevImg) return;
-
-	prevImg.src = "";
-	prevImg.width = 0;
-	prevImg.height = 0;
-	prevImgPanel.style.visibility = "hidden";
+  if(!prevImgPanel || !prevImg) return;
+  
+  prevImgPanel.style.visibility = "hidden";
+  prevImg.src = "";
+  prevImg.width = 0;
+  prevImg.height = 0;
+  prevImgPanel.style.left = 0;
+  prevImgPanel.style.top = 0;  
 }
 
 function ShowFullImage(source)
@@ -298,31 +235,27 @@ function ShowFullImage(source)
 function LoadXSL(path, lang)
 {
 	var xslt = new ActiveXObject("Msxml2.XSLTemplate.4.0");
-	var xsl = new ActiveXObject("Msxml2.FreeThreadedDOMDocument.4.0");
-	xsl.async = false;
+	var xsl  = new ActiveXObject("Msxml2.FreeThreadedDOMDocument.4.0"); xsl.async=false;
 	var proc;
-
-	xsl.load(path);
-	var doc = xsl.documentElement;
+	
+	xsl.load(path); 
+	var doc = xsl.documentElement;	
 	var imp = doc.firstChild;
-
+	
 	var ats = imp.attributes;
 	var href = ats.getNamedItem("href");
 	if(lang == "russian")
 		href.nodeValue = "rus.xsl";
 	if(lang == "english")
-	    href.nodeValue = "eng.xsl";
-	if (lang == "ukrainian")
-	    href.nodeValue = "ukr.xsl";
-		
-
+		href.nodeValue = "eng.xsl";
+	
 	if(xsl.parseError.errorCode)
-	{
-		errCantLoad(xsl, path); 
+	{ 
+		errCantLoad(xsl,path); 
 		return false; 
 	}
-
-	xslt.stylesheet = xsl;
+	
+	xslt.stylesheet=xsl;
 	return xslt;
 }
 
@@ -396,15 +329,6 @@ function XmlFromText(text)
 	return xml;
 }
 
-function recursiveChangeNbsp(elem, repChar) {
- var el=elem;
- while (el) {
-  if (el.nodeType==3) el.nodeValue=el.nodeValue.replace(/\u00A0/g, repChar);
-  if (el.nodeType==1 && el.firstChild) recursiveChangeNbsp(el.firstChild, repChar);
-  el=el.nextSibling;
- }
-}
-
 function apiLoadFB2(path, lang)
 {
 	var css=document.getElementById("css");
@@ -420,7 +344,7 @@ function apiLoadFB2(path, lang)
 		errCantLoad(xml, path);
 		return false; 
 	}
-
+	
 	pi = xml.firstChild;
 	var encoding;
 	if (pi) 
@@ -436,28 +360,6 @@ function apiLoadFB2(path, lang)
 			}
 		}
 	}
-    
-        if (window.external.GetNBSP())
-        {
-    	    var nbspChar=window.external.GetNBSP();
-    	    
-    	    if (nbspChar != "\u00A0")
-    	    {
-                var el=xml.firstChild;
-
-                while (el && el.nodeName!="FictionBook") el=el.nextSibling;
-        
-                if (el && el.firstChild) 
-                {
-                    el=el.firstChild;
-                    while (el) 
-                    {
-                        if (el.nodeName=="body") recursiveChangeNbsp(el, nbspChar);
-                        el=el.nextSibling;
-                    }
-                }
-            } 
-        }
 
 	if (!LoadFromDOM(xml, lang))
 	{
@@ -475,7 +377,7 @@ function apiLoadFB2(path, lang)
 	}
 	else
 	{
-		id.value=id.value; // ???????? ????????? ????????. ??? ???? ??????? ??? ?????? ??? ???????? ?????????? ????? ?????? ????, ??? ???????? ? ????? ?????????.
+		id.value=id.value; // странное поведение браузера. Ѕез этой строчки дл€ только что открытых документов можно делать анду, что приводит к краху программы.
 	}
 	
 
@@ -484,6 +386,7 @@ function apiLoadFB2(path, lang)
 	
 	return encoding;
 }
+
 
 function apiShowDesc(state)
 {
@@ -526,15 +429,6 @@ function apiGetClassName(path)
 		return;
 	script.src="file:///"+path; 
 	return GetClassName();
-}
-
-function apiGetTitle(path)
-{
-	var script=document.getElementById("userCmd"); 
-	if(!script) 
-		return;
-	script.src="file:///"+path;
-	return GetTitle();
 }
 
 function apiProcessCmd(path)
@@ -896,31 +790,15 @@ function dClone(obj)
 
 function Remove(obj)
 {
-	var pic_id = "";
+ var pic_id="";
 
-	if(obj.base64data != null) // this is a binary object
-	{
-		if(obj.all.type.value.search("image") != -1)
-		{
-			var idx = -1;
-			for(i = 0; i < ImagesInfo.length; ++i)
-			{
-				if(ImagesInfo[i].id == obj.all.id.value)
-				{
-					idx = i;
-					break;
-				}
-			}
+ if(obj.base64data!=null) // this is a binary object
+ {
+  var inpts=obj.getElementsByTagName("input");
 
-			if(idx != -1)
-				ImagesInfo.splice(idx, 1);
-		}
-		
-		var inpts = obj.getElementsByTagName("input");
-
-		if(inpts[0].id=="id") pic_id = inpts[0].value; else
-		if(inpts[1].id=="id") pic_id = inpts[1].value;
-	}
+  if(inpts[0].id=="id") pic_id=inpts[0].value; else
+  if(inpts[1].id=="id") pic_id=inpts[1].value;
+ }
 
  // delete 
 
@@ -1450,7 +1328,7 @@ function PutBinaries(doc)
    if(nerr++<3) MsgBox("Invalid base64 data for "+id);  continue;
   }
 
-  apiAddBinary("", id, bl[i].getAttribute("content-type"),dt);
+  apiAddBinary(id,bl[i].getAttribute("content-type"),dt);
  }
 
  if(nerr>3){ nerr-=3; MsgBox(nerr+" more invalid images ignored"); }
@@ -1641,152 +1519,50 @@ function IsCode(cp)
   {
     if(cp.tagName == "SPAN" && cp.className == "code")
       return true;
-    cp = cp.parentElement;
+    cp = cp.parentElement;    
   }
   return false;
 }
 
-function TextIntoHTML(s) {
- if (!s) return "";
- var re0=new RegExp("&");
- var re0_="&amp;"; 
- var re1=new RegExp("<","g");
- var re1_="&lt;";
- var re2=new RegExp(">","g");
- var re2_="&gt;";
- return s.replace(re0,re0_).replace(re1,re1_).replace(re2,re2_);
-}
-
-function AddTitle(cp, check)
+function AddTitle(cp,check)
 {
-  if(!cp)
-    return;
+ if(!cp) return;
 
-  if(cp.tagName == "P")
-    cp = cp.parentElement;
+ if(cp.tagName=="P") cp=cp.parentElement;
 
-  if(cp.tagName != "DIV")
-    return;
+ if(cp.tagName!="DIV") return;
 
-  if(cp.className != "body" && cp.className != "section" && cp.className != "stanza" && cp.className != "poem")
-    return;
+ if(cp.className!="body" && cp.className!="section" && cp.className!="stanza" && cp.className!="poem") return;
 
-  var np = cp.firstChild;
-  if(np)
-  {
-    if(cp.className == "body" && np.tagName == "DIV" && np.className == "image")
-      np = np.nextSibling;
-    if(np.tagName == "DIV" && np.className == "title")
-      return;
-  }
+ var np=cp.firstChild;
+ if(np)
+ {
+  if(cp.className=="body" && np.tagName=="DIV" && np.className=="image") np=np.nextSibling;
+  if(np.tagName=="DIV" && np.className=="title") return;
+ }
 
-  var sel = document.selection.createRange();
-  if (sel)
-    if (sel.text)
-      if(cp.innerText.length < sel.text.length)
-        return;
+ if(check) return true;
 
-  if(check)
-    return true;
+ window.external.BeginUndoUnit(document,"add title");
 
-  window.external.BeginUndoUnit(document, "add title");
+ var div=document.createElement("DIV");
+ div.className="title";
+ var seltext = document.selection.createRange();
+ var pp=document.createElement("P");
+ if(seltext.text != "")
+   pp.innerText = seltext.text;
+ else
+   window.external.inflateBlock(pp)=true;
+ div.appendChild(pp);
+ InsBefore(cp,np,div);
+ 
+ if(seltext.text != "")
+   seltext.pasteHTML("");
 
-  var div = document.createElement("DIV");
-  div.className = "title";
+ window.external.EndUndoUnit(document);
 
-  targ = np.tagName;
-  full = (sel.text == cp.innerText);
-
-  var del = false;
-
-  if(sel.text != "")
-  {
-    if(sel.htmlText.indexOf("<DIV") == -1)
-    {
-      div.innerHTML = "<P>"+TextIntoHTML(sel.text).replace(/\r+\n/gi,"</P><P>")+"</P>";
-      del = true;
-    }
-  } else {
-   var pp = document.createElement("P");   
-   pp.innerText="";
-   window.external.inflateBlock(pp) = true;   
-   div.appendChild(pp);   
-  }
-
-  InsBefore(cp, np, div);
-
-  if(full)
-  {
-//    var nps = np.nextSibling;
-//    while(nps)
-//    {
-//      nps.removeNode(true);
-//      nps = np.nextSibling;
-//    }
-
-//    switch(targ)
-//    {
-//      case "P":
-//        np.innerText = "";
-//        break;
-//      case "DIV":
-//        while(np)
-//        {
-//          var nps = np.nextSibling;
-//          while(nps)
-//          {
-//            nps.removeNode(true);
-//            nps = np.nextSibling;
-//          }
-
-//          if(np.tagName == "P")
-//          {
-//            var nps = np.nextSibling;
-//            while(nps)
-//            {
-//              nps.removeNode(true);
-//              nps = np.nextSibling;
-//            }
-//            np.innerText = "";
-//            window.external.inflateBlock(np) = true;
-//            break;
-//          }
-//          else
-//            np = np.firstChild;
-//        }
-
-//        if(cp.className == "body")
-//        {
-//          cp = cp.firstChild.nextSibling;
-//          while(np.parentElement && np.parentElement != cp)
-//          {
-//            np.parentElement.removeNode(false);
-//          }
-//        }
-//        else if(cp.className == "section")
-//        {
-//          while(np.parentElement && np.parentElement != cp)
-//          {
-//            np.parentElement.removeNode(false);
-//          }
-//        }
-//        break;
-//    }
-  }
-  else if(del)
-  {
-    sel.text = "";
-  }
-
-  sel = document.selection.createRange();
-  sel.moveToElementText(div);
-  sel.select();
-  sel.collapse(false);
-  sel.select();
-
-  window.external.EndUndoUnit(document);
+ GoTo(div);
 }
-
 //-----------------------------------------------
 
 function AddBody(check)
@@ -1888,37 +1664,6 @@ function InsImage(check, id)
   rng.pasteHTML(imgcode);
  else
   rng.pasteHTML("<DIV onresizestart='return false' contentEditable='false' class='image' href='#"+id+"'><IMG src='fbw-internal:#"+id+"'></DIV>");
- window.external.EndUndoUnit(document);
-
- return rng.parentElement;
-}
-//-----------------------------------------------
-
-var inlineimgcode="<SPAN onresizestart='return false' contentEditable='false' class='image' href='#undefined'><IMG src='fbw-internal:#undefined'></SPAN>";
-
-function InsInlineImage(check, id)
-{
- var rng=document.selection.createRange();
-
- if(!rng || !("compareEndPoints" in rng)) return;
-
- if(rng.compareEndPoints("StartToEnd",rng)!=0)
- {
-  rng.collapse(true); if(rng.move("character",1)==1) rng.move("character",-1);
- }
-
-/* var pe=rng.parentElement(); while(pe && pe.tagName!="DIV") pe=pe.parentElement;
-
- if(!pe || pe.className!="section") return;*/
-
- if(check) return true;
-
- window.external.BeginUndoUnit(document,"insert inline image");
- if(id=="")
-  rng.pasteHTML(inlineimgcode);
- else
-     rng.pasteHTML("<SPAN onresizestart='return false' contentEditable='false' class='image' href='#" + id + "'><IMG src='fbw-internal:#" + id + "'></SPAN>");
-  
  window.external.EndUndoUnit(document);
 
  return rng.parentElement;
@@ -2329,9 +2074,9 @@ function ShowElement(id, show)
 	}
 }
 
-function ShowElementsMenu(button)
+function ShowElementsMenu(buttton)
 {
-	var elem_id = window.external.DescShowMenu(button, window.event.screenX, window.event.screenY);
+	var elem_id = window.external.DescShowMenu(buttton, window.event.screenX, window.event.screenY);
 	if(elem_id)
 		ShowElement(elem_id, !window.external.GetExtendedStyle(elem_id));
 }

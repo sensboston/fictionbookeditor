@@ -8,15 +8,7 @@
 #include "FBDoc.h"
 #include "Words.h"
 
-#include "Settings.h"
-
-extern CSettings _Settings;
-
 #define IMG_LIST_DIMS 16
-#define MAKEDWORDLONG(a,b) ((DWORDLONG)(((DWORD)(a))|(((DWORDLONG)((DWORD)(b)))<<32)))
-
-static const wchar_t* pattern = L"%s( |\\n)*-( |\\n)*%s(?:[^A-Za-zР-пр-џ])";
-
 enum
 {
 	NORMAL = 0,
@@ -186,10 +178,7 @@ public:
 				break;
 			case VK_OEM_PLUS:
 				if(isCtrl)
-					::SendMessage(GetParent(), WM_COMMAND, MAKELPARAM(IDC_BUTTON_ADDHLTOEXCLS, BN_CLICKED), NULL);
-				break;
-			case VK_F3:
-					::SendMessage(GetParent(), WM_COMMAND, MAKELPARAM(IDC_WORDS_FR_BTN_FIND, BN_CLICKED), NULL);
+					::SendMessage(GetParent(), WM_COMMAND, IDC_BUTTON_ADDHLTOEXCLS, NULL);
 				break;
 			}
 		}
@@ -205,10 +194,7 @@ public:
 	}
 };
 
-static HWND lv_hWnd;
-
-class CWordsDlg :	public CDialogImpl<CWordsDlg>,
-					public CWinDataExchange<CWordsDlg>
+class CWordsDlg: public CDialogImpl<CWordsDlg>
 {
 public:
 	enum { IDD = IDD_WORDS };
@@ -219,39 +205,14 @@ public:
 	CSimpleArray<FB::Doc::Word>& m_words;
 	CSimpleArray<FB::Doc::Word> m_excl_words;
 	int m_sort;
+	DWORD m_ct;
 	bool m_showhide_excls;
 
 	CButton m_btn_showhide_excls;
 	CButton m_btn_addsel_excls;
 	CButton m_btn_chec_kall;
 
-	WINDOWPLACEMENT wpl;
-
-	// Index for current top-selected word for DDXed find-replace controls
-	int m_sel_idx;
-
-	struct FRContext
-	{
-		int iPIndex;
-		int iWIndex;
-		int iGlobIndex;
-	} m_fr_context;
-
-	FB::Doc& m_doc;
-	CButton btnFRFind, btnFRRepl;
-	bool m_single_repl;
-
-	int m_dlg_min_w, m_dlg_min_h;
-	int m_dlg_prev_h;
-
-	DWORD m_ct;
-
-	CWordsDlg(CSimpleArray<FB::Doc::Word>& words, FB::Doc& document) : m_words(words),
-													m_sort(0),
-													m_showhide_excls(_Settings.GetShowWordsExcls()),
-													m_doc(document),
-													m_single_repl(false),
-													m_ct(0)
+	CWordsDlg(CSimpleArray<FB::Doc::Word>& words) : m_words(words), m_sort(0), m_ct(0), m_showhide_excls(_Settings.GetShowWordsExcls())
 	{
 		if(!_Settings.GetShowWordsExcls())
 		{
@@ -261,14 +222,10 @@ public:
 					m_words.RemoveAt(i--);
 			}
 		}
-
-		m_sel_idx = m_words.GetSize() ? 0 : -1;
 	}
 
 	BEGIN_MSG_MAP(CWordsDlg)
 		MESSAGE_HANDLER(WM_INITDIALOG, OnInitDialog)
-		MESSAGE_HANDLER(WM_DESTROY, OnDestroy)
-		MESSAGE_HANDLER(WM_SIZE, OnSize)
 
 		COMMAND_HANDLER(IDC_REDIT, EN_KILLFOCUS, OnEditLoseFocus)
 		COMMAND_HANDLER(IDC_CHECK_SHOWHIDE_EXCLS, BN_CLICKED, OnBnClickedCheckShowhideExcls)
@@ -278,8 +235,6 @@ public:
 		COMMAND_HANDLER(IDC_BUTTON_SETHLREPL, BN_CLICKED, OnBnClickedButtonSethlrepl)
 		COMMAND_HANDLER(IDC_BUTTON_REMOVEHLREPL, BN_CLICKED, OnBnClickedButtonRemovehlrepl)
 		COMMAND_HANDLER(IDC_BUTTON_SELALL2, BN_CLICKED, OnBnClickedButtonSelallrepl)
-		COMMAND_HANDLER(IDC_WORDS_FR_BTN_FIND, BN_CLICKED, OnBnClickedWordsFrBtnFind)
-		COMMAND_HANDLER(IDC_WORDS_FR_BTN_REPL, BN_CLICKED, OnBnClickedWordsFrBtnRepl)
 
 		COMMAND_ID_HANDLER(IDOK, OnOK)
 		COMMAND_ID_HANDLER(IDCANCEL, OnCancel)
@@ -288,37 +243,9 @@ public:
 		NOTIFY_HANDLER(IDC_WLIST, LVN_COLUMNCLICK, OnListSort)
 		NOTIFY_HANDLER(IDC_WLIST, NM_CLICK, OnListClick)
 		NOTIFY_HANDLER(IDC_WLIST, LVN_ITEMCHANGED, OnListChanged)
-		NOTIFY_HANDLER(IDC_WLIST, LVN_ODSTATECHANGED, OnODStateChanged)
 
 		NOTIFY_CODE_HANDLER(NM_CUSTOMDRAW, OnCustomDraw)
 	END_MSG_MAP()
-
-	BEGIN_DDX_MAP(CWordsDlg)
-		if(m_sel_idx != -1)
-		{
-			DDX_TEXT(IDC_WORDS_FR_EDIT_WORD, m_words[m_sel_idx].word)
-			DDX_TEXT(IDC_WORDS_FR_EDIT_REPL, m_words[m_sel_idx].replacement)
-
-			m_fr_context.iWIndex = m_sel_idx;
-
-			CString strFRFind;
-			strFRFind.LoadString(IDS_WORDS_FR_BTN_FIND0);
-
-			btnFRFind.SetWindowText(strFRFind);
-			btnFRFind.EnableWindow(TRUE);
-		}
-		else
-		{
-			DDX_TEXT(IDC_WORDS_FR_EDIT_WORD, L"")
-			DDX_TEXT(IDC_WORDS_FR_EDIT_REPL, L"")
-
-			btnFRFind.EnableWindow(FALSE);
-			btnFRRepl.EnableWindow(FALSE);
-		}
-
-		m_fr_context.iGlobIndex = -1;
-		m_fr_context.iPIndex = 0;
-	END_DDX_MAP()
 
 	int GetWordLen(CString text)
 	{
@@ -387,27 +314,6 @@ public:
 
 		m_edit = GetDlgItem(IDC_REDIT);
 
-		::lv_hWnd = m_lv.m_hWnd;
-
-		RECT defRect;
-		GetClientRect(&defRect);
-
-		m_dlg_min_w = defRect.right - defRect.left;
-		m_dlg_min_h = 255;
-		m_dlg_prev_h = defRect.bottom - defRect.top;
-
-		if(_Settings.GetWordsDlgPosition(wpl))
-		{
-			SetWindowPlacement(&wpl);
-			GetClientRect(&defRect);
-			m_dlg_prev_h = defRect.bottom - defRect.top;
-		}
-
-		btnFRFind = GetDlgItem(IDC_WORDS_FR_BTN_FIND);
-		btnFRRepl = GetDlgItem(IDC_WORDS_FR_BTN_REPL);
-
-		DoDataExchange(FALSE);
-
 		return 0;
 	}
 
@@ -419,9 +325,6 @@ public:
 			return 0;
 
 		FB::Doc::Word* w = &m_words[ni->item.iItem];
-
-		m_sel_idx = m_lv.GetSelectedIndex();
-		DoDataExchange(FALSE);
 
 		if(ni->item.mask & LVIF_TEXT)
 		{
@@ -477,39 +380,6 @@ public:
 	LRESULT OnListChanged(int id, NMHDR* hdr, BOOL&)
 	{
 		m_ct = ::GetTickCount();
-
-		if(!m_words.GetSize())
-		{
-			m_sel_idx = -1;
-			DoDataExchange(FALSE);
-			return 0;
-		}
-
-		NMLISTVIEW* lv = (NMLISTVIEW*) hdr;
-		if(lv->uNewState & LVIS_SELECTED)
-		{
-			m_sel_idx = lv->iItem;
-		}
-
-		DoDataExchange(FALSE);
-
-		return 0;
-	}
-
-	LRESULT OnODStateChanged(int id, NMHDR* hdr, BOOL&)
-	{
-		if(!m_words.GetSize())
-		{
-			m_sel_idx = -1;
-			DoDataExchange(FALSE);
-			return 0;
-		}
-
-		NMLVODSTATECHANGE* lvsc = (NMLVODSTATECHANGE*)hdr;
-
-		m_sel_idx = lvsc->iTo;
-		DoDataExchange(FALSE);
-
 		return 0;
 	}
 
@@ -646,13 +516,11 @@ public:
 	{
 		NMITEMACTIVATE* ai =( NMITEMACTIVATE*)hdr;
 
-		if(/*(::GetTickCount() - m_ct) < 300 ||*/ ai->iItem < 0)
+		if(ai->iItem < 0)
 			return 0;
 
 		m_editidx = ai->iItem;
 		FB::Doc::Word* pw = &m_words[m_editidx];
-
-		m_sel_idx = m_editidx;
 
 		switch(ai->iSubItem)
 		{
@@ -767,12 +635,6 @@ public:
 						lvCd->clrTextBk = RGB(255, 150, 150);
 					else
 						lvCd->clrTextBk = cd->dwItemSpec & 1 ? RGB(255, 255, 200) : RGB(255, 255, 220);
-
-					if(m_lv.GetItemState(cd->dwItemSpec, LVIS_SELECTED) == LVIS_SELECTED)
-					{
-						lvCd->clrText = RGB(255, 255, 255);
-						lvCd->clrTextBk = RGB(10, 36, 106);
-					}
 				}
 				return CDRF_NOTIFYSUBITEMDRAW;
 			case CDDS_ITEMPREPAINT | CDDS_SUBITEM:
@@ -784,9 +646,6 @@ public:
 						lvCd->clrText = RGB(0, 0, 0);
 					else
 						lvCd->clrText = ::GetSysColor(COLOR_GRAYTEXT);// system gray color for unspecified default replacement
-
-					if(m_lv.GetItemState(cd->dwItemSpec, LVIS_SELECTED) == LVIS_SELECTED)
-						lvCd->clrText = RGB(255, 255, 255);
 
 					return CDRF_NOTIFYPOSTPAINT;
 				}
@@ -808,9 +667,8 @@ public:
 			m_words[m_editidx].replacement = U::GetWindowText(m_edit);
 			m_words[m_editidx].flags |= HASREPL;
 			m_edit.ShowWindow(SW_HIDE);
-
+			
 			m_lv.SetItemState(m_editidx, !LVIS_SELECTED, LVIS_SELECTED); // protects from UI-visible selection of LVC row
-
 			return 0;
 		}
 
@@ -864,12 +722,6 @@ public:
 
 		m_lv.SetItemCount(m_words.GetSize());
 		m_lv.Invalidate();
-
-		if(!m_words.GetSize())
-		{
-			m_sel_idx = -1;
-			DoDataExchange(FALSE);
-		}
 
 		return 0;
 	}
@@ -946,149 +798,9 @@ public:
 
 		return 0;
 	}
-
-	LRESULT OnDestroy(UINT, WPARAM, LPARAM, BOOL&)
-	{
-		GetWindowPlacement(&wpl);
-		_Settings.SetWordsDlgPosition(wpl);
-
-		return 0;
-	}
-
-	static BOOL CALLBACK EnumChildProc(HWND hWnd, LPARAM lParam)
-	{
-		int diff_h = lParam;
-
-		CWindow dlgFrame = ::GetParent(hWnd);
-		if(dlgFrame == ::lv_hWnd)
-			return TRUE;
-
-		CWindow wndChild = hWnd;
-		RECT rectChild;
-		wndChild.GetWindowRect(&rectChild);
-
-		dlgFrame.ScreenToClient(&rectChild);
-
-		if(hWnd != ::lv_hWnd && dlgFrame != ::lv_hWnd)
-		{
-			rectChild.top += diff_h;
-			rectChild.bottom += diff_h;
-		}
-		else if(hWnd == ::lv_hWnd)
-		{
-			rectChild.bottom += diff_h;
-		}
-
-		wndChild.MoveWindow(&rectChild);
-		dlgFrame.Invalidate();
-
-		return TRUE;
-	}
-
-	LRESULT OnSize(UINT, WPARAM wParam, LPARAM lParam, BOOL&)
-	{
-		RECT newRect, newClientRect;
-		GetWindowRect(&newRect);
-		GetClientRect(&newClientRect);
-
-		if(newClientRect.right - newClientRect.left != m_dlg_min_w)
-			newRect.right = newRect.left + m_dlg_min_w + 2*::GetSystemMetrics(SM_CXSIZEFRAME);
-		if(newClientRect.bottom - newClientRect.top < m_dlg_min_h)
-			newRect.bottom = newRect.top + m_dlg_min_h + 2*::GetSystemMetrics(SM_CYSIZEFRAME) + ::GetSystemMetrics(SM_CYMENU);
-
-		MoveWindow(&newRect);
-
-		GetClientRect(&newRect);
-		int diff_h = (newRect.bottom - newRect.top) - m_dlg_prev_h;
-		m_dlg_prev_h = newRect.bottom - newRect.top;
-
-		if(diff_h != 0)
-			::EnumChildWindows(m_hWnd, EnumChildProc, diff_h);
-
-		return 0;
-	}
-
-	LRESULT OnBnClickedWordsFrBtnFind(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/)
-	{
-		if(::GetFocus() != btnFRFind)
-		{
-			::SetFocus(btnFRFind);
-			btnFRFind.UpdateWindow();
-		}
-
-		MSHTML::IHTMLDocument3Ptr doc = m_doc.m_body.Document();
-
-		// Construct a search pattern
-		int hyp = m_words[m_fr_context.iWIndex].word.Find(L'-');
-		CString re;
-		re.Format(	pattern,
-			m_words[m_fr_context.iWIndex].word.Left(hyp),
-			m_words[m_fr_context.iWIndex].word.Right(m_words[m_fr_context.iWIndex].word.GetLength() - hyp - 1));
-
-		int res = m_doc.m_body.ReplaceToolWordsRe(
-										re,
-										m_words[m_fr_context.iWIndex].replacement,
-										doc->getElementById(L"fbw_body"),
-										false,
-										L"P",
-										&m_fr_context.iPIndex,
-										&m_fr_context.iGlobIndex);
-
-		CString strFRFind;
-
-		if(res != -1)
-		{
-			strFRFind.LoadString(IDS_WORDS_FR_BTN_FIND1);
-			btnFRRepl.EnableWindow(TRUE);
-		}
-		else
-		{
-			strFRFind.LoadString(IDS_WORDS_FR_BTN_FIND0);
-			btnFRRepl.EnableWindow(FALSE);
-
-			m_fr_context.iPIndex = 0;
-			m_fr_context.iGlobIndex = -1;
-		}
-
-		m_single_repl = !res;
-		btnFRFind.SetWindowText(strFRFind);
-
-		return 0;
-	}
-
-	LRESULT CWordsDlg::OnBnClickedWordsFrBtnRepl(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/)
-	{
-		if(m_single_repl)
-		{
-			MSHTML::IHTMLTxtRangePtr range = m_doc.m_body.Document()->selection->createRange();
-			CString strRepl;
-			GetDlgItem(IDC_WORDS_FR_EDIT_REPL).GetWindowText(strRepl);
-
-			range->text = L"";
-			range->text = strRepl.AllocSysString();
-			range->moveStart(L"character", -strRepl.GetLength());
-			range->select();
-
-			if(--m_words[m_sel_idx].count == 0)
-			{
-				m_words.RemoveAt(m_sel_idx);
-				m_lv.SetItemCount(m_words.GetSize());
-
-				m_sel_idx = -1;
-				DoDataExchange(FALSE);
-			}
-
-			m_fr_context.iGlobIndex = --m_fr_context.iGlobIndex < -1 ? -1 : m_fr_context.iGlobIndex;
-			btnFRRepl.EnableWindow(FALSE);
-		}
-
-		m_single_repl = false;
-
-		return 0;
-	}
 };
 
-bool ShowWordsDialog(FB::Doc& document, HWND parent)
+bool ShowWordsDialog(FB::Doc& document)
 {
 	int i,j;
 
@@ -1142,24 +854,17 @@ bool ShowWordsDialog(FB::Doc& document, HWND parent)
 		}
 	}
 
-	CWordsDlg dlg(hwords, document);
-	if(dlg.DoModal(parent) != IDOK)
+	CWordsDlg dlg(hwords);
+	if(dlg.DoModal() != IDOK)
 		return false;
 
 	// Replace words
 	int nRepl = 0, nTried = 0;
 	bool doUndo = false;
-	CWindow mainframe = dlg.GetParent();
-
 	for(i = 0; i < hwords.GetSize(); ++i)
 	{
 		if(!(hwords[i].flags & HASREPL))
 			continue;
-		else if(hwords[i].word == hwords[i].replacement)
-		{
-			nTried++;
-			continue;
-		}
 		else
 		{
 			if(!doUndo)
@@ -1174,7 +879,7 @@ bool ShowWordsDialog(FB::Doc& document, HWND parent)
 		// Construct a search pattern
 		int hyp = hwords[i].word.Find(L'-');
 		CString re;
-		re.Format(	pattern,
+		re.Format(L"%s( |\\n|\\r\\n)*-( |\\n|\\r\\n)*%s",
 					hwords[i].word.Left(hyp),
 					hwords[i].word.Right(hwords[i].word.GetLength() - hyp - 1));
 
@@ -1182,17 +887,10 @@ bool ShowWordsDialog(FB::Doc& document, HWND parent)
 
 		CWaitCursor hourglass;
 		int nWordRepl = 0;
-
-		nWordRepl += document.m_body.ReplaceToolWordsRe(re,
-														hwords[i].replacement,
-														doc->getElementById(L"fbw_body"),
-														true,
-														L"P",
-														NULL,
-														NULL,
-														hwords[i].count);
-
-		hwords.RemoveAt(i--);
+		while(nWordRepl < hwords[i].count) // that is hack because of unknown reason of wrong innerText value during active dynamic replace
+		{
+			nWordRepl += document.m_body.ReplaceToolWordsRe(re, hwords[i].replacement, doc->getElementById(L"fbw_body"), L"P");
+		}
 
 		nRepl += nWordRepl;
 	}

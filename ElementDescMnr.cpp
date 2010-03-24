@@ -336,15 +336,7 @@ void CElementDescMnr::CleanUpAll()
 	}
 }
 
-void CElementDescMnr::CleanTree()
+bool CElementDescMnr::IsInitedStEDs()
 {
-	for(int i = 0; i < m_EDs.GetSize(); i++)
-	{
-		m_EDs[i]->CleanUp();
-		m_EDs[i]->SetViewInTree(false);
-	}
-	for(int i = 0; i < m_stEDs.GetSize(); i++)
-	{
-		m_stEDs[i]->SetViewInTree(false);
-	}
+	return m_initedStEDs;
 }

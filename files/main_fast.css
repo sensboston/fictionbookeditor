@@ -30,6 +30,9 @@ div#fbw_desc div.float
    top: 0;
    left: 0;
    background: white;
+   border: 2px solid black;
+   margin: 2px 2px 2px 2px;
+   padding: 2px 2px 2px 2px;
 }
 
 div#fbw_desc button{
@@ -268,14 +271,5 @@ div#fbw_body div.hider{
 	margin: 0;
 	padding: 0;
 	width: 100%;
-}
-span.image{
-	text-indent: 0em;
-	margin: 0;
-	padding: 0;
-	border: none;
-	overflow: hidden;
-	clear: both;
-	text-align: center;
 }
 

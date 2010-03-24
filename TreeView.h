@@ -116,7 +116,6 @@ public:
 	LRESULT OnBegindrag(int idCtrl, LPNMHDR mhdr, BOOL& bHandled);
 
 	CTreeItem GetFirstSelectedItem();
-	CTreeItem GetLastSelectedItem();
 	CTreeItem GetNextSelectedItem(CTreeItem item);
 	CTreeItem GetPrevSelectedItem(CTreeItem	item);
 
