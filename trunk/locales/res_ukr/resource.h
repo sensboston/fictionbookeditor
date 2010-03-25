@@ -238,6 +238,7 @@
 #define IDC_SPELL_IGNOREALL             276
 #define IDS_SPELLCHECK_CONTINUE         277
 #define IDS_SPELL_CONTINUE              277
+#define IDS_HOTKEY_EDIT_INSERT_INLINEIMAGE    278
 #define IDS_LANG_UKRAINIAN              300
 #define IDC_SPELL_REPLACE               500
 #define ID_VER_ADVANCE                  550
@@ -400,6 +401,7 @@
 #define ID_EDIT_ADD_BODY                32818
 #define ID_EDIT_CLONE                   32819
 #define ID_EDIT_INS_IMAGE               32820
+#define ID_EDIT_INS_INLINEIMAGE         32821
 #define ID_FILE_VALIDATE                32822
 #define ID_EDIT_ADD_EPIGRAPH            32824
 #define ID_EDIT_ADD_IMAGE               32827
@@ -449,7 +451,6 @@
 #define ID_DT_DELETE32903               32903
 #define ID_SAVEIMG_AS                   32904
 #define ID_TOOLS_SPELLCHECK             32905
-#define ID_EDIT_INS_INLINEIMAGE         32906
 #define IDS_ENCODINGS                   61403
 #define IDS_DOCUMENT_TREE_CAPTION       61404
 

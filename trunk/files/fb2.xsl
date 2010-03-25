@@ -78,6 +78,11 @@
 			<legend unselectable="on" class="top"><xsl:value-of select="$IDS_BINARY_OBJ"/></legend>
 			<br/>
 		</fieldset>
+		
+        <fieldset unselectable="on">
+         <legend unselectable="on" class="top">Таблица стилей</legend>
+         <textarea id="stylesheetId" rows="10"><xsl:value-of select="/f:FictionBook/f:stylesheet"/></textarea>
+        </fieldset>
 	</xsl:template>
 
   <xsl:template match="/" mode="body">
@@ -734,6 +739,6 @@
       </xsl:for-each>
     </div>
   </xsl:template>
-
+  
   </xsl:stylesheet>
 

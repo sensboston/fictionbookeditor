@@ -1777,10 +1777,12 @@ LRESULT CFBEView::OnPaste(WORD, WORD, HWND, BOOL&)
 		++m_enable_paste;
 		
 		// added by SeNS: process clipboard and change nbsp
-		if (_Settings.GetNBSPChar().Compare(L"\u00A0") != 0)
-			if (OpenClipboard())
+		if (OpenClipboard())
+		{
+			// process text
+			if ( IsClipboardFormatAvailable(CF_TEXT) || IsClipboardFormatAvailable(CF_UNICODETEXT))
 			{
-				if ( IsClipboardFormatAvailable(CF_TEXT) || IsClipboardFormatAvailable(CF_UNICODETEXT))
+				if (_Settings.GetNBSPChar().Compare(L"\u00A0") != 0)
 				{
 					HANDLE hData = GetClipboardData( CF_UNICODETEXT );
 					TCHAR *buffer = (TCHAR*)GlobalLock( hData );
@@ -1796,9 +1798,29 @@ LRESULT CFBEView::OnPaste(WORD, WORD, HWND, BOOL&)
 					GlobalUnlock( clipbuffer );
 					SetClipboardData(CF_UNICODETEXT, clipbuffer);
 				}
-
-				CloseClipboard();
 			}
+			// process bitmaps from clipboard
+			else if ( IsClipboardFormatAvailable(CF_BITMAP))
+			{
+				HBITMAP hBitmap = (HBITMAP)GetClipboardData(CF_BITMAP);
+				TCHAR szPathName[MAX_PATH] = { 0 };
+				TCHAR szFileName[MAX_PATH] = { 0 };
+				if (::GetTempPath(sizeof(szPathName)/sizeof(TCHAR), szPathName))
+					if (::GetTempFileName(szPathName, L"img", ::GetTickCount(), szFileName))
+					{
+						CString fileName(szFileName);
+						fileName.Replace(L".tmp", L".png");
+
+						CImage image; 
+						image.Attach(hBitmap); 
+						image.Save(fileName, Gdiplus::ImageFormatPNG);
+
+						AddImage(fileName, true);
+						::DeleteFile(fileName);
+					}
+			}
+			CloseClipboard();
+		}
 
 		IOleCommandTargetPtr(m_browser)->Exec(&CGID_MSHTML, IDM_PASTE, 0, NULL, NULL);
 		--m_enable_paste;
@@ -3257,6 +3279,7 @@ LRESULT CFBEView::OnEditInsertTable(WORD wNotifyCode, WORD wID, HWND hWndCtl)
 
 LRESULT CFBEView::OnEditInsImage(WORD, WORD cmdID, HWND, BOOL&)
 {
+	// added by SeNS
 	bool bInline = (cmdID != ID_EDIT_INS_IMAGE);
 	
 	if(_Settings.GetInsImageAsking())
@@ -3288,6 +3311,7 @@ LRESULT CFBEView::OnEditInsImage(WORD, WORD cmdID, HWND, BOOL&)
 	}
 	else
 	{
+		// added by SeNS
 		try {
 			if (bInline)
 			{

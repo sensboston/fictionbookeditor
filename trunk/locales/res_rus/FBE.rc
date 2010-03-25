@@ -95,6 +95,7 @@ BEGIN
         MENUITEM SEPARATOR
         MENUITEM "А&втор",                      ID_EDIT_ADD_TA
         MENUITEM "&Рисунок",                    ID_EDIT_INS_IMAGE
+        MENUITEM "Рисунок в т&екст",            ID_EDIT_INS_INLINEIMAGE
         MENUITEM "&Стихи",                      ID_EDIT_INS_POEM
         MENUITEM "&Цитата",                     ID_EDIT_INS_CITE
         MENUITEM "Та&блица",                    ID_INSERT_TABLE
@@ -537,6 +538,7 @@ BEGIN
     SEPARATOR
     BUTTON      ID_EDIT_ADDBINARY
     BUTTON      ID_EDIT_INS_IMAGE
+    BUTTON      ID_EDIT_INS_INLINEIMAGE
     SEPARATOR
     BUTTON      ID_EDIT_FIND
     BUTTON      ID_EDIT_FINDNEXT
@@ -588,6 +590,7 @@ BEGIN
     BUTTON      ID_EDIT_UNDO
     BUTTON      ID_EDIT_REDO
     BUTTON      ID_EDIT_INS_IMAGE
+    BUTTON      ID_EDIT_INS_INLINEIMAGE
     BUTTON      ID_EDIT_ADD_IMAGE
     BUTTON      ID_STYLE_LINK
     BUTTON      ID_STYLE_NOTE
@@ -830,6 +833,7 @@ BEGIN
     ID_EDIT_ADD_BODY        "Добавить новое тело документа\nДобавить тело"
     ID_EDIT_CLONE           "Клонировать контейнер\nКлонировать"
     ID_EDIT_INS_IMAGE       "Вставить изображение на месте курсора\nВставить изображение"
+    ID_EDIT_INS_INLINEIMAGE "Вставить изображение в текст на месте курсора\nВставить изображение в текст"
     ID_FILE_VALIDATE        "Проверить документ на соответствие формату Fiction Book\nПроверить"
     ID_EDIT_ADD_EPIGRAPH    "Добавить эпиграф к выделенному фрагменту\nДобавить эпиграф"
     ID_EDIT_ADD_IMAGE       "Добавить изображение\nДобавить изображение"
@@ -871,6 +875,7 @@ BEGIN
     IDS_HOTKEY_EDIT_INCREMENTAL_SEARCH "Инкрементальный поиск"
     IDS_HOTKEY_EDIT_INSERT_CITE "Вставить цитату"
     IDS_HOTKEY_EDIT_INSERT_IMAGE "Вставить изображение"
+    IDS_HOTKEY_EDIT_INSERT_INLINEIMAGE "Вставить изображение в текст"
     IDS_HOTKEY_EDIT_INSERT_POEM "Вставить поэму"
     IDS_HOTKEY_EDIT_ITALIC  "Курсив"
     ID_VIEW_SOURCE          "Перейти к коду\nПерейти к коду"

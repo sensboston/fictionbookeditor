@@ -70,5 +70,7 @@ library FBELib
 	[id(17), helpstring("method GetImageDimsByPath")] HRESULT GetImageDimsByPath([in] BSTR path, [out, retval] BSTR* dims);
 	[id(18), helpstring("method GetImageDimsByData")] HRESULT GetImageDimsByData([in] VARIANT* data, [out, retval] BSTR* dims);
 	[id(19), helpstring("method GetNBSP")] HRESULT GetNBSP([out, retval] BSTR *name);
+	[id(20), helpstring("method GetViewWidth")] HRESULT GetViewWidth([out, retval] int *width);
+	[id(21), helpstring("method GetViewHeight")] HRESULT GetViewHeight([out, retval] int *height);
   };
 };

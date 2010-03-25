@@ -452,7 +452,8 @@ BOOL CMainFrame::OnIdle()
 		bool fCanCC = m_source.SendMessage(SCI_GETSELECTIONSTART) != m_source.SendMessage(SCI_GETSELECTIONEND);
 		UIEnable(ID_EDIT_COPY, fCanCC);
 		UIEnable(ID_EDIT_CUT, fCanCC);
-		UIEnable(ID_EDIT_PASTE, m_source.SendMessage(SCI_CANPASTE));
+		// Added by SeNS: process bitmap paste
+		UIEnable(ID_EDIT_PASTE, (bool)m_source.SendMessage(SCI_CANPASTE) | BitmapInClipboard());
 
 		if(m_source.SendMessage(SCI_CANUNDO))
 		{
@@ -564,6 +565,9 @@ BOOL CMainFrame::OnIdle()
 		UIUpdateViewCmd(view, ID_GOTO_REFERENCE);
 		UIUpdateViewCmd(view, ID_EDIT_MERGE);
 		UIUpdateViewCmd(view, ID_EDIT_REMOVE_OUTER_SECTION);
+
+		// Added by SeNS: process bitmap paste
+		UIEnable(ID_EDIT_PASTE, BitmapInClipboard());
 
 		if (m_sel_changed && /*GetCurView()*/m_current_view != DESC)
 		{
@@ -918,11 +922,6 @@ BOOL CMainFrame::OnIdle()
 		}
 	}
 	else UIEnable(ID_TOOLS_SPELLCHECK, false, true);
-
-	// temporary disable inline images
-#ifndef _DEBUG
-	UIEnable(ID_EDIT_INS_INLINEIMAGE, false, true);
-#endif
 
 	// update UI
 	UIUpdateToolBar();

@@ -464,6 +464,7 @@ BEGIN
     SEPARATOR
     BUTTON      ID_EDIT_ADDBINARY
     BUTTON      ID_EDIT_INS_IMAGE
+    BUTTON      ID_EDIT_INS_INLINEIMAGE
     SEPARATOR
     BUTTON      ID_EDIT_FIND
     BUTTON      ID_EDIT_FINDNEXT
@@ -515,6 +516,7 @@ BEGIN
     BUTTON      ID_EDIT_UNDO
     BUTTON      ID_EDIT_REDO
     BUTTON      ID_EDIT_INS_IMAGE
+    BUTTON      ID_EDIT_INS_INLINEIMAGE
     BUTTON      ID_EDIT_ADD_IMAGE
     BUTTON      ID_STYLE_LINK
     BUTTON      ID_STYLE_NOTE
@@ -750,6 +752,7 @@ BEGIN
     IDS_HOTKEY_EDIT_INCREMENTAL_SEARCH "Incremental search"
     IDS_HOTKEY_EDIT_INSERT_CITE "Insert cite"
     IDS_HOTKEY_EDIT_INSERT_IMAGE "Insert image"
+    IDS_HOTKEY_EDIT_INSERT_INLINEIMAGE "Insert inline image"
     IDS_HOTKEY_EDIT_INSERT_POEM "Insert poem"
     IDS_HOTKEY_EDIT_ITALIC  "Italic"
     ID_VIEW_SOURCE          "Show document source code\nSource"
@@ -779,6 +782,7 @@ BEGIN
     ID_EDIT_ADD_BODY        "Add a new body to the document\nAdd body"
     ID_EDIT_CLONE           "Clone selected object\nClone"
     ID_EDIT_INS_IMAGE       "Insert an image at cursor\nInsert image"
+    ID_EDIT_INS_INLINEIMAGE "Insert an inline image at cursor\nInsert inline image"
     ID_FILE_VALIDATE        "Validate current document against FictionBook schema\nValidate"
     ID_EDIT_ADD_EPIGRAPH    "Add epigraph to selected object\nAdd epigraph"
     ID_EDIT_ADD_IMAGE       "Add an image to the selected object\nAdd image"
@@ -1097,7 +1101,6 @@ END
 STRINGTABLE 
 BEGIN
     ID_TOOLS_SPELLCHECK     "Check document spelling...\nCheck document spelling"
-    ID_EDIT_INS_INLINEIMAGE "Insert inline image"
 END
 
 #endif    // English (U.S.) resources

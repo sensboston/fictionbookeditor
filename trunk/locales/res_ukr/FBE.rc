@@ -95,6 +95,7 @@ BEGIN
         MENUITEM SEPARATOR
         MENUITEM "А&втор",                      ID_EDIT_ADD_TA
         MENUITEM "&Малюнок",                    ID_EDIT_INS_IMAGE
+        MENUITEM "Малюнок у т&ексті",           ID_EDIT_INS_INLINEIMAGE
         MENUITEM "&Вірш",                       ID_EDIT_INS_POEM
         MENUITEM "&Цитата",                     ID_EDIT_INS_CITE
         MENUITEM "Та&блиця",                    ID_INSERT_TABLE
@@ -537,6 +538,7 @@ BEGIN
     SEPARATOR
     BUTTON      ID_EDIT_ADDBINARY
     BUTTON      ID_EDIT_INS_IMAGE
+    BUTTON      ID_EDIT_INS_INLINEIMAGE
     SEPARATOR
     BUTTON      ID_EDIT_FIND
     BUTTON      ID_EDIT_FINDNEXT
@@ -588,6 +590,7 @@ BEGIN
     BUTTON      ID_EDIT_UNDO
     BUTTON      ID_EDIT_REDO
     BUTTON      ID_EDIT_INS_IMAGE
+    BUTTON      ID_EDIT_INS_INLINEIMAGE
     BUTTON      ID_EDIT_ADD_IMAGE
     BUTTON      ID_STYLE_LINK
     BUTTON      ID_STYLE_NOTE
@@ -830,6 +833,7 @@ BEGIN
     ID_EDIT_ADD_BODY        "Додати нове тіло документа\nДодати тіло"
     ID_EDIT_CLONE           "Клонувати контейнер\nКлонувати"
     ID_EDIT_INS_IMAGE       "Вставити малюнок на місці курсору\nВставити малюнок"
+    ID_EDIT_INS_INLINEIMAGE "Вставити малюнок у текст на місці курсору\nВставити малюнок у текст"
     ID_FILE_VALIDATE        "Перевірити документ на відповідність формату Fiction Book\nПеревірити"
     ID_EDIT_ADD_EPIGRAPH    "Додати епіграф до виділеного фрагменту\nДодати епіграф"
     ID_EDIT_ADD_IMAGE       "Додати малюнок\nДодати малюнок"
@@ -871,6 +875,7 @@ BEGIN
     IDS_HOTKEY_EDIT_INCREMENTAL_SEARCH "Інкрементальний пошук"
     IDS_HOTKEY_EDIT_INSERT_CITE "Вставити цитату"
     IDS_HOTKEY_EDIT_INSERT_IMAGE "Вставити малюнок"
+	IDS_HOTKEY_EDIT_INSERT_INLINEIMAGE "Додати малюнок до тексту"
     IDS_HOTKEY_EDIT_INSERT_POEM "Вставити вірш"
     IDS_HOTKEY_EDIT_ITALIC  "Курсив"
     ID_VIEW_SOURCE          "Показати код\nПоказати код-сирець"

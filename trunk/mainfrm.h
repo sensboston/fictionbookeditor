@@ -459,9 +459,6 @@ public:
 		MESSAGE_HANDLER(AU::WM_SETSTATUSTEXT, OnSetStatusText)
 		MESSAGE_HANDLER(AU::WM_TRACKPOPUPMENU, OnTrackPopupMenu)
 
-		// resize
-		//MESSAGE_HANDLER(WM_SIZE, OnSizeChanged)
-
 		// incremental search support
 		MESSAGE_HANDLER(WM_CHAR, OnChar)
 		MESSAGE_HANDLER(WM_COMMAND, OnPreCommand)
@@ -874,7 +871,6 @@ public:
     return 0;
   }
 
-	//LRESULT OnSizeChanged(WORD, WORD, HWND, BOOL&);
 	LRESULT OnSciCollapse(WORD cose, WORD wID, HWND, BOOL&);  
 	LRESULT OnSciExpand(WORD cose, WORD wID, HWND, BOOL&);  
 
@@ -916,6 +912,19 @@ public:
 		}
 		return S_OK;
 	}
+
+	// added by SeNS - paste pictures
+	bool BitmapInClipboard()
+	{
+		bool result = false;
+		if (OpenClipboard())
+		{
+			if ( IsClipboardFormatAvailable(CF_BITMAP)) result = true;
+			CloseClipboard();
+		}
+		return result;
+	}
+
 };
 
 int	StartScript(CMainFrame* mainframe);

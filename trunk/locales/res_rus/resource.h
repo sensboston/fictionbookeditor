@@ -11,6 +11,7 @@
 #define IDS_HOTKEY_FILE_OPEN            105
 #define IDS_HOTKEY_FILE_SAVE            106
 #define IDS_HOTKEY_FILE_SAVEAS          107
+#define IDD_PROPPAGE_LARGE              107
 #define IDS_HOTKEY_FILE_VALIDATE        108
 #define IDS_HOTKEY_GROUP_FILE           109
 #define IDN_ED_TEXT                     110
@@ -231,14 +232,16 @@
 #define IDS_HOTKEY_GROUP_PLUGINS        271
 #define IDS_HOTKEY_PLUGINS_LAST_PLUGIN  272
 #define IDS_HOTKEY_TOOLS_SPELL          273
-#define ID_SPELL_ADD2DICT               274
 #define IDC_SPELL_ADD2DICT              274
 #define IDS_SPELL_CHECK_COMPLETED       275
+#define IDS_SPELL_COMPLETED             275
 #define IDC_SPELL_IGNOREALL             276
+#define IDS_SPELLCHECK_CONTINUE         277
 #define IDS_SPELL_CONTINUE              277
+#define IDS_HOTKEY_EDIT_INSERT_INLINEIMAGE    278
 #define IDS_LANG_UKRAINIAN              300
-#define ID_SPELL_REPLACE                500
 #define IDC_SPELL_REPLACE               500
+#define ID_VER_ADVANCE                  550
 #define ID_EXPORT_BASE                  860
 #define ID_IMPORT_BASE                  880
 #define ID_SEL_BASE                     900
@@ -300,6 +303,7 @@
 #define IDC_CHECK_DETECT_PER_P          1053
 #define IDC_BACKGROUNDSPELLCHECK        1053
 #define IDC_LANG                        1054
+#define IDC_SHOW_NBSP                   1054
 #define IDC_DEFAULT_SCRIPTS_FOLDER      1055
 #define IDC_USESPELLCHECKER             1055
 #define IDC_SCRIPTS_FOLDER_PATH         1056
@@ -317,6 +321,7 @@
 #define IDC_ADDIMAGE_ICON               1065
 #define IDC_OPTIONS_CLEARIMGS           1066
 #define IDC_STATIC_AB_LINKS             1066
+#define IDC_                            1067
 #define IDC_CHANGE_KEYB                 1067
 #define IDC_LIST1                       1068
 #define IDC_LIST_HOTKEYS_GROUPS         1068
@@ -333,6 +338,7 @@
 #define IDC_BUTTON_DEFAULT              1071
 #define IDC_BUTTON_ADD                  1071
 #define IDC_WORDS_FR_EDIT_REPL          1071
+#define IDC_NEW_WORD                    1071
 #define IDC_SPELL_REPLACEMENT           1071
 #define IDC_STATIC_HOTKEY_DESCRIPTION   1072
 #define IDC_EDIT_LV                     1072
@@ -365,7 +371,6 @@
 #define IDS_SPELL_CUSTOM_DICT           1099
 #define IDC_NBSP_CHAR                   1100
 #define IDC_SPELL_CHANGE                1103
-#define IDC_SPELL_CHANGEEALL            1104
 #define IDC_SPELL_CHANGEALL             1104
 #define IDC_SPELL_ADD                   1107
 #define IDC_SPELL_SUGGEST               1108
@@ -396,6 +401,7 @@
 #define ID_EDIT_ADD_BODY                32818
 #define ID_EDIT_CLONE                   32819
 #define ID_EDIT_INS_IMAGE               32820
+#define ID_EDIT_INS_INLINEIMAGE         32821
 #define ID_FILE_VALIDATE                32822
 #define ID_EDIT_ADD_EPIGRAPH            32824
 #define ID_EDIT_ADD_IMAGE               32827
@@ -453,9 +459,9 @@
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NO_MFC                     1
-#define _APS_NEXT_RESOURCE_VALUE        253
-#define _APS_NEXT_COMMAND_VALUE         32904
-#define _APS_NEXT_CONTROL_VALUE         1098
+#define _APS_NEXT_RESOURCE_VALUE        254
+#define _APS_NEXT_COMMAND_VALUE         32907
+#define _APS_NEXT_CONTROL_VALUE         1101
 #define _APS_NEXT_SYMED_VALUE           133
 #endif
 #endif
