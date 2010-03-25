@@ -1,6 +1,5 @@
 @ECHO OFF
 
-del .\*.exe
 rd .\Input /S /Q
 
 md .\Input
@@ -17,10 +16,10 @@ echo "No full Release build exist in ..\Release!"
 exit /b 1
 
 :ok
-copy ..\Release\res_rus.dll .\Input
-copy ..\Release\res_ukr.dll .\Input
-copy ..\Release\FBE.exe .\Input\
-copy ..\Release\FBShell.dll .\Input\
-xcopy ..\files\*.* .\Input\ /E /Y
+copy ..\Release\res_rus.dll .\Input >NUL
+copy ..\Release\res_ukr.dll .\Input >NUL
+copy ..\Release\FBE.exe .\Input\ >NUL
+copy ..\Release\FBShell.dll .\Input\ >NUL
+xcopy ..\files\*.* .\Input\ /E /Y >NUL
 
-makensis MakeInstaller.nsi
+"C:\Program Files\NSIS\Unicode\makensis" MakeInstaller.nsi
