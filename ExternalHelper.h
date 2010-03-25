@@ -221,6 +221,19 @@ public:
 
 		return S_OK;
 	}
+
+	STDMETHOD(GetViewWidth)(int* width)
+	{
+		*width = _Settings.GetViewWidth();
+		return S_OK;
+	}
+
+	STDMETHOD(GetViewHeight)(int* height)
+	{
+		*height = _Settings.GetViewHeight();
+		return S_OK;
+	}
+
 };
 
 #endif

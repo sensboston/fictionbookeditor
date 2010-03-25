@@ -308,6 +308,7 @@ public:
   BEGIN_MSG_MAP(CFBEView)
     MESSAGE_HANDLER(WM_CREATE, OnCreate)
     MESSAGE_HANDLER(WM_SETFOCUS, OnFocus)
+	MESSAGE_HANDLER(WM_SIZE, OnSize)
 
     // editing commands
     COMMAND_ID_HANDLER(ID_EDIT_UNDO, OnUndo)
@@ -492,6 +493,15 @@ public:
 
   // Modification by Pilgrim
   LRESULT OnEditInsertTable(WORD wNotifyCode, WORD wID, HWND hWndCtl);
+
+  // added by SeNS
+  LRESULT OnSize(UINT uint, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+  {
+	_Settings.SetViewWidth(LOWORD(lParam)-::GetSystemMetrics(SM_CXVSCROLL));
+	_Settings.SetViewHeight(HIWORD(lParam));
+	bHandled = FALSE;
+	return 0;
+  }
 
   bool	CheckCommand(WORD wID);
   bool	CheckSetCommand(WORD wID);

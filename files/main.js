@@ -1398,8 +1398,22 @@ function MakeCustInfo(doc,desc,indent)
  }
 }
 
+function MakeStylesheets(doc,indent) 
+{
+ if (!document.getElementById("stylesheetId")) return;
+ var s=document.getElementById("stylesheetId").value;
+ if (s=="") return;
+ var styles=doc.createNode(1,"stylesheet",fbNS);
+ SetAttr(styles, "type", "text/css");
+ Indent(doc.documentElement,1);
+ doc.documentElement.appendChild(styles);
+ Indent(styles,1);
+ styles.appendChild(doc.createTextNode(s));
+}
+
 function GetDesc(doc,ann,hist)
 {
+ MakeStylesheets(doc,1);
  var desc=doc.createNode(1,"description",fbNS);
  Indent(doc.documentElement,1);
  doc.documentElement.appendChild(desc);
@@ -1907,9 +1921,9 @@ function InsInlineImage(check, id)
   rng.collapse(true); if(rng.move("character",1)==1) rng.move("character",-1);
  }
 
-/* var pe=rng.parentElement(); while(pe && pe.tagName!="DIV") pe=pe.parentElement;
+ var pe=rng.parentElement(); while(pe && pe.tagName!="DIV") pe=pe.parentElement;
 
- if(!pe || pe.className!="section") return;*/
+ if(!pe || pe.className!="section") return;
 
  if(check) return true;
 

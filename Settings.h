@@ -489,6 +489,9 @@ class CSettings : public ISerializable, public IObjectFactory
 	DESCSHOWINFO m_desc;
 	TREEITEMSHOWINFO m_tree_items;
 
+	// added by SeNS: view dimensions for external helper
+	int m_viewWidth, m_viewHeight;
+
 public:
 	std::vector<CHotkeysGroup> m_hotkey_groups;
 	int keycodes; // total number of accelerators
@@ -609,4 +612,10 @@ public:
 	void	SetCustomDict(const ATL::CString &value, bool apply = false);
 	void	SetNBSPChar(const ATL::CString &value, bool apply = false);
 	void	SetChangeKeybLayout(const bool value, bool apply = false);
+
+	void	SetViewWidth(int width) { m_viewWidth = width; }
+	void	SetViewHeight(int height) { m_viewHeight = height; }
+	int		GetViewWidth() { return m_viewWidth; }
+	int		GetViewHeight() { return m_viewHeight; }
+
 };

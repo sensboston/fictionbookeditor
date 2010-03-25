@@ -32,10 +32,10 @@ bool IsP(MSHTML::IHTMLElementPtr elem, CString className)
 	return false;
 }
 
-// SeNS
+// added by SeNS
 bool IsStylesheet(MSHTML::IHTMLElementPtr elem)
 {
-	return IsDiv(elem, L"stylesheet");
+	return (U::scmp(elem->className, L"stylesheet") == 0);
 }
 
 CString GetStylesheetTitle(const MSHTML::IHTMLElementPtr elem)
