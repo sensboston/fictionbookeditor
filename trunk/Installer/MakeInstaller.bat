@@ -1,6 +1,5 @@
 @ECHO OFF
 
-del .\*.exe
 rd .\Input /S /Q
 
 devenv ..\FBE.sln /clean Release
@@ -14,4 +13,4 @@ copy ..\Release\res_ukr.dll .\Input\
 copy ..\Release\FBSHell.dll .\Input\
 xcopy ..\files\*.* .\Input\ /E /Y
 
-makensis MakeInstaller.nsi
+"C:\Program Files\NSIS\Unicode\makensis" MakeInstaller.nsi
