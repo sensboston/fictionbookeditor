@@ -1790,7 +1790,6 @@ LRESULT CFBEView::OnPaste(WORD, WORD, HWND, BOOL&)
 					GlobalUnlock( hData );
 
 					fromClipboard.Replace( L"\u00A0", _Settings.GetNBSPChar());
-//					EmptyClipboard();
 
 					HGLOBAL clipbuffer = GlobalAlloc(GMEM_DDESHARE, (fromClipboard.GetLength()+1)*sizeof(TCHAR));
 					buffer = (TCHAR*)GlobalLock(clipbuffer);

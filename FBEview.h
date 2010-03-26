@@ -308,7 +308,6 @@ public:
   BEGIN_MSG_MAP(CFBEView)
     MESSAGE_HANDLER(WM_CREATE, OnCreate)
     MESSAGE_HANDLER(WM_SETFOCUS, OnFocus)
-	MESSAGE_HANDLER(WM_SIZE, OnSize)
 
     // editing commands
     COMMAND_ID_HANDLER(ID_EDIT_UNDO, OnUndo)
@@ -316,6 +315,7 @@ public:
     COMMAND_ID_HANDLER(ID_EDIT_CUT, OnCut)
     COMMAND_ID_HANDLER(ID_EDIT_COPY, OnCopy)
     COMMAND_ID_HANDLER(ID_EDIT_PASTE, OnPaste)
+	COMMAND_ID_HANDLER(ID_EDIT_PASTE2, OnPaste)
     COMMAND_ID_HANDLER(ID_EDIT_BOLD, OnBold)
     COMMAND_ID_HANDLER(ID_EDIT_ITALIC, OnItalic)
     COMMAND_ID_HANDLER(ID_EDIT_FIND, OnFind)
@@ -493,15 +493,6 @@ public:
 
   // Modification by Pilgrim
   LRESULT OnEditInsertTable(WORD wNotifyCode, WORD wID, HWND hWndCtl);
-
-  // added by SeNS
-  LRESULT OnSize(UINT uint, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
-  {
-	_Settings.SetViewWidth(LOWORD(lParam)-::GetSystemMetrics(SM_CXVSCROLL));
-	_Settings.SetViewHeight(HIWORD(lParam));
-	bHandled = FALSE;
-	return 0;
-  }
 
   bool	CheckCommand(WORD wID);
   bool	CheckSetCommand(WORD wID);
