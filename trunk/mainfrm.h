@@ -462,6 +462,7 @@ public:
 		// incremental search support
 		MESSAGE_HANDLER(WM_CHAR, OnChar)
 		MESSAGE_HANDLER(WM_COMMAND, OnPreCommand)
+		MESSAGE_HANDLER(WM_SIZE, OnSize)
 
 		// tree view notifications
 		COMMAND_CODE_HANDLER(IDN_TREE_CLICK, OnTreeClick)
@@ -603,6 +604,7 @@ public:
   LRESULT OnUnhandledCommand(UINT, WPARAM, LPARAM, BOOL&);
   LRESULT OnSetFocus(UINT, WPARAM, LPARAM, BOOL&) {
     m_view.SetFocus();
+	UpdateViewSizeInfo();
     return 0;
   }
   LRESULT OnDropFiles(UINT, WPARAM, LPARAM, BOOL&);
@@ -772,6 +774,8 @@ public:
     StopIncSearch(true);
     m_doc_changed=true;
     m_cb_updated=false;
+	// added by SeNS - update 
+	UpdateViewSizeInfo();
 	// added by SeNS - process nbsp
 	if (_Settings.GetNBSPChar().Compare(L"\u00A0") != 0)
 	{
@@ -813,6 +817,7 @@ public:
 	// added by SeNS - do spellcheck
 	if (m_Speller && m_Speller->Enabled() && m_current_view == BODY) 
 		m_Speller->CheckElement(m_doc->m_body.SelectionContainer(), -1, m_doc->m_body.IsHTMLChanged());
+
 	return 0;
   }
   LRESULT OnCbEdChange(WORD, WORD, HWND, BOOL&);
@@ -925,6 +930,27 @@ public:
 		return result;
 	}
 
+    // added by SeNS
+	void UpdateViewSizeInfo()
+	{
+		if (m_doc && m_doc->m_body)
+			if (m_doc->m_body.Document())
+			{
+				MSHTML::IHTMLElement2Ptr m_scrollElement = MSHTML::IHTMLDocument3Ptr(m_doc->m_body.Document())->documentElement;
+				if (m_scrollElement)
+				{
+					_Settings.SetViewWidth (m_scrollElement->clientWidth);
+					_Settings.SetViewHeight(m_scrollElement->clientHeight);
+				}
+			}
+	}
+
+	LRESULT OnSize(UINT, WPARAM, LPARAM, BOOL& bHandled)
+	{
+		UpdateViewSizeInfo();
+		bHandled = FALSE;
+		return 0;
+	}
 };
 
 int	StartScript(CMainFrame* mainframe);
