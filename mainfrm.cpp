@@ -453,7 +453,7 @@ BOOL CMainFrame::OnIdle()
 		UIEnable(ID_EDIT_COPY, fCanCC);
 		UIEnable(ID_EDIT_CUT, fCanCC);
 		// Added by SeNS: process bitmap paste
-		UIEnable(ID_EDIT_PASTE, (bool)m_source.SendMessage(SCI_CANPASTE) | BitmapInClipboard());
+		UIEnable(ID_EDIT_PASTE, m_source.SendMessage(SCI_CANPASTE) || BitmapInClipboard());
 
 		if(m_source.SendMessage(SCI_CANUNDO))
 		{
@@ -567,7 +567,7 @@ BOOL CMainFrame::OnIdle()
 		UIUpdateViewCmd(view, ID_EDIT_REMOVE_OUTER_SECTION);
 
 		// Added by SeNS: process bitmap paste
-		UIEnable(ID_EDIT_PASTE, BitmapInClipboard());
+		UIEnable(ID_EDIT_PASTE, m_source.SendMessage(SCI_CANPASTE) || BitmapInClipboard());
 
 		if (m_sel_changed && /*GetCurView()*/m_current_view != DESC)
 		{
