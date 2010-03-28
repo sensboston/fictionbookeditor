@@ -9,7 +9,7 @@ function Run() {
  params["fbwBody"]=fbwBody;
  params["myDoc"]=document;
  params["myWin"]=window;
- params["nsbpChar"]=nbspChar;
+ params["nbspChar"]=nbspChar;
  params["nbspEntity"]=nbspEntity;
  rslt=window.showModalDialog("HTML/Точка, тире, буква - набор фреймов.html",params,
        "dialogHeight: "+dialogHeight+"; dialogWidth: "+dialogWidth+"; "+
