@@ -503,7 +503,7 @@ function Run() {
 
 // удаление лишних конечных точек в заголовках
  var re84 = new RegExp("\\\.("+fIB+"){0,1}$","g");
- var re84ex = new RegExp("(([0-9](\\\s|"+nbspEntity+")г{1,2})|([IVX](\\\s|"+nbspEntity+"в{1,2})|(\\\-мл))\\\.("+fIB+"){0,1}$","g");
+ var re84ex = new RegExp("(([0-9](\\\s|"+nbspEntity+")г{1,2})|([IVX](\\\s|"+nbspEntity+")в{1,2})|(\\\-мл))\\\.("+fIB+"){0,1}$","g");
  var re84_ = "";
  var count_84 = 0;
 
