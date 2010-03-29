@@ -1487,36 +1487,17 @@ function KillDivs(e)
 function GoTo(elem)
 {
  if(!elem) return;
-
- elem.scrollIntoView(true);
-
+ var b=elem.getBoundingClientRect();
+ if (b.bottom-b.top<=window.external.getViewHeight())
+  window.scrollBy(0,(b.top+b.bottom-window.external.getViewHeight())/2);
+ else
+  window.scrollBy(0,b.top);
  var r=document.selection.createRange();
-
  if (!r || !("compareEndPoints" in r)) return;
-
  r.moveToElementText(elem);
-
  r.collapse(true);
-
  if(r.parentElement!==elem && r.move("character",1)==1) r.move("character",-1);
-
  r.select();
-}
-function GoTo(elem) 
-{
-  if (!elem) return;
-  
-  var r=document.selection.createRange();
-  
-  if (!r || !("compareEndPoints" in r)) return;
-  
-  r.moveToElementText(elem);
-  
-  r.collapse(true);
-  
-  if (r.parentElement!==elem && r.move("character",1)==1) r.move("character",-1);
-
-  r.select();
 }
 //-----------------------------------------------
 
@@ -1792,11 +1773,7 @@ function AddTitle(cp, check)
     sel.text = "";
   }
 
-  sel = document.selection.createRange();
-  sel.moveToElementText(div);
-  sel.select();
-  sel.collapse(false);
-  sel.select();
+  GoTo(div);
 
   window.external.EndUndoUnit(document);
 }
