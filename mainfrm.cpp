@@ -2266,11 +2266,13 @@ extern "C"
 
 class CAboutDlg : public CDialogImpl<CAboutDlg>
 {
+	CEdit m_Contributors;
 public:
 	enum { IDD = IDD_ABOUTBOX };
 
 	BEGIN_MSG_MAP(CAboutDlg)
 		MESSAGE_HANDLER(WM_INITDIALOG, OnInitDialog)
+		MESSAGE_HANDLER(WM_CTLCOLORSTATIC, OnCtlColor)
 
 		COMMAND_ID_HANDLER(IDOK, OnCloseCmd)
 		COMMAND_ID_HANDLER(IDCANCEL, OnCloseCmd)
@@ -2282,12 +2284,33 @@ public:
 	{
 		CString stamp(build_timestamp);
 		::SetWindowText(GetDlgItem(IDC_BUILDSTAMP), stamp);
+
+		m_Contributors = GetDlgItem(IDC_CONTRIBS);
+
+		HRSRC hres = ::FindResource(NULL, L"ABOUT_FILE", L"ABOUT_FILE");
+		HGLOBAL hbytes = ::LoadResource(NULL, hres);
+		CString contribs((char*)::LockResource(hbytes));
+		contribs.Delete(contribs.GetLength()-5, 5);
+		m_Contributors.SetWindowText(contribs);
+
 		return 0;
 	}
 
 	LRESULT OnCloseCmd(WORD, WORD wID, HWND, BOOL&)
 	{
 		EndDialog(wID);
+		return 0;
+	}
+
+	LRESULT OnCtlColor(UINT, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+	{
+		HWND hwndEdit = (HWND) lParam;
+		if (hwndEdit == GetDlgItem(IDC_CONTRIBS) )
+		{
+			HDC hdc = (HDC)wParam;
+			::SetBkColor(hdc, RGB(255,255,255));
+			return (LRESULT) ::GetStockObject(WHITE_BRUSH);
+		}
 		return 0;
 	}
 
@@ -4865,6 +4888,50 @@ void CMainFrame::InitPluginHotkey(CString guid, UINT cmd, CString name)
 				cmd,
 				NULL);
 			hotkey_groups.at(i).m_hotkeys.push_back(PluginsHotkey);
+		}
+	}
+}
+
+void CMainFrame::ChangeNBSP(MSHTML::IHTMLElementPtr elem)
+{
+    long visible = false;
+	if (elem)
+	{
+		MSHTML::IDisplayServicesPtr ids (MSHTML::IDisplayServicesPtr(m_doc->m_body.Document()));
+		MSHTML::IHTMLCaretPtr caret = 0;
+		MSHTML::tagPOINT *point = new MSHTML::tagPOINT();
+		if (ids)
+		{
+			ids->GetCaret(&caret);
+			if (caret)
+			{
+				caret->IsVisible(&visible);
+				if (visible)
+					caret->GetLocation(point, true);
+			}
+		}
+
+		CString txt = elem->innerHTML;
+		if (txt.Find(L"<DIV") < 0)
+		{
+			int n = txt.Replace( L"&nbsp;", _Settings.GetNBSPChar());
+			if (n)
+			{
+				elem->innerHTML = txt.AllocSysString();
+				m_doc->AdvanceDocVersion(n);
+				if (caret && visible) 
+				{
+					// restore caret position
+					MSHTML::IDisplayPointerPtr disptr;
+					ids->CreateDisplayPointer(&disptr);
+					disptr->moveToPoint(*point, MSHTML::COORD_SYSTEM_GLOBAL, elem, 0, 0);
+					caret->MoveCaretToPointer(disptr, true, MSHTML::CARET_DIRECTION_SAME);
+					// shift one character right
+					MSHTML::IHTMLTxtRangePtr rng(m_doc->m_body.Document()->selection->createRange());
+					rng->move(L"character",1);
+					rng->select();
+				}
+			}
 		}
 	}
 }

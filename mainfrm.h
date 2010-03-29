@@ -770,8 +770,9 @@ public:
 		return 0;
 	}
 
+  void ChangeNBSP(MSHTML::IHTMLElementPtr elem);
+
   LRESULT OnEdChange(WORD, WORD, HWND, BOOL&) {
-    long visible = false;
     StopIncSearch(true);
     m_doc_changed=true;
     m_cb_updated=false;
@@ -779,46 +780,7 @@ public:
 	UpdateViewSizeInfo();
 	// added by SeNS - process nbsp
 	if (_Settings.GetNBSPChar().Compare(L"\u00A0") != 0)
-	{
-		MSHTML::IHTMLElementPtr elem = m_doc->m_body.SelectionContainer();
-		if (elem)
-		{
-			MSHTML::IDisplayServicesPtr ids (MSHTML::IDisplayServicesPtr(m_doc->m_body.Document()));
-			MSHTML::IHTMLCaretPtr caret = 0;
-			MSHTML::tagPOINT point;
-			if (ids)
-			{
-				ids->GetCaret(&caret);
-				if (caret)
-				{
-					caret->IsVisible(&visible);
-					if (visible)
-						caret->GetLocation(&point, true);
-				}
-			}
-
-			CString txt = elem->innerHTML;
-			if (txt.Find(L"<DIV") < 0)
-			{
-				int n = txt.Replace( L"&nbsp;", _Settings.GetNBSPChar());
-				if (n)
-				{
-					elem->innerHTML = txt.AllocSysString();
-					m_doc->AdvanceDocVersion(n);
-					if (caret && visible) 
-					try {
-						MSHTML::IDisplayPointerPtr disptr;
-						ids->CreateDisplayPointer(&disptr);
-						// shift to left - will positioning to the next char
-						point.x += _Settings.GetFontSize() * 2 / 3;
-						disptr->moveToPoint(point, MSHTML::COORD_SYSTEM_GLOBAL, elem, 0, 0);
-						caret->MoveCaretToPointer(disptr, true, MSHTML::CARET_DIRECTION_SAME);
-					}
-					catch (...) {};
-				}
-			}
-		}
-	}
+		ChangeNBSP(m_doc->m_body.SelectionContainer());
 
 	// added by SeNS - do spellcheck
 	if (m_Speller && m_Speller->Enabled() && m_current_view == BODY) 

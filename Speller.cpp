@@ -235,7 +235,7 @@ CSpeller::CSpeller(CString dictPath):
 	if (LoadHunspellDll())
 #endif
 		// load dictionaries
-		for (int i=LANG_EN; i<=LANG_ES; i++)
+		for (int i=LANG_EN; i<LANG_NONE; i++)
 			m_Dictionaries.Add(LoadDictionary(dictPath, dicts[i].name));
 }
 
@@ -302,7 +302,7 @@ void CSpeller::AttachDocument(MSHTML::IHTMLDocumentPtr doc)
 	if (elem)
 	{
 		CString lang = elem->value;
-		for (int i=LANG_EN; i<=LANG_ES; i++)
+		for (int i=LANG_EN; i<LANG_NONE; i++)
 			if (dicts[i].name.Find(lang) == 0)
 			{
 				m_Lang = dicts[i].lang;
@@ -458,7 +458,7 @@ Hunhandle* CSpeller::GetDictionary(CString word)
 	Hunhandle* currDict = m_Dictionaries[m_Lang];
 
 	// special fix for Russian words at non-Russian document
-	if (m_Lang != LANG_RU)
+	if (m_Lang != LANG_RU && m_Lang != LANG_UA)
 	{
 		// try to detect Russian language: too dirty but simple
 		// 0x0 - English or other latin, 0x4 - Russian
