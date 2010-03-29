@@ -1,0 +1,401 @@
+#summary Список функций main.js
+
+= Введение =
+
+В файле main.js, который является частью FBE, находятся JScript-функции, которые вызываются из CPP-кода и доступны также из любого пользовательского скрипта.
+
+
+= Список =
+function FillCoverList()
+
+
+
+function apiGetBinary(id)
+
+
+
+function apiAddBinary(fullpath, id, type, data)
+
+
+
+function GetImageData(id)
+
+
+
+function HighlightBorder(element, override, style, width, color)
+
+
+
+function ShowPrevImage(source)
+
+
+
+function HidePrevImage()
+
+
+
+function ShowFullImage(source)
+
+
+
+function LoadXSL(path, lang)
+
+
+
+function TransformXML(xslt, dom)
+
+
+
+function ShowDescElements()
+
+
+
+function LoadFromDOM(dom, lang)
+
+
+
+function XmlFromText(text)
+
+
+
+function recursiveChangeNbsp(elem, repChar)
+
+
+
+function apiLoadFB2(path, lang)
+
+
+
+function apiShowDesc(state)
+
+
+
+function apiRunCmd(path)
+
+
+
+function apiGetClassName(path)
+
+
+
+function apiGetTitle(path)
+
+
+
+function apiProcessCmd(path)
+
+
+
+function SetInFrame(range, tagName, className)
+
+
+
+function RemoveOuterTags(node)
+
+
+
+function apiCleanUp(className)
+
+
+
+function apiCheckRunnableScript()
+
+
+
+function apiSetFastMode(fast)
+
+
+
+function   MsgBox(str)
+
+
+
+function AskYesNo(str)
+
+
+
+function errorHandler(msg,url,lno)
+
+
+
+function errCantLoad(xd,file)
+
+
+
+function FillImageList(list, bin_objects)
+
+
+
+function FillLists()
+
+
+
+function SelectLanguages()
+
+
+
+function NewDocumentID()
+
+
+
+function PutSpacers(obj)
+
+
+
+function InitFieldsets()
+
+
+
+function SetDocumentVersion(desc)
+
+
+
+function SetProgramUsed(desc)
+
+
+
+function SetCurrentDate(desc)
+
+
+
+function SetupDescription(desc)
+
+
+
+function InflateIt(elem) // Seems the same as above...
+
+
+
+function GetGenre(d)
+
+
+
+function dClone(obj)
+
+
+
+function Remove(obj)
+
+
+
+function Clone(obj)
+
+
+
+function ChildClone(obj)
+
+
+
+function Indent(node,len)
+
+
+
+function SetAttr(node,name,val)
+
+
+
+function MakeText(node,name,val,force,indent)
+
+
+
+function MakeAuthor(node,name,dv,force,indent)
+
+
+
+function MakeDate(node,d,v,indent)
+
+
+
+function MakeSeq2(xn,hn,indent)
+
+
+
+function MakeSeq(xn,hn,indent)
+
+
+
+function IsEmpty(ii)
+
+
+
+function MakeTitleInfo(doc,desc,ann,indent)
+
+
+
+function IsAuthorExist(node,name,dv)
+
+
+
+function IsTextExist(val)
+
+
+
+function IsSeqExist2(xn,hn)
+
+
+
+function IsSeqExist(xn,hn)
+
+
+
+function IsSTBFieldTextExist(sti,desc,doc)
+
+
+
+function MakeSourceTitleInfo(doc,desc,ann,indent)
+
+
+
+function MakeDocInfo(doc,desc,hist,indent)
+
+
+
+function MakePubInfo(doc,desc,indent)
+
+
+
+function MakeCustInfo(doc,desc,indent)
+
+
+
+function MakeStylesheets(doc,indent)
+
+
+
+function GetDesc(doc,ann,hist)
+
+
+
+function GetBinaries(doc)
+
+
+
+function PutBinaries(doc)
+
+
+
+function KillDivs(e)
+
+
+
+function GoTo(elem)
+
+
+
+function SkipOver(np,n1,n2,n3)
+
+
+
+function StyleCheck(cp,st)
+
+
+
+function SetStyle(cp,check,name)
+
+
+
+function StyleNormal(cp,check)
+
+
+
+function StyleTextAuthor(cp,check)
+
+
+
+function StyleSubtitle(cp,check)
+
+
+
+function StyleCode(check, cp, range)
+
+
+
+function IsCode(cp)
+
+
+
+function TextIntoHTML(s)
+
+
+
+function AddTitle(cp, check)
+
+
+
+function AddBody(check)
+
+
+
+function GetCP(cp)
+
+
+
+function InsBefore(parent,ref,item)
+
+
+
+function InsBeforeHTML(parent,ref,ht)
+
+
+
+function CloneContainer(cp,check)
+
+
+
+function InsImage(check, id)
+
+
+
+function InsInlineImage(check, id)
+
+
+
+function AddImage(cp, check)
+
+
+
+function AddEpigraph(cp,check)
+
+
+
+function AddAnnotation(cp, check)
+
+
+
+function AddTA(cp,check)
+
+
+
+function IsCtSection(s)
+
+
+
+function FindSE(cp,name)
+
+
+
+function MergeContainers(cp,check)
+
+
+
+function RemoveOuterContainer(cp,check)
+
+
+
+function ImgSetURL(image,url)
+
+
+
+function SaveBodyScroll()
+
+
+
+function SetExtendedStyle(elem, button_id, change)
+
+
+
+function ShowElement(id, show)
+
+
+
+function ShowElementsMenu(button)
