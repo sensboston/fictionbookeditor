@@ -235,22 +235,21 @@ BEGIN
     PUSHBUTTON      "Отмена",IDCANCEL,203,254,55,15
 END
 
-IDD_ABOUTBOX DIALOGEX 0, 0, 219, 135
+IDD_ABOUTBOX DIALOGEX 0, 0, 267, 139
 STYLE DS_SETFONT | DS_MODALFRAME | DS_CENTER | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "О программе"
+CAPTION "About"
 FONT 9, "Tahoma", 0, 0, 0x0
 BEGIN
-    DEFPUSHBUTTON   "OK",IDOK,105,114,50,14
-    CONTROL         "FictionBook Editor v2.0 BETA",IDC_STATIC_AB_APPNAMEVER,
-                    "Static",SS_LEFTNOWORDWRAP | WS_GROUP,94,14,95,9
-    ICON            IDR_MAINFRAME,IDC_STATIC_AB_APPICON,72,14,20,20
-    RTEXT           "Build",IDC_STATIC,93,24,16,8
-    LTEXT           "",IDC_BUILDSTAMP,112,24,85,8
-    LTEXT           "© 2003 Mike Matsnev\n© 2008 LitRes\n© 2010 SeNS\n\nИзменения: Pilgrim, Hose, SeNS\nПоддерживается: SeNS, Sclex",IDC_STATIC_AB_CONTRIBUTORS,94,37,110,48
+    DEFPUSHBUTTON   "OK",IDOK,140,118,50,14
+    CONTROL         "FictionBook Editor v2.2 pre-release",IDC_STATIC_AB_APPNAMEVER,
+                    "Static",SS_LEFTNOWORDWRAP | WS_GROUP,101,8,153,8
+    ICON            IDR_MAINFRAME,IDC_STATIC_AB_APPICON,72,8,18,18
+    LTEXT           "Build",IDC_STATIC,101,20,15,8
+    LTEXT           "",IDC_BUILDSTAMP,120,20,131,8
     CONTROL         248,IDC_AB_BANNER,"Static",SS_BITMAP | SS_REALSIZEIMAGE,7,7,56,123,WS_EX_CLIENTEDGE
-    CONTROL         "<a href=""http://fbe.litres.ru/"">http://fbe.litres.ru/</a>\n<a href=""mailto:fbe@litres.ru"">fbe@litres.ru</a>",IDC_SYSLINK_AB_LINKS,
-                    "SysLink",WS_TABSTOP,116,92,61,19
-    LTEXT           "Сайт:\nСвязь:",IDC_STATIC_AB_LINKS,94,92,20,18
+    EDITTEXT        IDC_CONTRIBS,69,47,191,65,ES_MULTILINE | ES_AUTOVSCROLL | ES_READONLY | ES_WANTRETURN | NOT WS_BORDER | WS_VSCROLL
+    CONTROL         "<a href=""http://code.google.com/p/fictionbookeditor/"">http://code.google.com/p/fictionbookeditor/</a>",IDC_SYSLINK_AB_LINKS,
+                    "SysLink",WS_TABSTOP,101,32,154,8
 END
 
 IDD_INPUTBOX DIALOGEX 0, 0, 288, 46
@@ -654,14 +653,14 @@ BEGIN
     BEGIN
         BLOCK "040904b0"
         BEGIN
-            VALUE "CompanyName", "LitRes"
+            VALUE "CompanyName", "FBE Team"
             VALUE "FileDescription", "FictionBook Editor"
-            VALUE "FileVersion", "2, 0, 0, 0"
+            VALUE "FileVersion", "2, 2, 0, 0"
             VALUE "InternalName", "FBE"
-            VALUE "LegalCopyright", "Copyright 2003 Mike Matsnev, 2008 LitRes"
+            VALUE "LegalCopyright", "Copyright 2003 Mike Matsnev, 2008 LitRes, 2010 FBE Team"
             VALUE "OriginalFilename", "FBE.exe"
             VALUE "ProductName", "FictionBook Editor"
-            VALUE "ProductVersion", "2, 0, 0, 0"
+            VALUE "ProductVersion", "2, 2, 0, 0"
         END
     END
     BLOCK "VarFileInfo"

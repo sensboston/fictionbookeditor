@@ -1,0 +1,132 @@
+GNU GENERAL PUBLIC LICENSE version 3
+
+The contents of this software may be used under the terms of the 
+GNU General Public License Version 3 (the "GPL v 3")
+
+Software distributed under this license is distributed on an "AS IS" basis, 
+WITHOUT WARRANTY OF ANY KIND, either express or implied. See the license 
+for the specific language governing rights and limitations under the license.
+
+* * *
+
+Hunspell is a spell checker and morphological analyzer library and program
+designed for languages with rich morphology and complex word compounding or
+character encoding.
+
+Author of Hunspell:
+Németh László nemeth (at) OpenOffice.org
+
+GPL 2.0/LGPL 2.1/MPL 1.1 tri-license
+
+The contents of this software may be used under the terms of
+the GNU General Public License Version 2 or later (the "GPL"), or
+the GNU Lesser General Public License Version 2.1 or later (the "LGPL",
+see COPYING.LGPL) or (excepting the LGPLed GNU gettext library in the
+intl/ directory) the Mozilla Public License Version 1.1 or later
+(the "MPL", see COPYING.MPL).
+
+Software distributed under these licenses is distributed on an "AS IS" basis,
+WITHOUT WARRANTY OF ANY KIND, either express or implied. See the licences
+for the specific language governing rights and limitations under the licenses.
+
+Hunspell based on OpenOffice.org's Myspell. MySpell's author:
+Kevin Hendricks kevin.hendricks (at) sympatico.ca
+
+* * *
+
+Словарь русского языка для MySpell
+
+Словарь подготовлен в рамках подпроекта 
+OpenOffice:Lingucomponent:Spell Checking / Dictionaries
+
+Содержимое этого словаря ничем не отличается от орфографического словаря,
+разработанного для ispell Александром Лебедевым (Alexander Lebedev,
+swan@scon155.phys.msu.su).  По сути, это тот же словарь, в котором набор
+слов и affix-файл представлены в виде, пригодном для обработки myspell.
+
+При подготовке affix-файла русского словаря для MySpell приняли участие
+Анатолий Кирсанов (kiav@land.ru), Александр Рабцевич
+(alexander.v.rabtchevich@iaph.bas-net.by), Александр Лебедев
+(swan@scon155.phys.msu.su).
+
+* * *
+
+This is Ukrainian spelling dictionary for myspell & hunspell version 1.5.7.
+
+This dictionary based on spell-uk project http://ispell-uk.sourceforge.net/
+
+
+Copyright (C) 1999
+    Vladimir Yakovchuk
+    Oleg Podgurniy
+    
+Copyright (C) 2001 
+    Dmytro Kovalyov
+    Maksym Polyakov
+    Andriy Rysin
+
+Copyright (C) 2002
+    Valentyn Solomko
+    Volodymyr M. Lisivka
+    
+Copyright (C) 2005
+    Andriy Rysin
+    Eugeniy Meshcheryakov
+    Dmytro Kovalyov
+
+Copyright (C) 2006-2009
+    Andriy Rysin
+
+This dictionary is licensed under GPL, LGPL and MPL (Mozilla Public License) licenses.
+
+* * *
+
+English dictionary
+
+This dictionary is based on a subset of the original
+English wordlist created by Kevin Atkinson for Pspell 
+and  Aspell and thus is covered by his original 
+LGPL license.  The affix file is a heavily modified
+version of the original english.aff file which was
+released as part of Geoff Kuenning's Ispell and as 
+such is covered by his BSD license.
+
+
+* * *
+
+Diccionario para corrección ortográfica en español de OpenOffice.org
+
+   Este diccionario ha sido desarrollado inicialmente por Santiago Bosio;
+quien actualmente coordina el desarrollo de todos los diccionarios localizados,
+y mantiene el diccionario para la localización Argentina (es_AR).
+
+   Si desea contactar al autor, por favor envíe sus mensajes mediante correo
+electrónico a:
+
+	sbosio <en> openoffice <punto> org
+        (reemplace <en> por @ y <punto> por . al enviar su mensaje)
+
+   El diccionario es un desarrollo completamente nuevo, y NO ESTÁ BASADO en el
+trabajo de Jesús Carretero y Santiago Rodríguez, ni en la versión adaptada al
+formato de MySpell por Richard Holt.
+
+   Esta versión localizada del diccionario no cuenta con un encargado de
+mantenimiento. Si quiere ofrecerse para esta tarea, contáctese con el autor,
+quien le dará más detalles sobre el trabajo a desarrollar.
+
+* * *
+
+This is the dictionary file of the de_DE Hunspell dictionary
+derived from the igerman98 dictionary
+
+Version: 20090107+frami20090221 (build 20090221)
+
+Copyright (C) 1998-2009 Bjoern Jacke <bjoern@j3e.de>for the addon Franz Michael Baumann <frami.baumann@web.de>
+
+License: GPLv2, GPLv3 or OASIS distribution license agreement There
+should be a copy of all of this licenses included with every distribution
+of this dictionary. Modified versions using the GPL may only include the
+GPL. This dictionary is compiled from igerman98. For the purpose of the
+GPL modifications of this dictionary should be made public as a patch
+for igerman98 allowing to regenerate the modified dictionary.
+
