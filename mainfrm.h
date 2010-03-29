@@ -771,6 +771,7 @@ public:
 	}
 
   LRESULT OnEdChange(WORD, WORD, HWND, BOOL&) {
+    long visible = false;
     StopIncSearch(true);
     m_doc_changed=true;
     m_cb_updated=false;
@@ -788,7 +789,12 @@ public:
 			if (ids)
 			{
 				ids->GetCaret(&caret);
-				if (caret) try { caret->GetLocation(&point, true); } catch(...) {caret = 0; }
+				if (caret)
+				{
+					caret->IsVisible(&visible);
+					if (visible)
+						caret->GetLocation(&point, true);
+				}
 			}
 
 			CString txt = elem->innerHTML;
@@ -799,12 +805,12 @@ public:
 				{
 					elem->innerHTML = txt.AllocSysString();
 					m_doc->AdvanceDocVersion(n);
-					if (caret) 
+					if (caret && visible) 
 					try {
 						MSHTML::IDisplayPointerPtr disptr;
 						ids->CreateDisplayPointer(&disptr);
 						// shift to left - will positioning to the next char
-						point.x += _Settings.GetFontSize() / 2;
+						point.x += _Settings.GetFontSize() * 2 / 3;
 						disptr->moveToPoint(point, MSHTML::COORD_SYSTEM_GLOBAL, elem, 0, 0);
 						caret->MoveCaretToPointer(disptr, true, MSHTML::CARET_DIRECTION_SAME);
 					}
@@ -854,7 +860,6 @@ public:
   LRESULT OnGoToReference(WORD wNotifyCode, WORD wID, HWND hWndCtl)
   {
 	  m_doc->m_body.GoToReference(false);
-
 	  return 0;
   }
 
@@ -912,9 +917,7 @@ public:
 	LRESULT OnSpellCheck(WORD, WORD, HWND, BOOL&)
 	{
 		if (m_Speller)
-		{
 			m_Speller->StartDocumentCheck(m_doc->m_body.m_mk_srv);
-		}
 		return S_OK;
 	}
 
