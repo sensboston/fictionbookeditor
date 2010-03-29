@@ -14,7 +14,7 @@ function FillCoverList()
 	return FillLists();
 }
 
-function apiGetBinary(id) 
+function apiGetBinary(id)
 {
  var bin_objects=document.all.binobj.getElementsByTagName("DIV");
 
@@ -83,13 +83,13 @@ function apiAddBinary(fullpath, id, type, data)
 				var imgWidth = Dims.substring(0, Dims.search("x"));
 				var imgHeight = Dims.substring(Dims.search("x") + 1, Dims.length);
 				div.innerHTML += '<label unselectable="on">w*h:</label><input type="text" disabled id="dims" style="width:6em;" value="' + imgWidth +'x' + imgHeight + '">';
-				
+
 				var ImageInfo = new Object();
 				ImageInfo.src = imghref;
 				ImageInfo.id = curid;
 				ImageInfo.width = imgWidth;
 				ImageInfo.height = imgHeight;
-				
+
 				ImagesInfo.push(ImageInfo);
 			}
 	}
@@ -158,7 +158,7 @@ function ShowPrevImage(source)
 	var imgHeight = ImagesInfo[idx].height;
 
 	var btnHeight = event.srcElement.offsetHeight;
-	
+
 	coordX = event.clientX;
 	coordY = event.clientY;
 
@@ -191,7 +191,7 @@ function ShowPrevImage(source)
 		baseHeight =  winHeight - coordY;
 		place = "bottom";
 	}
-	
+
 	baseHeight -= btnHeight;
 
   var ratio;
@@ -201,7 +201,7 @@ function ShowPrevImage(source)
     baseWidth = 200;
     baseHeight *= ratio;
   }
-    
+
   var scaleTo = "width";
   ratio = baseWidth/imgWidth;
   if(imgWidth < imgHeight)
@@ -272,12 +272,12 @@ function ShowFullImage(source)
 {
   window.external.MsgBox("Full image preview is not implemented yet.");
   return;
-  
+
   var prevImg = new Image();
-  prevImg.src = source;  
-  
+  prevImg.src = source;
+
   // That let image to be loaded into rendered <img> (for huge images).
-  setTimeout('', 500); 
+  setTimeout('', 500);
 
   var args = "edge:sunken;help:no;resizable:no;status:no;"
   if(prevImg.width >= screen.width && prevImg.height >= screen.height)
@@ -288,7 +288,7 @@ function ShowFullImage(source)
     args += ("dialogWidth:" + (prevImg.width+20) + "px;dialogHeight:" + screen.height + "px;scroll:auto");
   else
     args += ("dialogWidth:" + (prevImg.width+4) + "px;dialogHeight:" + (prevImg.height+4) + "px;" + "scroll:no");
-  
+
   var sender = new Object();
   sender = prevImg;
   window.showModelessDialog("imgprev.html", sender, args);
@@ -314,12 +314,12 @@ function LoadXSL(path, lang)
 	    href.nodeValue = "eng.xsl";
 	if (lang == "ukrainian")
 	    href.nodeValue = "ukr.xsl";
-		
+
 
 	if(xsl.parseError.errorCode)
 	{
-		errCantLoad(xsl, path); 
-		return false; 
+		errCantLoad(xsl, path);
+		return false;
 	}
 
 	xslt.stylesheet = xsl;
@@ -328,27 +328,27 @@ function LoadXSL(path, lang)
 
 function TransformXML(xslt, dom)
 {
-	var body = document.getElementById("fbw_body"); 
-	if(!body) 
-	{
-		return false;
-	}
-	
-	var desc = document.getElementById("fbw_desc"); 
-	if(!desc) 
+	var body = document.getElementById("fbw_body");
+	if(!body)
 	{
 		return false;
 	}
 
-	proc=xslt.createProcessor(); 	
+	var desc = document.getElementById("fbw_desc");
+	if(!desc)
+	{
+		return false;
+	}
+
+	proc=xslt.createProcessor();
 	proc.input=dom;
-	proc.setStartMode("description");	
-	proc.transform(); 	
+	proc.setStartMode("description");
+	proc.transform();
 	desc.innerHTML=proc.output;
-	PutBinaries(dom); 
+	PutBinaries(dom);
 	SetupDescription(desc);
-	proc.setStartMode("body"); 
-	proc.transform(); 	
+	proc.setStartMode("body");
+	proc.transform();
 	body.innerHTML=proc.output;
 
 	window.external.InflateParagraphs(body);
@@ -359,27 +359,27 @@ function TransformXML(xslt, dom)
 
 function ShowDescElements()
 {
-  var desc = document.getElementById("fbw_desc"); 
+  var desc = document.getElementById("fbw_desc");
   var spans = desc.getElementsByTagName("SPAN");
   for(var i=0; i < spans.length; i++)
-  {		
+  {
     var elem_id = spans[i].getAttribute("id");
     if(elem_id)
-      ShowElement(elem_id, window.external.GetExtendedStyle(elem_id));			
-  } 
+      ShowElement(elem_id, window.external.GetExtendedStyle(elem_id));
+  }
 }
 
 function LoadFromDOM(dom, lang)
 {
-	dom.setProperty("SelectionNamespaces", "xmlns:fb='"+fbNS+"' xmlns:xlink='"+xlNS+"'");		
+	dom.setProperty("SelectionNamespaces", "xmlns:fb='"+fbNS+"' xmlns:xlink='"+xlNS+"'");
 	var xpath=window.external.GetStylePath()+"\\fb2.xsl";
-	
+
 	var ret = TransformXML(LoadXSL(xpath, lang), dom);
-	
-	ShowDescElements();	
-	
+
+	ShowDescElements();
+
 	// transform to html
-    return ret;	
+    return ret;
 }
 
 function XmlFromText(text)
@@ -389,10 +389,10 @@ function XmlFromText(text)
 	xml.preserveWhiteSpace = true;
 	xml.loadXML(text);
 	if(xml.parseError.errorCode)
-	{ 
-		//errCantLoad(xml, path); 
-		return xml.parseError; 
-	}	
+	{
+		//errCantLoad(xml, path);
+		return xml.parseError;
+	}
 	return xml;
 }
 
@@ -413,20 +413,20 @@ function apiLoadFB2(path, lang)
 	var xml = new ActiveXObject("Msxml2.DOMDocument.4.0");
 	xml.async=false;
 	xml.preserveWhiteSpace = true;
-	
+
 	xml.load(path);
 	if(xml.parseError.errorCode)
 	{
 		errCantLoad(xml, path);
-		return false; 
+		return false;
 	}
 
 	pi = xml.firstChild;
 	var encoding;
-	if (pi) 
+	if (pi)
 	{
 		attr = pi.attributes;
-		if (attr) 
+		if (attr)
 		{
 			enc = attr.getNamedItem("encoding");
 			if(enc)
@@ -436,102 +436,102 @@ function apiLoadFB2(path, lang)
 			}
 		}
 	}
-    
+
         if (window.external.GetNBSP())
         {
     	    var nbspChar=window.external.GetNBSP();
-    	    
+
     	    if (nbspChar != "\u00A0")
     	    {
                 var el=xml.firstChild;
 
                 while (el && el.nodeName!="FictionBook") el=el.nextSibling;
-        
-                if (el && el.firstChild) 
+
+                if (el && el.firstChild)
                 {
                     el=el.firstChild;
-                    while (el) 
+                    while (el)
                     {
                         if (el.nodeName=="body") recursiveChangeNbsp(el, nbspChar);
                         el=el.nextSibling;
                     }
                 }
-            } 
+            }
         }
 
 	if (!LoadFromDOM(xml, lang))
 	{
 		return false;
 	}
-	
+
 	document.selection.empty();
 
 	var desc = document.getElementById("fbw_desc");
-	var id=desc.all.diID; 
-	if(id) 
+	var id=desc.all.diID;
+	if(id)
 	if(path.indexOf("blank.fb2") != -1)
-	{	
-		id.value=window.external.GetUUID(); 
+	{
+		id.value=window.external.GetUUID();
 	}
 	else
 	{
 		id.value=id.value; // ???????? ????????? ????????. ??? ???? ??????? ??? ?????? ??? ???????? ?????????? ????? ?????? ????, ??? ???????? ? ????? ?????????.
 	}
-	
+
 
 	apiShowDesc(false);
 	css.href = css_filename;
-	
+
 	return encoding;
 }
 
 function apiShowDesc(state)
 {
-	var body=document.getElementById("fbw_body"); 
-	if(!body) 
+	var body=document.getElementById("fbw_body");
+	if(!body)
 		return;
 
-	var desc=document.getElementById("fbw_desc"); 
-	if(!desc) 
+	var desc=document.getElementById("fbw_desc");
+	if(!desc)
 		return;
 
 	if(state)
 	{
-		document.ScrollSave=document.body.scrollTop; 
-		desc.style.display="block"; 
-		document.body.scrollTop=0; 
-		body.style.display="none"; 
+		document.ScrollSave=document.body.scrollTop;
+		desc.style.display="block";
+		document.body.scrollTop=0;
+		body.style.display="none";
 	}
 	else
 	{
-		desc.style.display="none"; 
-		body.style.display="block"; 
+		desc.style.display="none";
+		body.style.display="block";
 		document.body.scrollTop=document.ScrollSave;
 	}
 }
 
 function apiRunCmd(path)
 {
-	var script=document.getElementById("userCmd"); 
-	if(!script) 
+	var script=document.getElementById("userCmd");
+	if(!script)
 		return;
-	script.src="file:///"+path; 
+	script.src="file:///"+path;
 	Run();
 }
 
 function apiGetClassName(path)
 {
-	var script=document.getElementById("userCmd"); 
-	if(!script) 
+	var script=document.getElementById("userCmd");
+	if(!script)
 		return;
-	script.src="file:///"+path; 
+	script.src="file:///"+path;
 	return GetClassName();
 }
 
 function apiGetTitle(path)
 {
-	var script=document.getElementById("userCmd"); 
-	if(!script) 
+	var script=document.getElementById("userCmd");
+	if(!script)
 		return;
 	script.src="file:///"+path;
 	return GetTitle();
@@ -539,10 +539,10 @@ function apiGetTitle(path)
 
 function apiProcessCmd(path)
 {
-	var script=document.getElementById("userCmd"); 
-	if(!script) 
+	var script=document.getElementById("userCmd");
+	if(!script)
 		return;
-	script.src="file:///"+path; 
+	script.src="file:///"+path;
 	ProcessCmd();
 }
 
@@ -571,47 +571,47 @@ function apiCheckRunnableScript()
   try
   {
     if(Run)
-    {       			
-      return true;		
+    {
+      return true;
     }
   }
   catch(e)
-  {       		
-    return false;		
+  {
+    return false;
   }
 }
 
 function apiSetFastMode(fast)
 {
-  var css=document.getElementById("css"); 
-  if(!css) 
+  var css=document.getElementById("css");
+  if(!css)
     return;
 
   if(fast)
-    css.href="main_fast.css"; 
+    css.href="main_fast.css";
   else
-    css.href="main.css"; 
+    css.href="main.css";
 }
 
 //======================================
-// Internal private functions           
+// Internal private functions
 //======================================
 
 function   MsgBox(str)
-{ 
-	window.external.MsgBox(str); 
+{
+	window.external.MsgBox(str);
 }
 function AskYesNo(str)
-{ 
-	return window.external.AskYesNo(str); 
+{
+	return window.external.AskYesNo(str);
 }
 //--------------------------------------
 // Our own, less scary error handler
 
 function errorHandler(msg,url,lno)
 {
-	MsgBox("Error at line "+lno+":\n"+msg+" "); 
-	return true; 
+	MsgBox("Error at line "+lno+":\n"+msg+" ");
+	return true;
 }
 
 function errCantLoad(xd,file)
@@ -623,20 +623,20 @@ function FillImageList(list, bin_objects)
 {
 	if(list.id=='href')
 	{
-		var cover=list.value; 
+		var cover=list.value;
 
 		list.innerHTML='';
 
-		var newopt=document.createElement('option'); 
-		newopt.value=''; 
-		newopt.innerHTML=''; 
+		var newopt=document.createElement('option');
+		newopt.value='';
+		newopt.innerHTML='';
 		list.appendChild(newopt);
 
 		for(var j=0; j<bin_objects.length; j++)
 		{
 			var pic_id=bin_objects[j].all.id.value;
 
-			if(pic_id.indexOf(".jpg")==-1 && pic_id.indexOf(".png")==-1  && pic_id.indexOf(".jpeg")==-1) 
+			if(pic_id.indexOf(".jpg")==-1 && pic_id.indexOf(".png")==-1  && pic_id.indexOf(".jpeg")==-1)
 			{
 				continue;
 			}
@@ -645,7 +645,7 @@ function FillImageList(list, bin_objects)
 			newopt.value='#'+pic_id;
 			newopt.innerHTML=pic_id;
 
-			if(newopt.value==cover) 
+			if(newopt.value==cover)
 			{
 				newopt.selected=true;
 			}
@@ -659,13 +659,13 @@ function FillLists()
 {
 	var bin_objects = document.all.binobj.getElementsByTagName("DIV");
 
-	var lists=document.all.tiCover.getElementsByTagName("select"); // drop-down lists	
+	var lists=document.all.tiCover.getElementsByTagName("select"); // drop-down lists
 	for(var i=0; i<lists.length; i++)
 	{
 		FillImageList(lists[i], bin_objects);
 	}
-	
-	var stilists=document.all.stiCover.getElementsByTagName("select"); // drop-down lists	
+
+	var stilists=document.all.stiCover.getElementsByTagName("select"); // drop-down lists
 	for(var i=0; i<stilists.length; i++)
 	{
 		FillImageList(stilists[i], bin_objects);
@@ -675,72 +675,72 @@ function FillLists()
 function SelectLanguages()
 {
 
-	var list=document.getElementById("tiLang"); 
-	var sel=list.value;
-
-	var opts=list.getElementsByTagName("option");
-
-	for(var i=0; i<opts.length; i++)
-	{ 
-		if(opts[i].innerHTML=="-org-") 
-			opts[i].removeNode(true); 
-		else if(opts[i].value==sel) 
-			opts[i].selected=true; 
-	}
-
- 
-	var list=document.getElementById("tiSrcLang"); 
+	var list=document.getElementById("tiLang");
 	var sel=list.value;
 
 	var opts=list.getElementsByTagName("option");
 
 	for(var i=0; i<opts.length; i++)
 	{
-		if(opts[i].innerHTML=="-org-") 
-			opts[i].removeNode(true); 
-		else if(opts[i].value==sel) 
-			opts[i].selected=true; 
-	}
-	
-	var list=document.getElementById("stiLang"); 
-	var sel=list.value;
-
-	var opts=list.getElementsByTagName("option");
-
-	for(var i=0; i<opts.length; i++)
-	{ 
-		if(opts[i].innerHTML=="-org-") 
-			opts[i].removeNode(true); 
-		else if(opts[i].value==sel) 
-			opts[i].selected=true; 
+		if(opts[i].innerHTML=="-org-")
+			opts[i].removeNode(true);
+		else if(opts[i].value==sel)
+			opts[i].selected=true;
 	}
 
- 
-	var list=document.getElementById("stiSrcLang"); 
+
+	var list=document.getElementById("tiSrcLang");
 	var sel=list.value;
 
 	var opts=list.getElementsByTagName("option");
 
 	for(var i=0; i<opts.length; i++)
 	{
-		if(opts[i].innerHTML=="-org-") 
-			opts[i].removeNode(true); 
-		else if(opts[i].value==sel) 
-			opts[i].selected=true; 
+		if(opts[i].innerHTML=="-org-")
+			opts[i].removeNode(true);
+		else if(opts[i].value==sel)
+			opts[i].selected=true;
+	}
+
+	var list=document.getElementById("stiLang");
+	var sel=list.value;
+
+	var opts=list.getElementsByTagName("option");
+
+	for(var i=0; i<opts.length; i++)
+	{
+		if(opts[i].innerHTML=="-org-")
+			opts[i].removeNode(true);
+		else if(opts[i].value==sel)
+			opts[i].selected=true;
+	}
+
+
+	var list=document.getElementById("stiSrcLang");
+	var sel=list.value;
+
+	var opts=list.getElementsByTagName("option");
+
+	for(var i=0; i<opts.length; i++)
+	{
+		if(opts[i].innerHTML=="-org-")
+			opts[i].removeNode(true);
+		else if(opts[i].value==sel)
+			opts[i].selected=true;
 	}
 }
 //-----------------------------------------------
-// Generates new ID and puts it into the field 
+// Generates new ID and puts it into the field
 
 function NewDocumentID()
 {
-	var desc=document.getElementById("fbw_desc"); 
-	if(!desc) 
+	var desc=document.getElementById("fbw_desc");
+	if(!desc)
 		return;
 
 	if(AskYesNo("\nAre you sure you want to generate a new ID? \n\nThis will affect library submission.\nPrevious value will be lost!\n\n"))
 	{
-		desc.all.diID.value=window.external.GetUUID(); 
+		desc.all.diID.value=window.external.GetUUID();
 	}
 }
 //-----------------------------------------------
@@ -786,8 +786,8 @@ function InitFieldsets()
 
 function SetDocumentVersion(desc)
 {
-	var version=desc.all.diVersion; 
-	if(version && version.value=="") 
+	var version=desc.all.diVersion;
+	if(version && version.value=="")
 		version.value="1.0";
 }
 
@@ -796,12 +796,12 @@ function SetProgramUsed(desc)
   var prgs = desc.all.diProgs;
   if(prgs)
   {
-    if(prgs.value == "") 
+    if(prgs.value == "")
       prgs.value = "FB Editor v2.0";
     else
     {
       if(prgs.value.search(/FB Editor v2\.0/i) == -1)
-      {				
+      {
         prgs.value += ", FB Editor v2.0";
       }
     }
@@ -810,25 +810,25 @@ function SetProgramUsed(desc)
 
 function SetCurrentDate(desc)
 {
-	var date=new Date(); 
+	var date=new Date();
 	var ms=Array("January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December");
 
-	var year=date.getFullYear(); 
-	var day=date.getDate(); 
-	if(day<10) 
+	var year=date.getFullYear();
+	var day=date.getDate();
+	if(day<10)
 		day="0"+day;
-		
-	var  mon=date.getMonth() + 1;    
-	
-	if(mon<10) 
+
+	var  mon=date.getMonth() + 1;
+
+	if(mon<10)
 		mon="0"+mon;
 
-	var dt=desc.all.diDate;    
-	if(dt && dt.value.length==0) 
+	var dt=desc.all.diDate;
+	if(dt && dt.value.length==0)
 		dt.value = day+" "+ms[mon - 1]+" "+year;
-		
-	var dv=desc.all.diDateVal; 
-	if(dv && dv.value.length==0) 
+
+	var dv=desc.all.diDateVal;
+	if(dv && dv.value.length==0)
 		dv.value = year +"-"+mon  +"-"+day;
 }
 
@@ -839,9 +839,9 @@ function SetupDescription(desc)
 	SetDocumentVersion(desc);
 	SetProgramUsed(desc);
 	SetCurrentDate(desc)
- 
-	var DocumentID=desc.all.diID; 
-	if(DocumentID && DocumentID.value=="") 
+
+	var DocumentID=desc.all.diID;
+	if(DocumentID && DocumentID.value=="")
 		DocumentID.value=window.external.GetUUID();
 
 	InitFieldsets();
@@ -915,20 +915,20 @@ function Remove(obj)
 			if(idx != -1)
 				ImagesInfo.splice(idx, 1);
 		}
-		
+
 		var inpts = obj.getElementsByTagName("input");
 
 		if(inpts[0].id=="id") pic_id = inpts[0].value; else
 		if(inpts[1].id=="id") pic_id = inpts[1].value;
 	}
 
- // delete 
+ // delete
 
  var pn=obj.parentNode; obj.removeNode(true); PutSpacers(pn);
 
  // update images
 
- if(pic_id!="")  
+ if(pic_id!="")
  {
   pic_id="fbw-internal:#"+pic_id;
 
@@ -939,7 +939,7 @@ function Remove(obj)
    {
     imgs[i].src=""; imgs[i].src=pic_id; break; // force image update
    }
- 
+
   // update Cover lists
 
   FillLists();
@@ -949,7 +949,7 @@ function Remove(obj)
 
 function Clone(obj)
 {
- obj.insertAdjacentElement("afterEnd",dClone(obj)); PutSpacers(obj.parentNode); 
+ obj.insertAdjacentElement("afterEnd",dClone(obj)); PutSpacers(obj.parentNode);
 
  if(obj.id=='href') FillLists(); // this is the Cover field
 }
@@ -957,8 +957,8 @@ function Clone(obj)
 
 function ChildClone(obj)
 {
- obj.appendChild(dClone(obj)); PutSpacers(obj); 
-} 
+ obj.appendChild(dClone(obj)); PutSpacers(obj);
+}
 //--------------------------------------
 
 //// == DESC == ///////////////////////////////////////////////////////////////////
@@ -1011,7 +1011,7 @@ function MakeAuthor(node,name,dv,force,indent)
  }
  added=MakeText(au,"nickname",dv.all.nick.value,false,indent+1) || added;
  added=MakeText(au,"home-page",dv.all.home.value,false,indent+1) || added;
- added=MakeText(au,"email",dv.all.email.value,false,indent+1) || added; 
+ added=MakeText(au,"email",dv.all.email.value,false,indent+1) || added;
 
  if(added || force)
  {
@@ -1129,7 +1129,7 @@ function MakeTitleInfo(doc,desc,ann,indent)
 
  MakeText(ti,"lang",document.all.tiLang.value,false,indent+1);
  MakeText(ti,"src-lang",document.all.tiSrcLang.value,false,indent+1);
- 
+
  // translator
  list=document.all.tiTrans.getElementsByTagName("DIV");
 
@@ -1157,7 +1157,7 @@ function IsAuthorExist(node,name,dv) {
 }
 
 function IsTextExist(val) {
-  if (val.length==0) 
+  if (val.length==0)
       return false;
   return true;
 }
@@ -1174,7 +1174,7 @@ function IsSeqExist2(xn,hn) {
     if (cn.nodeName=="DIV")
       exist=IsSeqExist2(newxn,cn) || exist;
   }
-  if (exist || name.length>0 || num.length>0) 
+  if (exist || name.length>0 || num.length>0)
     exist=true;
 
   return exist;
@@ -1190,7 +1190,7 @@ function IsSeqExist(xn,hn) {
 
 function IsSTBFieldTextExist(sti,desc,doc) {
   var exist=false;
-  
+
   // authors
   var list=document.all.stiAuthor.getElementsByTagName("DIV");
   for (var i=0;i<list.length;++i)
@@ -1204,7 +1204,7 @@ function IsSTBFieldTextExist(sti,desc,doc) {
   exist=IsTextExist(document.all.stiTitle.value) || exist;
 
   // genres
-  list=document.all.stiGenre.getElementsByTagName("DIV"); 
+  list=document.all.stiGenre.getElementsByTagName("DIV");
   for (var i=0;i<list.length;++i) {
     var ge=doc.createNode(1,"genre",fbNS);
     var match=list.item(i).all.match.value;
@@ -1215,7 +1215,7 @@ function IsSTBFieldTextExist(sti,desc,doc) {
       exist=true || exist;
     }
   }
-  
+
   // annotation, will be filled by body.xsl
   /*if (!IsEmpty(ann)) {
     exist=true;
@@ -1226,7 +1226,7 @@ function IsSTBFieldTextExist(sti,desc,doc) {
 
   // date
   var dt=sti.ownerDocument.createNode(1,"date",fbNS);
-  if (document.all.stiDateVal.value.length>0) 
+  if (document.all.stiDateVal.value.length>0)
     exist=true;
   if (document.all.stiDate.value.length>0)
     exist=true;
@@ -1235,16 +1235,16 @@ function IsSTBFieldTextExist(sti,desc,doc) {
   list=document.all.stiCover.getElementsByTagName("DIV");
   var cp=doc.createNode(1,"coverpage",fbNS);
   for (var i=0;i<list.length;++i) {
-    if (list.item(i).all.href.value.length>0) 
+    if (list.item(i).all.href.value.length>0)
       exist=true;
   }
-  if (cp.hasChildNodes) 
+  if (cp.hasChildNodes)
     exist=true;
 
   // lang
   exist=IsTextExist(document.all.stiLang.value) || exist;
   exist=IsTextExist(document.all.stiSrcLang.value) || exist;
-  
+
   // translator
   list=document.all.stiTrans.getElementsByTagName("DIV");
   for (var i=0;i<list.length;++i)
@@ -1252,21 +1252,21 @@ function IsSTBFieldTextExist(sti,desc,doc) {
 
   // sequence
   exist=IsSeqExist(sti,document.all.stiSeq) || exist;
-  
+
   return exist;
 }
 
-function MakeSourceTitleInfo(doc,desc,ann,indent) 
+function MakeSourceTitleInfo(doc,desc,ann,indent)
 {
 	var sti=doc.createNode(1,"src-title-info",fbNS);
-	if(IsSTBFieldTextExist(sti,desc,doc)) 
+	if(IsSTBFieldTextExist(sti,desc,doc))
 	{
 		Indent(desc,indent);
 		desc.appendChild(sti);
 
 		// genres
 		var list=document.all.stiGenre.getElementsByTagName("DIV");
-		for (var i=0;i<list.length;++i) 
+		for (var i=0;i<list.length;++i)
 		{
 			var ge=doc.createNode(1,"genre",fbNS);
 			var match=list.item(i).all.match.value;
@@ -1293,7 +1293,7 @@ function MakeSourceTitleInfo(doc,desc,ann,indent)
 		list=document.all.stiCover.getElementsByTagName("DIV");
 		var cp=doc.createNode(1,"coverpage",fbNS);
 		for (var i=0;i<list.length;++i)
-			if (list.item(i).all.href.value.length>0) 
+			if (list.item(i).all.href.value.length>0)
 			{
 				var xn=doc.createNode(1,"image",fbNS);
 				var an=doc.createNode(2,"l:href",xlNS);
@@ -1302,7 +1302,7 @@ function MakeSourceTitleInfo(doc,desc,ann,indent)
 				Indent(cp,indent+2);
 				cp.appendChild(xn);
 			}
-		if (cp.hasChildNodes) 
+		if (cp.hasChildNodes)
 		{
 			Indent(sti,indent+1);
 			sti.appendChild(cp);
@@ -1325,7 +1325,7 @@ function MakeSourceTitleInfo(doc,desc,ann,indent)
 function MakeDocInfo(doc,desc,hist,indent)
 {
  var added=false; var di=doc.createNode(1,"document-info",fbNS);
-  
+
  // authors
  var i; var list=document.all.diAuthor.getElementsByTagName("DIV");
 
@@ -1349,7 +1349,7 @@ function MakeDocInfo(doc,desc,hist,indent)
  {
   Indent(di,indent+1); di.appendChild(hist); added=true;
  }
-  
+
   // only append document info it is non-empty
  if(added)
  {
@@ -1398,7 +1398,7 @@ function MakeCustInfo(doc,desc,indent)
  }
 }
 
-function MakeStylesheets(doc,indent) 
+function MakeStylesheets(doc,indent)
 {
  if (!document.getElementById("stylesheetId")) return;
  var s=document.getElementById("stylesheetId").value;
@@ -1519,7 +1519,7 @@ function SkipOver(np,n1,n2,n3)
 function StyleCheck(cp,st)
 {
  if(!cp || cp.tagName != "P") return false;
- 
+
  var pp=cp.parentElement;
  if(!pp || pp.tagName != "DIV") return false;
 
@@ -1536,21 +1536,21 @@ function StyleCheck(cp,st)
     if(pp.className!="section" && pp.className!="stanza" && pp.className!="cite" && pp.className != "annotation")
       return false;
   break;
-  
+
   case "text-author":
     if(pp.className!="cite" && pp.className!="epigraph" && pp.className!="poem") return false;
     if(cp.nextSibling) return false;
   break;
 
   case "code":
-    if((cp.className == "text-author" || cp.className == "subtitle" && pp.className == "section") || 
+    if((cp.className == "text-author" || cp.className == "subtitle" && pp.className == "section") ||
          (pp.className == "stanza" && cp.tagName == "P") ||
          (cp.className == "" && pp.className == "section" && cp.tagName == "P") ||
          ((cp.className == "td" || cp.className == "th") && pp.className == "tr"))
       return true;
     else
       return false;
-    
+
   break;
  }
 
@@ -1604,13 +1604,13 @@ function StyleCode(check, cp, range)
         return false;
       }
     }
-    
+
     if(cp.tagName == "DIV" && cp.className == "section")
     {
       var end = range.duplicate();
       range.collapse(true);
       end.collapse(false);
-      
+
       per = range.parentElement();
       ped = end.parentElement();
 
@@ -1620,13 +1620,13 @@ function StyleCode(check, cp, range)
         ped = ped.parentElement;
 
       if(per && ped && per.parentElement == ped.parentElement)
-      {        
+      {
         return true;
       }
     }
   }
 
-  
+
   return SetStyle(cp, check, "code");
 }
 
@@ -1644,7 +1644,7 @@ function IsCode(cp)
 function TextIntoHTML(s) {
  if (!s) return "";
  var re0=new RegExp("&");
- var re0_="&amp;"; 
+ var re0_="&amp;";
  var re1=new RegExp("<","g");
  var re1_="&lt;";
  var re2=new RegExp(">","g");
@@ -1694,21 +1694,19 @@ function AddTitle(cp, check)
 
   var del = false;
 
-  if(sel.text != "")
+  if(sel.text == "" || cp.className=="body")
   {
+    var pp = document.createElement("P");
+    pp.innerText="";
+    window.external.inflateBlock(pp) = true;
+    div.appendChild(pp);
+  } else {
     if(sel.htmlText.indexOf("<DIV") == -1)
     {
       div.innerHTML = "<P>"+TextIntoHTML(sel.text).replace(/\r+\n/gi,"</P><P>")+"</P>";
       del = true;
     }
-  } else {
-   var pp = document.createElement("P");   
-   pp.innerText="";
-   window.external.inflateBlock(pp) = true;   
-   div.appendChild(pp);   
   }
-
-  InsBefore(cp, np, div);
 
   if(full)
   {
@@ -1772,6 +1770,8 @@ function AddTitle(cp, check)
   {
     sel.text = "";
   }
+
+  InsBefore(cp, np, div);
 
   GoTo(div);
 
@@ -1909,7 +1909,7 @@ function InsInlineImage(check, id)
   rng.pasteHTML(inlineimgcode);
  else
      rng.pasteHTML("<SPAN onresizestart='return false' contentEditable='false' class='image' href='#" + id + "'><IMG src='fbw-internal:#" + id + "'></SPAN>");
-  
+
  window.external.EndUndoUnit(document);
 
  return rng.parentElement;
@@ -1992,13 +1992,13 @@ function AddEpigraph(cp,check)
         var pptags = new Array();
         var ppall = pps[i].all;
         var j = 0;
-        
+
         for(k = 0; k < ppall.length; ++k)
         {
           if(ppall[k].innerText && ppall[k].innerText == pptext)
             pptags[j++] = ppall[k].tagName;
         }
-        
+
         for(pptag in pptags)
         {
           if(pptag != upTag)
@@ -2145,7 +2145,7 @@ function MergeContainers(cp,check)
  else
  {
     // move nx's content under cp
-    
+
     // check if there are any header items to save
     var needSave;
     for(var ii=nx.firstChild;ii;ii=ii.nextSibling)
@@ -2252,16 +2252,16 @@ function RemoveOuterContainer(cp,check)
   cc.removeNode(true);
   if(cc.nodeName=="DIV" && cc.className=="section") cp.insertAdjacentElement("beforeBegin",cc);
  }
- 
+
  cp.removeNode(true); // delete the section itself
 
  window.external.EndUndoUnit(document);
 }
 //-----------------------------------------------
 
-function ImgSetURL(image,url) 
-{       	
-	image.style.width=null;	
+function ImgSetURL(image,url)
+{
+	image.style.width=null;
 	image.src=document.urlprefix+url;
 }
 
@@ -2271,33 +2271,33 @@ function SaveBodyScroll()
 }
 
 function SetExtendedStyle(elem, button_id, change)
-{	
-	/*var desc = document.getElementById("fbw_desc"); 
-	var button = document.getElementById(button_id); 
-	
+{
+	/*var desc = document.getElementById("fbw_desc");
+	var button = document.getElementById(button_id);
+
 	var ext = window.external.GetExtendedStyle(elem);
 	if(change)
 		ext= !ext;
-	
+
 	if(!desc)
 		return false;
-		
+
 	var all=desc.all;
 	for(var i=0; i<all.length; i++)
 	{
-		if(null != all[i].getAttribute(elem)) 
+		if(null != all[i].getAttribute(elem))
 			if(ext)
 				all[i].style.display="inline-block";
 			else
-				all[i].style.display="none"; 
+				all[i].style.display="none";
 	}
-	
+
 	//button.setAttribute("onclick", "SetExtendedStyle(" + !ext + ",'" + elem + "','" + button_id + "')");
 	if(ext)
-		button.value = "<<<<";	
+		button.value = "<<<<";
 	else
-		button.value = ">>>";	
-	
+		button.value = ">>>";
+
 	window.external.SetExtendedStyle(elem, ext);*/
 }
 
@@ -2308,7 +2308,7 @@ function ShowElement(id, show)
 	var desc = document.getElementById("fbw_desc");
 	var spans = desc.getElementsByTagName("SPAN");
 	for(var i=0; i<spans.length; i++)
-	{		
+	{
 		if(spans[i].getAttribute("id") == id)
 		{
 			if(show)
