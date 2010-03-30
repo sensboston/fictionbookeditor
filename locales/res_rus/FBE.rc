@@ -237,15 +237,15 @@ END
 
 IDD_ABOUTBOX DIALOGEX 0, 0, 267, 139
 STYLE DS_SETFONT | DS_MODALFRAME | DS_CENTER | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "About"
+CAPTION "О программе"
 FONT 9, "Tahoma", 0, 0, 0x0
 BEGIN
     DEFPUSHBUTTON   "OK",IDOK,140,118,50,14
     CONTROL         "FictionBook Editor v2.2 pre-release",IDC_STATIC_AB_APPNAMEVER,
                     "Static",SS_LEFTNOWORDWRAP | WS_GROUP,101,8,153,8
-    ICON            IDR_MAINFRAME,IDC_STATIC_AB_APPICON,72,8,18,18
-    LTEXT           "Build",IDC_STATIC,101,20,15,8
-    LTEXT           "",IDC_BUILDSTAMP,120,20,131,8
+    ICON            IDR_MAINFRAME,IDC_STATIC_AB_APPICON,72,8,20,20
+    LTEXT           "Сборка",IDC_STATIC,101,20,24,8
+    LTEXT           "",IDC_BUILDSTAMP,130,20,126,8
     CONTROL         248,IDC_AB_BANNER,"Static",SS_BITMAP | SS_REALSIZEIMAGE,7,7,56,123,WS_EX_CLIENTEDGE
     EDITTEXT        IDC_CONTRIBS,69,47,191,65,ES_MULTILINE | ES_AUTOVSCROLL | ES_READONLY | ES_WANTRETURN | NOT WS_BORDER | WS_VSCROLL
     CONTROL         "<a href=""http://code.google.com/p/fictionbookeditor/"">http://code.google.com/p/fictionbookeditor/</a>",IDC_SYSLINK_AB_LINKS,
@@ -464,7 +464,7 @@ BEGIN
     BEGIN
         LEFTMARGIN, 7
         TOPMARGIN, 7
-        BOTTOMMARGIN, 127
+        BOTTOMMARGIN, 132
     END
 
     IDD_INPUTBOX, DIALOG
@@ -874,10 +874,20 @@ BEGIN
     IDS_HOTKEY_EDIT_INCREMENTAL_SEARCH "Инкрементальный поиск"
     IDS_HOTKEY_EDIT_INSERT_CITE "Вставить цитату"
     IDS_HOTKEY_EDIT_INSERT_IMAGE "Вставить изображение"
-    IDS_HOTKEY_EDIT_INSERT_INLINEIMAGE "Вставить изображение в текст"
     IDS_HOTKEY_EDIT_INSERT_POEM "Вставить поэму"
     IDS_HOTKEY_EDIT_ITALIC  "Курсив"
     ID_VIEW_SOURCE          "Перейти к коду\nПерейти к коду"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_HOTKEY_PLUGINS_LAST_PLUGIN "Последний плагин"
+    IDS_HOTKEY_TOOLS_SPELL  "Орфография"
+    IDC_SPELL_ADD2DICT      "Добавить в словарь"
+    IDS_SPELL_CHECK_COMPLETED "Проверка орфографии завершена."
+    IDC_SPELL_IGNOREALL     "Пропустить все"
+    IDS_SPELL_CONTINUE      "Продолжить"
+    IDS_HOTKEY_EDIT_INSERT_INLINEIMAGE "Вставить изображение в текст"
 END
 
 STRINGTABLE 
@@ -1026,16 +1036,6 @@ END
 STRINGTABLE 
 BEGIN
     IDC_SPELL_IGNORE        "Пропустить"
-END
-
-STRINGTABLE 
-BEGIN
-    IDS_HOTKEY_PLUGINS_LAST_PLUGIN "Последний плагин"
-    IDS_HOTKEY_TOOLS_SPELL  "Орфография"
-    IDC_SPELL_ADD2DICT      "Добавить в словарь"
-    IDS_SPELL_CHECK_COMPLETED "Проверка орфографии завершена."
-    IDC_SPELL_IGNOREALL     "Пропустить все"
-    IDS_SPELL_CONTINUE      "Продолжить"
 END
 
 STRINGTABLE 
