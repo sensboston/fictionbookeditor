@@ -636,7 +636,7 @@ function FillImageList(list, bin_objects)
 		{
 			var pic_id=bin_objects[j].all.id.value;
 
-			if(pic_id.indexOf(".jpg")==-1 && pic_id.indexOf(".png")==-1  && pic_id.indexOf(".jpeg")==-1)
+			if(pic_id.toLowerCase().indexOf(".jpg")==-1 && pic_id.toLowerCase().indexOf(".png")==-1  && pic_id.toLowerCase().indexOf(".jpeg")==-1)
 			{
 				continue;
 			}
