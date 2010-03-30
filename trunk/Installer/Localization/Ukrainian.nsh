@@ -28,3 +28,6 @@ LangString ErrCheckFBVRunning ${LANG_UKRAINIAN} "Перед початком в�
 LangString ErrNTCurrentVersion ${LANG_UKRAINIAN} "FictionBook Tools працює лише у Windows NT,XP,Vista,7."
 LangString ErrShellIntergation ${LANG_UKRAINIAN} "DLL-бібліотека інтеграції оболонки FB використовується і її неможливо перезаписати.$\r$\n\
 	Будь ласка, завершіть сеанс, після чого перезапустіть встановлення."
+
+; uninstall messages
+LangString UninstAskSettings ${LANG_UKRAINIAN} "Ви бажаєте видалити файли налаштувань програми?"

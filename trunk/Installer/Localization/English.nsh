@@ -28,3 +28,6 @@ LangString ErrCheckFBVRunning ${LANG_ENGLISH} "Please exit FictionBook Validator
 LangString ErrNTCurrentVersion ${LANG_ENGLISH} "FictionBook Tools run only on Windows NT and later OS'es."
 LangString ErrShellIntergation ${LANG_ENGLISH} "FB shell intergation dll was in use and could not be overwritten.$\r$\n\
 	Please logout and logon again, and restart this installation."
+
+; uninstall messages
+LangString UninstAskSettings ${LANG_ENGLISH} "Would you like to delete all application settings?"
