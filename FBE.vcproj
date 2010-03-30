@@ -925,12 +925,28 @@
 							Name="VCXMLDataGeneratorTool"
 						/>
 					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCXMLDataGeneratorTool"
+						/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath=".\files\FictionBookGenres.xsd"
 					>
 					<FileConfiguration
 						Name="Release|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCXMLDataGeneratorTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug|Win32"
 						ExcludedFromBuild="true"
 						>
 						<Tool
@@ -949,12 +965,28 @@
 							Name="VCXMLDataGeneratorTool"
 						/>
 					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCXMLDataGeneratorTool"
+						/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath=".\files\FictionBookLinks.xsd"
 					>
 					<FileConfiguration
 						Name="Release|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCXMLDataGeneratorTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug|Win32"
 						ExcludedFromBuild="true"
 						>
 						<Tool
