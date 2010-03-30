@@ -914,6 +914,54 @@
 			<Filter
 				Name="XML Schemas"
 				>
+				<File
+					RelativePath=".\files\FictionBook.xsd"
+					>
+					<FileConfiguration
+						Name="Release|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCXMLDataGeneratorTool"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath=".\files\FictionBookGenres.xsd"
+					>
+					<FileConfiguration
+						Name="Release|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCXMLDataGeneratorTool"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath=".\files\FictionBookLang.xsd"
+					>
+					<FileConfiguration
+						Name="Release|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCXMLDataGeneratorTool"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath=".\files\FictionBookLinks.xsd"
+					>
+					<FileConfiguration
+						Name="Release|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCXMLDataGeneratorTool"
+						/>
+					</FileConfiguration>
+				</File>
 			</Filter>
 			<Filter
 				Name="Style Sheets"
