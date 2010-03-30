@@ -4892,25 +4892,22 @@ void CMainFrame::InitPluginHotkey(CString guid, UINT cmd, CString name)
 	}
 }
 
+// 
+// Idea by Sclex
+// 
 void CMainFrame::ChangeNBSP(MSHTML::IHTMLElementPtr elem)
 {
     long visible = false;
 	if (elem)
 	{
-		MSHTML::IDisplayServicesPtr ids (MSHTML::IDisplayServicesPtr(m_doc->m_body.Document()));
-		MSHTML::IHTMLCaretPtr caret = 0;
-		MSHTML::tagPOINT *point = new MSHTML::tagPOINT();
-		if (ids)
-		{
-			ids->GetCaret(&caret);
-			if (caret)
-			{
-				caret->IsVisible(&visible);
-				if (visible)
-					caret->GetLocation(point, true);
-			}
-		}
+		MSHTML::IHTMLTxtRangePtr sel(m_doc->m_body.Document()->selection->createRange());
+		MSHTML::IHTMLTxtRangePtr tr1 = sel->duplicate();
 
+		tr1->moveToElementText(elem);
+		tr1->setEndPoint(L"EndToStart",sel);
+		CString s = tr1->text;
+		int offset = s.GetLength();
+ 
 		CString txt = elem->innerHTML;
 		if (txt.Find(L"<DIV") < 0)
 		{
@@ -4919,18 +4916,16 @@ void CMainFrame::ChangeNBSP(MSHTML::IHTMLElementPtr elem)
 			{
 				elem->innerHTML = txt.AllocSysString();
 				m_doc->AdvanceDocVersion(n);
-				if (caret && visible) 
-				{
-					// restore caret position
-					MSHTML::IDisplayPointerPtr disptr;
-					ids->CreateDisplayPointer(&disptr);
-					disptr->moveToPoint(*point, MSHTML::COORD_SYSTEM_GLOBAL, elem, 0, 0);
-					caret->MoveCaretToPointer(disptr, true, MSHTML::CARET_DIRECTION_SAME);
-					// shift one character right
-					MSHTML::IHTMLTxtRangePtr rng(m_doc->m_body.Document()->selection->createRange());
-					rng->move(L"character",1);
-					rng->select();
+
+				tr1->moveToElementText(elem);
+				tr1->collapse(true);
+				if (offset==0) 
+				{ 
+					tr1->move(L"character",1);
+					tr1->move(L"character",-1); 
 				}
+				else tr1->move(L"character",offset); 
+				tr1->select();
 			}
 		}
 	}

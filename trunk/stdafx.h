@@ -105,12 +105,4 @@ using namespace _com_util;
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
 
-
-#include "FictionBook.h"
-
-#include "FictionBookGenres.h"
-
-#include "FictionBookLinks.h"
-
-#include "FictionBookLang.h"
 #endif // !defined(AFX_STDAFX_H__149F645E_518F_4EA9_B603_63D633FFB194__INCLUDED_)
