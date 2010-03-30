@@ -193,7 +193,7 @@ BEGIN
     COMBOBOX        IDC_DEFAULT_ENC,72,19,132,30,CBS_DROPDOWNLIST | CBS_SORT | WS_VSCROLL | WS_TABSTOP
     GROUPBOX        "Параметри відкриття",IDC_STATIC,7,51,208,24
     CONTROL         "Відновлювати позицію позицію курсору",IDC_RESTORE_POS,
-                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,10,61,125,10
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,10,61,145,10
     GROUPBOX        "Тека скриптів",IDC_STATIC,7,81,208,42
     CONTROL         "Типова тека",IDC_DEFAULT_SCRIPTS_FOLDER,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,11,91,80,10
     EDITTEXT        IDC_SCRIPTS_FOLDER_PATH,10,104,170,14,ES_AUTOHSCROLL
@@ -237,15 +237,15 @@ END
 
 IDD_ABOUTBOX DIALOGEX 0, 0, 267, 139
 STYLE DS_SETFONT | DS_MODALFRAME | DS_CENTER | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "About"
+CAPTION "Про програму..."
 FONT 9, "Tahoma", 0, 0, 0x0
 BEGIN
-    DEFPUSHBUTTON   "OK",IDOK,140,118,50,14
+    DEFPUSHBUTTON   "Гаразд",IDOK,140,118,50,14
     CONTROL         "FictionBook Editor v2.2 pre-release",IDC_STATIC_AB_APPNAMEVER,
                     "Static",SS_LEFTNOWORDWRAP | WS_GROUP,101,8,153,8
-    ICON            IDR_MAINFRAME,IDC_STATIC_AB_APPICON,72,8,18,18
-    LTEXT           "Build",IDC_STATIC,101,20,15,8
-    LTEXT           "",IDC_BUILDSTAMP,120,20,131,8
+    ICON            IDR_MAINFRAME,IDC_STATIC_AB_APPICON,72,8,20,20
+    LTEXT           "збірка",IDC_STATIC,101,20,20,8
+    LTEXT           "",IDC_BUILDSTAMP,125,20,131,8
     CONTROL         248,IDC_AB_BANNER,"Static",SS_BITMAP | SS_REALSIZEIMAGE,7,7,56,123,WS_EX_CLIENTEDGE
     EDITTEXT        IDC_CONTRIBS,69,47,191,65,ES_MULTILINE | ES_AUTOVSCROLL | ES_READONLY | ES_WANTRETURN | NOT WS_BORDER | WS_VSCROLL
     CONTROL         "<a href=""http://code.google.com/p/fictionbookeditor/"">http://code.google.com/p/fictionbookeditor/</a>",IDC_SYSLINK_AB_LINKS,
@@ -270,7 +270,7 @@ BEGIN
     LTEXT           "Колір тексту:",IDC_STATIC,13,67,44,8
     PUSHBUTTON      "",IDC_FG,72,67,27,11
     LTEXT           "Колір тла:",IDC_STATIC,137,67,37,8
-    LTEXT           "Шрифт:",IDC_STATIC,13,51,42,8
+    LTEXT           "Шрифт:",IDC_STATIC,13,51,41,8
     COMBOBOX        IDC_FONT,72,49,140,70,CBS_DROPDOWNLIST | CBS_SORT | WS_VSCROLL | WS_TABSTOP
     LTEXT           "Розмір шрифту:",IDC_STATIC,13,27,57,8
     COMBOBOX        IDC_FONT_SIZE,72,26,51,70,CBS_DROPDOWN | WS_VSCROLL | WS_TABSTOP
@@ -281,7 +281,7 @@ BEGIN
     CONTROL         "Підсвітка синтаксису",IDC_SYNTAXHL,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,13,119,108,10
     CONTROL         "Показувати символи кінця рядків",IDC_SHOWEOL,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,13,131,125,10
     CONTROL         "Прискорений режим",IDC_FAST_MODE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,13,82,87,10
-    LTEXT           "Мова:",IDC_STATIC,14,15,41,8
+    LTEXT           "Мова:",IDC_STATIC,13,15,41,8
     COMBOBOX        IDC_LANG,72,12,138,30,CBS_DROPDOWNLIST | CBS_SORT | WS_VSCROLL | WS_TABSTOP
     GROUPBOX        "Перевірка орфографії",IDC_STATIC,7,146,206,54
     CONTROL         "Виділяти помилки",IDC_BACKGROUNDSPELLCHECK,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,124,159,77,10
@@ -874,10 +874,20 @@ BEGIN
     IDS_HOTKEY_EDIT_INCREMENTAL_SEARCH "Інкрементальний пошук"
     IDS_HOTKEY_EDIT_INSERT_CITE "Вставити цитату"
     IDS_HOTKEY_EDIT_INSERT_IMAGE "Вставити малюнок"
-	IDS_HOTKEY_EDIT_INSERT_INLINEIMAGE "Додати малюнок до тексту"
     IDS_HOTKEY_EDIT_INSERT_POEM "Вставити вірш"
     IDS_HOTKEY_EDIT_ITALIC  "Курсив"
     ID_VIEW_SOURCE          "Показати код\nПоказати код-сирець"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_HOTKEY_PLUGINS_LAST_PLUGIN "Останній модуль"
+    IDS_HOTKEY_TOOLS_SPELL  "Орфографія"
+    IDC_SPELL_ADD2DICT      "Додати до словника"
+    IDS_SPELL_CHECK_COMPLETED "Перевірку орфографії завершено."
+    IDC_SPELL_IGNOREALL     "Пропустити усі"
+    IDS_SPELL_CONTINUE      "Продовжити"
+    IDS_HOTKEY_EDIT_INSERT_INLINEIMAGE "Додати малюнок до тексту"
 END
 
 STRINGTABLE 
@@ -1014,7 +1024,7 @@ BEGIN
     IDS_HOTKEY_ASSIGN_NO_COLLISION "Не зарезервовано для інших коменд"
     IDS_HOTKEY_ASSIGN_COLLISION "Зарезервовано «%s»"
     IDS_SETTINGS_NEED_RESTART 
-                            "Зміни наберуть чинностіпісля перезавантаження програми.\nПерезавантажити негайно?"
+                            "Зміни наберуть чинності після перезавантаження програми.\nПерезавантажити негайно?"
     IDS_DOCTREE_MENU_ELEMENTS "Елементи"
     IDS_DOCTREE_MENU_SCRIPTS "Скрипти"
     IDS_HOTKEY_EDIT_REMOVE_OUTER_SECTION "Видалити зовнішню секцію"
@@ -1026,16 +1036,6 @@ END
 STRINGTABLE 
 BEGIN
     IDC_SPELL_IGNORE        "Пропустити"
-END
-
-STRINGTABLE 
-BEGIN
-    IDS_HOTKEY_PLUGINS_LAST_PLUGIN "Останній модуль"
-    IDS_HOTKEY_TOOLS_SPELL  "Орфографія"
-    IDC_SPELL_ADD2DICT      "Додати до словника"
-    IDS_SPELL_CHECK_COMPLETED "Перевірку орфографії завершено."
-    IDC_SPELL_IGNOREALL     "Пропустити усі"
-    IDS_SPELL_CONTINUE      "Продовжити"
 END
 
 STRINGTABLE 
