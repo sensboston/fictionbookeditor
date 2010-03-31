@@ -21,7 +21,7 @@ LangString DESC_Scripts ${LANG_ENGLISH} "Jurgennt's (http://jurgennt.nm.ru/) pac
 LangString DESC_Dictionaries ${LANG_ENGLISH} "Dictionaries for built-in spell-checker."
 
 ; error messages
-LangString ErrCheckMSXMLVersion ${LANG_ENGLISH} "This application requires Microsoft XML Parser version 4.0 or newer to run."
+LangString ErrCheckMSXMLVersion ${LANG_ENGLISH} "This application requires Microsoft XML Parser version 4.0 to run."
 LangString ErrCheckIEVersion ${LANG_ENGLISH} "This application requires Microsoft Internet Expolorer version 5.5 or newer to run."
 LangString ErrCheckFBERunning ${LANG_ENGLISH} "Please exit FictionBook Editor before continue."
 LangString ErrCheckFBVRunning ${LANG_ENGLISH} "Please exit FictionBook Validator before continue."
