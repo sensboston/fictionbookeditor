@@ -96,7 +96,7 @@ function Run() {
  //проход по картинкам
  for (i=0;i<imgs.length;i++) {
   imgDiv=imgs[i].parentNode;
-  if (imgDiv.nodeName=="DIV" && imgDiv.className=="image") {
+  if ((imgDiv.nodeName=="DIV" || imgDiv.nodeName=="SPAN") && imgDiv.className=="image") {
    href=GetLocalHref(imgDiv.getAttribute("href"));
    if (href!='"') {
     if (BinById[href]!=null) {
@@ -276,7 +276,7 @@ function Run() {
  var cnt=0;
  for (i=1;i<=ImgCnt;i++) {
   imgDiv=ImgByNum[i].parentNode;
-  if (imgDiv.nodeName=="DIV" && imgDiv.className=="image") {
+  if ((imgDiv.nodeName=="DIV" || imgDiv.nodeName=="SPAN") && imgDiv.className=="image") {
    id=GetLocalHref(imgDiv.getAttribute("href"));
    if (id!='"' &&
        (BinById[id].all.type.value=="image/png" ||
