@@ -1,34 +1,37 @@
 // Унификация вложений и картинок
-var VersionNumber="1.2";
+// автор Sclex
 
-// шаблон id картинок и вложений
-// вместо %N будет подставлен номер картинки
-var strconst1 = "i_%N";
-// как обозвать вложение-обложку
-var strconst2 = "cover";
-// как обозвать вложение-обложку оригинального издания
-var strconst3 = "cover_src";
-// префикс (то, что будет дописано в начале) к id вложений, на которые нет ссылки
-var strconst4 = "unused_";
-// префикс к ссылкам картинок, для которых нет вложений
-var strconst5 = "nobin_";
-// количество цифр, до которого будет дополняться номер картинки
-var strconst6 = "nonjpegpng_";
-// количество цифр, до которого будет дополняться номер картинки
-var SymbolsNum = 3;
-// количество цифр во временном имени бинарника, которое создается в процессе работы
-var DigitsInTempName = 10;
-//если true, выводить списки в столбик
-var ColumnView=true;
+function Run() {
+var VersionNumber="1.3";
 
-function PoShablonu(s,n) {
+ // шаблон id картинок и вложений
+ // вместо %N будет подставлен номер картинки
+ var strconst1 = "i_%N";
+ // как обозвать вложение-обложку
+ var strconst2 = "cover";
+ // как обозвать вложение-обложку оригинального издания
+ var strconst3 = "cover_src";
+ // префикс (то, что будет дописано в начале) к id вложений, на которые нет ссылки
+ var strconst4 = "unused_";
+ // префикс к ссылкам картинок, для которых нет вложений
+ var strconst5 = "nobin_";
+ // количество цифр, до которого будет дополняться номер картинки
+ var strconst6 = "nonjpegpng_";
+ // количество цифр, до которого будет дополняться номер картинки
+ var SymbolsNum = 3;
+ // количество цифр во временном имени бинарника, которое создается в процессе работы
+ var DigitsInTempName = 10;
+ //если true, выводить списки в столбик
+ var ColumnView=true;
+
+ function PoShablonu(s,n) {
   var ttt3 = new RegExp("\%N");
   var n1=n.toString();
   while (n1.length<SymbolsNum) n1="0"+n1;
   return(s.replace(ttt3,n1));
-}
+ }
 
-function GetLocalHref(name) {
+ function GetLocalHref(name) {
   var i=1;
   var name1=name;
   if (name.indexOf("#")!=0) {return('"')}
@@ -40,17 +43,16 @@ function GetLocalHref(name) {
    name1 = name1.substring(srch10+10,name1.length);
   }
   return(name1);
-}
-
-function GetRandomNum(n) {
- var s="";
- for (var i=1;i<=n;i++) {
-   s+=Math.floor(Math.random()*10);
  }
- return s;
-}
 
-function Run() {
+ function GetRandomNum(n) {
+  var s="";
+  for (var i=1;i<=n;i++) {
+    s+=Math.floor(Math.random()*10);
+  }
+  return s;
+ }
+
  var Ts=new Date().getTime();
  window.external.BeginUndoUnit(document,"binaries and images unification");
  var body=document.getElementById("fbw_body");
