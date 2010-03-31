@@ -21,7 +21,7 @@ LangString DESC_Scripts ${LANG_RUSSIAN} "Сборка полезных скри�
 LangString DESC_Dictionaries ${LANG_RUSSIAN} "Словари для встроенной проверки орфографии."
 
 ; error messages
-LangString ErrCheckMSXMLVersion ${LANG_RUSSIAN} "Для установки требуется Microsoft XML Parser версии 4.0 или выше."
+LangString ErrCheckMSXMLVersion ${LANG_RUSSIAN} "Для установки требуется Microsoft XML Parser версии 4.0."
 LangString ErrCheckIEVersion ${LANG_RUSSIAN} "Для установки требуется Microsoft Internet Expolorer версии 5.5 или выше."
 LangString ErrCheckFBERunning ${LANG_RUSSIAN} "Пожалуйста закройте FictionBook Editor перед началом установки."
 LangString ErrCheckFBVRunning ${LANG_RUSSIAN} "Пожалуйста закройте FictionBook Validator перед началом установки."
