@@ -4917,6 +4917,26 @@ void CMainFrame::ChangeNBSP(MSHTML::IHTMLElementPtr elem)
 				elem->innerHTML = txt.AllocSysString();
 				m_doc->AdvanceDocVersion(n);
 
+				// remove last undo operation
+				IServiceProviderPtr serviceProvider = IServiceProviderPtr(m_doc->m_body.Document());
+				CComPtr<IOleUndoManager> undoManager;
+				CComPtr<IOleUndoUnit> undoUnit[10];
+				CComPtr<IEnumOleUndoUnits> undoUnits;
+				if (SUCCEEDED(serviceProvider->QueryService(SID_SOleUndoManager, IID_IOleUndoManager, (void **) &undoManager)))
+				{
+					undoManager->EnumUndoable(&undoUnits);
+					if (undoUnits)
+					{
+						ULONG numUndos = 0;
+						undoUnits->Next(10, &undoUnit[0], &numUndos);
+						// delete whole stack
+						undoManager->DiscardFrom(NULL);
+						// restore all except previous
+						for (int i=0; i<numUndos-1; i++)
+							undoManager->Add(undoUnit[i]);
+					}
+				}
+
 				tr1->moveToElementText(elem);
 				tr1->collapse(true);
 				if (offset==0) 
