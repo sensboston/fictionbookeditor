@@ -2015,6 +2015,12 @@ LRESULT CMainFrame::OnFileOpenMRU(WORD wNotifyCode, WORD wID, HWND hWndCtl, BOOL
 	{
 		case OK:
 			m_mru.MoveToTop(wID);
+			// added by SeNS
+			if(_Settings.RestoreFilePosition())
+			{
+				int saved_pos = U::GetFileSelectedPos(m_doc->m_filename);
+				GoTo(saved_pos);
+			}
 			break;
 		case FAIL:
 			m_mru.RemoveFromList(wID);
@@ -2262,6 +2268,7 @@ LRESULT CMainFrame::OnLastPlugin(WORD, WORD wID, HWND, BOOL&)
 extern "C"
 {
 	extern const char* build_timestamp;
+	extern const char* build_name;
 };
 
 class CAboutDlg : public CDialogImpl<CAboutDlg>
@@ -2285,8 +2292,10 @@ public:
 		CString stamp(build_timestamp);
 		::SetWindowText(GetDlgItem(IDC_BUILDSTAMP), stamp);
 
-		m_Contributors = GetDlgItem(IDC_CONTRIBS);
+		CString bname(build_name);
+		::SetWindowText(GetDlgItem(IDC_STATIC_AB_APPNAMEVER), bname);
 
+		m_Contributors = GetDlgItem(IDC_CONTRIBS);
 		HRSRC hres = ::FindResource(NULL, L"ABOUT_FILE", L"ABOUT_FILE");
 		HGLOBAL hbytes = ::LoadResource(NULL, hres);
 		CString contribs((char*)::LockResource(hbytes));

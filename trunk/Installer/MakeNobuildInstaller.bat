@@ -1,7 +1,9 @@
 @ECHO OFF
 
+if not exist .\Input goto make_input
 rd .\Input /S /Q
 
+:make_input
 md .\Input
 
 if not exist ..\Release\FBE.exe goto err
