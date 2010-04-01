@@ -832,8 +832,6 @@ void CSpeller::StartDocumentCheck(MSHTML::IMarkupServices2Ptr undoSrv)
 		m_prevSelRange = m_doc2->selection->createRange();
 		m_ims->MovePointersToRange(m_prevSelRange, m_impStart, m_impEnd);
 	}
-	// spell check restarted, delete selection range
-	else delete m_selRange;
 
 	// fetch selection
 	CString selType = m_doc2->selection->type;
@@ -864,6 +862,7 @@ void CSpeller::ContinueDocumentCheck()
 	SPELL_RESULT result;
 	CString word;
 	_bstr_t b;
+	bool bHyphen = false;
 
 	// find next misspell word from the beginning or current position
 	do
@@ -875,6 +874,16 @@ void CSpeller::ContinueDocumentCheck()
 		result = SPELL_OK;
 		word.SetString (m_selRange->text);
 		word.Trim();
+		// special check for hyphen
+		if (word.Compare(L"-")==0)
+		{
+			m_selRange->moveStart(L"word", -1);
+			m_selRange->moveEnd(L"word", 1);
+			word.SetString (m_selRange->text);
+			word.Trim();
+			bHyphen = true;
+		}
+
 		// if word != words delimiter
 		if (word.FindOneOf(Tokens)==-1)
 			result = SpellCheck(word);
@@ -912,6 +921,12 @@ void CSpeller::ContinueDocumentCheck()
 		}
 
 		// check for end of selection
+		if (bHyphen)
+		{
+			m_selRange->moveStart(L"word", 2);
+			m_selRange->moveEnd(L"word", 1);
+			bHyphen = false;
+		}
 		compareEnd = m_selRange->compareEndPoints(L"StartToEnd", m_selRange);
 		if (compareEnd == 0)
 		{
