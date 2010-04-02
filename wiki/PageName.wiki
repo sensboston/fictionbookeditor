@@ -42,4 +42,5 @@ paste текста из редактора (ну, не мне вас учить,
 режим проверки. 
 
 Автор инструкции *Sens*
+
 Исходник инструкции http://groups.google.com/group/fiction-book-editor/browse_thread/thread/a90f759d39a8128a
