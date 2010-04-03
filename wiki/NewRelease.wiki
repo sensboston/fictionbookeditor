@@ -1,5 +1,5 @@
 #summary Примечания к апрельскому релизу FBE 2.2
-#labels Phase-Deploy,Phase-Support
+#labels Phase-Deploy,Phase-Support,Featured
 
 = Введение =
 
