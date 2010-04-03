@@ -464,6 +464,7 @@ class CSettings : public ISerializable, public IObjectFactory
 	bool		m_highlght_check;
 	CString		m_custom_dict;
 	CString		m_nbsp_char;
+	CString		m_old_nbsp;
 	bool		m_change_kbd_layout_check;
 	///
 
@@ -558,6 +559,7 @@ public:
 	bool	GetHighlightMisspells()const;
 	CString GetCustomDict()const;
 	CString GetNBSPChar()const;
+	CString GetOldNBSPChar()const;
 	bool	GetChangeKeybLayout()const;
 
 	bool	GetExtElementStyle(const CString& elem)const;

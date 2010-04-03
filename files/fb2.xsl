@@ -731,7 +731,7 @@
       <label unselectable="on"><xsl:value-of select="$IDS_NAME"/></label>
       <input type="text" maxlength="256" id="name" style="width:26em;" value="{$item/@name}"/>
       <label unselectable="on"><xsl:value-of select="$IDS_NUMBER"/></label>
-      <input type="text" maxlength="3" id="number" class="short" value="{$item/@number}"/>
+      <input type="text" maxlength="5" id="number" style="width:3em;" value="{$item/@number}"/>
       <xsl:for-each select="$item/f:sequence">
 	<xsl:call-template name="seq">
 	  <xsl:with-param name="item" select="."/>
