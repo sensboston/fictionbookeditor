@@ -240,6 +240,8 @@
 #define IDS_SPELL_CONTINUE              277
 #define IDS_HOTKEY_EDIT_INSERT_INLINEIMAGE 278
 #define IDS_HOTKEY_EDIT_PASTE2          279
+#define IDS_HOTKEY_FASTMODE				280
+#define IDS_HOTKEY_VIEWTREE				281
 #define IDS_LANG_UKRAINIAN              300
 #define IDC_SPELL_REPLACE               500
 #define ID_VER_ADVANCE                  550
@@ -291,7 +293,7 @@
 #define IDC_ENCODING_ALWAYS             1049
 #define IDC_CHECK1                      1050
 #define IDC_ENCODING_NEW                1050
-#define IDC_FAST_MODE                   1050
+#define IDC_FAST_MODE                   1110
 #define IDC_SELECT_SCRIPTS_FOLDER_BUTTON 1050
 #define IDC_ADDIMAGE_ASKAGAIN           1050
 #define IDC_CHECK_DETECT_ONLY_HYPHENED  1050
@@ -322,7 +324,6 @@
 #define IDC_ADDIMAGE_ICON               1065
 #define IDC_OPTIONS_CLEARIMGS           1066
 #define IDC_STATIC_AB_LINKS             1066
-#define IDC_                            1067
 #define IDC_CHANGE_KEYB                 1067
 #define IDC_LIST1                       1068
 #define IDC_LIST_HOTKEYS_GROUPS         1068

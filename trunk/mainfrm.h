@@ -771,6 +771,7 @@ public:
 	}
 
   void ChangeNBSP(MSHTML::IHTMLElementPtr elem);
+  void RemoveLastUndo();
 
   LRESULT OnEdChange(WORD, WORD, HWND, BOOL&) {
     StopIncSearch(true);
@@ -878,7 +879,7 @@ public:
     CSpeller *m_Speller;
 	LRESULT OnSpellCheck(WORD, WORD, HWND, BOOL&)
 	{
-		if (m_Speller)
+		if (m_Speller && m_current_view == BODY)
 			m_Speller->StartDocumentCheck(m_doc->m_body.m_mk_srv);
 		return S_OK;
 	}

@@ -31,11 +31,14 @@ CXMLSerializer::CXMLSerializer(const CString& sFile, const CString& sAppName, bo
  CXMLSerializer::~CXMLSerializer()
 {
 	if(!m_sFile.IsEmpty())
-	{
+	try {
 		_bstr_t bsFile(m_sFile);
 		m_doc->save(bsFile);
 	}
-
+	catch(_com_error& err)
+	{
+		U::ReportError(err);
+	}
 	m_doc = NULL;
 }
 

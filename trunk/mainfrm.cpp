@@ -4471,6 +4471,9 @@ bool CMainFrame::ShowSettingsDialog(HWND parent)
 
 void CMainFrame::ApplyConfChanges()
 {
+	CWaitCursor *hourglass = new CWaitCursor();
+	LONG visible = false;
+
 	wchar_t restartMsg[MAX_LOAD_STRING + 1];
 	::LoadString(_Module.GetResourceInstance(), IDS_SETTINGS_NEED_RESTART, restartMsg, MAX_LOAD_STRING);
 
@@ -4505,9 +4508,52 @@ void CMainFrame::ApplyConfChanges()
 		m_Speller->SetCustomDictionary(_Settings.GetCustomDict());
 	}
 
+	// added by SeNS: issue 17: process nbsp change
+	if (_Settings.GetOldNBSPChar().Compare (_Settings.GetNBSPChar()) != 0)
+	{
+		// change chars in whole document
+		MSHTML::IHTMLElementPtr elem = MSHTML::IHTMLDocument3Ptr(m_doc->m_body.Document())->getElementById(L"fbw_body");
+		if (elem)
+		{
+			// save caret position
+			MSHTML::IDisplayServicesPtr ids (MSHTML::IDisplayServicesPtr(m_doc->m_body.Document()));
+			MSHTML::IHTMLCaretPtr caret = 0;
+			MSHTML::tagPOINT *point = new MSHTML::tagPOINT();
+			if (ids)
+			{
+				ids->GetCaret(&caret);
+				if (caret)
+				{
+					caret->IsVisible(&visible);
+					if (visible) caret->GetLocation(point, true);
+				}
+			}
+
+			CString html = elem->innerHTML;
+			int n = html.Replace (_Settings.GetOldNBSPChar(), _Settings.GetNBSPChar());
+			if (n)
+			{
+				elem->innerHTML = html.AllocSysString();
+				m_doc->AdvanceDocVersion(n);
+				RemoveLastUndo();
+
+				// restore caret position
+				if (caret && visible) 
+				{
+					MSHTML::IDisplayPointerPtr disptr;
+					ids->CreateDisplayPointer(&disptr);
+					disptr->moveToPoint(*point, MSHTML::COORD_SYSTEM_GLOBAL, elem, 0, 0);
+					caret->MoveCaretToPointer(disptr, true, MSHTML::CARET_DIRECTION_SAME);
+				}
+			}
+		}
+	}
+
 	_Settings.SaveHotkeyGroups();
 	_Settings.Save();
 	_Settings.SaveWords();
+
+	delete hourglass;
 
 	if(_Settings.NeedRestart() && MessageBox(restartMsg, L"", MB_YESNO | MB_ICONINFORMATION) == IDYES)
 	{
@@ -4909,6 +4955,7 @@ void CMainFrame::ChangeNBSP(MSHTML::IHTMLElementPtr elem)
     long visible = false;
 	if (elem)
 	{
+		// save caret position
 		MSHTML::IHTMLTxtRangePtr sel(m_doc->m_body.Document()->selection->createRange());
 		MSHTML::IHTMLTxtRangePtr tr1 = sel->duplicate();
 
@@ -4921,31 +4968,13 @@ void CMainFrame::ChangeNBSP(MSHTML::IHTMLElementPtr elem)
 		if (txt.Find(L"<DIV") < 0)
 		{
 			int n = txt.Replace( L"&nbsp;", _Settings.GetNBSPChar());
+			int k = txt.Replace( L"<p>&nsbp;<p>", L"<p><p>");
 			if (n)
 			{
 				elem->innerHTML = txt.AllocSysString();
-				m_doc->AdvanceDocVersion(n);
-
-				// remove last undo operation
-				IServiceProviderPtr serviceProvider = IServiceProviderPtr(m_doc->m_body.Document());
-				CComPtr<IOleUndoManager> undoManager;
-				CComPtr<IOleUndoUnit> undoUnit[10];
-				CComPtr<IEnumOleUndoUnits> undoUnits;
-				if (SUCCEEDED(serviceProvider->QueryService(SID_SOleUndoManager, IID_IOleUndoManager, (void **) &undoManager)))
-				{
-					undoManager->EnumUndoable(&undoUnits);
-					if (undoUnits)
-					{
-						ULONG numUndos = 0;
-						undoUnits->Next(10, &undoUnit[0], &numUndos);
-						// delete whole stack
-						undoManager->DiscardFrom(NULL);
-						// restore all except previous
-						for (int i=0; i<numUndos-1; i++)
-							undoManager->Add(undoUnit[i]);
-					}
-				}
-
+				m_doc->AdvanceDocVersion(n+k);
+				RemoveLastUndo();
+				// restore caret position
 				tr1->moveToElementText(elem);
 				tr1->collapse(true);
 				if (offset==0) 
@@ -4956,6 +4985,30 @@ void CMainFrame::ChangeNBSP(MSHTML::IHTMLElementPtr elem)
 				else tr1->move(L"character",offset); 
 				tr1->select();
 			}
+		}
+	}
+}
+
+void CMainFrame::RemoveLastUndo()
+{
+	// remove last undo operation
+	IServiceProviderPtr serviceProvider = IServiceProviderPtr(m_doc->m_body.Document());
+	CComPtr<IOleUndoManager> undoManager;
+	CComPtr<IOleUndoUnit> undoUnit[10];
+	CComPtr<IEnumOleUndoUnits> undoUnits;
+	if (SUCCEEDED(serviceProvider->QueryService(SID_SOleUndoManager, IID_IOleUndoManager, (void **) &undoManager)))
+	{
+		undoManager->EnumUndoable(&undoUnits);
+		if (undoUnits)
+		{
+			ULONG numUndos = 0;
+			undoUnits->Next(10, &undoUnit[0], &numUndos);
+			// delete whole stack
+			undoManager->DiscardFrom(NULL);
+			// restore all except previous
+			if (numUndos)
+				for (ULONG i=0; i<numUndos-1; i++)
+					undoManager->Add(undoUnit[i]);
 		}
 	}
 }

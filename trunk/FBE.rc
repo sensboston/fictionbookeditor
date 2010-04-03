@@ -1042,6 +1042,7 @@ BEGIN
     IDS_HOTKEY_VIEW_DESCRIPTION "Description"
     IDS_HOTKEY_VIEW_SOURCE  "Source"
     IDS_HOTKEY_EDIT_INSERT_TABLE "Insert table"
+    IDS_HOTKEY_FASTMODE "Fast mode"
 END
 
 STRINGTABLE 
@@ -1089,11 +1090,8 @@ END
 STRINGTABLE 
 BEGIN
     IDC_SPELL_IGNORE        "Ignore"
-END
-
-STRINGTABLE 
-BEGIN
     IDC_SPELL_REPLACE       "Replace word"
+    ID_TOOLS_SPELLCHECK     "Check document spelling...\nCheck document spelling"
 END
 
 STRINGTABLE 
@@ -1105,10 +1103,6 @@ BEGIN
     ID_DT_MERGE             "\nMerge containers"
 END
 
-STRINGTABLE 
-BEGIN
-    ID_TOOLS_SPELLCHECK     "Check document spelling...\nCheck document spelling"
-END
 
 #endif    // English (U.S.) resources
 /////////////////////////////////////////////////////////////////////////////
