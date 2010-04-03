@@ -46,6 +46,7 @@
 	<xsl:variable name="IDS_WEBSITE" select="'Сайт:'"/>
 	<xsl:variable name="IDS_NAME" select="'Назва:'"/>		
 	<xsl:variable name="IDS_NUMBER" select="'Номер:'"/>		
+        <xsl:variable name="IDS_STYLES_TABLE" select="'Таблиця стилів'"/>
 	
 	<xsl:template name="fill_languages_combo">
 		<xsl:param name="lang"/>
