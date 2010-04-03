@@ -21,16 +21,16 @@
 
 ● добавлена полная поддержка работы под Windows Vista/Windows 7;
 
-● обновлена схема FB2 (используется последняя, официальная версии 2.21);
+● обновлена схема FB2 (используется последняя официальная версия 2.21);
 
 ● обновлены и расширены скрипты;
 
 = Примечания к релизу = 
 
 _*FBE Team настоятельно рекомендует*_ деинсталлировать предыдущую версию FBE перед установкой текущего релиза. Для обеспечения совместимости работы программы под Windows Vista/Windows 7, настройки программы, изменяемые в процессе работы, сейчас сохраняются:
-- для *Windows XP* - "C:\Documents and Settings\<user name>\Local Settings 
+● для *Windows XP* - "C:\Documents and Settings\<user name>\Local Settings 
 \Application Data\FBE"
-- для *Windows Vista/7* - "C:\Users\<user name>\Local Settings\Applicaiton 
+● для *Windows Vista/7* - "C:\Users\<user name>\Local Settings\Applicaiton 
 Data\FBE"
 где, соответственно, вместо "C:\" может быть фактический диск, а <user name> - фактическое 
 имя пользователя.
