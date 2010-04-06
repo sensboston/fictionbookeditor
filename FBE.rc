@@ -579,7 +579,7 @@ BEGIN
     BEGIN
         BLOCK "040904b0"
         BEGIN
-            VALUE "Comments", "RC (release candidate)"
+            VALUE "Comments", "Release"
             VALUE "CompanyName", "FBE Team"
             VALUE "FileDescription", "FictionBook Editor"
             VALUE "FileVersion", "2, 2, 0, 0"
@@ -773,6 +773,7 @@ BEGIN
     IDC_SPELL_IGNOREALL     "Ignore All"
     IDS_SPELL_CONTINUE      "Continue"
     IDS_HOTKEY_EDIT_INSERT_INLINEIMAGE "Insert inline image"
+    IDS_HOTKEY_FASTMODE     "Fast mode"
 END
 
 STRINGTABLE 
@@ -1042,7 +1043,6 @@ BEGIN
     IDS_HOTKEY_VIEW_DESCRIPTION "Description"
     IDS_HOTKEY_VIEW_SOURCE  "Source"
     IDS_HOTKEY_EDIT_INSERT_TABLE "Insert table"
-    IDS_HOTKEY_FASTMODE "Fast mode"
 END
 
 STRINGTABLE 
@@ -1090,7 +1090,15 @@ END
 STRINGTABLE 
 BEGIN
     IDC_SPELL_IGNORE        "Ignore"
+END
+
+STRINGTABLE 
+BEGIN
     IDC_SPELL_REPLACE       "Replace word"
+END
+
+STRINGTABLE 
+BEGIN
     ID_TOOLS_SPELLCHECK     "Check document spelling...\nCheck document spelling"
 END
 
@@ -1102,7 +1110,6 @@ BEGIN
     ID_DT_RIGHT_SMART       "\nMove one node to the right with smart mode"
     ID_DT_MERGE             "\nMerge containers"
 END
-
 
 #endif    // English (U.S.) resources
 /////////////////////////////////////////////////////////////////////////////
