@@ -13,6 +13,7 @@ Hose
 Script add-ins and modifications by:
 Sclex, http://scripts.fictionbook.org/, sclex2@gmail.com
 jurgennt
+Алекс Савельев
 
 Ukrainian translation by:
 vitalis, http://chtyvo.org.ua/, chtyvo@gmail.com

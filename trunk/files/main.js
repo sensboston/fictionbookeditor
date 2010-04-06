@@ -797,12 +797,12 @@ function SetProgramUsed(desc)
   if(prgs)
   {
     if(prgs.value == "")
-      prgs.value = "FB Editor v2.0";
+      prgs.value = "FB Editor v2.2";
     else
     {
-      if(prgs.value.search(/FB Editor v2\.0/i) == -1)
+      if(prgs.value.search(/FB Editor v2\.2/i) == -1)
       {
-        prgs.value += ", FB Editor v2.0";
+        prgs.value += ", FB Editor v2.2";
       }
     }
   }
