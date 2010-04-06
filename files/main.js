@@ -1690,7 +1690,7 @@ function AddTitle(cp, check)
   div.className = "title";
 
   targ = np.tagName;
-  full = (sel.text == cp.innerText);
+  //full = (sel.text == cp.innerText);
 
   var del = false;
 
@@ -1708,8 +1708,8 @@ function AddTitle(cp, check)
     }
   }
 
-  if(full)
-  {
+//  if(full)
+//  {
 //    var nps = np.nextSibling;
 //    while(nps)
 //    {
@@ -1765,8 +1765,8 @@ function AddTitle(cp, check)
 //        }
 //        break;
 //    }
-  }
-  else if(del)
+//  }
+  if(del)
   {
     sel.text = "";
   }
