@@ -35,7 +35,7 @@
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // v.2.6 – кастомизированные неразрывные пробелы          2010.03.20
 //======================================
-var VersionNumber="2.6";
+var VersionNumber="2.7";
 
 //обрабатывать ли history
 var ObrabotkaHistory=true;
@@ -54,7 +54,7 @@ var aIB="<EM>|<STRONG>|<EM><STRONG>|<STRONG><EM>|</EM>|</STRONG>|</EM></STRONG>|
      var nak = 0;                   // накат - коррекция сдвига подсветки после вставки временых замен и курсива.
 
 function Run() {
- try { var nbspChar=window.external.GetNBSP(); var nbspEntity=nbspChar;}
+ try { var nbspChar=window.external.GetNBSP(); var nbspEntity; if (nbspChar.charCodeAt(0)==160) nbspEntity="&nbsp;"; else nbspEntity=nbspChar;}
  catch(e) { var nbspChar=String.fromCharCode(160); var nbspEntity="&nbsp;";}
 
  if (PromptApostrophe) {

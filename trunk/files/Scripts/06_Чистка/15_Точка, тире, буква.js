@@ -4,7 +4,7 @@ function Run() {
  var params=new Object();
  var rslt;
  var fbwBody=document.getElementById("fbw_body");
- try { var nbspChar=window.external.GetNBSP(); var nbspEntity=nbspChar;}
+ try { var nbspChar=window.external.GetNBSP(); var nbspEntity; if (nbspChar.charCodeAt(0)==160) nbspEntity="&nbsp;"; else nbspEntity=nbspChar;}
  catch(e) { var nbspChar=String.fromCharCode(160); var nbspEntity="&nbsp;";} 
  params["fbwBody"]=fbwBody;
  params["myDoc"]=document;

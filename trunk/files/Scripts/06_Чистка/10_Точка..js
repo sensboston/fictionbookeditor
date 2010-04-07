@@ -20,7 +20,7 @@
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // v.1.8 — кастомизированные nbsp — Sclex (20.03.2010)
 //======================================
-var VersionNumber="1.8";
+var VersionNumber="1.9";
 
 //обрабатывать ли history
 var ObrabotkaHistory=false;
@@ -37,7 +37,7 @@ function Run() {
   var TimeStr=0;
   var count=0;                           //  счётчик
 
-  try { var nbspChar=window.external.GetNBSP(); var nbspEntity=nbspChar;}
+  try { var nbspChar=window.external.GetNBSP(); var nbspEntity; if (nbspChar.charCodeAt(0)==160) nbspEntity="&nbsp;"; else nbspEntity=nbspChar;}
   catch(e) { var nbspChar=String.fromCharCode(160); var nbspEntity="&nbsp;";}
 
   var krat = 1;

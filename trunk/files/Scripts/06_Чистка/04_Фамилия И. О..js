@@ -9,7 +9,7 @@
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // v.1.4 — кастомизированные неразрывные пробелы — Sclex (20.03.2010)
 //======================================
-var VersionNumber="1.4";
+var VersionNumber="1.5";
 
 //обрабатывать ли history
 var ObrabotkaHistory=true;
@@ -18,7 +18,7 @@ var ObrabotkaAnnotation=true;
 
 
 function Run() {
-  try { var nbspChar=window.external.GetNBSP(); var nbspEntity=nbspChar;}
+  try { var nbspChar=window.external.GetNBSP(); var nbspEntity; if (nbspChar.charCodeAt(0)==160) nbspEntity="&nbsp;"; else nbspEntity=nbspChar;}
   catch(e) { var nbspChar=String.fromCharCode(160); var nbspEntity="&nbsp;";}
 
   var Ts=new Date().getTime();
