@@ -3,7 +3,7 @@
 // Автор: Sclex
 
 function Run() {
- try { var nbspChar=window.external.GetNBSP(); var nbspEntity=nbspChar;}
+ try { var nbspChar=window.external.GetNBSP(); var nbspEntity; if (nbspChar.charCodeAt(0)==160) nbspEntity="&nbsp;"; else nbspEntity=nbspChar;}
  catch(e) { var nbspChar=String.fromCharCode(160); var nbspEntity="&nbsp;";}
  var DebugMode=0;
  var DestrongTitles=false; //делать ли удаление жирности в заголовках

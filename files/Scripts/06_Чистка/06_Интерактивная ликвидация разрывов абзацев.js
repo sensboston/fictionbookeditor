@@ -2,7 +2,7 @@
 // Автор скрипта: Sclex
 // Сайт скриптов FBE Sclex’а: http://scripts.fictionbook.org
 
-var versionStr="3.1";
+var versionStr="3.2";
 var CutLength=100;
 
 function Run() {
@@ -11,7 +11,7 @@ function Run() {
  var dialogWidth="640px";
  var dialogHeight="480px";
 
- try { var nbspChar=window.external.GetNBSP(); var nbspEntity=nbspChar;}
+ try { var nbspChar=window.external.GetNBSP(); var nbspEntity; if (nbspChar.charCodeAt(0)==160) nbspEntity="&nbsp;"; else nbspEntity=nbspChar;}
  catch(e) { var nbspChar=String.fromCharCode(160); var nbspEntity="&nbsp;";}
 
  var re0=new RegExp("[а-яёa-z]","");

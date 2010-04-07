@@ -84,7 +84,7 @@
 //~~~~~~~~~~~~~~~~~~
 //v.2.0 — изменения для правильной работы с учетом возможности выбора вида неразрывного пробела в FBE
 //======================================
-var VersionNumber="1.36";
+var VersionNumber="2.1";
 
 //обрабатывать ли history
 var ObrabotkaHistory=true;
@@ -100,7 +100,7 @@ var aIB="<EM>|<STRONG>|<EM><STRONG>|<STRONG><EM>|</EM>|</STRONG>|</EM></STRONG>|
 
 function Run() {
 
- try { var nbspChar=window.external.GetNBSP(); var nbspEntity=nbspChar;}
+ try { var nbspChar=window.external.GetNBSP(); var nbspEntity; if (nbspChar.charCodeAt(0)==160) nbspEntity="&nbsp;"; else nbspEntity=nbspChar;}
  catch(e) { var nbspChar=String.fromCharCode(160); var nbspEntity="&nbsp;";}
 
  if (PromptSnoska) {

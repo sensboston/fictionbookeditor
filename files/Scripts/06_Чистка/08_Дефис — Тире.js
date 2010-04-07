@@ -12,7 +12,7 @@
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // v.1.5 — кастомизированные nbsp — Sclex (20.03.2010)
 //===============================================
-var VersionNumber="1.5";
+var VersionNumber="1.6";
 
 //обрабатывать ли history
 var ObrabotkaHistory=false;
@@ -23,7 +23,7 @@ var ObrabotkaAnnotation=true;
 function Run()
 {
  var Ts=new Date().getTime();
- try { var nbspChar=window.external.GetNBSP(); var nbspEntity=nbspChar;}
+ try { var nbspChar=window.external.GetNBSP(); var nbspEntity; if (nbspChar.charCodeAt(0)==160) nbspEntity="&nbsp;"; else nbspEntity=nbspChar;}
  catch(e) { var nbspChar=String.fromCharCode(160); var nbspEntity="&nbsp;";}
  var count=0;
   var countt=0;   var countt1=0;   var countt2=0;

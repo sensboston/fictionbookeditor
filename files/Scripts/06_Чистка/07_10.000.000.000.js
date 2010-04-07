@@ -19,7 +19,7 @@
 //~~~~~~~~~~~~~~~~~~~
 // v.1.8 — кастомизированные неразрывные пробелы — Sclex (20.03.2010)
 //=========================================
-var VersionNumber="1.8";
+var VersionNumber="1.9";
 
 //обрабатывать ли history
 var ObrabotkaHistory=false;
@@ -36,7 +36,7 @@ function Run() {
   var Ts=new Date().getTime();
   var TimeStr=0;
 
-try { var nbspChar=window.external.GetNBSP(); var nbspEntity=nbspChar;}
+try { var nbspChar=window.external.GetNBSP(); var nbspEntity; if (nbspChar.charCodeAt(0)==160) nbspEntity="&nbsp;"; else nbspEntity=nbspChar;}
 catch(e) { var nbspChar=String.fromCharCode(160); var nbspEntity="&nbsp;";}
 
 var re50 = new RegExp("^(.*?[^\\\d\\\-N№/]){0,1}(\\\d{1,3})([\\\s\\\.]{0,2})(\\\d{3})([\\\s\\\.]{0,2})(\\\d{3})([\\\s\\\.]{0,2})(\\\d{3})([\\\s\\\.]{0,2})(\\\d{3})([\\\s\\\.]{0,2})(\\\d{3})([^\\\d/].*?){0,1}$","gi");
