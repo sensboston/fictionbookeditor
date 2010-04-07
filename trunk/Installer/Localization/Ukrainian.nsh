@@ -8,7 +8,7 @@ LangString Desktop_ShortCut ${LANG_UKRAINIAN} "Стільниця"
 LangString Start_Menu_ShortCuts ${LANG_UKRAINIAN} "Меню «Пуск»"
 LangString PluginsGroup ${LANG_UKRAINIAN} "Модулі"
 LangString Scripts ${LANG_UKRAINIAN} "Скрипти"
-LangString Dictionaries ${LANG_UKRAINIAN} "Словники (для перевірки орфографії)"
+LangString Dictionaries ${LANG_UKRAINIAN} "Словники"
 
 ; components descriptions
 LangString DESC_ShExSection ${LANG_UKRAINIAN} "Розширення оболонки вбудовується у Провідник Windows. \
