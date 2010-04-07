@@ -4963,6 +4963,10 @@ void CMainFrame::ChangeNBSP(MSHTML::IHTMLElementPtr elem)
 		tr1->setEndPoint(L"EndToStart",sel);
 		CString s = tr1->text;
 		int offset = s.GetLength();
+		// special fix for strange MSHTML bug (inline image present in html code)
+		CString s2 = tr1->htmlText;
+		int l = s2.Replace( L"<IMG", L"<IMG");
+		offset += (l * 3);
  
 		CString txt = elem->innerHTML;
 		if (txt.Find(L"<DIV") < 0)
@@ -4982,7 +4986,7 @@ void CMainFrame::ChangeNBSP(MSHTML::IHTMLElementPtr elem)
 					tr1->move(L"character",1);
 					tr1->move(L"character",-1); 
 				}
-				else tr1->move(L"character",offset); 
+				else tr1->move(L"character",offset);
 				tr1->select();
 			}
 		}
