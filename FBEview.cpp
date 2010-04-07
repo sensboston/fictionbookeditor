@@ -706,14 +706,6 @@ restart:
 			goto restart;
 		}
 
-		CString s, s2;
-
-		if (curelem)
-		{
-			s.SetString(curelem->innerHTML);
-			s2.SetString(curelem->className);
-		}
-
 		if (U::scmp(name,L"P") && U::scmp(name,L"STRONG") && 
 			U::scmp(name,L"STRIKE") && U::scmp(name,L"SUP") && U::scmp(name,L"SUB") && 
 			U::scmp(name,L"EM") && U::scmp(name,L"A") &&
