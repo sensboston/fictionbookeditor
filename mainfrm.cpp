@@ -4511,41 +4511,53 @@ void CMainFrame::ApplyConfChanges()
 	// added by SeNS: issue 17: process nbsp change
 	if (_Settings.GetOldNBSPChar().Compare (_Settings.GetNBSPChar()) != 0)
 	{
-		// change chars in whole document
-		MSHTML::IHTMLElementPtr elem = MSHTML::IHTMLDocument3Ptr(m_doc->m_body.Document())->getElementById(L"fbw_body");
-		if (elem)
+		int numChanges = 0;
+		// save caret position
+		MSHTML::IDisplayServicesPtr ids (MSHTML::IDisplayServicesPtr(m_doc->m_body.Document()));
+		MSHTML::IHTMLCaretPtr caret = 0;
+		MSHTML::tagPOINT *point = new MSHTML::tagPOINT();
+		if (ids)
 		{
-			// save caret position
-			MSHTML::IDisplayServicesPtr ids (MSHTML::IDisplayServicesPtr(m_doc->m_body.Document()));
-			MSHTML::IHTMLCaretPtr caret = 0;
-			MSHTML::tagPOINT *point = new MSHTML::tagPOINT();
-			if (ids)
+			ids->GetCaret(&caret);
+			if (caret)
 			{
-				ids->GetCaret(&caret);
-				if (caret)
+				caret->IsVisible(&visible);
+				if (visible) caret->GetLocation(point, true);
+			}
+		}
+
+		MSHTML::IHTMLElementPtr fbwBody = MSHTML::IHTMLDocument3Ptr(m_doc->m_body.Document())->getElementById(L"fbw_body");
+		MSHTML::IHTMLDOMNodePtr el = MSHTML::IHTMLDOMNodePtr(fbwBody)->firstChild;
+		CString nbsp = _Settings.GetNBSPChar();
+		while (el && el!=fbwBody) 
+		{
+			if (el->nodeType==3)
+			{
+				CString s = el->nodeValue;
+				int n = s.Replace(_Settings.GetOldNBSPChar(), _Settings.GetNBSPChar());
+				if (n) 
 				{
-					caret->IsVisible(&visible);
-					if (visible) caret->GetLocation(point, true);
+					numChanges += n;
+					el->nodeValue = s.AllocSysString();
 				}
 			}
-
-			CString html = elem->innerHTML;
-			int n = html.Replace (_Settings.GetOldNBSPChar(), _Settings.GetNBSPChar());
-			if (n)
+			if (el->firstChild)
+				el=el->firstChild;
+			else 
 			{
-				elem->innerHTML = html.AllocSysString();
-				m_doc->AdvanceDocVersion(n);
-				RemoveLastUndo();
-
-				// restore caret position
-				if (caret && visible) 
-				{
-					MSHTML::IDisplayPointerPtr disptr;
-					ids->CreateDisplayPointer(&disptr);
-					disptr->moveToPoint(*point, MSHTML::COORD_SYSTEM_GLOBAL, elem, 0, 0);
-					caret->MoveCaretToPointer(disptr, true, MSHTML::CARET_DIRECTION_SAME);
-				}
+				while (el && el!=fbwBody && el->nextSibling==NULL) el=el->parentNode;
+				if (el && el!=fbwBody) el=el->nextSibling;
 			}
+		}
+		m_doc->AdvanceDocVersion(numChanges);
+
+		// restore caret position
+		if (caret && visible) 
+		{
+			MSHTML::IDisplayPointerPtr disptr;
+			ids->CreateDisplayPointer(&disptr);
+			disptr->moveToPoint(*point, MSHTML::COORD_SYSTEM_GLOBAL, fbwBody, 0, 0);
+			caret->MoveCaretToPointer(disptr, true, MSHTML::CARET_DIRECTION_SAME);
 		}
 	}
 
@@ -4952,33 +4964,62 @@ void CMainFrame::InitPluginHotkey(CString guid, UINT cmd, CString name)
 // 
 void CMainFrame::ChangeNBSP(MSHTML::IHTMLElementPtr elem)
 {
-    long visible = false;
-	if (elem)
+	MSHTML::IHTMLElementPtr fbwBody = MSHTML::IHTMLDocument3Ptr(m_doc->m_body.Document())->getElementById(L"fbw_body");
+	if (fbwBody	&& elem && fbwBody->contains(elem))
 	{
 		// save caret position
+		MSHTML::IHTMLTxtRangePtr tr1;
+		int offset = 0;
 		MSHTML::IHTMLTxtRangePtr sel(m_doc->m_body.Document()->selection->createRange());
-		MSHTML::IHTMLTxtRangePtr tr1 = sel->duplicate();
-
-		tr1->moveToElementText(elem);
-		tr1->setEndPoint(L"EndToStart",sel);
-		CString s = tr1->text;
-		int offset = s.GetLength();
-		// special fix for strange MSHTML bug (inline image present in html code)
-		CString s2 = tr1->htmlText;
-		int l = s2.Replace( L"<IMG", L"<IMG");
-		offset += (l * 3);
- 
-		CString txt = elem->innerHTML;
-		if (txt.Find(L"<DIV") < 0)
+		if (sel)
 		{
-			int n = txt.Replace( L"&nbsp;", _Settings.GetNBSPChar());
-			int k = txt.Replace( L"<p>&nsbp;<p>", L"<p><p>");
-			if (n)
+			tr1 = sel->duplicate();
+			if (tr1)
 			{
-				elem->innerHTML = txt.AllocSysString();
-				m_doc->AdvanceDocVersion(n+k);
-				RemoveLastUndo();
-				// restore caret position
+				tr1->moveToElementText(elem);
+				tr1->setEndPoint(L"EndToStart",sel);
+				CString s = tr1->text;
+				offset = s.GetLength();
+				// special fix for strange MSHTML bug (inline image present in html code)
+				CString s2 = tr1->htmlText;
+				int l = s2.Replace( L"<IMG", L"<IMG");
+				offset += (l * 3);
+			}
+		}
+
+		MSHTML::IHTMLDOMNodePtr el = MSHTML::IHTMLDOMNodePtr(elem)->firstChild;
+		CString nbsp = _Settings.GetNBSPChar();
+		int numChanges = 0;
+
+		while (el && el!=elem) 
+		{
+			if (el->nodeType==3)
+			{
+				CString s = el->nodeValue;
+				int n = s.Replace( L"\u00A0", _Settings.GetNBSPChar());
+				int k = s.Replace( L"<p>\u00A0<p>", L"<p><p>");
+				if (n || k) 
+				{
+					numChanges += n + k;
+					el->nodeValue = s.AllocSysString();
+				}
+			}
+			if (el->firstChild)
+				el=el->firstChild;
+			else 
+			{
+				while (el && el!=elem && el->nextSibling==NULL) el=el->parentNode;
+				if (el && el!=elem) el=el->nextSibling;
+			}
+		}
+
+		if (numChanges)
+		{
+			m_doc->AdvanceDocVersion(numChanges);
+
+			// restore caret position
+			if (tr1)
+			{
 				tr1->moveToElementText(elem);
 				tr1->collapse(true);
 				if (offset==0) 
