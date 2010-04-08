@@ -31,7 +31,7 @@ function Run() {
  continueWithNonlocalImages=false;
  for (i=0;i<imgs.length;i++) {
   imgDiv=imgs[i].parentNode;
-  if (imgDiv.nodeName=="DIV" && imgDiv.className=="image") {
+  if ((imgDiv.nodeName=="DIV" || imgDiv.nodeName=="SPAN") && imgDiv.className=="image") {
    imgSrc=getLocalHref(imgDiv.getAttribute("href"));
    if (continueWithNonlocalImages==false && imgSrc=='"') {
     if (confirm("В книге есть по меньшей мере одна картинка, которая имеет адрес без решетки, т.е. указывает на картинку вне документа. Хотите ли вы продолжить удаление неиспользуемых картинок?")) 
