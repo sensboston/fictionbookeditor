@@ -1901,7 +1901,7 @@ function InsInlineImage(check, id)
  var pe=rng.parentElement(); while(pe && pe.tagName!="DIV") pe=pe.parentElement;
 
  if(!pe || (pe.className!="section" && pe.className!="annotation" && pe.className!="history"
-    && pe.className!="title")) return;
+    && pe.className!="title" && pe.className!="epigraph")) return;
 
  if(check) return true;
 
