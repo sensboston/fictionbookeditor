@@ -1,19 +1,19 @@
 The contents of this software may be used under the terms of the GNU General Public License Version 3.
 
-Copyright © 2010 FBE Team 
-Copyright © 2008 LitRes
-Copyright © 2003 Mike Matsnev
+Copyright В© 2010 FBE Team 
+Copyright В© 2008 LitRes
+Copyright В© 2003 Mike Matsnev
 
 C++ code modifications by:
 SeNS, http://senssoft.com/, sens.boston@gmail.com
 Pilgrim
 Hose
-Иван Ильин
+РРІР°РЅ РР»СЊРёРЅ
 
 Script add-ins and modifications by:
 Sclex, http://scripts.fictionbook.org/, sclex2@gmail.com
 jurgennt
-Алекс Савельев
+РђР»РµРєСЃ РЎР°РІРµР»СЊРµРІ
 
 Ukrainian translation by:
 vitalis, http://chtyvo.org.ua/, chtyvo@gmail.com
@@ -21,7 +21,7 @@ vitalis, http://chtyvo.org.ua/, chtyvo@gmail.com
 Testers:
 MarinaCh, cherstvova@gmail.com
 vitalis, stopchan@gmail.com
-Вадим Могильчак, vadim.mog@gmail.com
+Р’Р°РґРёРј РњРѕРіРёР»СЊС‡Р°Рє, vadim.mog@gmail.com
 mike, pallmike@gmail.com
 golma1, golma.golma@googlemail.com
 wotty, wotti111@gmail.com

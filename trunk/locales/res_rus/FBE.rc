@@ -241,7 +241,7 @@ CAPTION "О программе"
 FONT 9, "Tahoma", 0, 0, 0x0
 BEGIN
     DEFPUSHBUTTON   "OK",IDOK,140,118,50,14
-    CONTROL         "FictionBook Editor v2.2 pre-release",IDC_STATIC_AB_APPNAMEVER,
+    CONTROL         "FictionBook Editor",IDC_STATIC_AB_APPNAMEVER,
                     "Static",SS_LEFTNOWORDWRAP | WS_GROUP,101,8,153,8
     ICON            IDR_MAINFRAME,IDC_STATIC_AB_APPICON,72,8,20,20
     LTEXT           "Сборка",IDC_STATIC,101,20,24,8

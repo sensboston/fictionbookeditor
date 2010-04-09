@@ -2298,9 +2298,9 @@ public:
 		m_Contributors = GetDlgItem(IDC_CONTRIBS);
 		HRSRC hres = ::FindResource(NULL, L"ABOUT_FILE", L"ABOUT_FILE");
 		HGLOBAL hbytes = ::LoadResource(NULL, hres);
-		CString contribs((char*)::LockResource(hbytes));
-		contribs.Delete(contribs.GetLength()-5, 5);
-		m_Contributors.SetWindowText(contribs);
+		CA2CT contribs((char*)::LockResource(hbytes), 65001);  // UTF-8
+		CString s(contribs);
+		m_Contributors.SetWindowText(s.Left(s.GetLength()-5));
 
 		return 0;
 	}

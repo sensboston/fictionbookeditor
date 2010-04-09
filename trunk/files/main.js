@@ -797,12 +797,12 @@ function SetProgramUsed(desc)
   if(prgs)
   {
     if(prgs.value == "")
-      prgs.value = "FB Editor v2.2";
+      prgs.value = "FB Editor v2.3";
     else
     {
-      if(prgs.value.search(/FB Editor v2\.2/i) == -1)
+      if(prgs.value.search(/FB Editor v2\.3/i) == -1)
       {
-        prgs.value += ", FB Editor v2.2";
+        prgs.value += ", FB Editor v2.3";
       }
     }
   }
@@ -1086,8 +1086,11 @@ function MakeTitleInfo(doc,desc,ann,indent)
  for(var i=0; i<list.length; i++)
  {
   var ge=doc.createNode(1,"genre",fbNS);
-  var match=list.item(i).all.match.value;
-  if(match.length>0 && match!="100") SetAttr(ge,"match",match);
+  if (list.item(i).all.match)
+  {
+    var match=list.item(i).all.match.value;
+    if(match.length>0 && match!="100") SetAttr(ge,"match",match);
+  }
 
   ge.appendChild(doc.createTextNode(list.item(i).all.genre.value));
   Indent(ti,indent+1);
