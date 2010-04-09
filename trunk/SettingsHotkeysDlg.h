@@ -116,5 +116,4 @@ public:
 	int		GetTextLen(CString text);
 	bool	Test();
 	void	ClearAndSet();
-	CHotkey* FindHotkey(CString name);
 };

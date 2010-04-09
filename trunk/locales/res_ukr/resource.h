@@ -241,6 +241,7 @@
 #define IDS_HOTKEY_EDIT_INSERT_INLINEIMAGE 278
 #define IDS_HOTKEY_EDIT_PASTE2          279
 #define IDS_HOTKEY_FASTMODE				280
+#define IDS_HOTKEY_TREEVIEW				281
 #define IDS_LANG_UKRAINIAN              300
 #define IDC_SPELL_REPLACE               500
 #define ID_VER_ADVANCE                  550

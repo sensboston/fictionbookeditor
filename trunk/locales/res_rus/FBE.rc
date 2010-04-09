@@ -951,6 +951,7 @@ BEGIN
     IDS_HOTKEY_VIEW_SOURCE  "Код"
     IDS_HOTKEY_EDIT_INSERT_TABLE "Вставить таблицу"
     IDS_HOTKEY_FASTMODE "Ускоренный режим"
+	IDS_HOTKEY_TREEVIEW	"Дерево вкл/выкл"
 END
 
 STRINGTABLE 
