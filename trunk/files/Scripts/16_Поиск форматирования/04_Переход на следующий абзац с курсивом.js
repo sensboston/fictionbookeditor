@@ -107,7 +107,6 @@ function Run() {
   //теперь найдем новый курсив
   while (true) {
    el=getNextNodeInScriptDirection(el);
-   alert("next el:\n"+el);
    if (el==placeWhereToStop) {
     alert("Ничего не найдено, поиск завершен.");
     return;
