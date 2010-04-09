@@ -199,6 +199,7 @@ LRESULT CSpellDialog::OnAdd(WORD, WORD wID, HWND, BOOL&)
 
 LRESULT CSpellDialog::OnUndo(WORD, WORD wID, HWND, BOOL&)
 {
+	ATLASSERT(m_Speller!=NULL);
 	m_Speller->Undo();
 	UpdateData();
 	return 0;

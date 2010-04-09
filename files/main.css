@@ -13,6 +13,7 @@ div#fbw_desc
 	font-family: Tahoma, sans-serif;
 	background-color: #DCDCDC;
 	padding: 0.4em;
+
 }
 
 div#fbw_desc fieldset
@@ -73,6 +74,9 @@ div#fbw_desc input
 	font-family: "Tahoma",sans-serif;
 	font-size: 8pt;
 	border: 1px solid #7F9DB8;
+	margin-top:2px;
+	margin-bottom:2px;
+
 }
 
 div#fbw_desc input.short

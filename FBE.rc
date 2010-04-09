@@ -347,9 +347,8 @@ CAPTION "About"
 FONT 9, "Tahoma", 0, 0, 0x0
 BEGIN
     DEFPUSHBUTTON   "OK",IDOK,140,118,50,14
-    CONTROL         "FictionBook Editor v2.2 pre-release",IDC_STATIC_AB_APPNAMEVER,
-                    "Static",SS_LEFTNOWORDWRAP | WS_GROUP,101,8,153,8
-    ICON            IDR_MAINFRAME,IDC_STATIC_AB_APPICON,72,8,18,18
+    CONTROL         "FictionBook Editor",IDC_STATIC_AB_APPNAMEVER,"Static",SS_LEFTNOWORDWRAP | WS_GROUP,101,8,153,8
+    ICON            IDR_MAINFRAME,IDC_STATIC_AB_APPICON,72,8,20,20
     LTEXT           "Build",IDC_STATIC,101,20,15,8
     LTEXT           "",IDC_BUILDSTAMP,120,20,131,8
     CONTROL         248,IDC_AB_BANNER,"Static",SS_BITMAP | SS_REALSIZEIMAGE,7,7,56,123,WS_EX_CLIENTEDGE
@@ -563,8 +562,8 @@ IDB_AB_BANNER           BITMAP                  "res\\Fb2-shema.bmp"
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 2,2,0,0
- PRODUCTVERSION 2,2,0,0
+ FILEVERSION 2,3,0,0
+ PRODUCTVERSION 2,3,0,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -582,12 +581,12 @@ BEGIN
             VALUE "Comments", "Release"
             VALUE "CompanyName", "FBE Team"
             VALUE "FileDescription", "FictionBook Editor"
-            VALUE "FileVersion", "2, 2, 0, 0"
+            VALUE "FileVersion", "2, 3, 0, 0"
             VALUE "InternalName", "FBE"
             VALUE "LegalCopyright", "Copyright 2010 © FBE Team, 2008 © LitRes, 2003 © Mike Matsnev"
             VALUE "OriginalFilename", "FBE.exe"
             VALUE "ProductName", "FictionBook Editor"
-            VALUE "ProductVersion", "2, 2, 0, 0"
+            VALUE "ProductVersion", "2, 3, 0, 0"
         END
     END
     BLOCK "VarFileInfo"
@@ -774,7 +773,7 @@ BEGIN
     IDS_SPELL_CONTINUE      "Continue"
     IDS_HOTKEY_EDIT_INSERT_INLINEIMAGE "Insert inline image"
     IDS_HOTKEY_FASTMODE     "Fast mode"
-	IDS_HOTKEY_TREEVIEW		"Toggle tree view"
+    IDS_HOTKEY_TREEVIEW     "Toggle tree view"
 END
 
 STRINGTABLE 
