@@ -156,7 +156,7 @@ bool CFBEView::CheckCommand(WORD wID)
   case ID_EDIT_INS_IMAGE:
     return bCall(L"InsImage") && !SelectionStructCode() && !SelectionHasTags(L"SPAN");
   case ID_EDIT_INS_INLINEIMAGE:
-    return bCall(L"InsInlineImage") && !SelectionStructCode();
+    return bCall(L"InsInlineImage");
   case ID_EDIT_ADD_IMAGE:
     return bCall(L"AddImage", SelectionStructCon()) && !SelectionStructCode() && !SelectionHasTags(L"SPAN");
   case ID_EDIT_ADD_EPIGRAPH:
@@ -1417,7 +1417,8 @@ MSHTML::IHTMLElementPtr CFBEView::SelectionStructCode() {
 		MSHTML::IHTMLElementPtr cur(SelectionContainer());
 		while(cur)
 		{
-			if(U::scmp(cur->tagName, L"SPAN") == 0)
+			// changed by SeNS: inline images also have a tag SPAN
+			if((U::scmp(cur->tagName, L"SPAN") == 0) && (U::scmp(cur->className,L"image")!=0))
 				return cur;
 			cur = cur->parentElement;
 		}		
@@ -1449,7 +1450,8 @@ MSHTML::IHTMLElementPtr	  CFBEView::SelectionStructImage() {
   try {
     MSHTML::IHTMLElementPtr   cur(SelectionContainer());
     while (cur) {
-      if (U::scmp(cur->className,L"image")==0)
+	  // changed by SeNS: inline images have a tag SPAN, regular tag DIV
+      if ((U::scmp(cur->className,L"image")==0) && (U::scmp(cur->tagName,L"SPAN")!=0))
 		return cur;
       cur=cur->parentElement;
     }

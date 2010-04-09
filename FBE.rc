@@ -702,9 +702,9 @@ BEGIN
     POPUP "&Tools"
     BEGIN
         MENUITEM "&Words...",                   ID_TOOLS_WORDS
-        MENUITEM "&Options...",                 ID_VIEW_OPTIONS
+        MENUITEM "&Settings...",                ID_VIEW_OPTIONS
         MENUITEM SEPARATOR
-        MENUITEM "Spell check...",              ID_TOOLS_SPELLCHECK
+        MENUITEM "Spell &check...",             ID_TOOLS_SPELLCHECK
     END
     POPUP "&Scripts"
     BEGIN
@@ -774,6 +774,7 @@ BEGIN
     IDS_SPELL_CONTINUE      "Continue"
     IDS_HOTKEY_EDIT_INSERT_INLINEIMAGE "Insert inline image"
     IDS_HOTKEY_FASTMODE     "Fast mode"
+	IDS_HOTKEY_TREEVIEW		"Toggle tree view"
 END
 
 STRINGTABLE 

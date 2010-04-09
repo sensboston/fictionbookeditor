@@ -452,8 +452,8 @@ BOOL CMainFrame::OnIdle()
 		bool fCanCC = m_source.SendMessage(SCI_GETSELECTIONSTART) != m_source.SendMessage(SCI_GETSELECTIONEND);
 		UIEnable(ID_EDIT_COPY, fCanCC);
 		UIEnable(ID_EDIT_CUT, fCanCC);
-		// Added by SeNS: process bitmap paste
-		UIEnable(ID_EDIT_PASTE, m_source.SendMessage(SCI_CANPASTE) || BitmapInClipboard());
+		UIEnable(ID_EDIT_PASTE, m_source.SendMessage(SCI_CANPASTE));
+		UIEnable(ID_EDIT_PASTE2, m_source.SendMessage(SCI_CANPASTE));
 
 		if(m_source.SendMessage(SCI_CANUNDO))
 		{
@@ -612,16 +612,16 @@ BOOL CMainFrame::OnIdle()
 				MSHTML::IHTMLElementPtr	sc(m_doc->m_body.SelectionStructCon());
 				if(sc)
 				{
-				m_id_box.EnableWindow();
-				m_id_caption.SetEnabled(true);
-				m_ignore_cb_changes = true;
+					m_id_box.EnableWindow();
+					m_id_caption.SetEnabled(true);
+					m_ignore_cb_changes = true;
 
-				if(U::scmp(sc->id, L"fbw_body"))
-					m_id.SetWindowText(sc->id);		  
-				else
-					m_id.SetWindowText(L"");	
+					if(U::scmp(sc->id, L"fbw_body"))
+						m_id.SetWindowText(sc->id);		  
+					else
+						m_id.SetWindowText(L"");	
 
-				m_ignore_cb_changes = false;
+					m_ignore_cb_changes = false;
 				}
 				else
 				{
@@ -2626,7 +2626,7 @@ LRESULT CMainFrame::OnCbEdChange(WORD code, WORD wID, HWND hWndCtl, BOOL& bHandl
 				newhref = L"#undefined";
 		}
 
-		if (U::scmp(an->tagName,L"DIV")==0) // must be an image
+		if ( (U::scmp(an->tagName,L"DIV")==0) || (U::scmp(an->tagName,L"SPAN")==0)) // must be an image
 		{			
 			m_doc->m_body.ChangeAttribute(an, L"href", newhref);
 			MSHTML::IHTMLElementPtr img = MSHTML::IHTMLDOMNodePtr(an)->firstChild;

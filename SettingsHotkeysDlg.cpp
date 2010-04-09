@@ -21,7 +21,7 @@ CSettingsHotkeysDlg::CSettingsHotkeysDlg(): m_count(0),
 		{
 			CString fullname = groupname + L"\\" + _Settings.m_hotkey_groups[i].m_hotkeys[j].m_reg_name;
 			// added by SeNS: do not show empty hotkeys
-			if (!_Settings.m_hotkey_groups[i].m_hotkeys[j].m_name.IsEmpty())
+//			if (!_Settings.m_hotkey_groups[i].m_hotkeys[j].m_name.IsEmpty())
 				m_mapHotkeys.Add(fullname, &_Settings.m_hotkey_groups[i].m_hotkeys[j]);
 		}
 	}
@@ -49,7 +49,7 @@ LRESULT CSettingsHotkeysDlg::OnInitDialog(UINT uMsg, WPARAM wParam, LPARAM lPara
 	for(unsigned int i = 0; i < _Settings.m_hotkey_groups[m_selGr].m_hotkeys.size(); ++i)
 	{
 		// changed by SeNS: do not show empty hotkeys
-		if (!_Settings.m_hotkey_groups[m_selGr].m_hotkeys[i].m_name.IsEmpty())
+//		if (!_Settings.m_hotkey_groups[m_selGr].m_hotkeys[i].m_name.IsEmpty())
 			m_hotkeys.AddString(_Settings.m_hotkey_groups[m_selGr].m_hotkeys[i].m_name);
 	}
 
@@ -91,7 +91,7 @@ LRESULT CSettingsHotkeysDlg::OnGroupsSelChange(WORD wNotifyCode, WORD wID, HWND 
 		else m_hotkeys.SetHorizontalExtent(maxExt);
 
 		// changed by SeNS: do not show empty hotkeys
-		if (!_Settings.m_hotkey_groups[m_selGr].m_hotkeys[i].m_name.IsEmpty())
+//		if (!_Settings.m_hotkey_groups[m_selGr].m_hotkeys[i].m_name.IsEmpty())
 			m_hotkeys.AddString(_Settings.m_hotkey_groups[m_selGr].m_hotkeys[i].m_name);
 	}
 
@@ -303,7 +303,7 @@ LRESULT CSettingsHotkeysDlg::OnKeyPressed(UINT uMsg, WPARAM wParam, LPARAM lPara
 					m_accel.fVirt |= U::VKToFVirt(wParam);
 					m_count++;
 				}
-				else if(wParam >= VK_F1 && wParam <= VK_F12)
+				else if (wParam >= VK_F1 && wParam <= VK_F12)
 				{
 					wndText += U::KeycodeToString(wParam);
 					m_editHotkey.SetWindowText(wndText);
@@ -336,15 +336,15 @@ LRESULT CSettingsHotkeysDlg::OnKeyPressed(UINT uMsg, WPARAM wParam, LPARAM lPara
 			}
 			else if(U::KeycodeToString(wParam) != L"")
 			{
-				if(m_accel.fVirt & FSHIFT)
+/*				if(m_accel.fVirt & FSHIFT)
 				{
 					m_editHotkey.SetWindowText(m_wrongHkMsg);
 					m_count = 0;
 					::EnableWindow(GetDlgItem(IDC_BUTTON_HOTKEY_ASSIGN), FALSE);
 					::SetWindowText(GetDlgItem(IDC_EDIT_HOTKEY_COLLISION), NULL);
 				}
-				else
-				{
+				else */
+				{ 
 					wndText += L" + ";
 					wndText += U::KeycodeToString(wParam);
 					m_editHotkey.SetWindowText(wndText);
@@ -432,34 +432,15 @@ LRESULT CSettingsHotkeysDlg::OnBnClickedButtonHotkeyAssign(WORD wNotifyCode, WOR
 	return 0;
 }
 
-// added by SeNS
-CHotkey* CSettingsHotkeysDlg::FindHotkey(CString name)
-{
-	for(unsigned int i = 0; i < _Settings.m_hotkey_groups.size(); ++i)
-		for(unsigned int j = 0; j < _Settings.m_hotkey_groups[i].m_hotkeys.size(); ++j)
-		{
-			if (name.Compare(_Settings.m_hotkey_groups[i].m_hotkeys[j].m_name) == 0)
-				return &_Settings.m_hotkey_groups[i].m_hotkeys[j];
-		}
-	return NULL;
-}
-
 void CSettingsHotkeysDlg::ClearAndSet()
 {
 	m_count = 0;
 	ZeroMemory(&m_accel, sizeof(ACCEL));
 	::EnableWindow(GetDlgItem(IDC_BUTTON_HOTKEY_ASSIGN), FALSE);
-	// changed by SeNS
-	CString name;
-	m_hotkeys.GetText(m_hotkeys.GetCurSel(), name);
-	CHotkey* foundKey = FindHotkey(name);
-	if (foundKey)
-	{
-		m_editHotkey.SetWindowText(U::AccelToString(foundKey->m_accel));
-		::SetWindowText(GetDlgItem(IDC_EDIT_HOTKEY_COLLISION), NULL);
-		if(_Settings.m_hotkey_groups[m_selGr].m_hotkeys[m_selHk].m_desc != L"")
-			::SetWindowText(GetDlgItem(IDC_EDIT_HOTKEY_DESCRIPTION), _Settings.m_hotkey_groups[m_selGr].m_hotkeys[m_selHk].m_desc);
-		else
-			::SetWindowText(GetDlgItem(IDC_EDIT_HOTKEY_DESCRIPTION), NULL);
-	}
+	m_editHotkey.SetWindowText(U::AccelToString(_Settings.m_hotkey_groups[m_selGr].m_hotkeys[m_selHk].m_accel));
+	::SetWindowText(GetDlgItem(IDC_EDIT_HOTKEY_COLLISION), NULL);
+	if(_Settings.m_hotkey_groups[m_selGr].m_hotkeys[m_selHk].m_desc != L"")
+		::SetWindowText(GetDlgItem(IDC_EDIT_HOTKEY_DESCRIPTION), _Settings.m_hotkey_groups[m_selGr].m_hotkeys[m_selHk].m_desc);
+	else
+		::SetWindowText(GetDlgItem(IDC_EDIT_HOTKEY_DESCRIPTION), NULL);
 }
