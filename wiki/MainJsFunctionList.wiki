@@ -106,7 +106,7 @@ function apiSetFastMode(fast)
 
 
 
-function   MsgBox(str)
+function   MsgBox(str) - выводит окошко с сообщением str и кнопкой «ОК».
 
 
 
