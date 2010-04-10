@@ -310,7 +310,7 @@ function StyleCode(check, cp, range)
 
 
 
-function IsCode(cp)
+function IsCode(cp) - если элемент cp вложен в span с классом code, возвращает true, в противном случае false.
 
 
 
