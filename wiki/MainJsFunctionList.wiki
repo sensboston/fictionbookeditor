@@ -386,7 +386,7 @@ function ImgSetURL(image,url)
 
 
 
-function SaveBodyScroll()
+function SaveBodyScroll() - сохраняет позицию вертикальной прокрутки окна редактора в переменную document.ScrollSave.
 
 
 
