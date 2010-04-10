@@ -6,7 +6,7 @@
 
 
 = Список =
-function FillCoverList()
+function FillCoverList() - функция состоит из вызова FillLists().
 
 
 
