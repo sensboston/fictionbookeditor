@@ -330,11 +330,10 @@ function GetCP(cp)
 
 
 
-function InsBefore(parent,ref,item)
+function InsBefore(parent,ref,item) - если ref не null, вставляет элемент item перед элементом ref, в противном случае вставляет элемент item последним сыновним элементом parent.
 
 
-
-function InsBeforeHTML(parent,ref,ht)
+function InsBeforeHTML(parent,ref,ht) - если ref не null, вставляет html-код ht перед открывающим тегом элемента ref, в противном случае вставляет html-код ht перед закрывающим тегом элемента parent.
 
 
 
