@@ -110,7 +110,7 @@ function   MsgBox(str) - выводит окошко с сообщением str
 
 
 
-function AskYesNo(str)
+function AskYesNo(str) - выводит окошко с сообщением str и кнопками "Да" и "Нет". Возвращает true, если была нажата кнопка "Да", и false, если "Нет".
 
 
 
