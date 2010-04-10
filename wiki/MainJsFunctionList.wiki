@@ -278,7 +278,7 @@ function KillDivs(e)
 
 
 
-function GoTo(elem)
+function GoTo(elem) - функция устанавливает область видимости главного окна редактора на элемент elem.
 
 
 
