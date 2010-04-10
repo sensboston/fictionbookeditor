@@ -214,7 +214,7 @@ function MakeSeq(xn,hn,indent)
 
 
 
-function IsEmpty(ii) - если ii имеет хотя бы один сыновний элемент, и все сыновние элементы ii являются имеют baseName=="empty-line", возвращает true. Если ii==null или ii не имеет сыновних элементов, возвращает false.
+function IsEmpty(ii) - если ii не null, имеет хотя бы один сыновний элемент, и все сыновние элементы ii являются имеют baseName=="empty-line", возвращает true. В противном случае возвращает false.
 
 
 
