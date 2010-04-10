@@ -1036,7 +1036,7 @@ void CMainFrame::InitPluginsType(HMENU hMenu, const TCHAR* type, UINT cmdbase, C
 {
 	CRegKey rk;
 
-	if(rk.Open(HKEY_LOCAL_MACHINE, _Settings.GetKeyPath() + L"\\Plugins") != ERROR_SUCCESS)
+	if(rk.Open(HKEY_CURRENT_USER, _Settings.GetKeyPath() + L"\\Plugins") != ERROR_SUCCESS)
 		return;
 	int ncmd = 0;
 	for(int i = 0; ncmd < 20; ++i)

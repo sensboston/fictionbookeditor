@@ -10,6 +10,11 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FBShell", "FBSHell\FBShell.
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Ukrainian", "locales\res_ukr\res_ukr.vcproj", "{B0D6E5EB-56C0-4DC2-A98F-98EFE5158B8B}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ExportHTML", "ExportHTML\ExportHTML.vcproj", "{07249A4A-8D68-4300-B70F-688FD4F80506}"
+	ProjectSection(ProjectDependencies) = postProject
+		{E1B04471-3393-4970-93ED-FB6A57BCDA8B} = {E1B04471-3393-4970-93ED-FB6A57BCDA8B}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SubversionScc) = preSolution
 		Svn-Managed = True
@@ -99,6 +104,24 @@ Global
 		{B0D6E5EB-56C0-4DC2-A98F-98EFE5158B8B}.Unicode Release MinDependency|Win32.Build.0 = Release|Win32
 		{B0D6E5EB-56C0-4DC2-A98F-98EFE5158B8B}.Unicode Release MinSize|Win32.ActiveCfg = Release|Win32
 		{B0D6E5EB-56C0-4DC2-A98F-98EFE5158B8B}.Unicode Release MinSize|Win32.Build.0 = Release|Win32
+		{07249A4A-8D68-4300-B70F-688FD4F80506}.Debug|Win32.ActiveCfg = Debug|Win32
+		{07249A4A-8D68-4300-B70F-688FD4F80506}.Debug|Win32.Build.0 = Debug|Win32
+		{07249A4A-8D68-4300-B70F-688FD4F80506}.Release MinDependency|Win32.ActiveCfg = Release|Win32
+		{07249A4A-8D68-4300-B70F-688FD4F80506}.Release MinDependency|Win32.Build.0 = Release|Win32
+		{07249A4A-8D68-4300-B70F-688FD4F80506}.Release MinSize|Win32.ActiveCfg = Release|Win32
+		{07249A4A-8D68-4300-B70F-688FD4F80506}.Release MinSize|Win32.Build.0 = Release|Win32
+		{07249A4A-8D68-4300-B70F-688FD4F80506}.Release|Win32.ActiveCfg = Release|Win32
+		{07249A4A-8D68-4300-B70F-688FD4F80506}.Release|Win32.Build.0 = Release|Win32
+		{07249A4A-8D68-4300-B70F-688FD4F80506}.Solution debug|Win32.ActiveCfg = Debug|Win32
+		{07249A4A-8D68-4300-B70F-688FD4F80506}.Solution debug|Win32.Build.0 = Debug|Win32
+		{07249A4A-8D68-4300-B70F-688FD4F80506}.Solution release|Win32.ActiveCfg = Debug|Win32
+		{07249A4A-8D68-4300-B70F-688FD4F80506}.Solution release|Win32.Build.0 = Debug|Win32
+		{07249A4A-8D68-4300-B70F-688FD4F80506}.Unicode Debug|Win32.ActiveCfg = Debug|Win32
+		{07249A4A-8D68-4300-B70F-688FD4F80506}.Unicode Debug|Win32.Build.0 = Debug|Win32
+		{07249A4A-8D68-4300-B70F-688FD4F80506}.Unicode Release MinDependency|Win32.ActiveCfg = Release|Win32
+		{07249A4A-8D68-4300-B70F-688FD4F80506}.Unicode Release MinDependency|Win32.Build.0 = Release|Win32
+		{07249A4A-8D68-4300-B70F-688FD4F80506}.Unicode Release MinSize|Win32.ActiveCfg = Release|Win32
+		{07249A4A-8D68-4300-B70F-688FD4F80506}.Unicode Release MinSize|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

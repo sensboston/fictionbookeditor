@@ -30,6 +30,8 @@
 // turns off ATL's hiding of some common and often safely ignored warning messages
 #define _ATL_ALL_WARNINGS
 
+#define NO_EXTRN_SETTINGS
+
 #include <atlbase.h>
 #include <atlcom.h>
 #include <atlwin.h>
@@ -37,6 +39,7 @@
 #include <atlctl.h>
 #include <atlhost.h>
 #include <atlstr.h>
+#include <atlimage.h>
 
 extern CComModule _Module;
 
@@ -44,7 +47,7 @@ extern CComModule _Module;
 #include <atldlgs.h>
 #include <atlddx.h>
 
-extern CRegKey	  _Settings;
+extern CRegKey	  _RegSettings;
 extern CString    _SettingsPath;
 
 #include <comutil.h>

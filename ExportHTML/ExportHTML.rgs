@@ -12,11 +12,11 @@ HKCR
 	}
 }
 
-HKLM
+HKCU
 {
 	NoRemove Software
 	{
-		NoRemove LitRes
+		NoRemove FBETeam
 		{
 			NoRemove 'FictionBook Editor'
 			{

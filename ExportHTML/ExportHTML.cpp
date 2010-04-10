@@ -13,7 +13,7 @@ DEFINE_GUID(CLSID_ExportHTMLPlugin,
 0xe242a6d3, 0x84bf, 0x4285, 0x9f, 0xaa, 0x16, 0xf, 0x95, 0x37, 0x6, 0x68);
 
 CComModule  _Module;
-CRegKey	    _Settings;
+CRegKey	    _RegSettings;
 CString	    _SettingsPath;
 
 BEGIN_OBJECT_MAP(ObjectMap)

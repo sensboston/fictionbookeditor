@@ -1,4 +1,4 @@
-//Microsoft Developer Studio generated resource script.
+// Microsoft Visual C++ generated resource script.
 //
 #include "resource.h"
 
@@ -26,7 +26,7 @@ LANGUAGE LANG_RUSSIAN, SUBLANG_DEFAULT
 // REGISTRY
 //
 
-IDR_EXPORTHTML          REGISTRY DISCARDABLE    "ExportHTML.rgs"
+IDR_EXPORTHTML          REGISTRY                "ExportHTML.rgs"
 
 #ifdef APSTUDIO_INVOKED
 /////////////////////////////////////////////////////////////////////////////
@@ -34,18 +34,18 @@ IDR_EXPORTHTML          REGISTRY DISCARDABLE    "ExportHTML.rgs"
 // TEXTINCLUDE
 //
 
-1 TEXTINCLUDE DISCARDABLE 
+1 TEXTINCLUDE 
 BEGIN
     "resource.h\0"
 END
 
-2 TEXTINCLUDE DISCARDABLE 
+2 TEXTINCLUDE 
 BEGIN
     "#include ""afxres.h""\r\n"
     "\0"
 END
 
-3 TEXTINCLUDE DISCARDABLE 
+3 TEXTINCLUDE 
 BEGIN
     "\r\n"
     "\0"
@@ -71,19 +71,27 @@ LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 // Dialog
 //
 
-IDD_CUSTOMSAVEDLG DIALOG DISCARDABLE  0, 0, 330, 32
-STYLE DS_3DLOOK | DS_CONTROL | WS_CHILD | WS_CLIPSIBLINGS
+IDD_CUSTOMSAVEDLG DIALOG  0, 0, 330, 32
+STYLE DS_SETFONT | DS_3DLOOK | DS_CONTROL | WS_CHILD | WS_CLIPSIBLINGS
 FONT 8, "MS Shell Dlg"
 BEGIN
     LTEXT           "XSL Template:",IDC_STATIC,68,2,53,8
     EDITTEXT        IDC_TEMPLATE,130,0,164,12,ES_AUTOHSCROLL
     PUSHBUTTON      "...",IDC_BROWSE,297,0,15,12
-    CONTROL         "Include document description",IDC_DOCINFO,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,69,19,108,8
+    CONTROL         "Include document description",IDC_DOCINFO,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,69,19,108,8
     LTEXT           "TOC depth:",IDC_STATIC,186,19,42,8
     EDITTEXT        IDC_TOCDEPTH,228,17,19,12,ES_NUMBER
 END
 
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDI_ICON1               ICON                    "Open.ico"
 #endif    // English (U.S.) resources
 /////////////////////////////////////////////////////////////////////////////
 
