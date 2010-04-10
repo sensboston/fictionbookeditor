@@ -98,7 +98,7 @@ function apiCleanUp(className)
 
 
 
-function apiCheckRunnableScript() - пытается выполнить загруженный в текущий момент пользовательский скрипт, вызывая функцию Run() этого скрипта. Если при этом генерируется исключение, функция возвращает false, в противном случае true.
+function apiCheckRunnableScript() - возвращает true, если функция Run определена, false в  обратном случае.
 
 
 
