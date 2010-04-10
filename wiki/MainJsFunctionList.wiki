@@ -26,11 +26,11 @@ function HighlightBorder(element, override, style, width, color)
 
 
 
-function ShowPrevImage(source)
+function ShowPrevImage(source) - выводит эскиз картинки-вложения. Вызывается при наведении указателя мыши на значок просмотра на странице Description. Параметр source - адрес картинки.
 
 
 
-function HidePrevImage()
+function HidePrevImage() - убирает эскиз картинки-вложения.
 
 
 
