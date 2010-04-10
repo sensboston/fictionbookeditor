@@ -342,11 +342,11 @@ function CloneContainer(cp,check)
 
 
 
-function InsImage(check, id)
+function InsImage(check, id) - вставляет "блочную" картинку в книгу, если check!=true. При параметре check==true только проверяет, можно ли в текущий момент вставить блочную картинку. Параметр id - имя картинки (без "fbw-internal:#").
 
 
 
-function InsInlineImage(check, id)
+function InsInlineImage(check, id) - вставляет инлайн-картинку в книгу, если check!=true. При параметре check==true только проверяет, можно ли в текущий момент вставить инлайн-картинку. Параметр id - имя картинки (без "fbw-internal:#").
 
 
 
@@ -354,7 +354,7 @@ function AddImage(cp, check)
 
 
 
-function AddEpigraph(cp,check)
+function AddEpigraph(cp,check) - при параметре check==true проверяет, можно ли вставить эпиграф. При других значениях check вставляет эпиграф.
 
 
 
