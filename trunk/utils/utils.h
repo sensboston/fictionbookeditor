@@ -126,7 +126,6 @@ namespace U // place all utilities into their own namespace
 
 	  return ret;
   }
-
   void		InitSettings();
   void		InitSettingsHotkeyGroups();
 /*  extern inline DWORD	GetSettingI(const TCHAR *name,DWORD defval=0) {

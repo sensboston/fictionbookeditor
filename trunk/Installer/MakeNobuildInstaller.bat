@@ -22,6 +22,7 @@ copy ..\Release\res_rus.dll .\Input >NUL
 copy ..\Release\res_ukr.dll .\Input >NUL
 copy ..\Release\FBE.exe .\Input\ >NUL
 copy ..\Release\FBShell.dll .\Input\ >NUL
+copy ..\Release\ExportHTML.dll .\Input\ >NUL
 xcopy ..\files\*.* .\Input\ /E /Y >NUL
 
 "C:\Program Files\NSIS\Unicode\makensis" MakeInstaller.nsi

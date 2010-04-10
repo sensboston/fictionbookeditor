@@ -42,12 +42,12 @@ public:
     m_hDlg=hWnd;
 
     // read saved template name
-    m_template=U::QuerySV(_Settings,_T("Template"),U::GetProgDirFile(_T("html.xsl")));
+    m_template=U::QuerySV(_RegSettings,_T("Template"),U::GetProgDirFile(_T("html.xsl")));
     ::SetDlgItemText(hWnd,IDC_TEMPLATE,m_template);
-    m_includedesc=U::QueryIV(_Settings,_T("IncludeDesc"),1)!=0;
+    m_includedesc=U::QueryIV(_RegSettings,_T("IncludeDesc"),1)!=0;
     ::SendDlgItemMessage(hWnd,IDC_DOCINFO,BM_SETCHECK,
       m_includedesc ? BST_CHECKED : BST_UNCHECKED,0);
-    m_tocdepth=U::QueryIV(_Settings,_T("TOCDepth"),1);
+    m_tocdepth=U::QueryIV(_RegSettings,_T("TOCDepth"),1);
     ::SetDlgItemInt(hWnd,IDC_TOCDEPTH,m_tocdepth,FALSE);
     return TRUE;
   }
@@ -87,15 +87,15 @@ public:
 
   BOOL OnFileOK(LPOFNOTIFY on) {
     m_template=U::GetWindowText(::GetDlgItem(m_hDlg,IDC_TEMPLATE));
-    _Settings.SetStringValue(_T("Template"),m_template);
+    _RegSettings.SetStringValue(_T("Template"),m_template);
     m_includedesc=::SendDlgItemMessage(m_hDlg,IDC_DOCINFO,BM_GETCHECK,0,0)==BST_CHECKED;
-    _Settings.SetDWORDValue(_T("IncludeDesc"),m_includedesc);
+    _RegSettings.SetDWORDValue(_T("IncludeDesc"),m_includedesc);
     m_tocdepth=::GetDlgItemInt(m_hDlg,IDC_TOCDEPTH,NULL,FALSE);
     if (m_tocdepth<0)
       m_tocdepth=0;
     if (m_tocdepth>10)
       m_tocdepth=10;
-    _Settings.SetDWORDValue(_T("TOCDepth"),m_tocdepth);
+    _RegSettings.SetDWORDValue(_T("TOCDepth"),m_tocdepth);
     return TRUE;
   }
 };
