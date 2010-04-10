@@ -98,7 +98,7 @@ function apiCleanUp(className)
 
 
 
-function apiCheckRunnableScript() - возвращает true, если функция Run определена, false в  обратном случае.
+function apiCheckRunnableScript() - возвращает true, если функция Run определена в текущем окне, false в  обратном случае.
 
 
 
