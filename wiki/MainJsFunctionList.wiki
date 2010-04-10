@@ -365,7 +365,7 @@ function AddTA(cp,check)
 
 
 
-function IsCtSection(s)
+function IsCtSection(s) - возвращает false, если элемент s имеет хотя бы один непосредственно сыновний элемент P. В противном случае true.
 
 
 
