@@ -234,6 +234,7 @@ public:
 
   CString		  m_status_msg; // message to be posted to frame's status line
 
+  bool			  m_restore_pos_cmdline;
   
   // incremental search helpers
   CString		  m_is_str;
@@ -280,7 +281,7 @@ public:
     m_doc_changed(false), m_sel_changed(false), m_want_focus(0),
     m_ignore_cb_changes(false), m_incsearch(0), m_cb_last_images(false),
     m_last_ie_ovr(true), m_last_sci_ovr(true), m_saved_xml(0), m_sci_find_dlg(0), m_sci_replace_dlg(0),
-	m_last_script(0), m_last_plugin(0)
+	m_last_script(0), m_last_plugin(0), m_restore_pos_cmdline(false)
 	// added by SeNS
 	{ 
 		TCHAR prgPath[MAX_PATH];
@@ -540,6 +541,7 @@ public:
 		COMMAND_ID_HANDLER(ID_LAST_SCRIPT, OnLastScript)
 
 		COMMAND_ID_HANDLER(ID_TOOLS_SPELLCHECK, OnSpellCheck);
+		COMMAND_ID_HANDLER(ID_TOOLS_SPELLCHECK_HIGHLIGHT, OnToggleHighlight);
 
 		// help menu
 		COMMAND_ID_HANDLER(ID_APP_ABOUT, OnAppAbout)
@@ -881,6 +883,16 @@ public:
 	{
 		if (m_Speller && m_current_view == BODY)
 			m_Speller->StartDocumentCheck(m_doc->m_body.m_mk_srv);
+		return S_OK;
+	}
+
+	LRESULT OnToggleHighlight(WORD, WORD, HWND, BOOL&)
+	{
+		if (m_Speller && m_current_view == BODY)
+		{
+			_Settings.SetHighlightMisspells(!_Settings.GetHighlightMisspells());
+			m_Speller->SetHighlightMisspells(_Settings.GetHighlightMisspells());
+		}
 		return S_OK;
 	}
 

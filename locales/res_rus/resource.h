@@ -242,6 +242,7 @@
 #define IDS_HOTKEY_EDIT_PASTE2          279
 #define IDS_HOTKEY_FASTMODE				280
 #define IDS_HOTKEY_TREEVIEW				281
+#define IDS_HOTKEY_TOOLS_SPELLHIGHLIGHT 282
 #define IDS_LANG_UKRAINIAN              300
 #define IDC_SPELL_REPLACE               500
 #define ID_VER_ADVANCE                  550
@@ -454,6 +455,7 @@
 #define ID_DT_DELETE32903               32903
 #define ID_SAVEIMG_AS                   32904
 #define ID_TOOLS_SPELLCHECK             32905
+#define ID_TOOLS_SPELLCHECK_HIGHLIGHT	32906
 #define ID_EDIT_PASTE2                  0xE525
 #define IDS_ENCODINGS                   61403
 #define IDS_DOCUMENT_TREE_CAPTION       61404

@@ -241,8 +241,7 @@ CAPTION "О программе"
 FONT 9, "Tahoma", 0, 0, 0x0
 BEGIN
     DEFPUSHBUTTON   "OK",IDOK,140,118,50,14
-    CONTROL         "FictionBook Editor",IDC_STATIC_AB_APPNAMEVER,
-                    "Static",SS_LEFTNOWORDWRAP | WS_GROUP,101,8,153,8
+    CONTROL         "FictionBook Editor",IDC_STATIC_AB_APPNAMEVER,"Static",SS_LEFTNOWORDWRAP | WS_GROUP,101,8,153,8
     ICON            IDR_MAINFRAME,IDC_STATIC_AB_APPICON,72,8,20,20
     LTEXT           "Сборка",IDC_STATIC,101,20,24,8
     LTEXT           "",IDC_BUILDSTAMP,130,20,126,8
@@ -298,9 +297,9 @@ CAPTION "Заменить"
 FONT 9, "Tahoma", 0, 0, 0x0
 BEGIN
     LTEXT           "Найти:",IDC_STATIC,7,9,45,8,NOT WS_GROUP
-    COMBOBOX        IDC_TEXT,53,7,179,62,CBS_DROPDOWN | WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_TEXT,53,7,179,62,CBS_DROPDOWN | CBS_AUTOHSCROLL | WS_VSCROLL | WS_TABSTOP
     LTEXT           "Заменить:",IDC_STATIC,7,25,45,8,NOT WS_GROUP
-    COMBOBOX        IDC_REPLACE,53,23,179,62,CBS_DROPDOWN | WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_REPLACE,53,23,179,62,CBS_DROPDOWN | CBS_AUTOHSCROLL | WS_VSCROLL | WS_TABSTOP
     CONTROL         "&Только слова целиком",IDC_WHOLE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,41,98,13
     CONTROL         "&Учитывать регистр",IDC_MATCHCASE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,54,98,13
     CONTROL         "&Регулярное выражение",IDC_REGEXP,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,67,98,13
@@ -316,7 +315,7 @@ CAPTION "Поиск"
 FONT 9, "Tahoma", 0, 0, 0x0
 BEGIN
     LTEXT           "Что искать:",IDC_STATIC,7,9,40,8
-    COMBOBOX        IDC_TEXT,49,7,183,62,CBS_DROPDOWN | WS_VSCROLL | WS_GROUP | WS_TABSTOP
+    COMBOBOX        IDC_TEXT,49,7,183,62,CBS_DROPDOWN | CBS_AUTOHSCROLL | WS_VSCROLL | WS_GROUP | WS_TABSTOP
     CONTROL         "&Только целые слова",IDC_WHOLE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,30,98,13
     CONTROL         "&Учитывать регистр",IDC_MATCHCASE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,43,98,13
     CONTROL         "&Регулярное выражение",IDC_REGEXP,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,56,98,13
@@ -844,11 +843,14 @@ STRINGTABLE
 BEGIN
     IDS_HOTKEY_PLUGINS_LAST_PLUGIN "Последний плагин"
     IDS_HOTKEY_TOOLS_SPELL  "Орфография"
+    IDS_HOTKEY_TOOLS_SPELLHIGHLIGHT "Переключить выделение слов с ошибками"
     IDC_SPELL_ADD2DICT      "Добавить в словарь"
     IDS_SPELL_CHECK_COMPLETED "Проверка орфографии завершена."
     IDC_SPELL_IGNOREALL     "Пропустить все"
     IDS_SPELL_CONTINUE      "Продолжить"
     IDS_HOTKEY_EDIT_INSERT_INLINEIMAGE "Вставить изображение в текст"
+    IDS_HOTKEY_FASTMODE     "Ускоренный режим"
+    IDS_HOTKEY_TREEVIEW     "Дерево вкл/выкл"
 END
 
 STRINGTABLE 
@@ -950,8 +952,6 @@ BEGIN
     IDS_HOTKEY_VIEW_DESCRIPTION "Описание"
     IDS_HOTKEY_VIEW_SOURCE  "Код"
     IDS_HOTKEY_EDIT_INSERT_TABLE "Вставить таблицу"
-    IDS_HOTKEY_FASTMODE "Ускоренный режим"
-	IDS_HOTKEY_TREEVIEW	"Дерево вкл/выкл"
 END
 
 STRINGTABLE 

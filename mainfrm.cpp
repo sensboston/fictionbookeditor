@@ -262,7 +262,7 @@ CMainFrame::FILE_OP_STATUS CMainFrame::SaveFile(bool askname) {
 CMainFrame::FILE_OP_STATUS  CMainFrame::LoadFile(const wchar_t *initfilename)
 {
   if (!DiscardChanges())
-    return CANCELLED;
+    return CANCELLED; 
   
   CString filename(initfilename);
   if (filename.IsEmpty())
@@ -480,6 +480,7 @@ BOOL CMainFrame::OnIdle()
 		m_last_sci_ovr = m_source.SendMessage(SCI_GETOVERTYPE);
 		m_status.SetPaneText(ID_PANE_INS, m_last_sci_ovr ? strOVR : strINS);
 	}
+	// BODY view
 	else
 	{
 		HMENU scripts = GetSubMenu(m_CmdBar.GetMenu(), 7);
@@ -906,6 +907,15 @@ BOOL CMainFrame::OnIdle()
 		{
 			m_last_ie_ovr = fOvr;
 			m_status.SetPaneText(ID_PANE_INS, fOvr ? strOVR : strINS);
+		}
+
+		// added by SeNS: strange bug woraround - restore position on loaded from command line file
+		if (m_restore_pos_cmdline)
+		{
+			m_restore_pos_cmdline = false;
+			int saved_pos = U::GetFileSelectedPos(m_doc->m_filename);
+			GoTo(saved_pos);
+			m_view.SetFocus();
 		}
 	}
 
@@ -1394,13 +1404,13 @@ LRESULT CMainFrame::OnCreate(UINT, WPARAM, LPARAM, BOOL&)
   m_doc=new FB::Doc(*this);
   FB::Doc::m_active_doc = m_doc;
   bool start_with_params = false;
-  if (_ARGV.GetSize()>0 && !_ARGV[0].IsEmpty()) { // load a command line arg if it was provided
+  // load a command line arg if it was provided
+  if (_ARGV.GetSize()>0 && !_ARGV[0].IsEmpty()) 
+  { 
     if (m_doc->Load(m_view,_ARGV[0]))
 	{
       start_with_params = true;
 	  m_file_age = FileAge(_ARGV[0]);
-	  int saved_pos = U::GetFileSelectedPos(_ARGV[0]);
-	  GoTo(saved_pos);
 	}
     else
 	{
@@ -1428,11 +1438,6 @@ LRESULT CMainFrame::OnCreate(UINT, WPARAM, LPARAM, BOOL&)
 
   // init plugins&MRU list
   InitPlugins();  
-
-  if(start_with_params)
-  {
-	  m_mru.AddToList(_ARGV[0]);
-  }
 
   // setup splitter
   m_splitter.SetSplitterPanes(m_document_tree, m_view);
@@ -1505,6 +1510,15 @@ LRESULT CMainFrame::OnCreate(UINT, WPARAM, LPARAM, BOOL&)
   m_document_tree.ShowWindow(bVisible ? SW_SHOWNOACTIVATE : SW_HIDE);
   UISetCheck(ID_VIEW_TREE, bVisible);
   m_splitter.SetSinglePaneMode(bVisible ? SPLIT_PANE_NONE : SPLIT_PANE_RIGHT);
+
+  if(start_with_params)
+  {
+	  m_mru.AddToList(_ARGV[0]);
+  	  if(_Settings.RestoreFilePosition())
+	  {
+			m_restore_pos_cmdline = true;
+	  }
+  }
 
   // Раскладка русской клавиатуры
   if (_Settings.GetChangeKeybLayout())
@@ -4445,17 +4459,18 @@ void CMainFrame::GoTo(int selected_pos)
 
 	MSHTML::IHTMLElementPtr fbw_body;
 
-	for (long i=0;i<c_len;++i) {
-	MSHTML::IHTMLElementPtr div(children->item(i));
-	if (!(bool)div)
-		continue;
-	  
-	if (U::scmp(div->tagName,L"DIV")==0 && U::scmp(div->id,L"fbw_body")==0) 
+	for (long i=0;i<c_len;++i) 
 	{
-		fbw_body = div;
-		break;
-	}
-} 
+		MSHTML::IHTMLElementPtr div(children->item(i));
+		if (!(bool)div)
+			continue;
+		  
+		if (U::scmp(div->tagName,L"DIV")==0 && U::scmp(div->id,L"fbw_body")==0) 
+		{
+			fbw_body = div;
+			break;
+		}
+	} 
 	MSHTML::IHTMLTxtRangePtr rng(MSHTML::IHTMLBodyElementPtr(m_doc->m_body.Document()->body)->createTextRange());
 	rng->moveToElementText(fbw_body);
 	rng->collapse(true);
