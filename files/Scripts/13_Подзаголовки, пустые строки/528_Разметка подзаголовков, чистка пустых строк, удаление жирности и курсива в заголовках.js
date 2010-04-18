@@ -25,13 +25,11 @@ function Run() {
  var EmptyClearedTitleEnd=0;
  var EmptyClearedTitleInside=0;
  var while_flag;
+ var txt;
+ var re0=new RegExp("^( | |&nbsp;|"+nbspChar+")*?$","i");
 
  function isLineEmpty(ptr) {
-  var txt=ptr.innerText;
-  var i=0;
-  while (i<txt.length && (txt.substr(i,1)==" " || txt.substr(i,1)==nbspChar)) {i++}
-  if (i==txt.length) {return true;}
-  else {return false;}
+  return re0.test(ptr.innerHTML.replace(/<(?!img)[^>]*?>/gi,""));
  }
 
  //a
