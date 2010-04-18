@@ -78,24 +78,25 @@ LRESULT CSettingsWordsDlg::OnInitDialog(UINT uMsg, WPARAM wParam, LPARAM lParam,
 
 	RECT rc;
 	m_list_words.GetClientRect(&rc);
-	int wcWidth = rc.right - rc.left - 150;
+	int wcWidth = rc.right - rc.left - 80;
 
 	CString header;
 
-	m_list_words.InsertColumn(0, L"%", LVCFMT_CENTER | LVCFMT_IMAGE, IMG_STAT_WIDTH + 10);
+//	m_list_words.InsertColumn(0, L"%", LVCFMT_CENTER | LVCFMT_IMAGE, IMG_STAT_WIDTH + 10);
 
 	header.LoadString(IDS_SETTINGS_WLIST_COUNTED);
-	m_list_words.InsertColumn(1, header, LVCFMT_LEFT, 60);
+	m_list_words.InsertColumn(0, header, LVCFMT_LEFT, 60);
 
 	header.LoadString(IDS_SETTINGS_WLIST_WORD);
-	m_list_words.InsertColumn(2, header, LVCFMT_LEFT, wcWidth);
+	m_list_words.InsertColumn(1, header, LVCFMT_LEFT, wcWidth);
 	
 	m_list_words.SetItemCount(_Settings.m_words.size());
 
 	m_edt_new = GetDlgItem(IDC_EDIT_NEW);
 	m_chk_all = GetDlgItem(IDC_CHECK_SELALL);
 
-	CreateStatBitmaps();
+	// this unuseful code dramatically slowdown application! must be removed
+//	CreateStatBitmaps();
 
 	qsort(m_words.GetData(), m_words.GetSize(), sizeof(WordsItem), g_compare_funcs[3]);
 
@@ -117,23 +118,24 @@ LRESULT CSettingsWordsDlg::OnListDispInfo(int id, NMHDR *hdr, BOOL&)
 	if (ni->item.mask & LVIF_TEXT)
 		switch(ni->item.iSubItem)
 		{
-			case 1:
+			case 0:
 			{
 				w->m_sCount.Format(L"%i", w->m_count);
 				ni->item.pszText = w->m_sCount.GetBuffer();
 			}
 			break;
-			case 2:
+			case 1:
 				ni->item.pszText = w->m_word.GetBuffer();
 			break;
 		}
 
-	if(ni->item.mask & LVIF_IMAGE)
-		ni->item.iImage = w->m_prc_idx;
+/*	if(ni->item.mask & LVIF_IMAGE)
+		ni->item.iImage = w->m_prc_idx; */
 
 	return 0;
 }
 
+/*
 void CSettingsWordsDlg::CreateStatBitmaps()
 {
 	unsigned int size = m_words.GetSize();
@@ -180,7 +182,7 @@ void CSettingsWordsDlg::CreateStatBitmaps()
 	}
 	
 	m_list_words.SetImageList(m_stat_images.Detach(), LVSIL_SMALL);
-}
+} */
 
 LRESULT CSettingsWordsDlg::OnListSort(int id, NMHDR *hdr, BOOL&)
 {
@@ -191,7 +193,7 @@ LRESULT CSettingsWordsDlg::OnListSort(int id, NMHDR *hdr, BOOL&)
 	else
 		m_sort = lv->iSubItem + 1;
 
-	qsort(m_words.GetData(), m_words.GetSize(), sizeof(WordsItem), g_compare_funcs[abs(m_sort)*2 - (m_sort < 0 ? 1 : 2)]);
+	qsort(m_words.GetData(), m_words.GetSize(), sizeof(WordsItem), g_compare_funcs[abs(m_sort)*2 - (m_sort < 0 ? 0 : 1)]);
 
 	m_list_words.InvalidateRect(NULL);
 
@@ -202,7 +204,7 @@ LRESULT CSettingsWordsDlg::OnListClick(int id, NMHDR *hdr, BOOL&)
 {
 	NMITEMACTIVATE *ai = (NMITEMACTIVATE*) hdr;
 
-	if ((::GetTickCount() - m_ct) < 500 || ai->iItem < 0 || ai->iSubItem != 2)
+	if ((::GetTickCount() - m_ct) < 500 || ai->iItem < 0 || ai->iSubItem != 1)
 	{
 		m_edit.ShowWindow(SW_HIDE);
 		return 0;
@@ -215,7 +217,7 @@ LRESULT CSettingsWordsDlg::OnListClick(int id, NMHDR *hdr, BOOL&)
 	m_edit.SetWindowText(w->m_word);
 
 	RECT rci;
-	m_list_words.GetSubItemRect(m_editidx, 2, LVIR_BOUNDS, &rci);
+	m_list_words.GetSubItemRect(m_editidx, 1, LVIR_BOUNDS, &rci);
 	m_list_words.ClientToScreen(&rci);
 	ScreenToClient(&rci);
 	m_edit.SetWindowPos(NULL, rci.left, rci.top, rci.right - rci.left, rci.bottom - rci.top + 5, SWP_SHOWWINDOW | SWP_NOACTIVATE);

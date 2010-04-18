@@ -52,7 +52,7 @@ public:
 	LRESULT OnOK(WORD, WORD wID, HWND, BOOL&);
 	LRESULT OnCancel(WORD, WORD wID, HWND, BOOL&);
 
-	void CreateStatBitmaps();
+//	void CreateStatBitmaps();
 	bool AddNewWord(CString&, bool test = false);
 	void RemoveWord(int);
 	LRESULT OnBnClickedButtonAdd(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
