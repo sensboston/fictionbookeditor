@@ -241,8 +241,7 @@ CAPTION "Про програму..."
 FONT 9, "Tahoma", 0, 0, 0x0
 BEGIN
     DEFPUSHBUTTON   "Гаразд",IDOK,140,118,50,14
-    CONTROL         "FictionBook Editor",IDC_STATIC_AB_APPNAMEVER,
-                    "Static",SS_LEFTNOWORDWRAP | WS_GROUP,101,8,153,8
+    CONTROL         "FictionBook Editor",IDC_STATIC_AB_APPNAMEVER,"Static",SS_LEFTNOWORDWRAP | WS_GROUP,101,8,153,8
     ICON            IDR_MAINFRAME,IDC_STATIC_AB_APPICON,72,8,20,20
     LTEXT           "збірка",IDC_STATIC,101,20,20,8
     LTEXT           "",IDC_BUILDSTAMP,125,20,131,8
@@ -298,9 +297,9 @@ CAPTION "Пошук і заміна"
 FONT 9, "Tahoma", 0, 0, 0x0
 BEGIN
     LTEXT           "Знайти:",IDC_STATIC,7,9,45,8,NOT WS_GROUP
-    COMBOBOX        IDC_TEXT,53,7,179,62,CBS_DROPDOWN | WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_TEXT,53,7,179,62,CBS_DROPDOWN | CBS_AUTOHSCROLL | WS_VSCROLL | WS_TABSTOP
     LTEXT           "Замінити на:",IDC_STATIC,7,25,45,8,NOT WS_GROUP
-    COMBOBOX        IDC_REPLACE,53,23,179,62,CBS_DROPDOWN | WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_REPLACE,53,23,179,62,CBS_DROPDOWN | CBS_AUTOHSCROLL | WS_VSCROLL | WS_TABSTOP
     CONTROL         "&Слова повністю",IDC_WHOLE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,41,98,13
     CONTROL         "&Враховувати регістр",IDC_MATCHCASE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,54,98,13
     CONTROL         "&Регулярний вираз",IDC_REGEXP,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,67,98,13
@@ -316,7 +315,7 @@ CAPTION "Пошук"
 FONT 9, "Tahoma", 0, 0, 0x0
 BEGIN
     LTEXT           "Знайти:",IDC_STATIC,7,9,40,8
-    COMBOBOX        IDC_TEXT,49,7,183,62,CBS_DROPDOWN | WS_VSCROLL | WS_GROUP | WS_TABSTOP
+    COMBOBOX        IDC_TEXT,49,7,183,62,CBS_DROPDOWN | CBS_AUTOHSCROLL | WS_VSCROLL | WS_GROUP | WS_TABSTOP
     CONTROL         "Слова &повністю",IDC_WHOLE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,30,98,13
     CONTROL         "&Враховувати регістр",IDC_MATCHCASE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,43,98,13
     CONTROL         "&Регулярний вираз",IDC_REGEXP,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,56,98,13
@@ -423,7 +422,7 @@ BEGIN
     LTEXT           "Варіанти:",IDC_STATIC,7,47,46,8
     LISTBOX         IDC_SPELL_SUGG_LIST,7,58,145,68,LBS_SORT | LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
     PUSHBUTTON      "Пропустити",IDC_SPELL_IGNORE,159,58,50,14
-    PUSHBUTTON      "Пропустити усі",IDC_SPELL_IGNOREALL,216,58,50,14
+    PUSHBUTTON      "Пропуст. усі",IDC_SPELL_IGNOREALL,216,58,50,14
     PUSHBUTTON      "Замінити",IDC_SPELL_CHANGE,159,76,50,14
     PUSHBUTTON      "Замінити усі",IDC_SPELL_CHANGEALL,216,76,50,14
     PUSHBUTTON      "Додати",IDC_SPELL_ADD,159,94,50,14
@@ -654,7 +653,7 @@ IDR_MAINFRAME           ICON                    "res\\FBE.ico"
 
 STRINGTABLE 
 BEGIN
-    IDR_MAINFRAME           "FBE"
+    IDR_MAINFRAME           "FB Editor"
     IDS_SB_NO_ERR           "Помилок не виявлено."
     IDS_DMS_TI              "Інформація про твір"
     IDS_LANG_ENGLISH        "Англійська"
@@ -700,7 +699,7 @@ BEGIN
     IDS_HOTKEY_EDIT_REPLACE "Замінити"
     IDS_HOTKEY_EDIT_SPLIT   "Розділити"
     IDS_HOTKEY_EDIT_UNDO    "Скасувати дію"
-    IDS_HOTKEY_GROUP_EDIT   "Редактировать"
+    IDS_HOTKEY_GROUP_EDIT   "Редагування"
     IDS_HOTKEY_GROUP_NAVIGATION "Навіґація"
     IDS_HOTKEY_NAVIGATION_GOTO_REFERENCE "Перейти до посилання"
     IDS_HOTKEY_NAVIGATION_NEXT_ITEM "Наступний елемент"
@@ -844,11 +843,14 @@ STRINGTABLE
 BEGIN
     IDS_HOTKEY_PLUGINS_LAST_PLUGIN "Останній модуль"
     IDS_HOTKEY_TOOLS_SPELL  "Орфографія"
+    IDS_HOTKEY_TOOLS_SPELLHIGHLIGHT "Переключити виділення помилок"
     IDC_SPELL_ADD2DICT      "Додати до словника"
     IDS_SPELL_CHECK_COMPLETED "Перевірку орфографії завершено."
     IDC_SPELL_IGNOREALL     "Пропустити усі"
     IDS_SPELL_CONTINUE      "Продовжити"
     IDS_HOTKEY_EDIT_INSERT_INLINEIMAGE "Додати малюнок до тексту"
+    IDS_HOTKEY_FASTMODE     "Прискорений режим"
+    IDS_HOTKEY_TREEVIEW     "Дерево увімк./вимк."
 END
 
 STRINGTABLE 
@@ -898,7 +900,7 @@ BEGIN
     IDS_SCRIPT_ERRD_MSG     "Помилка виконання скрипту: %s в рядку %d, символ %d"
     IDS_SCRIPT_MSG          "Невідома помилка виконання скрипту."
     IDS_SCRIPT_LOAD_ERR_MSG "При завантаженні скрипту %s виникла помилка: %s"
-    IDS_COM_ERR_CPT         "COM Error"
+    IDS_COM_ERR_CPT         "Помилка COM"
     IDS_XML_PARSE_ERR_CPT   "XML Parse Error"
     IDS_XML_PARSE_ERR_MSG   "At %s, line %d, column %d: %s"
     IDS_XML_PARSE_ERRQ_MSG  "At %s: %s"
@@ -950,8 +952,6 @@ BEGIN
     IDS_HOTKEY_VIEW_DESCRIPTION "Опис"
     IDS_HOTKEY_VIEW_SOURCE  "Код"
     IDS_HOTKEY_EDIT_INSERT_TABLE "Вставити таблицю"
-    IDS_HOTKEY_FASTMODE "Прискорений режим"
-	IDS_HOTKEY_TREEVIEW "Дерево вкл/вимк"
 END
 
 STRINGTABLE 
@@ -987,7 +987,7 @@ BEGIN
     IDS_HOTKEY_ASSIGN_NO_COLLISION "Не зарезервовано для інших коменд"
     IDS_HOTKEY_ASSIGN_COLLISION "Зарезервовано «%s»"
     IDS_SETTINGS_NEED_RESTART 
-                            "Зміни наберуть чинності після перезавантаження програми.\nПерезавантажити негайно?"
+                            "Зміни наберуть чинності після перезапуску програми.\nПерезапустити негайно?"
     IDS_DOCTREE_MENU_ELEMENTS "Елементи"
     IDS_DOCTREE_MENU_SCRIPTS "Скрипти"
     IDS_HOTKEY_EDIT_REMOVE_OUTER_SECTION "Видалити зовнішню секцію"
