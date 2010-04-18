@@ -25,9 +25,9 @@ LangString ErrCheckMSXMLVersion ${LANG_UKRAINIAN} "Для встановленн
 LangString ErrCheckIEVersion ${LANG_UKRAINIAN} "Для встановлення потрібен Microsoft Internet Expolorer версії 5.5 або новіший."
 LangString ErrCheckFBERunning ${LANG_UKRAINIAN} "Перед початком встановлення закрийте FictionBook Editor."
 LangString ErrCheckFBVRunning ${LANG_UKRAINIAN} "Перед початком встановлення закрийте FictionBook Validator."
-LangString ErrNTCurrentVersion ${LANG_UKRAINIAN} "FictionBook Tools працює лише у Windows NT,XP,Vista,7."
+LangString ErrNTCurrentVersion ${LANG_UKRAINIAN} "FictionBook Tools працює лише у Windows NT, XP, Vista, 7."
 LangString ErrShellIntergation ${LANG_UKRAINIAN} "DLL-бібліотека інтеграції оболонки FB використовується і її неможливо перезаписати.$\r$\n\
 	Будь ласка, завершіть сеанс, після чого перезапустіть встановлення."
 
 ; uninstall messages
-LangString UninstAskSettings ${LANG_UKRAINIAN} "Ви бажаєте видалити файли налаштувань програми?"
+LangString UninstAskSettings ${LANG_UKRAINIAN} "Бажаєте видалити файли налаштувань програми?"
