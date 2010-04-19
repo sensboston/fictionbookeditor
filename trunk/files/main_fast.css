@@ -273,7 +273,6 @@ img{
 	padding: 0;
 	border: none;
 	position: relative;
-	z-index: -1;
 	cursor: move;
 }
 
