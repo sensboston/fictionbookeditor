@@ -92,11 +92,13 @@ LRESULT COptDlg::OnInitDialog(UINT, WPARAM, LPARAM, BOOL&)
   m_src_wrap=GetDlgItem(IDC_WRAP);
   m_src_hl=GetDlgItem(IDC_SYNTAXHL);
   m_src_eol=GetDlgItem(IDC_SHOWEOL);
+  m_src_line_numbers=GetDlgItem(IDC_SHOWLINENUMBERS);
 
   // init controls
   m_src_wrap.SetCheck(_Settings.XmlSrcWrap());
   m_src_hl.SetCheck(_Settings.XmlSrcSyntaxHL());  
   m_src_eol.SetCheck(_Settings.XmlSrcShowEOL());  
+  m_src_line_numbers.SetCheck(_Settings.XMLSrcShowLineNumbers());
   
   if(_Settings.FastMode())
 	m_fast_mode.SetCheck(BST_CHECKED);
@@ -149,6 +151,8 @@ LRESULT COptDlg::OnOK(WORD, WORD wID, HWND, BOOL&)
   _Settings.SetXmlSrcWrap(m_src_wrap.GetCheck() != 0);
   _Settings.SetXmlSrcSyntaxHL(m_src_hl.GetCheck() != 0);
   _Settings.SetXmlSrcShowEOL(m_src_eol.GetCheck() != 0);
+  _Settings.SetXMLSrcShowLineNumbers(m_src_line_numbers.GetCheck() != 0);
+
   _Settings.SetFastMode(m_fast_mode.GetCheck() != 0);  
   _Settings.SetUseSpellChecker(m_usespell_check.GetCheck() != 0); // SeNS
   _Settings.SetHighlightMisspells(m_highlight_check.GetCheck() != 0); // SeNS

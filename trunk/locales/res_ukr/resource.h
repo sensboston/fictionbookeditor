@@ -240,8 +240,8 @@
 #define IDS_SPELL_CONTINUE              277
 #define IDS_HOTKEY_EDIT_INSERT_INLINEIMAGE 278
 #define IDS_HOTKEY_EDIT_PASTE2          279
-#define IDS_HOTKEY_FASTMODE				280
-#define IDS_HOTKEY_TREEVIEW				281
+#define IDS_HOTKEY_FASTMODE             280
+#define IDS_HOTKEY_TREEVIEW             281
 #define IDS_HOTKEY_TOOLS_SPELLHIGHLIGHT 282
 #define IDS_LANG_UKRAINIAN              300
 #define IDC_SPELL_REPLACE               500
@@ -274,7 +274,7 @@
 #define IDC_WRAP                        1027
 #define IDC_SYNTAXHL                    1028
 #define IDC_SHOWEOL                     1029
-#define IDC_IDT                         1030
+#define IDC_SHOWLINENUMBERS             1030
 #define IDC_STYLE                       1031
 #define IDC_COLSPAN                     1032
 #define IDC_ROWSPAN                     1033
@@ -294,7 +294,6 @@
 #define IDC_ENCODING_ALWAYS             1049
 #define IDC_CHECK1                      1050
 #define IDC_ENCODING_NEW                1050
-#define IDC_FAST_MODE                   1110
 #define IDC_SELECT_SCRIPTS_FOLDER_BUTTON 1050
 #define IDC_ADDIMAGE_ASKAGAIN           1050
 #define IDC_CHECK_DETECT_ONLY_HYPHENED  1050
@@ -379,6 +378,8 @@
 #define IDC_SPELL_ADD                   1107
 #define IDC_SPELL_SUGGEST               1108
 #define IDC_SPELL_UNDO                  1109
+#define IDC_FAST_MODE                   1110
+#define IDC_IDT				1111
 #define ID_SCRIPT_BASE                  9000
 #define ID_EDIT_INS_SYMBOL              10000
 #define ID_NEXT_ITEM                    32772
@@ -455,7 +456,7 @@
 #define ID_DT_DELETE32903               32903
 #define ID_SAVEIMG_AS                   32904
 #define ID_TOOLS_SPELLCHECK             32905
-#define ID_TOOLS_SPELLCHECK_HIGHLIGHT	32906
+#define ID_TOOLS_SPELLCHECK_HIGHLIGHT   32906
 #define ID_EDIT_PASTE2                  0xE525
 #define IDS_ENCODINGS                   61403
 #define IDS_DOCUMENT_TREE_CAPTION       61404

@@ -289,6 +289,7 @@ BEGIN
     LTEXT           "Словник користувача:",IDS_SPELL_CUSTOM_DICT,15,172,44,16
     PUSHBUTTON      "..",IDC_DICTPATH,199,176,12,12
     PUSHBUTTON      "",IDC_BG,180,67,31,12
+    CONTROL         "Показувати номери рядків",IDC_SHOWLINENUMBERS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,111,107,96,11
 END
 
 IDD_REPLACE DIALOGEX 0, 0, 295, 87
@@ -843,7 +844,6 @@ STRINGTABLE
 BEGIN
     IDS_HOTKEY_PLUGINS_LAST_PLUGIN "Останній модуль"
     IDS_HOTKEY_TOOLS_SPELL  "Орфографія"
-    IDS_HOTKEY_TOOLS_SPELLHIGHLIGHT "Переключити виділення помилок"
     IDC_SPELL_ADD2DICT      "Додати до словника"
     IDS_SPELL_CHECK_COMPLETED "Перевірку орфографії завершено."
     IDC_SPELL_IGNOREALL     "Пропустити усі"
@@ -851,6 +851,7 @@ BEGIN
     IDS_HOTKEY_EDIT_INSERT_INLINEIMAGE "Додати малюнок до тексту"
     IDS_HOTKEY_FASTMODE     "Прискорений режим"
     IDS_HOTKEY_TREEVIEW     "Дерево увімк./вимк."
+    IDS_HOTKEY_TOOLS_SPELLHIGHLIGHT "Переключити виділення помилок"
 END
 
 STRINGTABLE 
