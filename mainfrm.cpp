@@ -3756,6 +3756,10 @@ void  CMainFrame::ShowView(VIEW_TYPE vt) {
 	}	
     break;
   case SOURCE:
+	// added by SeNS: display line numbers
+	if (_Settings.XMLSrcShowLineNumbers()) m_source.SendMessage(SCI_SETMARGINWIDTHN,0,64);
+	else m_source.SendMessage(SCI_SETMARGINWIDTHN,0,0);
+
     UISetCheck(ID_VIEW_SOURCE, 1);
     m_view.HideActiveWnd();
     m_splitter.SetSinglePaneMode(SPLIT_PANE_RIGHT);
@@ -3811,7 +3815,7 @@ void  CMainFrame::SetSciStyles() {
     { 1, RGB(128,0,0) },    // tags
     { 2, RGB(128,0,0) },    // unknown tags
     { 3, RGB(128,128,0) },  // attributes
-    { 4, RGB(255,0,0) },  // unknown attributes
+    { 4, RGB(255,0,0) },    // unknown attributes
     { 5, RGB(0,128,96) },   // numbers
     { 6, RGB(0,128,0) },    // double quoted strings
     { 7, RGB(0,128,0) },    // single quoted strings
@@ -3925,6 +3929,9 @@ void  CMainFrame::SetupSci()
   m_source.SendMessage(SCI_SETWRAPMODE, _Settings.XmlSrcWrap() ? SC_WRAP_WORD : SC_WRAP_NONE);
   m_source.SendMessage(SCI_SETXCARETPOLICY,CARET_SLOP|CARET_EVEN,50);
   m_source.SendMessage(SCI_SETYCARETPOLICY,CARET_SLOP|CARET_EVEN,50);
+  // added by SeNS: display line numbers
+  if (_Settings.XMLSrcShowLineNumbers()) m_source.SendMessage(SCI_SETMARGINWIDTHN,0,64);
+  else m_source.SendMessage(SCI_SETMARGINWIDTHN,0,0);
   m_source.SendMessage(SCI_SETMARGINWIDTHN,1,0);
   m_source.SendMessage(SCI_SETFOLDFLAGS, 16);
   m_source.SendMessage(SCI_SETPROPERTY,(WPARAM)"fold",(WPARAM)"1");
@@ -4495,6 +4502,12 @@ void CMainFrame::ApplyConfChanges()
 	m_doc->ApplyConfChanges();
 	SetupSci();
 	SetSciStyles();
+
+	// added by SeNS: display line numbers
+	if (_Settings.XMLSrcShowLineNumbers())
+		m_source.SendMessage(SCI_SETMARGINWIDTHN,0,64);
+	else
+		m_source.SendMessage(SCI_SETMARGINWIDTHN,0,0);
 
 	// added by SeNS
 	if (_Settings.GetUseSpellChecker())

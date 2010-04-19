@@ -276,7 +276,7 @@ BEGIN
     GROUPBOX        "Общее",IDC_STATIC,7,4,209,40
     GROUPBOX        "Тело",IDC_STATIC,7,45,209,56
     GROUPBOX        "Редактор кода",IDC_STATIC,7,102,209,52
-    CONTROL         "Перенос строк",IDC_WRAP,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,13,113,125,10
+    CONTROL         "Перенос строк",IDC_WRAP,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,13,113,88,10
     CONTROL         "Подсветка синтаксиса",IDC_SYNTAXHL,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,13,127,125,10
     CONTROL         "Показывать символы конца строк",IDC_SHOWEOL,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,13,140,125,10
     CONTROL         "Ускоренный режим",IDC_FAST_MODE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,13,88,87,10
@@ -289,6 +289,7 @@ BEGIN
     LTEXT           "Пользовательский словарь:",IDS_SPELL_CUSTOM_DICT,15,189,61,17
     PUSHBUTTON      "..",IDC_DICTPATH,201,192,12,12
     PUSHBUTTON      "",IDC_BG,180,72,31,12
+    CONTROL         "Показывать номера строк",IDC_SHOWLINENUMBERS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,113,114,95,11
 END
 
 IDD_REPLACE DIALOGEX 0, 0, 295, 87
@@ -843,7 +844,6 @@ STRINGTABLE
 BEGIN
     IDS_HOTKEY_PLUGINS_LAST_PLUGIN "Последний плагин"
     IDS_HOTKEY_TOOLS_SPELL  "Орфография"
-    IDS_HOTKEY_TOOLS_SPELLHIGHLIGHT "Переключить выделение слов с ошибками"
     IDC_SPELL_ADD2DICT      "Добавить в словарь"
     IDS_SPELL_CHECK_COMPLETED "Проверка орфографии завершена."
     IDC_SPELL_IGNOREALL     "Пропустить все"
@@ -851,6 +851,7 @@ BEGIN
     IDS_HOTKEY_EDIT_INSERT_INLINEIMAGE "Вставить изображение в текст"
     IDS_HOTKEY_FASTMODE     "Ускоренный режим"
     IDS_HOTKEY_TREEVIEW     "Дерево вкл/выкл"
+    IDS_HOTKEY_TOOLS_SPELLHIGHLIGHT "Переключить выделение слов с ошибками"
 END
 
 STRINGTABLE 

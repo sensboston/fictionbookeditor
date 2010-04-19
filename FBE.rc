@@ -303,6 +303,7 @@ BEGIN
     EDITTEXT        IDC_CUSTOM_DICT,78,181,122,12,ES_AUTOHSCROLL
     LTEXT           "Custom dictionary:",IDS_SPELL_CUSTOM_DICT,15,183,60,9
     PUSHBUTTON      "..",IDC_DICTPATH,201,181,12,12
+    CONTROL         "Show line numbers",IDC_SHOWLINENUMBERS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,113,115,95,11
 END
 
 IDD_INPUTBOX DIALOG  0, 0, 288, 46
@@ -767,7 +768,6 @@ STRINGTABLE
 BEGIN
     IDS_HOTKEY_PLUGINS_LAST_PLUGIN "Last plugin"
     IDS_HOTKEY_TOOLS_SPELL  "Spell check"
-	IDS_HOTKEY_TOOLS_SPELLHIGHLIGHT "Toggle highlight"
     IDC_SPELL_ADD2DICT      "Add to dictionary"
     IDS_SPELL_COMPLETED     "The spelling check is complete."
     IDC_SPELL_IGNOREALL     "Ignore All"
@@ -775,6 +775,7 @@ BEGIN
     IDS_HOTKEY_EDIT_INSERT_INLINEIMAGE "Insert inline image"
     IDS_HOTKEY_FASTMODE     "Fast mode"
     IDS_HOTKEY_TREEVIEW     "Toggle tree view"
+    IDS_HOTKEY_TOOLS_SPELLHIGHLIGHT "Toggle highlight"
 END
 
 STRINGTABLE 
