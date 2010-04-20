@@ -974,7 +974,10 @@ bool CFBEView::InsertPoem(bool fCheck)
 			for(int i = 0; i < coll->length; ++i)
 			{
 				MSHTML::IHTMLElementPtr curr = coll->item(i);
-				if(!U::scmp(curr->innerText.GetBSTR(), L""))
+
+				CString line = curr->innerText;
+				// changed by SeNS: issue #61
+				if (line.Trim().IsEmpty())
 				{
 					if(trim)
 						continue;

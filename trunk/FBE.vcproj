@@ -492,6 +492,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Splitter.cpp"
+				>
+			</File>
+			<File
 				RelativePath="stdafx.cpp"
 				>
 				<FileConfiguration
@@ -692,6 +696,10 @@
 			</File>
 			<File
 				RelativePath=".\Speller.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Splitter.h"
 				>
 			</File>
 			<File
