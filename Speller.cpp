@@ -636,6 +636,7 @@ void CSpeller::ClearMarks (int elemID)
 //
 void CSpeller::CheckElement(MSHTML::IHTMLElementPtr elem, long uniqID, bool HTMLChanged)
 {
+	CWords words;
 	// skip whole document checking
 	CString html = elem->innerHTML;
 	if (html.Find(L"<DIV") >= 0) return;
@@ -652,16 +653,12 @@ void CSpeller::CheckElement(MSHTML::IHTMLElementPtr elem, long uniqID, bool HTML
 			ClearMarks(uniqID);
 
 		// tokenize and spellcheck
-		int curPos = 0;
-		int prevPos = 0;
-		CString word = innerText.Tokenize(Tokens,curPos);
-		while (word != L"")
+		splitter.Split(innerText, &words);
+		for (int i=0; i<words.GetSize(); i++)
 		{
-			if (SpellCheck(word) == SPELL_MISSPELL)
-				MarkElement (elem, uniqID, word, prevPos);
-			prevPos = curPos;
-			word = innerText.Tokenize(Tokens, curPos);
-		};
+			if (SpellCheck(words.GetValueAt(i)) == SPELL_MISSPELL)
+				MarkElement (elem, uniqID, words.GetValueAt(i), words.GetKeyAt(i));
+		}
 	}
 	// spell check previous element
 	if (HTMLChanged)
@@ -702,62 +699,58 @@ void CSpeller::CheckCurrentPage()
 
 	MSHTML::IHTMLElementPtr currElem = NULL;
 	CString innerText;
+	CWords words;
 	std::pair< std::set<long>::iterator, bool > pr;
 	int y = 10, currNum, prevNum = -1, iHeight, numChanges = 0;
 
 	iHeight = m_scrollElement->clientHeight;
 
-	while (y < iHeight)
+	MSHTML::IHTMLTxtRangePtr range(m_doc2->selection->createRange());
+	if (range)
 	{
-		// get (next) visible element pointer
-		currElem = m_doc2->elementFromPoint(63, y);
-		if (currElem && ((currElem->tagName == paragraph) || (currElem->tagName == emphasis) ||
-			             (currElem->tagName == strong) || (currElem->tagName == sup) ||
-			             (currElem->tagName == sub) || (currElem->tagName == span)))
-		{
-			// get element unique number
-			currNum = MSHTML::IHTMLUniqueNamePtr(currElem)->uniqueNumber;
-			
-			// Getting uniqueNumber from IHTMLUniqueName interface changes
-			// the internal HTML document version. We need to correct this
-			// issue, because document not really changed
-			pr = m_uniqIDs.insert(currNum);
-			if (pr.second) numChanges++;
+		MSHTML::IHTMLTxtRangePtr rng = range->duplicate();
 
-			if (currNum != prevNum)
+		while (y < iHeight)
+		{
+			// get (next) visible element pointer
+			currElem = m_doc2->elementFromPoint(63, y);
+			if (currElem && ((currElem->tagName == paragraph) || (currElem->tagName == emphasis) ||
+							 (currElem->tagName == strong) || (currElem->tagName == sup) ||
+							 (currElem->tagName == sub) || (currElem->tagName == span)))
 			{
-				MSHTML::IHTMLTxtRangePtr range(m_doc2->selection->createRange());
-				if (range)
+				// get element unique number
+				currNum = MSHTML::IHTMLUniqueNamePtr(currElem)->uniqueNumber;
+				
+				// Getting uniqueNumber from IHTMLUniqueName interface changes
+				// the internal HTML document version. We need to correct this
+				// issue, because document not really changed
+				pr = m_uniqIDs.insert(currNum);
+				if (pr.second) numChanges++;
+
+				if (currNum != prevNum)
 				{
-					MSHTML::IHTMLTxtRangePtr rng = range->duplicate();
 					rng->moveToElementText(currElem);
 					rng->moveEnd(L"sentence", 1);
 					innerText.SetString(rng->text);
-				}
 
-				prevNum = currNum;
+					prevNum = currNum;
 
-				if(!innerText.IsEmpty())
-				{
-					// remove underline
-					ClearMarks(currNum);
-
-					// tokenize and spellcheck
-					int curPos = 0;
-					int prevPos = 0;
-					CString word = innerText.Tokenize(Tokens,curPos);
-					while (word != L"")
+					if(!innerText.IsEmpty())
 					{
-						if (SpellCheck(word) == SPELL_MISSPELL)
-							MarkElement(currElem, currNum, word, prevPos);
-						prevPos = curPos;
-						word = innerText.Tokenize(Tokens, curPos);
-					};   
-				} // of if (!innerText.IsEmpty())
-			} // of if (currNum != prevNum)
-		}
-		y += 17;
-	} // of while
+						// remove underline
+						ClearMarks(currNum);
+						splitter.Split(innerText, &words);
+						for (int i=0; i<words.GetSize(); i++)
+						{
+							if (SpellCheck(words.GetValueAt(i)) == SPELL_MISSPELL)
+								MarkElement(currElem, currNum, words.GetValueAt(i), words.GetKeyAt(i));
+						}
+					} // of if (!innerText.IsEmpty())
+				} // of if (currNum != prevNum)
+			}
+			y += 17;
+		} // of while
+	}
 
 	if (numChanges)
 		AdvanceVersionNumber(numChanges);
@@ -887,7 +880,7 @@ void CSpeller::ContinueDocumentCheck()
 
 		// if word != words delimiter
 		if (word.FindOneOf(Tokens)==-1)
-			result = SpellCheck(word);
+			result = SpellCheck(word); 
 
 		// select exact word
 		if ((result == SPELL_CHANGE) || (result == SPELL_CHANGEALL) || (result == SPELL_MISSPELL))
