@@ -346,6 +346,7 @@
 	  <div unselectable="on">
 	    <button id="del" onclick="Remove(this.parentNode)" unselectable="on">&#x72;</button>
 	    <button onclick="Clone(this.parentNode)" unselectable="on">&#x32;</button>
+	    <button id="show" onmouseover="ShowCoverImage(this.parentNode,false);" onmouseout="HidePrevImage();" onclick="ShowCoverImage(this.parentNode,true);">&#x4e;</button>
 	    <label unselectable="on"><xsl:value-of select="$IDS_IMAGE"/></label>
 		<select id="href" class="wide">
 		<option selected="yes" value="{@l:href}"></option>
@@ -453,6 +454,7 @@
 				<div unselectable="on">
 					<button id="del" onclick="Remove(this.parentNode)" unselectable="on">&#x72;</button>
 					<button onclick="Clone(this.parentNode)" unselectable="on">&#x32;</button>
+	    			<button id="show" onmouseover="ShowCoverImage(this.parentNode,false);" onmouseout="HidePrevImage();" onclick="ShowCoverImage(this.parentNode,true);">&#x4e;</button>
 					<label unselectable="on"><xsl:value-of select="$IDS_IMAGE"/></label>
 					<select id="href" class="wide">
 						<option selected="yes" value="{@l:href}"></option>
