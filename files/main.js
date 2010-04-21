@@ -326,6 +326,14 @@ function LoadXSL(path, lang)
 	return xslt;
 }
 
+function ClickOnDesc()
+{
+  var srcName = event.srcElement.nodeName;
+  if (srcName=="FIELDSET" || srcName=="LABEL" || srcName=="DIV" ||srcName=="LEGEND") {
+    document.body.focus();
+  }
+}
+
 function TransformXML(xslt, dom)
 {
 	var body = document.getElementById("fbw_body");
@@ -347,10 +355,10 @@ function TransformXML(xslt, dom)
 	desc.innerHTML=proc.output;
 	PutBinaries(dom);
 	SetupDescription(desc);
+	desc.onclick=ClickOnDesc;
 	proc.setStartMode("body");
 	proc.transform();
 	body.innerHTML=proc.output;
-
 	window.external.InflateParagraphs(body);
 	document.fbwFilename=name;
 	document.urlprefix="fbw-internal:";
