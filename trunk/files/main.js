@@ -334,6 +334,16 @@ function ClickOnDesc()
   }
 }
 
+function ShowCoverImage(prntEl,fullImg)
+{
+ if (!prntEl) return;
+ var list=prntEl.getElementsByTagName("SELECT");
+ if (list[0] && list[0].value) 
+  if (fullImg)
+   ShowFullImage("fbw-internal:"+list[0].value);
+   ShowPrevImage("fbw-internal:"+list[0].value);
+}
+
 function TransformXML(xslt, dom)
 {
 	var body = document.getElementById("fbw_body");
