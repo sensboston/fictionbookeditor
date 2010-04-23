@@ -263,7 +263,7 @@ p.text-author{
 	color: rgb(192,64,64);
 }
 span.code{
-	font-family: "Arial", monospace;
+	font-family: monospace;
 	font-style: normal;
 	background: rgb(238,238,238);
 }
