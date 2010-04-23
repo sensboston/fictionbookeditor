@@ -591,8 +591,12 @@ BOOL CMainFrame::OnIdle()
 
 					if(!(m_href == ::GetFocus()))
 					{
-						m_href.SetWindowText(V_BSTR(&href));
-						m_href.SetSel(wcslen(V_BSTR(&href)), wcslen(V_BSTR(&href)), FALSE);
+						// changed by SeNS: fix hrefs
+						CString tmp(V_BSTR(&href));
+						if (tmp.Find(L"file") == 0)
+							tmp = tmp.Mid(tmp.ReverseFind (L'#'),1024);
+						m_href.SetWindowText(tmp);
+						m_href.SetSel(tmp.GetLength(), tmp.GetLength(), FALSE);
 					}
 
 					m_ignore_cb_changes = false;

@@ -653,7 +653,7 @@ void CSpeller::CheckElement(MSHTML::IHTMLElementPtr elem, long uniqID, bool HTML
 			ClearMarks(uniqID);
 
 		// tokenize and spellcheck
-		splitter.Split(innerText, &words);
+		splitter.Split(&innerText, &words);
 		for (int i=0; i<words.GetSize(); i++)
 		{
 			if (SpellCheck(words.GetValueAt(i)) == SPELL_MISSPELL)
@@ -739,7 +739,7 @@ void CSpeller::CheckCurrentPage()
 					{
 						// remove underline
 						ClearMarks(currNum);
-						splitter.Split(innerText, &words);
+						splitter.Split(&innerText, &words);
 						for (int i=0; i<words.GetSize(); i++)
 						{
 							if (SpellCheck(words.GetValueAt(i)) == SPELL_MISSPELL)
