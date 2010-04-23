@@ -8,16 +8,14 @@ CSplitter::CSplitter()
 		isAlpha[i] = iswalpha(i);
 }
 
-void CSplitter::Split(CString src, CWords* words)
+void CSplitter::Split(CString *src, CWords *words)
 {
-	int j=0;
-	CString word;
+	int j=0, size = src->GetLength();
 	words->RemoveAll();
-	for (int i=0; i<src.GetLength(); i++)
-		if (!isAlpha[src[i]])
+	for (int i=0; i<size; i++)
+		if (!isAlpha[src->GetAt(i)])
 		{
-			word = src.Mid(j, i-j).Trim();
-			if (!word.IsEmpty()) words->Add(j,word);
+			if (i-j) words->Add(j,src->Mid(j, i-j));
 			j=i+1;
 		}
 }
