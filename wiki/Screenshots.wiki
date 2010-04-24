@@ -1,4 +1,4 @@
-== Screenshots ==
+#summary Screenshots
 
 <img src="http://fictionbookeditor.googlecode.com/files/fbe0.png" width="700"/>
 
