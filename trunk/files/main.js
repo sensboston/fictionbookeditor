@@ -23,6 +23,11 @@ function apiGetBinary(id)
   if(bin_objects[i].all.id.value==id) return bin_objects[i].base64data;
  }
 }
+
+function OnBinaryIdChange() {
+ FillLists();
+}
+
 //--------------------------------------
 // Adds a binary object.
 // Don't forget to call FillCoverList() when you have finished adding objects!
@@ -97,6 +102,8 @@ function apiAddBinary(fullpath, id, type, data)
 	div.all.id.value = curid;
 	div.all.type.value = type;
 	div.base64data = data;
+	div.all.id.setAttribute("oldId",curid);
+	div.all.id.onchange=OnBinaryIdChange;
 
 	document.all.binobj.appendChild(div);
 	// PutSpacers(document.all.binobj);
