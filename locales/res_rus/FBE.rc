@@ -341,7 +341,7 @@ CAPTION "Сделайте выбор"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     DEFPUSHBUTTON   "Да",IDYES,21,31,49,14
-    PUSHBUTTON      "Нет",IDNO,77,31,49,14
+    PUSHBUTTON      "Нет",IDCANCEL,77,31,49,14
     CONTROL         "Больше не спрашивать",IDC_ADDIMAGE_ASKAGAIN,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,28,53,91,10
     LTEXT           "Вставить пустое изображение?",IDS_ADD_CLEARIMG_TEXT,29,11,110,10
     ICON            IDR_MAINFRAME,IDC_ADDIMAGE_ICON,3,6,20,20
