@@ -1,5 +1,15 @@
-http://fictionbookeditor.googlecode.com/files/fbe0.png
+== Screenshots ==
 
-http://fictionbookeditor.googlecode.com/files/fbe1.png
+<img src="http://fictionbookeditor.googlecode.com/files/fbe0.png" width="700"/>
 
-http://fictionbookeditor.googlecode.com/files/fbe2.png
+*Main window*
+
+
+<img src="http://fictionbookeditor.googlecode.com/files/fbe1.png" width="700"/>
+
+*Source editor (Scintilla)*
+
+
+<img src="http://fictionbookeditor.googlecode.com/files/fbe2.png" width="700"/>
+
+*Spell-checker dialog*
