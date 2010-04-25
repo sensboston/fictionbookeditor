@@ -2637,11 +2637,12 @@ LRESULT CMainFrame::OnCbEdChange(WORD code, WORD wID, HWND hWndCtl, BOOL& bHandl
       if ((bool)an && V_VT(&href)==VT_BSTR) {
 		CString	    newhref(U::GetWindowText(m_href));
 
-		if(newhref[0] != L'#')
+		// changed by SeNS: href's fix - by default internal hrefs begins from '#'
+		// otherwise set http protocol (if no other protocols specified)
+		if (!newhref.IsEmpty() && (newhref[0] != L'#'))
 		{
-			newhref = L'#' + newhref;
-			if(newhref.GetLength() == 1)
-				newhref = L"#undefined";
+			if (newhref.Find (L"://") < 0)
+				newhref = L"http://" + newhref;
 		}
 
 		if ( (U::scmp(an->tagName,L"DIV")==0) || (U::scmp(an->tagName,L"SPAN")==0)) // must be an image

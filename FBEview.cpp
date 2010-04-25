@@ -721,9 +721,9 @@ restart:
 				if (!(U::scmp(cls,L"body") && U::scmp(cls,L"section") &&
 					U::scmp(cls,L"table") && U::scmp(cls,L"tr") && U::scmp(cls,L"th") && U::scmp(cls,L"td") && 
 					U::scmp(cls,L"output") && U::scmp(cls,L"part") && U::scmp(cls,L"output-document-class") &&
-
 					U::scmp(cls,L"annotation") && U::scmp(cls,L"title") && U::scmp(cls,L"epigraph") &&
 					U::scmp(cls,L"poem") && U::scmp(cls,L"stanza") && U::scmp(cls,L"cite") &&
+					U::scmp(cls,L"date") &&
 					U::scmp(cls,L"history") && U::scmp(cls,L"image")&&
 					U::scmp(cls,L"code") &&
 					U::scmp(id,L"fbw_desc") && U::scmp(id,L"fbw_body") && U::scmp(id,L"fbw_updater")))
@@ -3168,6 +3168,9 @@ bool CFBEView::GoToFootnote(bool fCheck)
 		return false;
 
 	CString	    sref(AU::GetAttrCS(tr->parentElement(),L"href"));
+	// added by SeNS
+	if (sref.Find(L"file") == 0)
+		sref = sref.Mid(sref.ReverseFind (L'#'),1024);
 	if (sref.IsEmpty() || sref[0]!=_T('#'))
 		return false;
 
@@ -3240,7 +3243,10 @@ bool CFBEView::GoToReference(bool fCheck)
 			continue;
 
 		CString	    href(AU::GetAttrCS((MSHTML::IHTMLElementPtr)coll->item(l),L"href"));
-		if(href.Find(_T("http://"),0) !=-1 || href.Find(_T("https://"),0) !=-1)
+		// changed by SeNS
+		if (href.Find(L"file") == 0)
+			href = href.Mid(href.ReverseFind (L'#'),1024);
+		else if(href.Find(_T("://"),0) !=-1)
 			continue;
 
 		_variant_t aid = pe->getAttribute(L"id",2);
