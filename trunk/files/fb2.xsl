@@ -138,6 +138,13 @@
     </div>
   </xsl:template>
 
+  <xsl:template match="f:date">
+    <div class="date">
+	<xsl:apply-templates/>
+    </div>
+  </xsl:template>
+
+
      <!-- table -->
       
   
@@ -209,7 +216,7 @@
     <span class="code"><xsl:apply-templates/></span>
   </xsl:template>
   <!-- Added by SeNS -->
-  <!-- images -->
+  <!-- inline images -->
   <xsl:template match="f:p//f:image">
    <span onresizestart="return false" class='image' contentEditable='false' href="{@l:href}">
 	<xsl:call-template name="image_title"/>
@@ -221,6 +228,7 @@
   <xsl:template match="f:image">
    <div onresizestart="return false" class='image' contentEditable='false' href="{@l:href}">
 	<xsl:call-template name="image_title"/>
+        <xsl:call-template name="id"/>
 	<img src="fbw-internal:{@l:href}"/>
    </div>
   </xsl:template>      
