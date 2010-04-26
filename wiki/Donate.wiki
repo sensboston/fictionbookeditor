@@ -7,4 +7,4 @@ You can support FBE project by donating some money:
 
  
 
-*RUR via WebMoney* <a href="https://light.webmoney.ru/pci.aspx?purse=R201880676616&amount=30.0&method=POST&desc=Пожертвование FBE Team&mode=test"><img src="http://www.webmoney.ru/img/banner/AWMcaribbean.gif"</img></a>
+*RUR via WebMoney* <a href="https://light.webmoney.ru/pci.aspx?purse=R201880676616&amount=30.0&method=POST&url=http://code.google.com/p/fictionbookeditor&desc=Пожертвование FBE Team&mode=test"><img src="http://www.webmoney.ru/img/banner/AWMcaribbean.gif"</img></a>
