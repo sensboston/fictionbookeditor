@@ -1180,7 +1180,7 @@ void CMainFrame::InitPlugins()
 
 	// Scripts
 	HMENU ManMenu = m_CmdBar.GetMenu();
-	HMENU scripts = GetSubMenu(ManMenu, 7);
+	HMENU scripts = GetSubMenu(ManMenu, 6);
 
 	while(::GetMenuItemCount(scripts) > 0)
 	::RemoveMenu(scripts, 0, MF_BYPOSITION);

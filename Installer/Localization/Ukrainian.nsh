@@ -10,6 +10,20 @@ LangString PluginsGroup ${LANG_UKRAINIAN} "Модулі"
 LangString Scripts ${LANG_UKRAINIAN} "Скрипти"
 LangString Dictionaries ${LANG_UKRAINIAN} "Словники"
 
+LangString EnglishDict ${LANG_UKRAINIAN} "Английский"
+LangString RussianDict ${LANG_UKRAINIAN} "Російський"
+LangString UkrainianDict ${LANG_UKRAINIAN} "Український"
+LangString ByelorussianDict ${LANG_UKRAINIAN} "Білоруский"
+LangString BulgarianDict ${LANG_UKRAINIAN} "Болгарський"
+LangString CzechDict ${LANG_UKRAINIAN} "Чеський"
+LangString PolishDict ${LANG_UKRAINIAN} "Польський"
+LangString GermanDict ${LANG_UKRAINIAN} "Німецький"
+LangString FrenchDict ${LANG_UKRAINIAN} "Французький"
+LangString SpanishDict ${LANG_UKRAINIAN} "Іспанський"
+LangString ItalianDict ${LANG_UKRAINIAN} "Італійський"
+LangString DownloadingDict ${LANG_UKRAINIAN} "Завантажую "
+LangString Dictionary ${LANG_UKRAINIAN} " словник"
+
 ; components descriptions
 LangString DESC_ShExSection ${LANG_UKRAINIAN} "Розширення оболонки вбудовується у Провідник Windows. \
 	Замінюються значки файлів fb2, у зринаючій підказці до файлів відображається інформація про книгу."

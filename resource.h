@@ -243,6 +243,7 @@
 #define IDS_HOTKEY_FASTMODE             280
 #define IDS_HOTKEY_TREEVIEW             281
 #define IDS_HOTKEY_TOOLS_SPELLHIGHLIGHT 282
+#define IDS_HOTKEY_NAVIGATION_GOTO_FOOTNOTE 283
 #define IDS_LANG_UKRAINIAN              300
 #define IDC_SPELL_REPLACE               500
 #define ID_VER_ADVANCE                  550
@@ -373,13 +374,14 @@
 #define IDC_SPELL_IGNORE                1098
 #define IDS_SPELL_CUSTOM_DICT           1099
 #define IDC_NBSP_CHAR                   1100
+#define IDC_EDIT3                       1102
 #define IDC_SPELL_CHANGE                1103
 #define IDC_SPELL_CHANGEALL             1104
 #define IDC_SPELL_ADD                   1107
 #define IDC_SPELL_SUGGEST               1108
 #define IDC_SPELL_UNDO                  1109
 #define IDC_FAST_MODE                   1110
-#define IDC_IDT				1111
+#define IDC_IDT                         1111
 #define ID_SCRIPT_BASE                  9000
 #define ID_EDIT_INS_SYMBOL              10000
 #define ID_NEXT_ITEM                    32772
@@ -468,7 +470,7 @@
 #define _APS_NO_MFC                     1
 #define _APS_NEXT_RESOURCE_VALUE        254
 #define _APS_NEXT_COMMAND_VALUE         32907
-#define _APS_NEXT_CONTROL_VALUE         1101
+#define _APS_NEXT_CONTROL_VALUE         1103
 #define _APS_NEXT_SYMED_VALUE           133
 #endif
 #endif

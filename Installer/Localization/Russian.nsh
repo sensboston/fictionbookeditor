@@ -10,6 +10,21 @@ LangString PluginsGroup ${LANG_RUSSIAN} "Плагины"
 LangString Scripts ${LANG_RUSSIAN} "Скрипты"
 LangString Dictionaries ${LANG_RUSSIAN} "Словари"
 
+LangString EnglishDict ${LANG_RUSSIAN} "Английский"
+LangString RussianDict ${LANG_RUSSIAN} "Русский"
+LangString UkrainianDict ${LANG_RUSSIAN} "Украинский"
+LangString ByelorussianDict ${LANG_RUSSIAN} "Белоруский"
+LangString BulgarianDict ${LANG_RUSSIAN} "Болгарский"
+LangString CzechDict ${LANG_RUSSIAN} "Чешский"
+LangString PolishDict ${LANG_RUSSIAN} "Польский"
+LangString GermanDict ${LANG_RUSSIAN} "Немецкий"
+LangString FrenchDict ${LANG_RUSSIAN} "Французский"
+LangString SpanishDict ${LANG_RUSSIAN} "Испанский"
+LangString ItalianDict ${LANG_RUSSIAN} "Итальянский"
+LangString DownloadingDict ${LANG_RUSSIAN} "Загружаю "
+LangString Dictionary ${LANG_RUSSIAN} " словарь"
+
+
 ; components descriptions
 LangString DESC_ShExSection ${LANG_RUSSIAN} "Расширение оболочки встраивается в Проводник. \
 	Подменяет иконки fb2 файлов, показывает во всплывающей подсказке информацию о книге."

@@ -65,12 +65,12 @@ BEGIN
         MENUITEM "Знайти &далі",                ID_EDIT_FINDNEXT
         MENUITEM "&Замінити...",                ID_EDIT_REPLACE
         MENUITEM SEPARATOR
+        MENUITEM "&Перейти до примітки або до посилання", ID_GOTO_FOOTNOTE
+        MENUITEM SEPARATOR
         MENUITEM "К&лонувати",                  ID_EDIT_CLONE
         MENUITEM "Розр&ізати",                  ID_EDIT_SPLIT
         MENUITEM "&Об'єднати",                  ID_EDIT_MERGE
         MENUITEM "За&брати зовнішній",          ID_EDIT_REMOVE_OUTER_SECTION
-        MENUITEM SEPARATOR
-        MENUITEM "&Долучити",                   ID_EDIT_ADDBINARY
     END
     POPUP "&Вигляд"
     BEGIN
@@ -100,6 +100,8 @@ BEGIN
         MENUITEM "&Цитата",                     ID_EDIT_INS_CITE
         MENUITEM "Та&блиця",                    ID_INSERT_TABLE
         MENUITEM "Ма&люнок секції",             ID_EDIT_ADD_IMAGE
+        MENUITEM SEPARATOR
+        MENUITEM "&Долучити",                   ID_EDIT_ADDBINARY
     END
     POPUP "С&тиль"
     BEGIN
@@ -110,11 +112,6 @@ BEGIN
         MENUITEM "По&силання...",               ID_STYLE_LINK
         MENUITEM "При&мітка...",                ID_STYLE_NOTE
         MENUITEM "&Видалити посилання",         ID_STYLE_NOLINK
-    END
-    POPUP "П&ерехід"
-    BEGIN
-        MENUITEM "&Перейти до примітки",        ID_GOTO_FOOTNOTE
-        MENUITEM "По&вернутися до посилання",   ID_GOTO_REFERENCE
     END
     POPUP "&Інструменти"
     BEGIN
@@ -237,18 +234,18 @@ END
 
 IDD_ABOUTBOX DIALOGEX 0, 0, 267, 139
 STYLE DS_SETFONT | DS_MODALFRAME | DS_CENTER | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Про програму..."
+CAPTION "Про програму"
 FONT 9, "Tahoma", 0, 0, 0x0
 BEGIN
-    DEFPUSHBUTTON   "Гаразд",IDOK,140,118,50,14
-    CONTROL         "FictionBook Editor",IDC_STATIC_AB_APPNAMEVER,"Static",SS_LEFTNOWORDWRAP | WS_GROUP,101,8,153,8
-    ICON            IDR_MAINFRAME,IDC_STATIC_AB_APPICON,72,8,20,20
-    LTEXT           "збірка",IDC_STATIC,101,20,20,8
-    LTEXT           "",IDC_BUILDSTAMP,125,20,131,8
     CONTROL         248,IDC_AB_BANNER,"Static",SS_BITMAP | SS_REALSIZEIMAGE,7,7,56,123,WS_EX_CLIENTEDGE
-    EDITTEXT        IDC_CONTRIBS,69,47,191,65,ES_MULTILINE | ES_AUTOVSCROLL | ES_READONLY | ES_WANTRETURN | NOT WS_BORDER | WS_VSCROLL
+    ICON            IDR_MAINFRAME,IDC_STATIC_AB_APPICON,72,8,20,20
+    EDITTEXT        IDC_STATIC_AB_APPNAMEVER,99,8,157,12,ES_READONLY | NOT WS_BORDER
+    LTEXT           "Збірка",IDC_STATIC,101,20,15,8
+    EDITTEXT        IDC_BUILDSTAMP,120,20,134,12,ES_READONLY | NOT WS_BORDER
     CONTROL         "<a href=""http://code.google.com/p/fictionbookeditor/"">http://code.google.com/p/fictionbookeditor/</a>",IDC_SYSLINK_AB_LINKS,
                     "SysLink",WS_TABSTOP,101,32,154,8
+    EDITTEXT        IDC_CONTRIBS,69,47,191,65,ES_MULTILINE | ES_AUTOVSCROLL | ES_READONLY | ES_WANTRETURN | NOT WS_BORDER | WS_VSCROLL
+    DEFPUSHBUTTON   "Гаразд",IDOK,140,118,50,14
 END
 
 IDD_INPUTBOX DIALOGEX 0, 0, 288, 46
@@ -560,7 +557,6 @@ BEGIN
     BUTTON      ID_STYLE_NOTE
     BUTTON      ID_STYLE_NOLINK
     BUTTON      ID_GOTO_FOOTNOTE
-    BUTTON      ID_GOTO_REFERENCE
     SEPARATOR
     BUTTON      ID_STYLE_NORMAL
     BUTTON      ID_STYLE_SUBTITLE
@@ -598,7 +594,6 @@ BEGIN
     BUTTON      ID_STYLE_SUBTITLE
     BUTTON      ID_STYLE_TEXTAUTHOR
     BUTTON      ID_GOTO_FOOTNOTE
-    BUTTON      ID_GOTO_REFERENCE
     BUTTON      ID_EDIT_ADD_BODY
     BUTTON      ID_EDIT_ADD_TITLE
     BUTTON      ID_EDIT_ADD_EPIGRAPH
@@ -702,7 +697,7 @@ BEGIN
     IDS_HOTKEY_EDIT_UNDO    "Скасувати дію"
     IDS_HOTKEY_GROUP_EDIT   "Редагування"
     IDS_HOTKEY_GROUP_NAVIGATION "Навіґація"
-    IDS_HOTKEY_NAVIGATION_GOTO_REFERENCE "Перейти до посилання"
+    IDS_HOTKEY_NAVIGATION_GOTO_FOOTNOTE "Перейти до виноски або до посилання"
     IDS_HOTKEY_NAVIGATION_NEXT_ITEM "Наступний елемент"
     ID_PANE_INS             "ЗАМ"
     IDS_HOTKEY_NAVIGATION_SCI_COLLAPSE1 "Згорнути дерево на 1 рівень"
@@ -816,8 +811,7 @@ END
 STRINGTABLE 
 BEGIN
     ID_INSERT_TABLE         "Вставити таблицю на місце курсору\nВставити таблицю"
-    ID_GOTO_FOOTNOTE        "Перейти до тексту примітки\nПерейти до тексту примітки"
-    ID_GOTO_REFERENCE       "Перейти до тексту, який посилається на цю примітку\nПерейти на посилання примітки"
+    ID_GOTO_FOOTNOTE        "Перейти до тексту примітки або до посилання\nПерейти до тексту примітки або до посилання"
 END
 
 STRINGTABLE 

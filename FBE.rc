@@ -347,15 +347,15 @@ STYLE DS_SETFONT | DS_MODALFRAME | DS_CENTER | WS_POPUP | WS_CAPTION | WS_SYSMEN
 CAPTION "About"
 FONT 9, "Tahoma", 0, 0, 0x0
 BEGIN
-    DEFPUSHBUTTON   "OK",IDOK,140,118,50,14
-    CONTROL         "FictionBook Editor",IDC_STATIC_AB_APPNAMEVER,"Static",SS_LEFTNOWORDWRAP | WS_GROUP,101,8,153,8
-    ICON            IDR_MAINFRAME,IDC_STATIC_AB_APPICON,72,8,20,20
-    LTEXT           "Build",IDC_STATIC,101,20,15,8
-    LTEXT           "",IDC_BUILDSTAMP,120,20,131,8
     CONTROL         248,IDC_AB_BANNER,"Static",SS_BITMAP | SS_REALSIZEIMAGE,7,7,56,123,WS_EX_CLIENTEDGE
-    EDITTEXT        IDC_CONTRIBS,69,47,191,65,ES_MULTILINE | ES_AUTOVSCROLL | ES_READONLY | ES_WANTRETURN | NOT WS_BORDER | WS_VSCROLL
+    ICON            IDR_MAINFRAME,IDC_STATIC_AB_APPICON,72,8,20,20
+    EDITTEXT        IDC_STATIC_AB_APPNAMEVER,99,8,157,12,ES_READONLY | NOT WS_BORDER
+    LTEXT           "Build",IDC_STATIC,101,20,15,8
+    EDITTEXT        IDC_BUILDSTAMP,120,20,134,12,ES_READONLY | NOT WS_BORDER
     CONTROL         "<a href=""http://code.google.com/p/fictionbookeditor/"">http://code.google.com/p/fictionbookeditor/</a>",IDC_SYSLINK_AB_LINKS,
                     "SysLink",WS_TABSTOP,101,32,154,8
+    EDITTEXT        IDC_CONTRIBS,69,47,191,65,ES_MULTILINE | ES_AUTOVSCROLL | ES_READONLY | ES_WANTRETURN | NOT WS_BORDER | WS_VSCROLL
+    DEFPUSHBUTTON   "OK",IDOK,140,118,50,14
 END
 
 IDD_ADDIMAGE DIALOGEX 0, 0, 147, 66
@@ -486,7 +486,6 @@ BEGIN
     BUTTON      ID_STYLE_NOTE
     BUTTON      ID_STYLE_NOLINK
     BUTTON      ID_GOTO_FOOTNOTE
-    BUTTON      ID_GOTO_REFERENCE
     SEPARATOR
     BUTTON      ID_STYLE_NORMAL
     BUTTON      ID_STYLE_SUBTITLE
@@ -524,7 +523,6 @@ BEGIN
     BUTTON      ID_STYLE_SUBTITLE
     BUTTON      ID_STYLE_TEXTAUTHOR
     BUTTON      ID_GOTO_FOOTNOTE
-    BUTTON      ID_GOTO_REFERENCE
     BUTTON      ID_EDIT_ADD_BODY
     BUTTON      ID_EDIT_ADD_TITLE
     BUTTON      ID_EDIT_ADD_EPIGRAPH
@@ -648,12 +646,12 @@ BEGIN
         MENUITEM "Find &Next",                  ID_EDIT_FINDNEXT
         MENUITEM "R&eplace...",                 ID_EDIT_REPLACE
         MENUITEM SEPARATOR
+        MENUITEM "&Goto footnote or reference", ID_GOTO_FOOTNOTE
+        MENUITEM SEPARATOR
         MENUITEM "C&lone container",            ID_EDIT_CLONE
         MENUITEM "Sp&lit container",            ID_EDIT_SPLIT
         MENUITEM "&Merge containers",           ID_EDIT_MERGE
         MENUITEM "Remove outer container",      ID_EDIT_REMOVE_OUTER_SECTION
-        MENUITEM SEPARATOR
-        MENUITEM "Add &Binary Object...",       ID_EDIT_ADDBINARY
     END
     POPUP "&View"
     BEGIN
@@ -683,6 +681,8 @@ BEGIN
         MENUITEM "&Cite",                       ID_EDIT_INS_CITE
         MENUITEM "T&able",                      ID_INSERT_TABLE
         MENUITEM "&Section image",              ID_EDIT_ADD_IMAGE
+        MENUITEM SEPARATOR
+        MENUITEM "Add &Binary Object...",       ID_EDIT_ADDBINARY
     END
     POPUP "&Style"
     BEGIN
@@ -693,11 +693,6 @@ BEGIN
         MENUITEM "&Link...",                    ID_STYLE_LINK
         MENUITEM "&Footnote...",                ID_STYLE_NOTE
         MENUITEM "&Remove link",                ID_STYLE_NOLINK
-    END
-    POPUP "&Goto"
-    BEGIN
-        MENUITEM "Note",                        ID_GOTO_FOOTNOTE
-        MENUITEM "Note Reference",              ID_GOTO_REFERENCE
     END
     POPUP "&Tools"
     BEGIN
@@ -781,8 +776,7 @@ END
 STRINGTABLE 
 BEGIN
     ID_INSERT_TABLE         "Insert an table at cursor\nInsert table"
-    ID_GOTO_FOOTNOTE        "Goto footnote text\nGoto footnote text"
-    ID_GOTO_REFERENCE       "Goto footnote reference\nGoto footnote reference"
+    ID_GOTO_FOOTNOTE        "Goto footnote or reference\nGoto footnote or reference"
 END
 
 STRINGTABLE 
@@ -901,7 +895,7 @@ BEGIN
     IDS_HOTKEY_EDIT_UNDO    "Undo"
     IDS_HOTKEY_GROUP_EDIT   "Edit"
     IDS_HOTKEY_GROUP_NAVIGATION "Navigation"
-    IDS_HOTKEY_NAVIGATION_GOTO_REFERENCE "Goto reference"
+    IDS_HOTKEY_NAVIGATION_GOTO_FOOTNOTE "Goto footnote or reference"
     IDS_HOTKEY_NAVIGATION_NEXT_ITEM "Next item"
     ID_PANE_INS             "OVR"
     IDS_HOTKEY_NAVIGATION_SCI_COLLAPSE1 "Collapse 1 tree level"
