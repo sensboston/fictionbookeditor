@@ -138,13 +138,6 @@
     </div>
   </xsl:template>
 
-  <xsl:template match="f:date">
-    <div class="date">
-	<xsl:apply-templates/>
-    </div>
-  </xsl:template>
-
-
      <!-- table -->
       
   
@@ -173,6 +166,12 @@
   </xsl:template>
   <xsl:template match="f:text-author | f:subtitle">
     <p class="{local-name()}">
+      <xsl:call-template name="id"/>
+      <xsl:apply-templates/>
+    </p>
+  </xsl:template>
+  <xsl:template match="f:date">
+    <p class="text-author">
       <xsl:call-template name="id"/>
       <xsl:apply-templates/>
     </p>
