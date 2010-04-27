@@ -182,7 +182,7 @@ bool CFBEView::CheckCommand(WORD wID)
   case ID_INSERT_TABLE:
 	  return InsertTable(true);
   case ID_GOTO_FOOTNOTE:
-	  return GoToFootnote(true);
+	  return (GoToFootnote(true) | GoToReference(true));
   case ID_GOTO_REFERENCE:
 	  return GoToReference(true);
   case ID_EDIT_ADD_TA:
@@ -3152,14 +3152,34 @@ bool CFBEView::GoToFootnote(bool fCheck)
 	if (!(bool)rng)
 		return false;
 
+	MSHTML::IHTMLTxtRangePtr next_rng = rng->duplicate();
+	MSHTML::IHTMLTxtRangePtr prev_rng = rng->duplicate();
+	next_rng->move(L"character", +1);
+	prev_rng->move(L"character", -1);
+
 	// * get its parent element
 	MSHTML::IHTMLElementPtr	pe(rng->parentElement());
 	if (!(bool)pe)
 		return false;
 
+	MSHTML::IHTMLElementPtr	next_pe(next_rng->parentElement());
+	MSHTML::IHTMLElementPtr	prev_pe(prev_rng->parentElement());
+
 	// * check if it possible footnote
 	if (U::scmp(pe->tagName,L"A"))
-		return false;
+	{
+		if (next_pe && !U::scmp(next_pe->tagName,L"A"))
+		{
+			rng = next_rng;
+			pe = next_pe;
+		}
+		else if (prev_pe && !U::scmp(prev_pe->tagName,L"A"))
+		{
+			rng = prev_rng;
+			pe = prev_pe;
+		}
+		else return false;
+	}
 
 	// * get parents for start and end ranges and ensure they are the same as pe
 	MSHTML::IHTMLTxtRangePtr	tr(rng->duplicate());
@@ -3185,9 +3205,31 @@ bool CFBEView::GoToFootnote(bool fCheck)
 	if (!(bool)targ)
 		return false;
 
-	GoTo(targ);
+	MSHTML::IHTMLDOMNodePtr childNode;
+	MSHTML::IHTMLDOMNodePtr node(targ);
+	if (!(bool)node)
+		return false;
 
-	return false;
+	// added by SeNS: move caret to the foornote text
+	if (!U::scmp(node->nodeName,L"DIV") && !U::scmp(targ->className,L"section"))
+	{
+		if (node->firstChild) 
+		{
+			childNode = node->firstChild;
+			while (childNode && !U::scmp(childNode->nodeName,L"DIV") && 
+				  (!U::scmp(MSHTML::IHTMLElementPtr(childNode)->className,L"image") || 
+				   !U::scmp(MSHTML::IHTMLElementPtr(childNode)->className,L"title"))) 
+				childNode=childNode->nextSibling;
+		}
+	}
+	if (!childNode) childNode=node;
+	if (childNode)
+	{
+		GoTo(MSHTML::IHTMLElementPtr(childNode));
+		targ->scrollIntoView(true);
+	}
+
+	return true; 
 }
 bool CFBEView::GoToReference(bool fCheck)
 {
@@ -3250,17 +3292,13 @@ bool CFBEView::GoToReference(bool fCheck)
 			continue;
 
 		_variant_t aid = pe->getAttribute(L"id",2);
-		CString snote(""); snote.Format(_T("#%s"),(CString)aid);
+		CString snote(L"#"+CString(aid));
+
 		if(href==snote){
 			GoTo(a);
 			MSHTML::IHTMLTxtRangePtr	r(MSHTML::IHTMLBodyElementPtr(Document()->body)->createTextRange());
 			r->moveToElementText(a);
 			r->collapse(VARIANT_TRUE);
-			// all m$ editors like to position the pointer at the end of the preceding element,
-			// which sucks. This workaround seems to work most of the time.
-			if (a!=r->parentElement() && r->move(L"character",1)==1)
-				r->move(L"character",1);
-
 			r->select();
 		}
 	}

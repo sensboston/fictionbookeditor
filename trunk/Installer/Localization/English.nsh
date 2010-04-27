@@ -10,6 +10,20 @@ LangString PluginsGroup ${LANG_ENGLISH} "Plugins"
 LangString Scripts ${LANG_ENGLISH} "Scripts"
 LangString Dictionaries ${LANG_ENGLISH} "Dictionaries"
 
+LangString EnglishDict ${LANG_ENGLISH} "English"
+LangString RussianDict ${LANG_ENGLISH} "Russian"
+LangString UkrainianDict ${LANG_ENGLISH} "Ukrainian"
+LangString ByelorussianDict ${LANG_ENGLISH} "Byelorussian"
+LangString BulgarianDict ${LANG_ENGLISH} "Bulgarian"
+LangString CzechDict ${LANG_ENGLISH} "Czech"
+LangString PolishDict ${LANG_ENGLISH} "Polish"
+LangString GermanDict ${LANG_ENGLISH} "German"
+LangString FrenchDict ${LANG_ENGLISH} "French"
+LangString SpanishDict ${LANG_ENGLISH} "Spanish"
+LangString ItalianDict ${LANG_ENGLISH} "Italian"
+LangString DownloadingDict ${LANG_ENGLISH} "Downloading "
+LangString Dictionary ${LANG_ENGLISH} " dictionary"
+
 ; components descriptions
 LangString DESC_ShExSection ${LANG_ENGLISH} "Shell extension is embedded into Explorer. \
 	It switches fb2 file icons and shows book info in a tooltip."
