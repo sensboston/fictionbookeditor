@@ -1567,8 +1567,7 @@ function StyleCheck(cp,st)
 
   case "text-author":
     if(pp.className!="cite" && pp.className!="epigraph" && pp.className!="poem") return false;
-    if((cp.nextSibling && cp.nextSibling.className!="text-author")
-       || !cp.previousSibling) return false;
+    if((cp.nextSibling && cp.nextSibling.className!="text-author")) return false;
   break;
 
   case "code":
