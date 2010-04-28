@@ -3,11 +3,20 @@
 *You can support FBE developers by donating some money:*
 
 ||   $US, PayPal   || <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=A295D5YE3JJ2A"  rel="nofollow"><img src="https://www.paypal.com/en_US/i/btn/btn_donateCC_LG.gif"></img></a> ||   RUR, WebMoney    || <a href="https://light.webmoney.ru/pci.aspx?purse=R201880676616&amount=30.0&method=POST&url=http%3A//code.google.com/p/fictionbookeditor&desc=Пожертвование FBE Team"><img src="http://www.webmoney.ru/img/banner/AWMcaribbean.gif"></img></a> ||
-
-
   
-
-
+   
+   
+   
 *Вы можете поддержать разработчиков FBE, пожертвовав небольшую сумму:*
 
 || в $ США, PayPal || <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=A295D5YE3JJ2A"  rel="nofollow"><img src="https://www.paypal.com/en_US/i/btn/btn_donateCC_LG.gif"></img></a> || в рублях, WebMoney || <a href="https://light.webmoney.ru/pci.aspx?purse=R201880676616&amount=30.0&method=POST&url=http%3A//code.google.com/p/fictionbookeditor&desc=Пожертвование FBE Team"><img src="http://www.webmoney.ru/img/banner/AWMcaribbean.gif"</img></a> ||
+
+  
+   
+   
+   
+== Для чего нужны Ваши пожертвования? ==
+
+Разработчики вовсе не планируют обогатиться за счет пожертвований. Благодарные отзывы пользователей и возрастающее количество закачек программы, признание того, что наш труд важен и нужен людям - вот наша главная награда!
+
+Однако, некоторая сумма могла-бы быть полезна полезна проекту, например, для покупки сертификата подписи, облегчающего установку программы под новейшими операционными системами Microsoft Vista и Windows 7 (примерная стоимость сертификата от $100 в год и выше). Также не помешал бы выделенный тестовый компьютер с установленной Windows 7 (на данный момент разработчики не располагают этой операционной системой). Ну, и, весьма вероятно, что за кружкой ароматного крепкого темного... чая :-) от благодарных пользователей, нам захочется реализовать совсем уж заманчивые "хотелки", вроде рисования таблиц в режиме WYSIWYG :-)
