@@ -1,4 +1,5 @@
 #summary Project support
+#labels Featured
 
 *You may support project by donating some money:*
 
