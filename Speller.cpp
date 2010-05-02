@@ -6,48 +6,6 @@
 #include "FBE.h"
 #include "Speller.h"
 
-#ifdef DYNAMIC_HUNSPELL
-// Hunspell dll handle
-static HINSTANCE hUnspellDll;
-
-// Hunspell function 
-static LPHUNSPELL_CREATE Hunspell_create;
-static LPHUNSPELL_DESTROY Hunspell_destroy;
-static LPHUNSPELL_SPELL Hunspell_spell;
-static LPHUNSPELL_SUGGEST Hunspell_suggest;
-static LPHUNSPELL_FREE_LIST Hunspell_free_list;
-static LPHUNSPELL_GET_DIC_ENCODING Hunspell_get_dic_encoding;
-static LPHUNSPELL_ADD Hunspell_add;
-static LPHUNSPELL_ADD_WITH_AFFIX Hunspell_add_with_affix;
-
-// load Hunspell dll and exported functions
-bool LoadHunspellDll()
-{
-	hUnspellDll = LoadLibrary(L"libhunspell.dll");
-	if ((hUnspellDll) && (hUnspellDll != INVALID_HANDLE_VALUE))
-	{
-		Hunspell_create = (LPHUNSPELL_CREATE)::GetProcAddress(hUnspellDll, "Hunspell_create");
-		Hunspell_destroy = (LPHUNSPELL_DESTROY)::GetProcAddress(hUnspellDll, "Hunspell_destroy");
-		Hunspell_spell = (LPHUNSPELL_SPELL)::GetProcAddress(hUnspellDll, "Hunspell_spell");
-		Hunspell_suggest = (LPHUNSPELL_SUGGEST)::GetProcAddress(hUnspellDll, "Hunspell_suggest");
-		Hunspell_free_list = (LPHUNSPELL_FREE_LIST)::GetProcAddress(hUnspellDll, "Hunspell_free_list");
-		Hunspell_get_dic_encoding = (LPHUNSPELL_GET_DIC_ENCODING)::GetProcAddress(hUnspellDll, "Hunspell_get_dic_encoding");
-		Hunspell_add = (LPHUNSPELL_ADD)::GetProcAddress(hUnspellDll, "Hunspell_add");
-		Hunspell_add_with_affix = (LPHUNSPELL_ADD_WITH_AFFIX)::GetProcAddress(hUnspellDll, "Hunspell_add_with_affix");
-		return ( Hunspell_create && Hunspell_destroy && Hunspell_spell && Hunspell_suggest &&
-			     Hunspell_free_list && Hunspell_get_dic_encoding && Hunspell_add);
-	}
-	return false;
-}
-
-// unload Hunspell dll
-void UnloadHunspellDll()
-{
-	if ((hUnspellDll) && (hUnspellDll != INVALID_HANDLE_VALUE))
-		FreeLibrary(hUnspellDll);
-}
-#endif
-
 // variables to receive string from resource
 wchar_t txt[MAX_LOAD_STRING + 1];
 wchar_t cpt[MAX_LOAD_STRING + 1];
@@ -231,13 +189,18 @@ Hunhandle* CSpeller::LoadDictionary(CString dictPath, CString dictName)
 CSpeller::CSpeller(CString dictPath): 
 	m_prevY(0), m_Lang(LANG_EN), m_Enabled(true), m_spell_dlg(0), m_prevSelRange(0)
 {
-#ifdef DYNAMIC_HUNSPELL
-	// load dll first
-	if (LoadHunspellDll())
-#endif
-		// load dictionaries
-		for (int i=LANG_EN; i<LANG_NONE; i++)
-			m_Dictionaries.Add(LoadDictionary(dictPath, dicts[i].name));
+	m_DictPath = dictPath;
+
+	// initialize all dictionaries
+	for (int i=LANG_EN; i<=LANG_NONE; i++)
+		m_Dictionaries.Add(dicts[i]);
+
+	// but load only English and Russian dictionaries 
+	m_Dictionaries[LANG_EN].handle = LoadDictionary(dictPath, dicts[LANG_EN].name);
+	m_Dictionaries[LANG_RU].handle = LoadDictionary(dictPath, dicts[LANG_RU].name);
+
+	// don't split on apostrophes
+	splitter = new CSplitter(L"'’");
 }
 
 //
@@ -248,10 +211,8 @@ CSpeller::~CSpeller()
 	EndDocumentCheck();
 	// unload dictionaries
 	for (int i=0; i<m_Dictionaries.GetSize(); i++)
-		if (m_Dictionaries[i]) Hunspell_destroy (m_Dictionaries[i]);
-#ifdef DYNAMIC_HUNSPELL
-	UnloadHunspellDll();
-#endif
+		if (m_Dictionaries[i].handle) 
+			Hunspell_destroy (m_Dictionaries[i].handle);
 }
 
 void CSpeller::AttachDocument(MSHTML::IHTMLDocumentPtr doc)
@@ -298,14 +259,22 @@ void CSpeller::AttachDocument(MSHTML::IHTMLDocumentPtr doc)
 	m_irs->textUnderlineStyle = "wave";
 
 	// detect document language
-	m_Lang = LANG_EN;
+	SetDocumentLanguage();
+}
+
+void CSpeller::SetDocumentLanguage()
+{
+	m_Lang = LANG_NONE;
 	MSHTML::IHTMLSelectElementPtr elem = MSHTML::IHTMLDocument3Ptr(m_doc4)->getElementById(L"tiLang");
 	if (elem)
 	{
 		CString lang = elem->value;
 		for (int i=LANG_EN; i<LANG_NONE; i++)
-			if (dicts[i].name.Find(lang) == 0)
+			if (m_Dictionaries[i].name.Find(lang) == 0)
 			{
+				// load dictionary (if needed)
+				if (!m_Dictionaries[i].handle)
+					m_Dictionaries[i].handle = LoadDictionary(m_DictPath, dicts[i].name);
 				m_Lang = dicts[i].lang;
 				// special hack: for the bilingual spell-check of Russian texts
 				// let's select English as a second language 
@@ -314,9 +283,10 @@ void CSpeller::AttachDocument(MSHTML::IHTMLDocumentPtr doc)
 				break;
 			}
 	}
-
 	// initiate background check
-	HighlightMisspells();
+	if (m_Dictionaries[m_Lang].handle) HighlightMisspells();
+	// no dictionary or language not supported
+	else SetEnabled (false);
 }
 
 // 
@@ -455,11 +425,11 @@ void CSpeller::AddToDictionary(CString word)
 Hunhandle* CSpeller::GetDictionary(CString word)
 {
 	// select document dictionary (based on FB2 document settings)
-	m_codePage = dicts[m_Lang].codepage;
-	Hunhandle* currDict = m_Dictionaries[m_Lang];
+	m_codePage = m_Dictionaries[m_Lang].codepage;
+	Hunhandle* currDict = m_Dictionaries[m_Lang].handle;
 
 	// special fix for Russian words at non-Russian document
-	if (m_Lang != LANG_RU && m_Lang != LANG_UA)
+	if (m_Lang != LANG_RU && m_Lang != LANG_UA && m_Lang != LANG_BY)
 	{
 		// try to detect Russian language: too dirty but simple
 		// 0x0 - English or other latin, 0x4 - Russian
@@ -467,8 +437,8 @@ Hunhandle* CSpeller::GetDictionary(CString word)
 		if (sData[1] == 0x4)
 		{
 			// Russian language detected
-			currDict = m_Dictionaries[LANG_RU];
-			m_codePage = dicts[LANG_RU].codepage;
+			currDict = m_Dictionaries[LANG_RU].handle;
+			m_codePage = m_Dictionaries[LANG_RU].codepage;
 		}
 	}
 	return currDict;
@@ -522,7 +492,7 @@ SPELL_RESULT CSpeller::SpellCheck(CString word)
 		// remove all soft hyphens
 		checkWord.Replace(L"\u00AD", L"");
 		// special case for Russian letter "¸"
-		if (currDict == m_Dictionaries[LANG_RU]) checkWord.Replace(L"¸", L"å");
+		if (currDict == m_Dictionaries[LANG_RU].handle) checkWord.Replace(L"¸", L"å");
 
 		// encode string to the dictionary encoding 
 		CT2A str (checkWord, m_codePage);
@@ -653,7 +623,7 @@ void CSpeller::CheckElement(MSHTML::IHTMLElementPtr elem, long uniqID, bool HTML
 			ClearMarks(uniqID);
 
 		// tokenize and spellcheck
-		splitter.Split(&innerText, &words);
+		splitter->Split(&innerText, &words);
 		for (int i=0; i<words.GetSize(); i++)
 		{
 			if (SpellCheck(words.GetValueAt(i)) == SPELL_MISSPELL)
@@ -690,67 +660,60 @@ inline void CSpeller::HighlightMisspells()
 
 void CSpeller::CheckCurrentPage()
 {
-    _bstr_t paragraph(L"P");
-	_bstr_t emphasis(L"EM");
-	_bstr_t strong(L"STRONG");
-	_bstr_t sup(L"SUP");
-	_bstr_t sub(L"SUB");
-	_bstr_t span(L"SPAN");
-
-	MSHTML::IHTMLElementPtr currElem = NULL;
-	CString innerText;
 	CWords words;
 	std::pair< std::set<long>::iterator, bool > pr;
-	int y = 10, currNum, prevNum = -1, iHeight, numChanges = 0;
+	int nodeCount = 0, currNum, numChanges = 0;
 
-	iHeight = m_scrollElement->clientHeight;
+	MSHTML::IHTMLElementPtr elem = m_doc2->elementFromPoint(63, 10);
+	MSHTML::IHTMLDOMNodePtr currNode(elem);
+	MSHTML::IHTMLElementPtr endElem = m_doc2->elementFromPoint(63, m_scrollElement->clientHeight-10);
 
-	MSHTML::IHTMLTxtRangePtr range(m_doc2->selection->createRange());
-	if (range)
+	do
 	{
-		MSHTML::IHTMLTxtRangePtr rng = range->duplicate();
-
-		while (y < iHeight)
+		if (currNode->nodeType == 3 )
 		{
-			// get (next) visible element pointer
-			currElem = m_doc2->elementFromPoint(63, y);
-			if (currElem && ((currElem->tagName == paragraph) || (currElem->tagName == emphasis) ||
-							 (currElem->tagName == strong) || (currElem->tagName == sup) ||
-							 (currElem->tagName == sub) || (currElem->tagName == span)))
+			elem = currNode->parentNode;
+
+			// get element unique number
+			if (elem)
 			{
-				// get element unique number
-				currNum = MSHTML::IHTMLUniqueNamePtr(currElem)->uniqueNumber;
-				
+				currNum = MSHTML::IHTMLUniqueNamePtr(elem)->uniqueNumber;
+			
 				// Getting uniqueNumber from IHTMLUniqueName interface changes
 				// the internal HTML document version. We need to correct this
 				// issue, because document not really changed
 				pr = m_uniqIDs.insert(currNum);
 				if (pr.second) numChanges++;
 
-				if (currNum != prevNum)
+				CString innerText = elem->innerText;
+				if(!innerText.IsEmpty())
 				{
-					rng->moveToElementText(currElem);
-					rng->moveEnd(L"sentence", 1);
-					innerText.SetString(rng->text);
-
-					prevNum = currNum;
-
-					if(!innerText.IsEmpty())
+					// remove underline
+					ClearMarks(currNum);
+					splitter->Split(&innerText, &words);
+					for (int i=0; i<words.GetSize(); i++)
 					{
-						// remove underline
-						ClearMarks(currNum);
-						splitter.Split(&innerText, &words);
-						for (int i=0; i<words.GetSize(); i++)
-						{
-							if (SpellCheck(words.GetValueAt(i)) == SPELL_MISSPELL)
-								MarkElement(currElem, currNum, words.GetValueAt(i), words.GetKeyAt(i));
-						}
-					} // of if (!innerText.IsEmpty())
-				} // of if (currNum != prevNum)
+						CString wrd = words.GetValueAt(i);
+						if (SpellCheck(words.GetValueAt(i)) == SPELL_MISSPELL)
+							MarkElement(elem, currNum, words.GetValueAt(i), words.GetKeyAt(i));
+					}
+				}
 			}
-			y += 17;
-		} // of while
+		}
+
+		if (currNode->firstChild) currNode=currNode->firstChild;
+		else 
+		{
+			while (currNode && U::scmp(currNode->nodeName, L"BODY") && !currNode->nextSibling) currNode = currNode->parentNode;
+			if (currNode && U::scmp(currNode->nodeName, L"BODY")) currNode = currNode->nextSibling;
+		}
+
+		if (U::scmp(currNode->nodeName, L"BODY") == 0) elem=endElem;
+
+		nodeCount++;
+
 	}
+	while (elem!=endElem && nodeCount < 60);
 
 	if (numChanges)
 		AdvanceVersionNumber(numChanges);

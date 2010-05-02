@@ -3702,6 +3702,9 @@ void  CMainFrame::ShowView(VIEW_TYPE vt) {
 			  m_source.SendMessage(SCI_SETSAVEPOINT);
 			}
 			m_status.SetPaneText(ID_PANE_INS, m_last_ie_ovr ? strOVR : strINS);
+
+			if (m_Speller) 
+				m_Speller->SetDocumentLanguage();
 	  }	
     break;
   case DESC:
