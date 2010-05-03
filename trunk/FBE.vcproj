@@ -272,6 +272,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\DialogMessageHook.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\DocumentTree.cpp"
 				>
 			</File>
@@ -620,6 +624,10 @@
 			</File>
 			<File
 				RelativePath="ContainerWnd.h"
+				>
+			</File>
+			<File
+				RelativePath=".\DialogMessageHook.h"
 				>
 			</File>
 			<File
