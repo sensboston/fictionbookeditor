@@ -34,8 +34,8 @@
 #include <atlctl.h>
 #include <atlhost.h>
 #include <atlstr.h>
-#include <atlimage.h>
 #include <atlpath.h>
+#include "atlimage.h"
 
 #include <shellapi.h>
 

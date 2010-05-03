@@ -1804,12 +1804,29 @@ LRESULT CFBEView::OnPaste(WORD, WORD, HWND, BOOL&)
 				if (::GetTempPath(sizeof(szPathName)/sizeof(TCHAR), szPathName))
 					if (::GetTempFileName(szPathName, L"img", ::GetTickCount(), szFileName))
 					{
-						CString fileName(szFileName);
-						fileName.Replace(L".tmp", L".png");
+						int quality = _Settings.GetJpegQuality();
 
+						CString fileName(szFileName);
 						CImage image; 
 						image.Attach(hBitmap); 
-						image.Save(fileName, Gdiplus::ImageFormatPNG);
+
+						if (_Settings.GetImageType() == 0)
+						{
+							fileName.Replace(L".tmp", L".png");
+							image.Save(fileName, Gdiplus::ImageFormatPNG);
+						}
+						else
+						{
+							fileName.Replace(L".tmp", L".jpg");
+							// set encoder quality
+							Gdiplus::EncoderParameters encoderParameters[1];
+							encoderParameters[0].Count = 1;
+							encoderParameters[0].Parameter[0].Guid = Gdiplus::EncoderQuality;
+							encoderParameters[0].Parameter[0].NumberOfValues = 1;
+							encoderParameters[0].Parameter[0].Type = Gdiplus::EncoderParameterValueTypeLong;
+							encoderParameters[0].Parameter[0].Value = &quality;
+							image.Save(fileName, Gdiplus::ImageFormatJPEG, &encoderParameters[0]);
+						}
 
 						AddImage(fileName, true);
 						::DeleteFile(fileName);

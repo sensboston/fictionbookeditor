@@ -338,6 +338,7 @@
 #define IDC_SPELL_CUSTOMDICT            1070
 #define IDC_CUSTOM_DICT                 1070
 #define IDC_CONTRIBS                    1070
+#define IDC_JPEGQUALITY                 1070
 #define IDC_BUTTON1                     1071
 #define IDC_BUTTON_DEFAULT              1071
 #define IDC_BUTTON_ADD                  1071
@@ -374,8 +375,11 @@
 #define IDC_SPELL_IGNORE                1098
 #define IDS_SPELL_CUSTOM_DICT           1099
 #define IDC_NBSP_CHAR                   1100
+#define IDC_IMAGETYPE                   1101
 #define IDC_EDIT3                       1102
 #define IDC_SPELL_CHANGE                1103
+#define IDC_SPIN1                       1103
+#define IDC_JPEGSPIN                    1103
 #define IDC_SPELL_CHANGEALL             1104
 #define IDC_SPELL_ADD                   1107
 #define IDC_SPELL_SUGGEST               1108
@@ -470,7 +474,7 @@
 #define _APS_NO_MFC                     1
 #define _APS_NEXT_RESOURCE_VALUE        254
 #define _APS_NEXT_COMMAND_VALUE         32907
-#define _APS_NEXT_CONTROL_VALUE         1103
+#define _APS_NEXT_CONTROL_VALUE         1104
 #define _APS_NEXT_SYMED_VALUE           133
 #endif
 #endif

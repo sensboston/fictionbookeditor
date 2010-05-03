@@ -8,6 +8,11 @@
 
 extern CSettings _Settings;
 
+extern "C"
+{
+	extern const char* build_timestamp;
+	extern const char* build_name;
+};
 
 class ExternalHelper :
   public CComObjectRoot,
@@ -234,6 +239,12 @@ public:
 		return S_OK;
 	}
 
+	STDMETHOD(GetProgramVersion)(BSTR* ver)
+	{
+		CString version(build_name);
+		*ver = version.AllocSysString();
+		return S_OK;
+	}
 };
 
 #endif
