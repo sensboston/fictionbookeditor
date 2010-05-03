@@ -180,31 +180,37 @@ END
 // Dialog
 //
 
-IDD_SETTING_OTHER DIALOGEX 0, 0, 255, 233
+IDD_SETTING_OTHER DIALOGEX 0, 0, 225, 226
 STYLE DS_SETFONT | WS_CHILD | WS_SYSMENU
 FONT 9, "Tahoma", 400, 0, 0xCC
 BEGIN
-    GROUPBOX        "Параметри збереження",IDC_STATIC,7,9,207,40
-    LTEXT           "Кодування:",IDC_STATIC,11,21,60,9
-    CONTROL         "Зберігати оригінальне кодування",IDC_KEEP,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,10,33,133,10
-    COMBOBOX        IDC_DEFAULT_ENC,72,19,132,30,CBS_DROPDOWNLIST | CBS_SORT | WS_VSCROLL | WS_TABSTOP
-    GROUPBOX        "Параметри відкриття",IDC_STATIC,7,51,208,24
+    GROUPBOX        "Параметри збереження",IDC_STATIC,7,3,208,40
+    LTEXT           "Кодування:",IDC_STATIC,11,15,60,9
+    CONTROL         "Зберігати оригінальне кодування",IDC_KEEP,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,10,27,133,10
+    COMBOBOX        IDC_DEFAULT_ENC,72,13,132,30,CBS_DROPDOWNLIST | CBS_SORT | WS_VSCROLL | WS_TABSTOP
+    GROUPBOX        "Параметри відкриття",IDC_STATIC,7,44,208,26
     CONTROL         "Відновлювати позицію позицію курсору",IDC_RESTORE_POS,
-                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,10,61,145,10
-    GROUPBOX        "Тека скриптів",IDC_STATIC,7,81,208,42
-    CONTROL         "Типова тека",IDC_DEFAULT_SCRIPTS_FOLDER,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,11,91,80,10
-    EDITTEXT        IDC_SCRIPTS_FOLDER_PATH,10,104,170,14,ES_AUTOHSCROLL
-    PUSHBUTTON      "...",IDC_SELECT_SCRIPTS_FOLDER_BUTTON,188,104,17,14
-    GROUPBOX        "Діалоги",IDC_STATIC,7,127,208,28
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,10,55,145,10
+    GROUPBOX        "Тека скриптів",IDC_STATIC,7,73,208,42
+    CONTROL         "Типова тека",IDC_DEFAULT_SCRIPTS_FOLDER,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,11,83,80,10
+    EDITTEXT        IDC_SCRIPTS_FOLDER_PATH,10,96,170,13,ES_AUTOHSCROLL
+    PUSHBUTTON      "...",IDC_SELECT_SCRIPTS_FOLDER_BUTTON,188,96,17,13
+    GROUPBOX        "Діалоги",IDC_STATIC,7,118,116,33
     CONTROL         "Запитувати про вставку непорожнього малюнка",IDC_SETTINGS_ASKIMAGE,
-                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,12,139,180,10
-    GROUPBOX        "Малюнки",IDC_STATIC,7,156,208,26
-    CONTROL         "Вставляти порожні малюнки",IDC_OPTIONS_CLEARIMGS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,12,167,125,10
-    GROUPBOX        "Нерозривні пробіли",IDC_STATIC,7,187,116,27
-    LTEXT           "Використати символ:",IDC_STATIC,13,199,73,8
-    COMBOBOX        IDC_NBSP_CHAR,90,196,27,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
-    GROUPBOX        "Розкладка клавіатури",IDC_STATIC,126,187,88,27
-    CONTROL         "Міняти при старті",IDC_CHANGE_KEYB,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,133,199,74,8
+                    "Button",BS_AUTOCHECKBOX | BS_MULTILINE | WS_TABSTOP,13,129,103,17
+    GROUPBOX        "Малюнки",IDC_STATIC,127,118,88,33
+    CONTROL         "Вставляти порожні малюнки",IDC_OPTIONS_CLEARIMGS,"Button",BS_AUTOCHECKBOX | BS_MULTILINE | WS_TABSTOP,136,128,74,18
+    GROUPBOX        "Нерозривні пробіли",IDC_STATIC,7,189,116,27
+    LTEXT           "Використати символ:",IDC_STATIC,13,201,73,8
+    COMBOBOX        IDC_NBSP_CHAR,90,198,27,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    GROUPBOX        "Розкладка клавіатури",IDC_STATIC,126,189,88,27
+    CONTROL         "Міняти при старті",IDC_CHANGE_KEYB,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,133,201,74,8
+    GROUPBOX        "Вставляти малюнки, як",IDC_STATIC,7,154,208,30
+    LTEXT           "Формат:",IDC_STATIC,15,168,28,8
+    COMBOBOX        IDC_IMAGETYPE,60,166,40,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    EDITTEXT        IDC_JPEGQUALITY,176,165,26,13,ES_AUTOHSCROLL | ES_NUMBER
+    CONTROL         "",IDC_JPEGSPIN,"msctls_updown32",UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS | UDS_NOTHOUSANDS,201,165,7,14
+    LTEXT           "Якість JPEG:",IDC_STATIC,119,168,43,8
 END
 
 IDD_TABLE DIALOGEX 0, 0, 260, 46
@@ -697,12 +703,26 @@ BEGIN
     IDS_HOTKEY_EDIT_UNDO    "Скасувати дію"
     IDS_HOTKEY_GROUP_EDIT   "Редагування"
     IDS_HOTKEY_GROUP_NAVIGATION "Навіґація"
-    IDS_HOTKEY_NAVIGATION_GOTO_FOOTNOTE "Перейти до виноски або до посилання"
     IDS_HOTKEY_NAVIGATION_NEXT_ITEM "Наступний елемент"
     ID_PANE_INS             "ЗАМ"
     IDS_HOTKEY_NAVIGATION_SCI_COLLAPSE1 "Згорнути дерево на 1 рівень"
     IDS_HOTKEY_NAVIGATION_SCI_COLLAPSE2 "Згорнути дерево на 2 рівні"
     IDS_HOTKEY_NAVIGATION_SCI_COLLAPSE3 "Згорнути дерево на 3 рівні"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_HOTKEY_PLUGINS_LAST_PLUGIN "Останній модуль"
+    IDS_HOTKEY_TOOLS_SPELL  "Орфографія"
+    IDC_SPELL_ADD2DICT      "Додати до словника"
+    IDS_SPELL_CHECK_COMPLETED "Перевірку орфографії завершено."
+    IDC_SPELL_IGNOREALL     "Пропустити усі"
+    IDS_SPELL_CONTINUE      "Продовжити"
+    IDS_HOTKEY_EDIT_INSERT_INLINEIMAGE "Додати малюнок до тексту"
+    IDS_HOTKEY_FASTMODE     "Прискорений режим"
+    IDS_HOTKEY_TREEVIEW     "Дерево увімк./вимк."
+    IDS_HOTKEY_TOOLS_SPELLHIGHLIGHT "Переключити виділення помилок"
+    IDS_HOTKEY_NAVIGATION_GOTO_FOOTNOTE "Перейти до виноски або до посилання"
 END
 
 STRINGTABLE 
@@ -832,20 +852,6 @@ BEGIN
     IDS_HOTKEY_EDIT_INSERT_POEM "Вставити вірш"
     IDS_HOTKEY_EDIT_ITALIC  "Курсив"
     ID_VIEW_SOURCE          "Показати код\nПоказати код-сирець"
-END
-
-STRINGTABLE 
-BEGIN
-    IDS_HOTKEY_PLUGINS_LAST_PLUGIN "Останній модуль"
-    IDS_HOTKEY_TOOLS_SPELL  "Орфографія"
-    IDC_SPELL_ADD2DICT      "Додати до словника"
-    IDS_SPELL_CHECK_COMPLETED "Перевірку орфографії завершено."
-    IDC_SPELL_IGNOREALL     "Пропустити усі"
-    IDS_SPELL_CONTINUE      "Продовжити"
-    IDS_HOTKEY_EDIT_INSERT_INLINEIMAGE "Додати малюнок до тексту"
-    IDS_HOTKEY_FASTMODE     "Прискорений режим"
-    IDS_HOTKEY_TREEVIEW     "Дерево увімк./вимк."
-    IDS_HOTKEY_TOOLS_SPELLHIGHLIGHT "Переключити виділення помилок"
 END
 
 STRINGTABLE 

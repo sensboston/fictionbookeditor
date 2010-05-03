@@ -65,7 +65,7 @@ BEGIN
         MENUITEM "Н&айти далее",                ID_EDIT_FINDNEXT
         MENUITEM "&Заменить...",                ID_EDIT_REPLACE
         MENUITEM SEPARATOR
-        MENUITEM "&Перейти к сноске или к ссылке",  ID_GOTO_FOOTNOTE
+        MENUITEM "&Перейти к сноске или к ссылке", ID_GOTO_FOOTNOTE
         MENUITEM SEPARATOR
         MENUITEM "К&лонировать",                ID_EDIT_CLONE
         MENUITEM "Разр&езать",                  ID_EDIT_SPLIT
@@ -180,31 +180,37 @@ END
 // Dialog
 //
 
-IDD_SETTING_OTHER DIALOGEX 0, 0, 228, 204
+IDD_SETTING_OTHER DIALOGEX 0, 0, 231, 213
 STYLE DS_SETFONT | WS_CHILD | WS_SYSMENU
 FONT 9, "Tahoma", 400, 0, 0xCC
 BEGIN
-    GROUPBOX        "Опции сохранения",IDC_STATIC,7,9,207,40
-    LTEXT           "Кодировка:",IDC_STATIC,11,21,60,9
-    CONTROL         "Сохранять оригинальную кодировку",IDC_KEEP,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,10,33,133,10
-    COMBOBOX        IDC_DEFAULT_ENC,72,19,132,30,CBS_DROPDOWNLIST | CBS_SORT | WS_VSCROLL | WS_TABSTOP
-    GROUPBOX        "Опции открытия",IDC_STATIC,7,51,208,24
-    CONTROL         "Восстанавливать позицию курсора",IDC_RESTORE_POS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,10,61,125,10
-    GROUPBOX        "Папка скриптов",IDC_STATIC,7,81,208,42
-    CONTROL         "Папка по-умолчанию",IDC_DEFAULT_SCRIPTS_FOLDER,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,11,91,80,10
-    EDITTEXT        IDC_SCRIPTS_FOLDER_PATH,10,104,170,14,ES_AUTOHSCROLL
-    PUSHBUTTON      "...",IDC_SELECT_SCRIPTS_FOLDER_BUTTON,188,104,17,14
-    GROUPBOX        "Диалоги",IDC_STATIC,7,127,116,34
+    GROUPBOX        "Опции сохранения",IDC_STATIC,6,3,208,40
+    LTEXT           "Кодировка:",IDC_STATIC,11,15,60,9
+    CONTROL         "Сохранять оригинальную кодировку",IDC_KEEP,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,10,27,133,10
+    COMBOBOX        IDC_DEFAULT_ENC,72,13,132,30,CBS_DROPDOWNLIST | CBS_SORT | WS_VSCROLL | WS_TABSTOP
+    GROUPBOX        "Опции открытия",IDC_STATIC,6,46,208,25
+    CONTROL         "Восстанавливать позицию курсора",IDC_RESTORE_POS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,10,57,125,10
+    GROUPBOX        "Папка скриптов",IDC_STATIC,6,74,208,42
+    CONTROL         "Папка по-умолчанию",IDC_DEFAULT_SCRIPTS_FOLDER,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,11,84,80,10
+    EDITTEXT        IDC_SCRIPTS_FOLDER_PATH,10,96,170,13,ES_AUTOHSCROLL
+    PUSHBUTTON      "...",IDC_SELECT_SCRIPTS_FOLDER_BUTTON,188,96,17,13
+    GROUPBOX        "Диалоги",IDC_STATIC,6,118,116,30
     CONTROL         "Спрашивать о вставке непустого изображения",IDC_SETTINGS_ASKIMAGE,
-                    "Button",BS_AUTOCHECKBOX | BS_VCENTER | BS_MULTILINE | WS_TABSTOP,15,138,99,17
-    GROUPBOX        "Изображения",IDC_STATIC,127,127,88,34
+                    "Button",BS_AUTOCHECKBOX | BS_VCENTER | BS_MULTILINE | WS_TABSTOP,15,128,99,17
+    GROUPBOX        "Изображения",IDC_STATIC,127,118,88,30
     CONTROL         "Вставлять пустые изображения",IDC_OPTIONS_CLEARIMGS,
-                    "Button",BS_AUTOCHECKBOX | BS_MULTILINE | WS_TABSTOP,133,139,76,16
-    GROUPBOX        "Неразрывные пробелы",IDC_STATIC,7,162,116,27
-    LTEXT           "Использовать символ:",IDC_STATIC,13,174,73,8
-    COMBOBOX        IDC_NBSP_CHAR,90,172,27,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
-    GROUPBOX        "Раскладка клавиатуры",IDC_STATIC,126,162,88,27
-    CONTROL         "Менять при старте",IDC_CHANGE_KEYB,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,133,174,76,8
+                    "Button",BS_AUTOCHECKBOX | BS_MULTILINE | WS_TABSTOP,133,129,76,16
+    GROUPBOX        "Неразрывные пробелы",IDC_STATIC,6,184,116,27
+    LTEXT           "Использовать символ:",IDC_STATIC,13,196,73,8
+    COMBOBOX        IDC_NBSP_CHAR,90,194,27,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    GROUPBOX        "Раскладка клавиатуры",IDC_STATIC,126,184,88,27
+    CONTROL         "Менять при старте",IDC_CHANGE_KEYB,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,133,196,76,8
+    GROUPBOX        "Вставлять изображения, как",IDC_STATIC,6,151,208,30
+    LTEXT           "Формат:",IDC_STATIC,14,164,28,8
+    COMBOBOX        IDC_IMAGETYPE,59,162,40,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    EDITTEXT        IDC_JPEGQUALITY,175,161,26,13,ES_AUTOHSCROLL | ES_NUMBER
+    CONTROL         "",IDC_JPEGSPIN,"msctls_updown32",UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS | UDS_NOTHOUSANDS,200,161,7,14
+    LTEXT           "Качество JPEG:",IDC_STATIC,118,164,51,8
 END
 
 IDD_TABLE DIALOGEX 0, 0, 260, 46
@@ -439,8 +445,10 @@ GUIDELINES DESIGNINFO
 BEGIN
     IDD_SETTING_OTHER, DIALOG
     BEGIN
-        LEFTMARGIN, 7
+        LEFTMARGIN, 6
+        RIGHTMARGIN, 228
         TOPMARGIN, 7
+        BOTTOMMARGIN, 204
     END
 
     IDD_TABLE, DIALOG
@@ -697,12 +705,26 @@ BEGIN
     IDS_HOTKEY_EDIT_UNDO    "Отменить"
     IDS_HOTKEY_GROUP_EDIT   "Редактировать"
     IDS_HOTKEY_GROUP_NAVIGATION "Навигация"
-    IDS_HOTKEY_NAVIGATION_GOTO_FOOTNOTE "Перейти к сноске или к ссылке"
     IDS_HOTKEY_NAVIGATION_NEXT_ITEM "Следующий элемент"
     ID_PANE_INS             "ЗАМ"
     IDS_HOTKEY_NAVIGATION_SCI_COLLAPSE1 "Свернуть дерево на 1 уровень"
     IDS_HOTKEY_NAVIGATION_SCI_COLLAPSE2 "Свернуть дерево на 2 уровня"
     IDS_HOTKEY_NAVIGATION_SCI_COLLAPSE3 "Свернуть дерево на 3 уровня"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_HOTKEY_PLUGINS_LAST_PLUGIN "Последний плагин"
+    IDS_HOTKEY_TOOLS_SPELL  "Орфография"
+    IDC_SPELL_ADD2DICT      "Добавить в словарь"
+    IDS_SPELL_CHECK_COMPLETED "Проверка орфографии завершена."
+    IDC_SPELL_IGNOREALL     "Пропустить все"
+    IDS_SPELL_CONTINUE      "Продолжить"
+    IDS_HOTKEY_EDIT_INSERT_INLINEIMAGE "Вставить изображение в текст"
+    IDS_HOTKEY_FASTMODE     "Ускоренный режим"
+    IDS_HOTKEY_TREEVIEW     "Дерево вкл/выкл"
+    IDS_HOTKEY_TOOLS_SPELLHIGHLIGHT "Переключить выделение слов с ошибками"
+    IDS_HOTKEY_NAVIGATION_GOTO_FOOTNOTE "Перейти к сноске или к ссылке"
 END
 
 STRINGTABLE 
@@ -832,20 +854,6 @@ BEGIN
     IDS_HOTKEY_EDIT_INSERT_POEM "Вставить поэму"
     IDS_HOTKEY_EDIT_ITALIC  "Курсив"
     ID_VIEW_SOURCE          "Перейти к коду\nПерейти к коду"
-END
-
-STRINGTABLE 
-BEGIN
-    IDS_HOTKEY_PLUGINS_LAST_PLUGIN "Последний плагин"
-    IDS_HOTKEY_TOOLS_SPELL  "Орфография"
-    IDC_SPELL_ADD2DICT      "Добавить в словарь"
-    IDS_SPELL_CHECK_COMPLETED "Проверка орфографии завершена."
-    IDC_SPELL_IGNOREALL     "Пропустить все"
-    IDS_SPELL_CONTINUE      "Продолжить"
-    IDS_HOTKEY_EDIT_INSERT_INLINEIMAGE "Вставить изображение в текст"
-    IDS_HOTKEY_FASTMODE     "Ускоренный режим"
-    IDS_HOTKEY_TREEVIEW     "Дерево вкл/выкл"
-    IDS_HOTKEY_TOOLS_SPELLHIGHLIGHT "Переключить выделение слов с ошибками"
 END
 
 STRINGTABLE 

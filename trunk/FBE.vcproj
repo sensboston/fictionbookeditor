@@ -611,6 +611,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\atlimage.h"
+				>
+			</File>
+			<File
 				RelativePath=".\utils\CFileDialogEx.h"
 				>
 			</File>

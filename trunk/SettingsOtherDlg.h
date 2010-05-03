@@ -22,6 +22,9 @@ class CSettingsOtherDlg :
 	// added by SeNS
 	CComboBox   m_nbsp_char;
 	CButton		m_change_keyb;
+	CComboBox	m_image_type;
+	CUpDownCtrl	m_updown;
+	CEdit		m_jpeg_quality;
 
 	bool		m_scripts_switched;
 	CString		m_scripts_fld_dlg_msg;

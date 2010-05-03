@@ -819,15 +819,19 @@ function SetDocumentVersion(desc)
 function SetProgramUsed(desc)
 {
   var prgs = desc.all.diProgs;
+  var ver;
+
   if(prgs)
   {
+    ver = window.external.GetProgramVersion();
+
     if(prgs.value == "")
-      prgs.value = "FB Editor v2.3";
+      prgs.value = ver;
     else
     {
-      if(prgs.value.search(/FB Editor v2\.3/i) == -1)
+      if(prgs.value.search(ver) == -1)
       {
-        prgs.value += ", FB Editor v2.3";
+        prgs.value += ", "+ver;
       }
     }
   }
