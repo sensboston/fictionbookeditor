@@ -1868,14 +1868,15 @@ bool CFBEView::DoSearch(bool fMore)
 	return m_fo.fRegexp ? DoSearchRegexp(fMore) : DoSearchStd(fMore);
 }
 
-void CFBEView::SelMatch(MSHTML::IHTMLTxtRange *tr,AU::ReMatch rm) {
-  tr->collapse(VARIANT_TRUE);
-  tr->move(L"character",rm->FirstIndex);
-  if (tr->moveStart(L"character",1)==1)
-    tr->move(L"character",-1);
-  tr->moveEnd(L"character",rm->Length);
-  tr->select();
-  m_fo.match=rm;
+void CFBEView::SelMatch(MSHTML::IHTMLTxtRange *tr,AU::ReMatch rm) 
+{
+	tr->collapse(VARIANT_TRUE);
+	tr->move(L"character",rm->FirstIndex);
+	if (tr->moveStart(L"character",1)==1)
+		tr->move(L"character",-1);
+	tr->moveEnd(L"character",rm->Length);
+	tr->select();
+	m_fo.match=rm;
 }
 
 bool CFBEView::DoSearchRegexp(bool fMore)
@@ -1924,8 +1925,11 @@ bool CFBEView::DoSearchRegexp(bool fMore)
 		if ((bool)sc && U::scmp(sc->tagName, L"P") == 0)
 		{
 			sel->moveToElementText(sc);
+			CString selText = sel->text;
+
 			AU::ReMatches rm(re->Execute(sel->text));
-			if(rm->Count > 0)
+			// changed by SeNS: fix for issue #62
+			if(rm->Count > 0 && !(selText.IsEmpty() && fMore))
 			{
 				if(incr > 0)
 				{
@@ -1980,9 +1984,17 @@ bool CFBEView::DoSearchRegexp(bool fMore)
 
 			// search inside current element
 			sel->moveToElementText(elem);
+			
+/*			CString selText = sel->text;
+			if (selText.IsEmpty())
+				sel->move(L"character", incr); */
+
 			AU::ReMatches rm(re->Execute(sel->text));
 			if(rm->Count <= 0)
+			{
+				
 				continue;
+			}
 			if(incr > 0)
 				SelMatch(sel, rm->Item[0]);
 			else
