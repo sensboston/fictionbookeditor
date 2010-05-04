@@ -5,6 +5,7 @@
 #include "Settings.h"
 
 extern CSettings _Settings;
+extern bool VBErr;
 
 class FRBase: public CWinDataExchange<FRBase>
 {
@@ -283,13 +284,17 @@ public:
 	virtual void DoFind()
 	{
 		GetData();
+		VBErr = false;
 		if(!m_view->DoSearch())
 		{
-			wchar_t cpt[MAX_LOAD_STRING + 1];
-			wchar_t msg[MAX_LOAD_STRING + 1];
-			::LoadString(_Module.GetResourceInstance(), IDR_MAINFRAME, cpt, MAX_LOAD_STRING);
-			::LoadString(_Module.GetResourceInstance(), IDS_SEARCH_FAIL_MSG, msg, MAX_LOAD_STRING);
-			U::MessageBox(MB_OK | MB_ICONEXCLAMATION, cpt, msg, m_view->m_fo.pattern);
+			if (!VBErr)
+			{
+				wchar_t cpt[MAX_LOAD_STRING + 1];
+				wchar_t msg[MAX_LOAD_STRING + 1];
+				::LoadString(_Module.GetResourceInstance(), IDR_MAINFRAME, cpt, MAX_LOAD_STRING);
+				::LoadString(_Module.GetResourceInstance(), IDS_SEARCH_FAIL_MSG, msg, MAX_LOAD_STRING);
+				U::MessageBox(MB_OK | MB_ICONEXCLAMATION, cpt, msg, m_view->m_fo.pattern);
+			}
 		}
 		else
 		{

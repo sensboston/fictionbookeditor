@@ -25,6 +25,7 @@ class CSettingsOtherDlg :
 	CComboBox	m_image_type;
 	CUpDownCtrl	m_updown;
 	CEdit		m_jpeg_quality;
+	CComboBox	m_keyb_layout;
 
 	bool		m_scripts_switched;
 	CString		m_scripts_fld_dlg_msg;

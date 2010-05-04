@@ -1875,6 +1875,7 @@ void CFBEView::SelMatch(MSHTML::IHTMLTxtRange *tr,AU::ReMatch rm)
 	if (tr->moveStart(L"character",1)==1)
 		tr->move(L"character",-1);
 	tr->moveEnd(L"character",rm->Length);
+	SetFocus();
 	tr->select();
 	m_fo.match=rm;
 }
@@ -1929,15 +1930,16 @@ bool CFBEView::DoSearchRegexp(bool fMore)
 
 			AU::ReMatches rm(re->Execute(sel->text));
 			// changed by SeNS: fix for issue #62
-			if(rm->Count > 0 && !(selText.IsEmpty() && fMore))
+			if (rm->Count > 0&& !(selText.IsEmpty() && fMore))
 			{
 				if(incr > 0)
 				{
-					for(long l = 0;l < rm->Count; ++l)
+					for(long l = startMatch;l < rm->Count; ++l)
 					{
 						AU::ReMatch crm(rm->Item[l]);
-						if(crm->FirstIndex >= s_off2)
+						if(crm->FirstIndex >= s_off2 )
 						{
+							startMatch = l+1;
 							SelMatch(sel, crm);
 							return true;
 						}
@@ -1945,12 +1947,13 @@ bool CFBEView::DoSearchRegexp(bool fMore)
 				}
 				else
 				{
-					for(long l = rm->Count - 1; l >= 0; --l)
+					for(long l = endMatch; l >= 0; --l)
 					{
 						AU::ReMatch crm(rm->Item[l]);
 						if(crm->FirstIndex < s_off1)
 						{
 							SelMatch(sel, crm);
+							endMatch = l-1;
 							return true;
 						}
 					}
@@ -1985,20 +1988,19 @@ bool CFBEView::DoSearchRegexp(bool fMore)
 			// search inside current element
 			sel->moveToElementText(elem);
 			
-/*			CString selText = sel->text;
-			if (selText.IsEmpty())
-				sel->move(L"character", incr); */
-
 			AU::ReMatches rm(re->Execute(sel->text));
 			if(rm->Count <= 0)
-			{
-				
 				continue;
-			}
 			if(incr > 0)
+			{
 				SelMatch(sel, rm->Item[0]);
+				startMatch = 1;
+			}
 			else
-				SelMatch(sel, rm->Item[rm->Count - 1]);
+			{
+				SelMatch(sel, rm->Item[rm->Count-1]);
+				endMatch = rm->Count-2;
+			}
 			if(fWrapped)
 				::MessageBeep(MB_ICONASTERISK);
 			
@@ -2666,10 +2668,10 @@ LRESULT CFBEView::OnFind(WORD, WORD, HWND, BOOL&)
 	if(!m_find_dlg)
 		m_find_dlg = new CViewFindDlg(this);
 
-	if(m_find_dlg->IsValid())
-		return 0;
-
-	m_find_dlg->ShowDialog(*this); // show modeless
+	if(!m_find_dlg->IsValid())
+		m_find_dlg->ShowDialog(*this); // show modeless
+	else
+		m_find_dlg->SetFocus();
 	return 0;
 }
 
@@ -2681,6 +2683,8 @@ LRESULT CFBEView::OnReplace(WORD, WORD, HWND, BOOL&)
 
 	if(!m_replace_dlg->IsValid())
 		m_replace_dlg->ShowDialog(*this);
+	else
+		m_replace_dlg->SetFocus();
 	return 0;
 }
 

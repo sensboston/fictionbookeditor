@@ -643,6 +643,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\ErrsEx.h"
+				>
+			</File>
+			<File
 				RelativePath="ExternalHelper.h"
 				>
 			</File>
