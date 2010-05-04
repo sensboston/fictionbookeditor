@@ -377,6 +377,7 @@
 #define IDC_NBSP_CHAR                   1100
 #define IDC_IMAGETYPE                   1101
 #define IDC_EDIT3                       1102
+#define IDC_KEYB_LAYOUT                 1102
 #define IDC_SPELL_CHANGE                1103
 #define IDC_SPIN1                       1103
 #define IDC_JPEGSPIN                    1103

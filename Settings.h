@@ -466,6 +466,7 @@ class CSettings : public ISerializable, public IObjectFactory
 	CString		m_nbsp_char;
 	CString		m_old_nbsp;
 	bool		m_change_kbd_layout_check;
+	DWORD		m_keyb_layout;
 	bool		m_show_line_numbers;
 	DWORD		m_image_type;
 	DWORD		m_jpeg_quality;
@@ -564,6 +565,7 @@ public:
 	CString GetNBSPChar()const;
 	CString GetOldNBSPChar()const;
 	bool	GetChangeKeybLayout()const;
+	DWORD	GetKeybLayout()const;
 	bool	XMLSrcShowLineNumbers()const;
 	DWORD	GetImageType()const;
 	DWORD	GetJpegQuality()const;
@@ -620,6 +622,7 @@ public:
 	void	SetCustomDict(const ATL::CString &value, bool apply = false);
 	void	SetNBSPChar(const ATL::CString &value, bool apply = false);
 	void	SetChangeKeybLayout(const bool value, bool apply = false);
+	void	SetKeybLayout(const DWORD value, bool apply = false);
 	void	SetXMLSrcShowLineNumbers(const bool value, bool apply = false);
 	void	SetImageType(const DWORD value, bool apply = false);
 	void	SetJpegQuality(const DWORD value, bool apply = false);

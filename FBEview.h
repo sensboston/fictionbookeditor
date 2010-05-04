@@ -680,8 +680,10 @@ public:
   }
 
 private:
-	bool				ExpandTxtRangeToParagraphs(MSHTML::IHTMLTxtRangePtr &rng, MSHTML::IHTMLElementPtr& begin, MSHTML::IHTMLElementPtr& end)const;
-	CString			GetClearedRangeText(const MSHTML::IHTMLTxtRangePtr &rng)const;   
+	bool ExpandTxtRangeToParagraphs(MSHTML::IHTMLTxtRangePtr &rng, MSHTML::IHTMLElementPtr& begin, MSHTML::IHTMLElementPtr& end)const;
+	CString GetClearedRangeText(const MSHTML::IHTMLTxtRangePtr &rng)const;   
+	// added by SeNS
+	int startMatch, endMatch;
 };
 
 /////////////////////////////////////////////////////////////////////////////

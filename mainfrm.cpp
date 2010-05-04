@@ -1527,7 +1527,9 @@ LRESULT CMainFrame::OnCreate(UINT, WPARAM, LPARAM, BOOL&)
   // Раскладка русской клавиатуры
   if (_Settings.GetChangeKeybLayout())
   {
-	LoadKeyboardLayout(_T("00000419"),KLF_ACTIVATE);
+	  CString layout;
+	  layout.Format(L"%08x", _Settings.GetKeybLayout());
+	  LoadKeyboardLayout(layout,KLF_ACTIVATE);
   }
 
   // Added by SeNS
