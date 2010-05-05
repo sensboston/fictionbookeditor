@@ -2322,6 +2322,8 @@ public:
 		CString s(contribs);
 		m_Contributors.SetWindowText(s.Left(s.GetLength()-5));
 
+		::SetFocus(GetDlgItem(IDOK));
+
 		return 0;
 	}
 
@@ -3959,7 +3961,7 @@ void  CMainFrame::SetupSci()
   ///
   if (_Settings.XmlSrcSyntaxHL()) 
   {
-    m_source.SendMessage(SCI_SETLEXER,5); // xml
+    m_source.SendMessage(SCI_SETLEXER, SCLEX_XML);
     m_source.SendMessage(SCI_SETMARGINTYPEN, 2, SC_MARGIN_SYMBOL);
     m_source.SendMessage(SCI_SETMARGINWIDTHN, 2, 16);
     m_source.SendMessage(SCI_SETMARGINMASKN, 2, SC_MASK_FOLDERS);
@@ -3975,7 +3977,7 @@ void  CMainFrame::SetupSci()
   } 
   else 
   {
-    m_source.SendMessage(SCI_SETLEXER,1); // null lexer
+    m_source.SendMessage(SCI_SETLEXER, SCLEX_NULL);
     m_source.SendMessage(SCI_SETMARGINWIDTHN, 2, 0);
   }
 }
