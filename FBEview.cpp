@@ -1875,7 +1875,9 @@ void CFBEView::SelMatch(MSHTML::IHTMLTxtRange *tr,AU::ReMatch rm)
 	if (tr->moveStart(L"character",1)==1)
 		tr->move(L"character",-1);
 	tr->moveEnd(L"character",rm->Length);
-	SetFocus();
+	// set focus to editor if selection empty
+	if (!rm->Length)
+		SetFocus();
 	tr->select();
 	m_fo.match=rm;
 }
@@ -3329,9 +3331,12 @@ bool CFBEView::GoToReference(bool fCheck)
 
 		if(href==snote){
 			GoTo(a);
-			MSHTML::IHTMLTxtRangePtr	r(MSHTML::IHTMLBodyElementPtr(Document()->body)->createTextRange());
+			MSHTML::IHTMLTxtRangePtr r(MSHTML::IHTMLBodyElementPtr(Document()->body)->createTextRange());
 			r->moveToElementText(a);
 			r->collapse(VARIANT_TRUE);
+			// move selection to position after reference
+			CString sa = a->innerText;
+			r->move(L"character", sa.GetLength());
 			r->select();
 		}
 	}

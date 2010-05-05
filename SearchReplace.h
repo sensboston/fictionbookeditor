@@ -17,6 +17,7 @@ public:
 	int			m_case;
 	int			m_regexp;
 	int			m_dir;
+	CEdit		m_text;
 
 	FRBase(CFBEView* view) : m_view(view) { }
 
@@ -44,6 +45,8 @@ public:
 
 	void GetData()
 	{
+		m_text.SetSelNone();
+
 		DoDataExchange(TRUE);
 
 		int flags = 0;
@@ -85,13 +88,15 @@ public:
 
     CString   ps,str;
 
-    for (DWORD i=0;i<nfs;++i) {
+    for (DWORD i=0;i<nfs;++i) 
+	{
       ps.Format(_T("%d"),i);
       str=U::QuerySV(rk,ps);
-      if (!str.IsEmpty()) {
-	::SendMessage(hCB,CB_ADDSTRING,0,(LPARAM)(const TCHAR *)str);
-	if (first.IsEmpty())
-	  first=str;
+      if (!str.IsEmpty()) 
+	  {
+		::SendMessage(hCB,CB_ADDSTRING,0,(LPARAM)(const TCHAR *)str);
+		if (first.IsEmpty())
+			first=str;
       }
     }
   }
@@ -107,6 +112,8 @@ public:
 		DWORD flags = _Settings.GetSearchOptions();
 		m_view->m_fo.fRegexp = (flags & CFBEView::FRF_REGEX) != 0;
 		m_view->m_fo.flags = flags & ~CFBEView::FRF_REGEX;
+
+		m_text = GetDlgItem(IDC_TEXT);
 
 		// Set fields
 		PutData();
