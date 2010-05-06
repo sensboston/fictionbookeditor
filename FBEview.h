@@ -468,6 +468,11 @@ public:
 		if(m_file_path != L"")
 			imgSaveDlg.m_ofn.lpstrInitialDir = m_file_path;
 
+		// add file types
+		imgSaveDlg.m_ofn.lpstrFilter = L"JPEG files (*.jpg)\0*.jpg\0PNG files (*.png)\0*.png\0All files (*.*)\0*.*\0\0";
+		imgSaveDlg.m_ofn.nFilterIndex = 0;
+		imgSaveDlg.m_ofn.lpstrDefExt = L"jpg";
+
 		if(imgSaveDlg.DoModal(m_hWnd) == IDOK)
 		{
 			HANDLE imgFile = ::CreateFile(	imgSaveDlg.m_szFileName,

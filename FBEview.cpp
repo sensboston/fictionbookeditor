@@ -3990,17 +3990,18 @@ bool CFBEView::SelectionHasTags(wchar_t* elem)
 
 BSTR CFBEView::PrepareDefaultId(const CString& filename){
 
+    CString _filename = U::Transliterate(filename);
 	// prepare a default id
-	int cp = filename.ReverseFind(_T('\\'));
+	int cp = _filename.ReverseFind(_T('\\'));
 	if (cp < 0)
 		cp = 0;
 	else
 		++cp;
 	CString   newid;
-	TCHAR	    *ncp=newid.GetBuffer(filename.GetLength()-cp);
+	TCHAR	    *ncp=newid.GetBuffer(_filename.GetLength()-cp);
 	int	    newlen=0;
-	while (cp<filename.GetLength()) {
-		TCHAR   c=filename[cp];
+	while (cp<_filename.GetLength()) {
+		TCHAR   c=_filename[cp];
 		if ((c>=_T('0') && c<=_T('9')) ||
 			(c>=_T('A') && c<=_T('Z')) ||
 			(c>=_T('a') && c<=_T('z')) ||

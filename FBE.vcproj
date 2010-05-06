@@ -598,6 +598,10 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath=".\xmlMatchedTagsHighlighter.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\XMLSerializer\XMLSerializer.cpp"
 				>
 			</File>
@@ -724,6 +728,10 @@
 			</File>
 			<File
 				RelativePath="Words.h"
+				>
+			</File>
+			<File
+				RelativePath=".\xmlMatchedTagsHighlighter.h"
 				>
 			</File>
 			<File

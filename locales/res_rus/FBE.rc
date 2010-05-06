@@ -726,7 +726,8 @@ BEGIN
     IDS_HOTKEY_FASTMODE     "Ускоренный режим"
     IDS_HOTKEY_TREEVIEW     "Дерево вкл/выкл"
     IDS_HOTKEY_TOOLS_SPELLHIGHLIGHT "Переключить выделение слов с ошибками"
-    IDS_HOTKEY_NAVIGATION_GOTO_FOOTNOTE "Перейти к сноске или к ссылке"
+    IDS_HOTKEY_NAVIGATION_GOTO_FOOTNOTE "Переход к сноске или к ссылке"
+    IDS_HOTKEY_NAVIGATION_GOTO_MATCHTAG "Переход на парный тег"
 END
 
 STRINGTABLE 

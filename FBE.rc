@@ -780,6 +780,7 @@ BEGIN
     IDS_HOTKEY_TREEVIEW     "Toggle tree view"
     IDS_HOTKEY_TOOLS_SPELLHIGHLIGHT "Toggle highlight"
     IDS_HOTKEY_NAVIGATION_GOTO_FOOTNOTE "Goto footnote or reference"
+    IDS_HOTKEY_NAVIGATION_GOTO_MATCHTAG "Goto matchig tag"
 END
 
 STRINGTABLE 

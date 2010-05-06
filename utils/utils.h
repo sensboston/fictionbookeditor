@@ -218,6 +218,8 @@ namespace U // place all utilities into their own namespace
 	MSHTML::IHTMLElementPtr	FindTitleNode(MSHTML::IHTMLDOMNodePtr elem);
 	CString	FindTitle(MSHTML::IHTMLDOMNodePtr elem);
 	CString GetImageFileName(MSHTML::IHTMLDOMNodePtr elem);
+
+	CString Transliterate (CString src);
 } // namespace
 
 #endif

@@ -580,6 +580,7 @@ public:
 		// source code editor notifications
 		NOTIFY_CODE_HANDLER(SCN_MODIFIED, OnSciModified)
 		NOTIFY_CODE_HANDLER(SCN_MARGINCLICK, OnSciMarginClick)
+		NOTIFY_CODE_HANDLER(SCN_UPDATEUI, OnSciUpdateUI)
 
 		// tree pane
 		COMMAND_ID_HANDLER(ID_PANE_CLOSE, OnViewTree)
@@ -587,6 +588,7 @@ public:
 		// FBEview calls to process messages without FBEview focused
 		COMMAND_ID_HANDLER_EX(ID_GOTO_FOOTNOTE, OnGoToFootnote)
 		COMMAND_ID_HANDLER_EX(ID_GOTO_REFERENCE, OnGoToReference)
+		COMMAND_ID_HANDLER_EX(ID_GOTO_MATCHTAG, OnGoToMatchTag);
 
 		// chain commands to active view
 		MESSAGE_HANDLER(WM_COMMAND, OnUnhandledCommand)
@@ -849,11 +851,27 @@ public:
     return 0;
   }
 
+  LRESULT OnSciUpdateUI(int id,NMHDR *hdr,BOOL& bHandled) 
+  {
+    if (m_current_view == SOURCE)
+		SciUpdateUI(false);
+	return 0;
+  }
+
+  LRESULT OnGoToMatchTag(WORD wNotifyCode, WORD wID, HWND hWndCtl)
+  {
+    if (m_current_view == SOURCE)
+		SciUpdateUI(true);
+	return 0;
+  }
+
+
 	LRESULT OnSciCollapse(WORD cose, WORD wID, HWND, BOOL&);  
 	LRESULT OnSciExpand(WORD cose, WORD wID, HWND, BOOL&);  
 
 	void SciModified(const SCNotification& scn);
 	void SciMarginClicked(const SCNotification& scn);
+	void SciUpdateUI(bool gotoTag);
 	void SciCollapse(int level2Collapse, bool mode);
 
 	void GoToSelectedTreeItem();

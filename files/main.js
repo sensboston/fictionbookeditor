@@ -829,6 +829,7 @@ function SetProgramUsed(desc)
       prgs.value = ver;
     else
     {
+      
       if(prgs.value.search(ver) == -1)
       {
         prgs.value += ", "+ver;
