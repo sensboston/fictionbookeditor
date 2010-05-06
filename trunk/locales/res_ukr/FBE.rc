@@ -725,7 +725,8 @@ BEGIN
     IDS_HOTKEY_FASTMODE     "Прискорений режим"
     IDS_HOTKEY_TREEVIEW     "Дерево увімк./вимк."
     IDS_HOTKEY_TOOLS_SPELLHIGHLIGHT "Переключити виділення помилок"
-    IDS_HOTKEY_NAVIGATION_GOTO_FOOTNOTE "Перейти до виноски або до посилання"
+    IDS_HOTKEY_NAVIGATION_GOTO_FOOTNOTE "Перехід до виноски або до посилання"
+    IDS_HOTKEY_NAVIGATION_GOTO_MATCHTAG "Перехід на парний тег"
 END
 
 STRINGTABLE 

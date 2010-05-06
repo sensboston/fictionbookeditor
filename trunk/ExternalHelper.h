@@ -152,20 +152,43 @@ public:
 		return S_OK;
 	}
 
-	STDMETHOD(SaveBinary)(BSTR path, BSTR data, BOOL* ret)
-	{		
-		int len = SysStringByteLen(data);
-		void* buf = (void*)data;
-		HANDLE file = CreateFile(path, GENERIC_WRITE | FILE_WRITE_DATA, FILE_SHARE_WRITE, 0, CREATE_NEW, 0, 0);
-		if(INVALID_HANDLE_VALUE == file)
+	STDMETHOD(SaveBinary)(BSTR path, BSTR data, BOOL prompt, BOOL* ret)
+	{	
+		INT_PTR modalResult = IDOK;
+		*ret = false;
+		CString file_name = CString(path);
+
+		if (prompt)
 		{
-			*ret = false;
-			return S_OK;
+			CString fname = ATLPath::FindFileName(file_name );
+			CString fpath(file_name);
+			fpath = fpath.Left(file_name.GetLength()-fname.GetLength());
+			CFileDialog imgSaveDlg(FALSE, NULL, fname);
+			imgSaveDlg.m_ofn.lpstrInitialDir = fpath;
+
+			// add file types
+			imgSaveDlg.m_ofn.lpstrFilter = L"JPEG files (*.jpg)\0*.jpg\0PNG files (*.png)\0*.png\0All files (*.*)\0*.*\0\0";
+			imgSaveDlg.m_ofn.nFilterIndex = 0;
+			imgSaveDlg.m_ofn.lpstrDefExt = L"jpg";
+
+			modalResult = imgSaveDlg.DoModal(NULL);
+			file_name.SetString(imgSaveDlg.m_szFileName);
 		}
-		DWORD writen = 0;
-		WriteFile(file, buf, len, &writen, 0);
-		CloseHandle(file);
-		*ret = true;
+
+		if (modalResult == IDOK)
+		{
+			int len = SysStringByteLen(data);
+			void* buf = (void*)data;
+			HANDLE file = CreateFile(file_name, GENERIC_WRITE | FILE_WRITE_DATA, FILE_SHARE_WRITE, 0, CREATE_NEW, 0, 0);
+			if(INVALID_HANDLE_VALUE == file)
+			{
+				return S_OK;
+			}
+			DWORD writen = 0;
+			WriteFile(file, buf, len, &writen, 0);
+			CloseHandle(file);
+			*ret = true;
+		}
 		return S_OK;
 	}
 

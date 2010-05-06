@@ -7,6 +7,8 @@
 #include "CFileDialogEx.h"
 #include "SettingsDlg.h"
 
+#include "xmlMatchedTagsHighlighter.h"
+
 
 // utility methods
 bool  CMainFrame::IsBandVisible(int id) {
@@ -3973,7 +3975,19 @@ void  CMainFrame::SetupSci()
     DefineMarker(SC_MARKNUM_FOLDEREND, SC_MARK_EMPTY, RGB(0xff, 0xff, 0xff), RGB(0, 0, 0));
     DefineMarker(SC_MARKNUM_FOLDEROPENMID, SC_MARK_EMPTY, RGB(0xff, 0xff, 0xff), RGB(0, 0, 0));
     DefineMarker(SC_MARKNUM_FOLDERMIDTAIL, SC_MARK_EMPTY, RGB(0xff, 0xff, 0xff), RGB(0, 0, 0));
-    m_source.SendMessage(SCI_COLOURISE,0,-1);
+
+	// indicator for tag match
+	m_source.SendMessage(SCI_INDICSETSTYLE, SCE_UNIVERSAL_TAGMATCH, INDIC_ROUNDBOX);
+	m_source.SendMessage(SCI_INDICSETALPHA, SCE_UNIVERSAL_TAGMATCH, 100);
+	m_source.SendMessage(SCI_INDICSETUNDER, SCE_UNIVERSAL_TAGMATCH, TRUE);
+	m_source.SendMessage(SCI_INDICSETFORE,  SCE_UNIVERSAL_TAGMATCH, RGB(128, 128, 255));
+
+	m_source.SendMessage(SCI_INDICSETSTYLE, SCE_UNIVERSAL_TAGATTR, INDIC_ROUNDBOX);
+	m_source.SendMessage(SCI_INDICSETALPHA, SCE_UNIVERSAL_TAGATTR, 100);
+	m_source.SendMessage(SCI_INDICSETUNDER, SCE_UNIVERSAL_TAGATTR, TRUE);
+	m_source.SendMessage(SCI_INDICSETFORE,  SCE_UNIVERSAL_TAGATTR, RGB(128, 128, 255));
+
+	m_source.SendMessage(SCI_COLOURISE,0,-1);
   } 
   else 
   {
@@ -3998,7 +4012,14 @@ void  CMainFrame::SciModified(const SCNotification& scn) {
   }
 }
 
-void  CMainFrame::SciMarginClicked(const SCNotification& scn) {
+void CMainFrame::SciUpdateUI(bool gotoTag)
+{
+	XmlMatchedTagsHighlighter xmlTagMatchHiliter(&m_source);
+	xmlTagMatchHiliter.tagMatch(_Settings.XmlSrcSyntaxHL(), false, gotoTag);
+}
+
+void  CMainFrame::SciMarginClicked(const SCNotification& scn) 
+{
   int lineClick = m_source.SendMessage(SCI_LINEFROMPOSITION, scn.position);
   if ((scn.modifiers & SCMOD_SHIFT) && (scn.modifiers & SCMOD_CTRL)) {
     FoldAll();
