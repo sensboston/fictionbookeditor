@@ -587,6 +587,7 @@ public:
 
   bool SelectionHasTags(wchar_t* elem);
   MSHTML::IHTMLElementPtr   SelectionAnchor();
+  MSHTML::IHTMLElementPtr   SelectionAnchor(MSHTML::IHTMLElementPtr cur);
   MSHTML::IHTMLElementPtr   SelectionStructCon();
   MSHTML::IHTMLElementPtr	SelectionStructNearestCon();
   MSHTML::IHTMLElementPtr   SelectionStructCode();
