@@ -151,6 +151,7 @@ bool	InputBox(CString& result,const wchar_t *title,const wchar_t *prompt) {
 
 // html
 CString GetAttrCS(MSHTML::IHTMLElement *elem,const wchar_t *attr) {
+  if (!elem) return L"";
   _variant_t	    va(elem->getAttribute(attr,2));
   if (V_VT(&va)!=VT_BSTR)
     return CString();
@@ -158,6 +159,7 @@ CString GetAttrCS(MSHTML::IHTMLElement *elem,const wchar_t *attr) {
 }
 
 _bstr_t GetAttrB(MSHTML::IHTMLElement *elem,const wchar_t *attr) {
+  if (!elem) return L"";
   _variant_t	    va(elem->getAttribute(attr,2));
   if (V_VT(&va)!=VT_BSTR)
     return _bstr_t();

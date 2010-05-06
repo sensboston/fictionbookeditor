@@ -1377,6 +1377,23 @@ MSHTML::IHTMLElementPtr CFBEView::SelectionAnchor() {
   return MSHTML::IHTMLElementPtr();
 }
 
+MSHTML::IHTMLElementPtr CFBEView::SelectionAnchor(MSHTML::IHTMLElementPtr cur) {
+  try {
+    while (cur) {
+      _bstr_t	tn(cur->tagName);
+      if (U::scmp(tn,L"A")==0 || (U::scmp(tn,L"DIV")==0 && U::scmp(cur->className,L"image")==0))
+		return cur;
+	  // Added by SeNS - inline images
+      if (U::scmp(tn,L"A")==0 || (U::scmp(tn,L"SPAN")==0 && U::scmp(cur->className,L"image")==0))
+		return cur;
+      cur=cur->parentElement;
+    }
+  }
+  catch (_com_error&) { }
+  return MSHTML::IHTMLElementPtr();
+}
+
+
 MSHTML::IHTMLElementPtr CFBEView::SelectionStructCon() {
 	try
 	{
@@ -3183,47 +3200,21 @@ static bool IsTD(MSHTML::IHTMLDOMNode *node) {
 bool CFBEView::GoToFootnote(bool fCheck)
 {
 	// * create selection range
-	MSHTML::IHTMLTxtRangePtr	rng(Document()->selection->createRange());
+	MSHTML::IHTMLTxtRangePtr rng(Document()->selection->createRange());
 	if (!(bool)rng)
 		return false;
 
 	MSHTML::IHTMLTxtRangePtr next_rng = rng->duplicate();
 	MSHTML::IHTMLTxtRangePtr prev_rng = rng->duplicate();
-	next_rng->move(L"character", +1);
-	prev_rng->move(L"character", -1);
+	next_rng->moveEnd(L"character", +1);
+	prev_rng->moveStart(L"character", -1);
 
-	// * get its parent element
-	MSHTML::IHTMLElementPtr	pe(rng->parentElement());
-	if (!(bool)pe)
-		return false;
+	CString	sref(AU::GetAttrCS(SelectionAnchor(),L"href"));
+	if (sref.IsEmpty())
+		sref = AU::GetAttrCS(SelectionAnchor(next_rng->parentElement()),L"href");
+	if (sref.IsEmpty())
+		sref = AU::GetAttrCS(SelectionAnchor(prev_rng->parentElement()),L"href");
 
-	MSHTML::IHTMLElementPtr	next_pe(next_rng->parentElement());
-	MSHTML::IHTMLElementPtr	prev_pe(prev_rng->parentElement());
-
-	// * check if it possible footnote
-	if (U::scmp(pe->tagName,L"A"))
-	{
-		if (next_pe && !U::scmp(next_pe->tagName,L"A"))
-		{
-			rng = next_rng;
-			pe = next_pe;
-		}
-		else if (prev_pe && !U::scmp(prev_pe->tagName,L"A"))
-		{
-			rng = prev_rng;
-			pe = prev_pe;
-		}
-		else return false;
-	}
-
-	// * get parents for start and end ranges and ensure they are the same as pe
-	MSHTML::IHTMLTxtRangePtr	tr(rng->duplicate());
-	tr->collapse(VARIANT_TRUE);
-	if (tr->parentElement()!=pe)
-		return false;
-
-	CString	    sref(AU::GetAttrCS(tr->parentElement(),L"href"));
-	// added by SeNS
 	if (sref.Find(L"file") == 0)
 		sref = sref.Mid(sref.ReverseFind (L'#'),1024);
 	if (sref.IsEmpty() || sref[0]!=_T('#'))
