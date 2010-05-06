@@ -11,7 +11,7 @@ function Run()
 MsgBox('	–= Alex Saveliev Script =– \n\n'+
          'В этом документе нет бинарных объектов. \n\n'); return; }
 
- if(!AskYesNo('	–= Sclex Script =– \n\n'+
+ if(!AskYesNo('	–= Alex Saveliev Script =– \n\n'+
             'Подтвердите ваше желание извлечь все бинарные объекты \n'+
             'из этого документа и сохранить их рядом с книгой,\n'+
             'в тот же самом каталоге. \n\n')) return false;
@@ -35,11 +35,11 @@ MsgBox('	–= Alex Saveliev Script =– \n\n'+
  else if (Tmin>=1) var TimeStr=Tmin+ " мин " +Tsec+ " с" }}
 
  if(cnt==0)
-  MsgBox('	–= Sclex Script =– \n\n'+
+  MsgBox('	–= Alex Saveliev Script =– \n\n'+
               ' Ни один бинарник не сохранён!\n\n'+
               'Возможно файлы уже существуют?   \n');
  else
-  MsgBox('	–= Sclex Script =– \n\n'+
+  MsgBox('	–= Alex Saveliev Script =– \n\n'+
               'Было сохранено ' +cnt+ ' из ' +i+ ' бинарных объектов. \n\n'+
               'Время выполнения: '+TimeStr );
 }
