@@ -78,7 +78,7 @@
 			<legend unselectable="on" class="top"><xsl:value-of select="$IDS_BINARY_OBJ"/></legend>
 			<br/>
 		</fieldset>
-		
+		<br/>
         <fieldset unselectable="on">
          <legend unselectable="on" class="top"><xsl:value-of select="$IDS_STYLES_TABLE"/></legend>
          <textarea id="stylesheetId" rows="10"><xsl:value-of select="/f:FictionBook/f:stylesheet"/></textarea>
