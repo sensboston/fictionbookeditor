@@ -1,4 +1,4 @@
-SF, Fantasy
+Фантастика, Фэнтези	 … SF, Fantasy
  sf_history Альтернативная история	 … Alternative history
  sf_action Боевая фантастика	 … Action SF
  sf_epic Эпическая фантастика	 … Epic SF
@@ -137,7 +137,7 @@ SF, Fantasy
  home_sex Эротика и Секс	 … Erotica, Sex
  home Дом и Семья: Прочее	 … Home: Other
  geo_guides ГеоПутеводитель	Geo_guides
-… Economy, Business
+Экономика, Бизнес	 … Economy, Business
  job_hunting Поиск работы, карьера	… Job Hunting
  management Управление, подбор персонала	… Management
  marketing Маркетинг, PR, реклама	… Marketing
