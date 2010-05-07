@@ -1,157 +1,156 @@
-1251 // codepage
-Химерна	 … SF, Fantasy
- sf_history Альтернативна історія	 … Alternative history
- sf_action Бойова фантастика	 … Action SF
- sf_epic Епічна фантастика	 … Epic SF
- sf_heroic Героїчна фантастика	 … Heroic SF
- sf_detective Детективна фантастика	 … Detective SF
- sf_cyberpunk Кіберпанк	 … Cyberpunk
- sf_space Космічна фантастика	 … Space SF
- sf_social Соціально-філософська фантастика	 … Social SF
- sf_horror Жахи й Містика	 … Horror & Mystic
- sf_humor Гумористична фантастика	 … Humor SF
- sf_fantasy Фентезі	 … Fantasy
- sf Наукова фантастика	 … Science Fiction
- child_sf Дитяча фантастика	 … Science Fiction for Kids
- love_sf Любовна фантастика	… Love
-Детективи і Бойовики	 … Detectives, Thrillers
- det_classic Класичні детективи	 … Classical Detective
- det_police Поліцейські детективи	 … Police Stories
- det_action Бойовики	 … Action
- det_irony Іронічні детективи	 … Ironical Detective
- det_history Історичні детективи	 … Historical Detective
- det_espionage Шпіонські детективи	 … Espionage Detective
- det_crime Кримінальні детективи	 … Crime Detective
- det_political Політичні детективи	 … Political Detective
- det_maniac Маньяки	 … Maniacs
- det_hard Крутий детектив	 … Hard-boiled Detective
- thriller Трилери	 … Thrillers
- detective Детективи	 … Detective
- sf_detective НФ детективи	 … Detective SF
- child_det Дитячі детективи	 … Detectives & Thrillers
- love_detective Гостросюжетні любовні романи	 … Detective Romance
-Проза	 … Prose
- prose_classic Класична проза	 … Classics Prose
- prose_history Історична проза	 … Historical Prose
- prose_contemporary Сучасна проза	 … Contemporary Prose
- prose_counter Контркультура	 … Counterculture
- prose_rus_classic Російська класика	 … Russian Classics
- prose_su_classics Совєтська класика	 … Soviet Classics
- humor_prose Гумористична проза	 … Humor Prose
- prose_military Воєнна проза	 … Prose Military
- child_prose Дитяча проза	 … Prose for Kids
-Любовні романи	 … Romance
- love_contemporary Сучасні любовні романи	 … Contemporary Romance
- love_history Історичні любовні романи	 … Historical Romance
- love_detective Гостросюжетні любовні романи	 … Detective Romance
- love_short Короткі любовні романи	 … Short Romance
- love_erotica Еротика	 … Erotica
- love_sf Любовна фантастика	… Love
-Пригоди	 … Adventure
- adv_western Вестерни	 … Western
- adv_history Історичні пригоди	 … History
- adv_indian Пригоди: Індіанці	 … Indians
- adv_maritime Морські пригоди	 … Maritime Fiction
- adv_geo Подорожі та Географія	 … Travel & Geography
- adv_animal Природа і Тварини	 … Nature & Animals
- adventure Пригоди: Інше	 … Misk Adventures
- child_adv Дитячі пригоди	 … Adventures for Kids
-Дитячі	 … Children's
- child_tale Казки	 … Fairy Tales
- child_verse Дитячі вірші	 … Verses
- child_prose Дитяча проза	 … Prose for Kids
- child_sf Дитяча фантастика	 … Science Fiction for Kids
- child_det Дитячі гостросюжетні	 … Detectives & Thrillers
- child_adv Дитячі пригоди	 … Adventures for Kids
- child_education Дитяча освітня	 … Education for Kids
- children Дитячі: Інше	 … For Kids: Misk
-Поезія і Драматургія	 … Poetry, Dramaturgy
- dramaturgy Драматургія	 … Dramaturgy
- poetry Поезія	 … Poetry
- humor_verse Гумористичні вірші	 … Humor Verses
- child_verse Дитячі вірші	 … Verses
-Старовинна література	 … Antique
- antique_ant Антична література	 … Antique Literature
- antique_european Європейська старовинна література	 … European Literature
- antique_russian Давньоукраїнська література	 … Antique Russian Literature
- antique_east Давньосхідна література	 … Antique East Literature
- antique_myths Міфи. Легенди. Епос	 … Myths. Legends. Epos
- antique Старовинна література: Інше	 … Other Antique
-Науково-освітня	 … Science, Education
- sci_history Історія	 … History
- sci_psychology Психологія	 … Psychology
- sci_culture Культурологія	 … Cultural Science
- sci_religion Релігієзнавство	 … Religious Studies
- sci_philosophy Філософія	 … Philosophy
- sci_politics Політика	 … Politics
- sci_juris Юриспруденція	 … Jurisprudence
- sci_linguistic Мовознавство	 … Linguistics
- sci_medicine Медицина	 … Medicine
- sci_phys Фізика	 … Physics
- sci_math Математика	 … Mathematics
- sci_chem Хімія	 … Chemistry
- sci_biology Біологія	 … Biology
- sci_tech Технічні	 … Technical
- science Науково-освітня: Інше	 … Misk Science, Education
- adv_animal Природа і Тварини	 … Nature & Animals
-Комп'ютери й Інтернет	 … Computers
- comp_www Інтернет	 … Internet
- comp_programming Програмування	 … Programming
- comp_hard Комп'ютерне залізо	 … Hardware
- comp_soft Програми	 … Software
- comp_db Бази даних	 … Databases
- comp_osnet ОС і мережі	 … OS & Networking
- computers Комп'ютери й Інтернет: Інше	 … Computers: Misk
-Довідкова література	 … Reference
- ref_encyc Енциклопедії	 … Encyclopedias
- ref_dict Словники	 … Dictionaries
- ref_ref Довідники	 … Reference
- ref_guide Путівники	 … Guidebooks
- reference Довідкова література: Інше	 … Misk References
-Документальне	 … Nonfiction
- nonf_biography Біографії й Мемуари	 … Biography & Memoirs
- nonf_publicism Публіцистика	 … Publicism
- nonf_criticism Критика	 … Criticism
- nonfiction Документальне: Інше	 … Misk Nonfiction
- design Мистецтво	 … Art, Design
- adv_animal Природа і Тварини	 … Nature & Animals
-Релігія і Духовність	 … Religion
- religion_rel Релігія	 … Religion
- religion_esoterics Езотерика	 … Esoterics
- religion_self Самовдосконалення	 … Self-perfection
- religion Релігія і Духовність: Інше	 … Religion: Other
- sci_religion Релігійна освіта	 … Religious Studies
-Гумор	 … Humor
- humor_anecdote Анекдоти	 … Anecdote
- humor_prose Гумористична проза	 … Humor Prose
- humor_verse Гумористичні вірші	 … Humor Verses
- humor Гумор: Інше	 … Misk Humor
-Дім та Сім'я	 … Home, Family
- home_cooking Кулінарія	 … Cooking
- home_pets Домашні тварини	 … Pets
- home_crafts Захоплення і Ремесла	 … Hobbies & Crafts
- home_entertain Розваги	 … Entertaining
- home_health Здоров'я	 … Health
- home_garden Сад і город	 … Garden
- home_diy Саморобки	 … Do it yourself
- home_sport Спорт	 … Sports
- home_sex Еротика і Секс	 … Erotica, Sex
- home Дім та Сім'я: Інше	 … Home: Other
-Економіка і Бізнес	 … Economy, Business
- job_hunting Пошук роботи, кар'єра	… Job Hunting
- management Управління, підбір персоналу	… Management
- marketing Маркетинг, PR, реклама	… Marketing
- banking Банківська справа	… Banking
- stock Цінні папери, інвестиції	… Stock
- accounting	Бухоблік, оподаткування, аудит	… Accounting
- global_economy Зовнішньоекономічна діяльність	… Global Economy
- economics Економіка	… Economics
- industries Галузеві видання	… Industries
- org_behavior  Корпоративна культура	… Corporate Culture
- personal_finance Особисті фінанси	… Personal Finance
- real_estate Нерухомість	… Real Estate
- popular_business Про бізнес популярно	… Popular Business
- small_business Малий бізнес	… Small Business
- paper_work Діловодство	… Paper Work
- economics_ref Довідники	… Economics Reference Book
+РҐРёРјРµСЂРЅР°	 вЂ¦ SF, Fantasy
+ sf_history РђР»СЊС‚РµСЂРЅР°С‚РёРІРЅР° С–СЃС‚РѕСЂС–СЏ	 вЂ¦ Alternative history
+ sf_action Р‘РѕР№РѕРІР° С„Р°РЅС‚Р°СЃС‚РёРєР°	 вЂ¦ Action SF
+ sf_epic Р•РїС–С‡РЅР° С„Р°РЅС‚Р°СЃС‚РёРєР°	 вЂ¦ Epic SF
+ sf_heroic Р“РµСЂРѕС—С‡РЅР° С„Р°РЅС‚Р°СЃС‚РёРєР°	 вЂ¦ Heroic SF
+ sf_detective Р”РµС‚РµРєС‚РёРІРЅР° С„Р°РЅС‚Р°СЃС‚РёРєР°	 вЂ¦ Detective SF
+ sf_cyberpunk РљС–Р±РµСЂРїР°РЅРє	 вЂ¦ Cyberpunk
+ sf_space РљРѕСЃРјС–С‡РЅР° С„Р°РЅС‚Р°СЃС‚РёРєР°	 вЂ¦ Space SF
+ sf_social РЎРѕС†С–Р°Р»СЊРЅРѕ-С„С–Р»РѕСЃРѕС„СЃСЊРєР° С„Р°РЅС‚Р°СЃС‚РёРєР°	 вЂ¦ Social SF
+ sf_horror Р–Р°С…Рё Р№ РњС–СЃС‚РёРєР°	 вЂ¦ Horror & Mystic
+ sf_humor Р“СѓРјРѕСЂРёСЃС‚РёС‡РЅР° С„Р°РЅС‚Р°СЃС‚РёРєР°	 вЂ¦ Humor SF
+ sf_fantasy Р¤РµРЅС‚РµР·С–	 вЂ¦ Fantasy
+ sf РќР°СѓРєРѕРІР° С„Р°РЅС‚Р°СЃС‚РёРєР°	 вЂ¦ Science Fiction
+ child_sf Р”РёС‚СЏС‡Р° С„Р°РЅС‚Р°СЃС‚РёРєР°	 вЂ¦ Science Fiction for Kids
+ love_sf Р›СЋР±РѕРІРЅР° С„Р°РЅС‚Р°СЃС‚РёРєР°	вЂ¦ Love
+Р”РµС‚РµРєС‚РёРІРё С– Р‘РѕР№РѕРІРёРєРё	 вЂ¦ Detectives, Thrillers
+ det_classic РљР»Р°СЃРёС‡РЅС– РґРµС‚РµРєС‚РёРІРё	 вЂ¦ Classical Detective
+ det_police РџРѕР»С–С†РµР№СЃСЊРєС– РґРµС‚РµРєС‚РёРІРё	 вЂ¦ Police Stories
+ det_action Р‘РѕР№РѕРІРёРєРё	 вЂ¦ Action
+ det_irony Р†СЂРѕРЅС–С‡РЅС– РґРµС‚РµРєС‚РёРІРё	 вЂ¦ Ironical Detective
+ det_history Р†СЃС‚РѕСЂРёС‡РЅС– РґРµС‚РµРєС‚РёРІРё	 вЂ¦ Historical Detective
+ det_espionage РЁРїС–РѕРЅСЃСЊРєС– РґРµС‚РµРєС‚РёРІРё	 вЂ¦ Espionage Detective
+ det_crime РљСЂРёРјС–РЅР°Р»СЊРЅС– РґРµС‚РµРєС‚РёРІРё	 вЂ¦ Crime Detective
+ det_political РџРѕР»С–С‚РёС‡РЅС– РґРµС‚РµРєС‚РёРІРё	 вЂ¦ Political Detective
+ det_maniac РњР°РЅСЊСЏРєРё	 вЂ¦ Maniacs
+ det_hard РљСЂСѓС‚РёР№ РґРµС‚РµРєС‚РёРІ	 вЂ¦ Hard-boiled Detective
+ thriller РўСЂРёР»РµСЂРё	 вЂ¦ Thrillers
+ detective Р”РµС‚РµРєС‚РёРІРё	 вЂ¦ Detective
+ sf_detective РќР¤ РґРµС‚РµРєС‚РёРІРё	 вЂ¦ Detective SF
+ child_det Р”РёС‚СЏС‡С– РґРµС‚РµРєС‚РёРІРё	 вЂ¦ Detectives & Thrillers
+ love_detective Р“РѕСЃС‚СЂРѕСЃСЋР¶РµС‚РЅС– Р»СЋР±РѕРІРЅС– СЂРѕРјР°РЅРё	 вЂ¦ Detective Romance
+РџСЂРѕР·Р°	 вЂ¦ Prose
+ prose_classic РљР»Р°СЃРёС‡РЅР° РїСЂРѕР·Р°	 вЂ¦ Classics Prose
+ prose_history Р†СЃС‚РѕСЂРёС‡РЅР° РїСЂРѕР·Р°	 вЂ¦ Historical Prose
+ prose_contemporary РЎСѓС‡Р°СЃРЅР° РїСЂРѕР·Р°	 вЂ¦ Contemporary Prose
+ prose_counter РљРѕРЅС‚СЂРєСѓР»СЊС‚СѓСЂР°	 вЂ¦ Counterculture
+ prose_rus_classic Р РѕСЃС–Р№СЃСЊРєР° РєР»Р°СЃРёРєР°	 вЂ¦ Russian Classics
+ prose_su_classics РЎРѕРІС”С‚СЃСЊРєР° РєР»Р°СЃРёРєР°	 вЂ¦ Soviet Classics
+ humor_prose Р“СѓРјРѕСЂРёСЃС‚РёС‡РЅР° РїСЂРѕР·Р°	 вЂ¦ Humor Prose
+ prose_military Р’РѕС”РЅРЅР° РїСЂРѕР·Р°	 вЂ¦ Prose Military
+ child_prose Р”РёС‚СЏС‡Р° РїСЂРѕР·Р°	 вЂ¦ Prose for Kids
+Р›СЋР±РѕРІРЅС– СЂРѕРјР°РЅРё	 вЂ¦ Romance
+ love_contemporary РЎСѓС‡Р°СЃРЅС– Р»СЋР±РѕРІРЅС– СЂРѕРјР°РЅРё	 вЂ¦ Contemporary Romance
+ love_history Р†СЃС‚РѕСЂРёС‡РЅС– Р»СЋР±РѕРІРЅС– СЂРѕРјР°РЅРё	 вЂ¦ Historical Romance
+ love_detective Р“РѕСЃС‚СЂРѕСЃСЋР¶РµС‚РЅС– Р»СЋР±РѕРІРЅС– СЂРѕРјР°РЅРё	 вЂ¦ Detective Romance
+ love_short РљРѕСЂРѕС‚РєС– Р»СЋР±РѕРІРЅС– СЂРѕРјР°РЅРё	 вЂ¦ Short Romance
+ love_erotica Р•СЂРѕС‚РёРєР°	 вЂ¦ Erotica
+ love_sf Р›СЋР±РѕРІРЅР° С„Р°РЅС‚Р°СЃС‚РёРєР°	вЂ¦ Love
+РџСЂРёРіРѕРґРё	 вЂ¦ Adventure
+ adv_western Р’РµСЃС‚РµСЂРЅРё	 вЂ¦ Western
+ adv_history Р†СЃС‚РѕСЂРёС‡РЅС– РїСЂРёРіРѕРґРё	 вЂ¦ History
+ adv_indian РџСЂРёРіРѕРґРё: Р†РЅРґС–Р°РЅС†С–	 вЂ¦ Indians
+ adv_maritime РњРѕСЂСЃСЊРєС– РїСЂРёРіРѕРґРё	 вЂ¦ Maritime Fiction
+ adv_geo РџРѕРґРѕСЂРѕР¶С– С‚Р° Р“РµРѕРіСЂР°С„С–СЏ	 вЂ¦ Travel & Geography
+ adv_animal РџСЂРёСЂРѕРґР° С– РўРІР°СЂРёРЅРё	 вЂ¦ Nature & Animals
+ adventure РџСЂРёРіРѕРґРё: Р†РЅС€Рµ	 вЂ¦ Misk Adventures
+ child_adv Р”РёС‚СЏС‡С– РїСЂРёРіРѕРґРё	 вЂ¦ Adventures for Kids
+Р”РёС‚СЏС‡С–	 вЂ¦ Children's
+ child_tale РљР°Р·РєРё	 вЂ¦ Fairy Tales
+ child_verse Р”РёС‚СЏС‡С– РІС–СЂС€С–	 вЂ¦ Verses
+ child_prose Р”РёС‚СЏС‡Р° РїСЂРѕР·Р°	 вЂ¦ Prose for Kids
+ child_sf Р”РёС‚СЏС‡Р° С„Р°РЅС‚Р°СЃС‚РёРєР°	 вЂ¦ Science Fiction for Kids
+ child_det Р”РёС‚СЏС‡С– РіРѕСЃС‚СЂРѕСЃСЋР¶РµС‚РЅС–	 вЂ¦ Detectives & Thrillers
+ child_adv Р”РёС‚СЏС‡С– РїСЂРёРіРѕРґРё	 вЂ¦ Adventures for Kids
+ child_education Р”РёС‚СЏС‡Р° РѕСЃРІС–С‚РЅСЏ	 вЂ¦ Education for Kids
+ children Р”РёС‚СЏС‡С–: Р†РЅС€Рµ	 вЂ¦ For Kids: Misk
+РџРѕРµР·С–СЏ С– Р”СЂР°РјР°С‚СѓСЂРіС–СЏ	 вЂ¦ Poetry, Dramaturgy
+ dramaturgy Р”СЂР°РјР°С‚СѓСЂРіС–СЏ	 вЂ¦ Dramaturgy
+ poetry РџРѕРµР·С–СЏ	 вЂ¦ Poetry
+ humor_verse Р“СѓРјРѕСЂРёСЃС‚РёС‡РЅС– РІС–СЂС€С–	 вЂ¦ Humor Verses
+ child_verse Р”РёС‚СЏС‡С– РІС–СЂС€С–	 вЂ¦ Verses
+РЎС‚Р°СЂРѕРІРёРЅРЅР° Р»С–С‚РµСЂР°С‚СѓСЂР°	 вЂ¦ Antique
+ antique_ant РђРЅС‚РёС‡РЅР° Р»С–С‚РµСЂР°С‚СѓСЂР°	 вЂ¦ Antique Literature
+ antique_european Р„РІСЂРѕРїРµР№СЃСЊРєР° СЃС‚Р°СЂРѕРІРёРЅРЅР° Р»С–С‚РµСЂР°С‚СѓСЂР°	 вЂ¦ European Literature
+ antique_russian Р”Р°РІРЅСЊРѕСѓРєСЂР°С—РЅСЃСЊРєР° Р»С–С‚РµСЂР°С‚СѓСЂР°	 вЂ¦ Antique Russian Literature
+ antique_east Р”Р°РІРЅСЊРѕСЃС…С–РґРЅР° Р»С–С‚РµСЂР°С‚СѓСЂР°	 вЂ¦ Antique East Literature
+ antique_myths РњС–С„Рё. Р›РµРіРµРЅРґРё. Р•РїРѕСЃ	 вЂ¦ Myths. Legends. Epos
+ antique РЎС‚Р°СЂРѕРІРёРЅРЅР° Р»С–С‚РµСЂР°С‚СѓСЂР°: Р†РЅС€Рµ	 вЂ¦ Other Antique
+РќР°СѓРєРѕРІРѕ-РѕСЃРІС–С‚РЅСЏ	 вЂ¦ Science, Education
+ sci_history Р†СЃС‚РѕСЂС–СЏ	 вЂ¦ History
+ sci_psychology РџСЃРёС…РѕР»РѕРіС–СЏ	 вЂ¦ Psychology
+ sci_culture РљСѓР»СЊС‚СѓСЂРѕР»РѕРіС–СЏ	 вЂ¦ Cultural Science
+ sci_religion Р РµР»С–РіС–С”Р·РЅР°РІСЃС‚РІРѕ	 вЂ¦ Religious Studies
+ sci_philosophy Р¤С–Р»РѕСЃРѕС„С–СЏ	 вЂ¦ Philosophy
+ sci_politics РџРѕР»С–С‚РёРєР°	 вЂ¦ Politics
+ sci_juris Р®СЂРёСЃРїСЂСѓРґРµРЅС†С–СЏ	 вЂ¦ Jurisprudence
+ sci_linguistic РњРѕРІРѕР·РЅР°РІСЃС‚РІРѕ	 вЂ¦ Linguistics
+ sci_medicine РњРµРґРёС†РёРЅР°	 вЂ¦ Medicine
+ sci_phys Р¤С–Р·РёРєР°	 вЂ¦ Physics
+ sci_math РњР°С‚РµРјР°С‚РёРєР°	 вЂ¦ Mathematics
+ sci_chem РҐС–РјС–СЏ	 вЂ¦ Chemistry
+ sci_biology Р‘С–РѕР»РѕРіС–СЏ	 вЂ¦ Biology
+ sci_tech РўРµС…РЅС–С‡РЅС–	 вЂ¦ Technical
+ science РќР°СѓРєРѕРІРѕ-РѕСЃРІС–С‚РЅСЏ: Р†РЅС€Рµ	 вЂ¦ Misk Science, Education
+ adv_animal РџСЂРёСЂРѕРґР° С– РўРІР°СЂРёРЅРё	 вЂ¦ Nature & Animals
+РљРѕРјРї'СЋС‚РµСЂРё Р№ Р†РЅС‚РµСЂРЅРµС‚	 вЂ¦ Computers
+ comp_www Р†РЅС‚РµСЂРЅРµС‚	 вЂ¦ Internet
+ comp_programming РџСЂРѕРіСЂР°РјСѓРІР°РЅРЅСЏ	 вЂ¦ Programming
+ comp_hard РљРѕРјРї'СЋС‚РµСЂРЅРµ Р·Р°Р»С–Р·Рѕ	 вЂ¦ Hardware
+ comp_soft РџСЂРѕРіСЂР°РјРё	 вЂ¦ Software
+ comp_db Р‘Р°Р·Рё РґР°РЅРёС…	 вЂ¦ Databases
+ comp_osnet РћРЎ С– РјРµСЂРµР¶С–	 вЂ¦ OS & Networking
+ computers РљРѕРјРї'СЋС‚РµСЂРё Р№ Р†РЅС‚РµСЂРЅРµС‚: Р†РЅС€Рµ	 вЂ¦ Computers: Misk
+Р”РѕРІС–РґРєРѕРІР° Р»С–С‚РµСЂР°С‚СѓСЂР°	 вЂ¦ Reference
+ ref_encyc Р•РЅС†РёРєР»РѕРїРµРґС–С—	 вЂ¦ Encyclopedias
+ ref_dict РЎР»РѕРІРЅРёРєРё	 вЂ¦ Dictionaries
+ ref_ref Р”РѕРІС–РґРЅРёРєРё	 вЂ¦ Reference
+ ref_guide РџСѓС‚С–РІРЅРёРєРё	 вЂ¦ Guidebooks
+ reference Р”РѕРІС–РґРєРѕРІР° Р»С–С‚РµСЂР°С‚СѓСЂР°: Р†РЅС€Рµ	 вЂ¦ Misk References
+Р”РѕРєСѓРјРµРЅС‚Р°Р»СЊРЅРµ	 вЂ¦ Nonfiction
+ nonf_biography Р‘С–РѕРіСЂР°С„С–С— Р№ РњРµРјСѓР°СЂРё	 вЂ¦ Biography & Memoirs
+ nonf_publicism РџСѓР±Р»С–С†РёСЃС‚РёРєР°	 вЂ¦ Publicism
+ nonf_criticism РљСЂРёС‚РёРєР°	 вЂ¦ Criticism
+ nonfiction Р”РѕРєСѓРјРµРЅС‚Р°Р»СЊРЅРµ: Р†РЅС€Рµ	 вЂ¦ Misk Nonfiction
+ design РњРёСЃС‚РµС†С‚РІРѕ	 вЂ¦ Art, Design
+ adv_animal РџСЂРёСЂРѕРґР° С– РўРІР°СЂРёРЅРё	 вЂ¦ Nature & Animals
+Р РµР»С–РіС–СЏ С– Р”СѓС…РѕРІРЅС–СЃС‚СЊ	 вЂ¦ Religion
+ religion_rel Р РµР»С–РіС–СЏ	 вЂ¦ Religion
+ religion_esoterics Р•Р·РѕС‚РµСЂРёРєР°	 вЂ¦ Esoterics
+ religion_self РЎР°РјРѕРІРґРѕСЃРєРѕРЅР°Р»РµРЅРЅСЏ	 вЂ¦ Self-perfection
+ religion Р РµР»С–РіС–СЏ С– Р”СѓС…РѕРІРЅС–СЃС‚СЊ: Р†РЅС€Рµ	 вЂ¦ Religion: Other
+ sci_religion Р РµР»С–РіС–Р№РЅР° РѕСЃРІС–С‚Р°	 вЂ¦ Religious Studies
+Р“СѓРјРѕСЂ	 вЂ¦ Humor
+ humor_anecdote РђРЅРµРєРґРѕС‚Рё	 вЂ¦ Anecdote
+ humor_prose Р“СѓРјРѕСЂРёСЃС‚РёС‡РЅР° РїСЂРѕР·Р°	 вЂ¦ Humor Prose
+ humor_verse Р“СѓРјРѕСЂРёСЃС‚РёС‡РЅС– РІС–СЂС€С–	 вЂ¦ Humor Verses
+ humor Р“СѓРјРѕСЂ: Р†РЅС€Рµ	 вЂ¦ Misk Humor
+Р”С–Рј С‚Р° РЎС–Рј'СЏ	 вЂ¦ Home, Family
+ home_cooking РљСѓР»С–РЅР°СЂС–СЏ	 вЂ¦ Cooking
+ home_pets Р”РѕРјР°С€РЅС– С‚РІР°СЂРёРЅРё	 вЂ¦ Pets
+ home_crafts Р—Р°С…РѕРїР»РµРЅРЅСЏ С– Р РµРјРµСЃР»Р°	 вЂ¦ Hobbies & Crafts
+ home_entertain Р РѕР·РІР°РіРё	 вЂ¦ Entertaining
+ home_health Р—РґРѕСЂРѕРІ'СЏ	 вЂ¦ Health
+ home_garden РЎР°Рґ С– РіРѕСЂРѕРґ	 вЂ¦ Garden
+ home_diy РЎР°РјРѕСЂРѕР±РєРё	 вЂ¦ Do it yourself
+ home_sport РЎРїРѕСЂС‚	 вЂ¦ Sports
+ home_sex Р•СЂРѕС‚РёРєР° С– РЎРµРєСЃ	 вЂ¦ Erotica, Sex
+ home Р”С–Рј С‚Р° РЎС–Рј'СЏ: Р†РЅС€Рµ	 вЂ¦ Home: Other
+Р•РєРѕРЅРѕРјС–РєР° С– Р‘С–Р·РЅРµСЃ	 вЂ¦ Economy, Business
+ job_hunting РџРѕС€СѓРє СЂРѕР±РѕС‚Рё, РєР°СЂ'С”СЂР°	вЂ¦ Job Hunting
+ management РЈРїСЂР°РІР»С–РЅРЅСЏ, РїС–РґР±С–СЂ РїРµСЂСЃРѕРЅР°Р»Сѓ	вЂ¦ Management
+ marketing РњР°СЂРєРµС‚РёРЅРі, PR, СЂРµРєР»Р°РјР°	вЂ¦ Marketing
+ banking Р‘Р°РЅРєС–РІСЃСЊРєР° СЃРїСЂР°РІР°	вЂ¦ Banking
+ stock Р¦С–РЅРЅС– РїР°РїРµСЂРё, С–РЅРІРµСЃС‚РёС†С–С—	вЂ¦ Stock
+ accounting	Р‘СѓС…РѕР±Р»С–Рє, РѕРїРѕРґР°С‚РєСѓРІР°РЅРЅСЏ, Р°СѓРґРёС‚	вЂ¦ Accounting
+ global_economy Р—РѕРІРЅС–С€РЅСЊРѕРµРєРѕРЅРѕРјС–С‡РЅР° РґС–СЏР»СЊРЅС–СЃС‚СЊ	вЂ¦ Global Economy
+ economics Р•РєРѕРЅРѕРјС–РєР°	вЂ¦ Economics
+ industries Р“Р°Р»СѓР·РµРІС– РІРёРґР°РЅРЅСЏ	вЂ¦ Industries
+ org_behavior  РљРѕСЂРїРѕСЂР°С‚РёРІРЅР° РєСѓР»СЊС‚СѓСЂР°	вЂ¦ Corporate Culture
+ personal_finance РћСЃРѕР±РёСЃС‚С– С„С–РЅР°РЅСЃРё	вЂ¦ Personal Finance
+ real_estate РќРµСЂСѓС…РѕРјС–СЃС‚СЊ	вЂ¦ Real Estate
+ popular_business РџСЂРѕ Р±С–Р·РЅРµСЃ РїРѕРїСѓР»СЏСЂРЅРѕ	вЂ¦ Popular Business
+ small_business РњР°Р»РёР№ Р±С–Р·РЅРµСЃ	вЂ¦ Small Business
+ paper_work Р”С–Р»РѕРІРѕРґСЃС‚РІРѕ	вЂ¦ Paper Work
+ economics_ref Р”РѕРІС–РґРЅРёРєРё	вЂ¦ Economics Reference Book
  
