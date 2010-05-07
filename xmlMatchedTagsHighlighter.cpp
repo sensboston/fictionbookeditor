@@ -22,9 +22,6 @@
 
 int XmlMatchedTagsHighlighter::getFirstTokenPosFrom(int targetStart, int targetEnd, const char *token, pair<int, int> & foundPos)
 {
-	//int start = currentPos;
-	//int end = (direction == DIR_LEFT)?0:_pEditView->getCurrentDocLen();
-	
 	_pEditView->execute(SCI_SETTARGETSTART, targetStart);
 	_pEditView->execute(SCI_SETTARGETEND, targetEnd);
 	_pEditView->execute(SCI_SETSEARCHFLAGS, SCFIND_REGEXP|SCFIND_POSIX);

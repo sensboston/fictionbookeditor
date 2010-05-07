@@ -18,7 +18,7 @@ MsgBox('	–= Alex Saveliev Script =– \n\n'+
 
  for(var i=0, cnt=0; i<bin_objects.length; i++)
  {
-  var ret=window.external.SaveBinary(bin_objects[i].all.id.value, bin_objects[i].base64data);
+  var ret=window.external.SaveBinary(bin_objects[i].all.id.value, bin_objects[i].base64data, 0);
   if(ret) cnt++;
  }
 
