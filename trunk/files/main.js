@@ -69,6 +69,9 @@ function apiAddBinary(fullpath, id, type, data)
 		'onmouseout="HidePrevImage();"' +
 		'onclick="ShowFullImage(\'' + imghref + '\');"' +
 		'unselectable="on">&#x4e;</button>';
+		div.innerHTML += '<button id="save"' +
+		'onclick="SaveImage(\'' + imghref + '\');"' +
+		'unselectable="on">&#xcd;</button>';
 	}
 
 	div.innerHTML += '<label unselectable="on">ID:</label><input type="text" maxlength="256" id="id" style="width:20em;"><label unselectable="on">Type:</label><input type="text" style="width:8em;" maxlength="256" id="type" value="">';
@@ -300,6 +303,20 @@ function ShowFullImage(source)
   sender = prevImg;
   window.showModelessDialog("imgprev.html", sender, args);
   return;
+}
+
+function SaveImage(source)
+{
+  var bin_objects=document.all.binobj.getElementsByTagName("DIV");
+  for(var i=0, cnt=0; i<bin_objects.length; i++)
+  {
+
+     if ("fbw-internal:#"+bin_objects[i].all.id.value == source)
+     {
+       window.external.SaveBinary(bin_objects[i].all.id.value, bin_objects[i].base64data, 1);
+       break;
+     }
+  }
 }
 
 function LoadXSL(path, lang)
