@@ -11,7 +11,6 @@
 #include "FBEView.h"
 #include "SearchReplace.h"
 #include "Scintilla.h"
-#include ".\fbeview.h"
 #include "ElementDescMnr.h"
 
 extern CElementDescMnr _EDMnr;
@@ -1953,12 +1952,12 @@ bool CFBEView::DoSearchRegexp(bool fMore)
 			{
 				if(incr > 0)
 				{
-					for(long l = startMatch;l < rm->Count; ++l)
+					for(long l = m_startMatch;l < rm->Count; ++l)
 					{
 						AU::ReMatch crm(rm->Item[l]);
 						if(crm->FirstIndex >= s_off2 )
 						{
-							startMatch = l+1;
+							m_startMatch = l+1;
 							SelMatch(sel, crm);
 							return true;
 						}
@@ -1966,13 +1965,13 @@ bool CFBEView::DoSearchRegexp(bool fMore)
 				}
 				else
 				{
-					for(long l = endMatch; l >= 0; --l)
+					for(long l = m_endMatch; l >= 0; --l)
 					{
 						AU::ReMatch crm(rm->Item[l]);
 						if(crm->FirstIndex < s_off1)
 						{
 							SelMatch(sel, crm);
-							endMatch = l-1;
+							m_endMatch = l-1;
 							return true;
 						}
 					}
@@ -2013,12 +2012,12 @@ bool CFBEView::DoSearchRegexp(bool fMore)
 			if(incr > 0)
 			{
 				SelMatch(sel, rm->Item[0]);
-				startMatch = 1;
+				m_startMatch = 1;
 			}
 			else
 			{
 				SelMatch(sel, rm->Item[rm->Count-1]);
-				endMatch = rm->Count-2;
+				m_endMatch = rm->Count-2;
 			}
 			if(fWrapped)
 				::MessageBeep(MB_ICONASTERISK);

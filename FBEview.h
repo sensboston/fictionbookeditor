@@ -299,7 +299,7 @@ public:
   DECLARE_WND_SUPERCLASS(NULL, CAxWindow::GetWndClassName())
 
   CFBEView(HWND frame, bool fNorm) : m_frame(frame), m_ignore_changes(0), m_enable_paste(0),
-    m_normalize(fNorm), m_complete(false), m_initialized(false),
+    m_normalize(fNorm), m_complete(false), m_initialized(false), m_startMatch(0), m_endMatch(0),
     m_form_changed(false), m_form_cp(false), m_find_dlg(0), m_replace_dlg(0), m_file_path(L""), m_file_name(L"") { }
   ~CFBEView();
 
@@ -689,7 +689,7 @@ private:
 	bool ExpandTxtRangeToParagraphs(MSHTML::IHTMLTxtRangePtr &rng, MSHTML::IHTMLElementPtr& begin, MSHTML::IHTMLElementPtr& end)const;
 	CString GetClearedRangeText(const MSHTML::IHTMLTxtRangePtr &rng)const;   
 	// added by SeNS
-	int startMatch, endMatch;
+	int m_startMatch, m_endMatch;
 };
 
 /////////////////////////////////////////////////////////////////////////////
