@@ -250,6 +250,7 @@ function ShowPrevImage(source)
 	prevImg.src = source;
 	prevImg.width = imgWidth ;
 	prevImg.height = imgHeight;
+	prevImg.style.cursor = "default";
 
 	prevImgPanel.style.left = (coordX + scrollX - Math.round(imgWidth/2)) + "px";
 	switch(place)
@@ -280,30 +281,75 @@ function HidePrevImage()
 
 function ShowFullImage(source)
 {
-  window.external.MsgBox("Full image preview is not implemented yet.");
-  return;
+	HidePrevImage();
 
-  var prevImg = new Image();
-  prevImg.src = source;
+	var fullImgPanel = document.getElementById("fullImgPanel");
+	var fullImg = document.getElementById("fullImg");
 
-  // That let image to be loaded into rendered <img> (for huge images).
-  setTimeout('', 500);
+	if(!fullImgPanel || !fullImg) return;
 
-  var args = "edge:sunken;help:no;resizable:no;status:no;"
-  if(prevImg.width >= screen.width && prevImg.height >= screen.height)
-    args += ("dialogWidth:" + screen.width + "px;dialogHeight:" + screen.height +"px");
-  else if(prevImg.width >= screen.width)
-    args += ("dialogWidth:" + screen.width + "px;dialogHeight:" + (prevImg.height+25) + "px;scroll:auto");
-  else if(prevImg.height >= screen.height)
-    args += ("dialogWidth:" + (prevImg.width+20) + "px;dialogHeight:" + screen.height + "px;scroll:auto");
-  else
-    args += ("dialogWidth:" + (prevImg.width+4) + "px;dialogHeight:" + (prevImg.height+4) + "px;" + "scroll:no");
+	var idx = -1;
+	for(i = 0; i < ImagesInfo.length; ++i)
+	{
+		if(ImagesInfo[i].src == source)
+		{
+			idx = i;
+			break;
+		}
+	}
 
-  var sender = new Object();
-  sender = prevImg;
-  window.showModelessDialog("imgprev.html", sender, args);
-  return;
+	if(idx == -1)
+		return;
+
+	var imgWidth = ImagesInfo[idx].width;
+	var imgHeight = ImagesInfo[idx].height;
+
+	var scrollX = 0;
+	var scrollY = 0;
+	if(document.documentElement && (document.documentElement.scrollTop || document.documentElement.scrollLeft))
+	{
+		scrollX += document.documentElement.scrollLeft;
+		scrollY += document.documentElement.scrollTop;
+	}
+
+	var winWidth = 0;;
+	var winHeight = 0;
+	if (document.documentElement && document.documentElement.clientWidth && document.documentElement.clientHeight)
+	{
+		winWidth = document.documentElement.clientWidth;
+		winHeight = document.documentElement.clientHeight;
+	}
+
+	fullImg.src = source;
+	fullImg.width = imgWidth;
+	fullImg.height = imgHeight;
+	if (imgHeight < winHeight ) fullImg.style.top = ((winHeight-imgHeight) / 2)+"px";
+	else fullImg.style.top = "0px";
+	fullImg.style.cursor = "default";
+
+	fullImgPanel.style.left = "0px";
+	fullImgPanel.style.width = (winWidth) + "px";
+
+	fullImgPanel.style.top = (scrollY) + "px";
+	if (winHeight < imgHeight) winHeight = imgHeight;
+	fullImgPanel.style.height = (winHeight) + "px";
+
+	fullImgPanel.style.visibility = "visible";
 }
+
+function HideFullImage()
+{
+	var fullImgPanel = document.getElementById("fullImgPanel");
+	var fullImg = document.getElementById("fullImg");
+
+	if(!fullImgPanel || !fullImg) return;
+
+	fullImg.src = "";
+	fullImg.width = 0;
+	fullImg.height = 0;
+	fullImgPanel.style.visibility = "hidden";
+}
+
 
 function SaveImage(source)
 {

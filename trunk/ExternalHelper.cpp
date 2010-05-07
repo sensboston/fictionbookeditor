@@ -103,7 +103,8 @@ static void LoadGenres()
       buffer[--l]='\0';
 
     if (buffer[0] && buffer[0]!=' ') {
-      CString name(buffer);
+	  CA2W tmp(buffer, 65001);
+      CString name(tmp);
       name.Replace(_T("&"),_T("&&"));
       g_genre_groups.Add(name);
     } else {
@@ -114,7 +115,8 @@ static void LoadGenres()
       Genre   g;
       g.groupid=g_genre_groups.GetSize()-1;
       g.id=buffer+1;
-      g.text=p;
+	  CA2W tmp(p, 65001);
+      g.text.SetString(tmp);
       g.text.Replace(_T("&"),_T("&&"));
       g_genres.Add(g);
     }

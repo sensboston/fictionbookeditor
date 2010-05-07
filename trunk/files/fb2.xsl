@@ -23,6 +23,11 @@
 		<div class="float" id="prevImgPanel">
 			<img id="prevImg"/>
 		</div>
+
+		<div class="float" id="fullImgPanel" align="center">
+			<img id="fullImg" onclick="HideFullImage()"/>
+		</div>
+
 		<fieldset style="border:none">
 			<button id="tiShowBtn" onclick="ShowElementsMenu(this)" unselectable="on" style="font-family: Tahoma; float: left;">
 				<xsl:value-of select="$IDS_VIEW_BTN"/>
