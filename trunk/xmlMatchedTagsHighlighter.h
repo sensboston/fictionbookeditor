@@ -18,6 +18,8 @@
 #ifndef XMLMATCHEDTAGSHIGHLIGHTER_H
 #define XMLMATCHEDTAGSHIGHLIGHTER_H
 
+#pragma once
+
 using namespace std;
 
 // wrapper class
@@ -58,12 +60,17 @@ private:
 
 enum TagCateg {tagOpen, tagClose, inSingleTag, outOfTag, invalidTag, unknownPb};
 
+typedef pair<CString, int> TAG;
+typedef vector<TAG>::iterator tagIterator;
+
+
 class XmlMatchedTagsHighlighter {
 public:
 	XmlMatchedTagsHighlighter(CWindow* source) {
 	  _pEditView = new ScintillaEditView(source);
 	};
-	void tagMatch(bool doHilite, bool doHiliteAttr, bool gotoTag);
+	bool tagMatch(bool doHilite, bool doHiliteAttr, bool gotoTag);
+	void gotoWrongTag();
 	
 private:
 	struct XmlMatchedTagsPos {
@@ -88,6 +95,7 @@ private:
 				return true;
 		return false;
 	};
+	vector< pair<CString, int> > lookupTags();
 };
 
 #endif //XMLMATCHEDTAGSHIGHLIGHTER_H

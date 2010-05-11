@@ -681,6 +681,7 @@ public:
   {
 	  long newElementsNum = Document()->all->length;
 	  bool b = (newElementsNum != m_elementsNum);
+	  if (b) m_startMatch = m_endMatch = 0;
 	  m_elementsNum = newElementsNum;
 	  return b;
   }

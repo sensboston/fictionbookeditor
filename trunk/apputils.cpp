@@ -116,7 +116,8 @@ public:
   END_DDX_MAP()
 
   BEGIN_MSG_MAP(CInputBox)
-        COMMAND_ID_HANDLER(IDOK, OnOK)
+        COMMAND_ID_HANDLER(IDYES, OnYes)
+		COMMAND_ID_HANDLER(IDNO, OnCancel)
         COMMAND_ID_HANDLER(IDCANCEL, OnCancel)
         MESSAGE_HANDLER(WM_INITDIALOG, OnInitDialog)
   END_MSG_MAP()
@@ -128,7 +129,7 @@ public:
     return 0;
   }
 
-  LRESULT OnOK(WORD, WORD wID, HWND, BOOL&) {
+  LRESULT OnYes(WORD, WORD wID, HWND, BOOL&) {
     DoDataExchange(TRUE);  // Populate the data members
     EndDialog(wID);
     return 0L;
@@ -140,13 +141,12 @@ public:
   }
 };
 
-bool	InputBox(CString& result,const wchar_t *title,const wchar_t *prompt) {
+int	InputBox(CString& result, const wchar_t *title, const wchar_t *prompt) {
   CInputBox   dlg(title,prompt);
   dlg.m_text=result;
-  if (dlg.DoModal()!=IDOK)
-    return false;
-  result=dlg.m_text;
-  return true;
+  int dlgResult = dlg.DoModal();
+  if (dlgResult == IDYES) result=dlg.m_text;
+  return dlgResult;
 }
 
 // html

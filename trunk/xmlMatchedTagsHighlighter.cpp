@@ -16,6 +16,7 @@
 //Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 #include "stdafx.h"
+#include <algorithm>
 #include "Scintilla.h"
 #include "SciLexer.h"
 #include "xmlMatchedTagsHighlighter.h"
@@ -254,7 +255,6 @@ bool XmlMatchedTagsHighlighter::getMatchedTagPos(int searchStart, int searchEnd,
 	return getMatchedTagPos(start, end, tag2find, oppositeTag2find, oppositeTagFound, tagsPos);
 }
 
-
 bool XmlMatchedTagsHighlighter::getXmlMatchedTagsPos(XmlMatchedTagsPos & tagsPos)
 {
 	// get word where caret is on
@@ -437,9 +437,7 @@ vector< pair<int, int> > XmlMatchedTagsHighlighter::getAttributesPos(int start, 
 	return attributes;
 }
 
-
-
-void XmlMatchedTagsHighlighter::tagMatch(bool doHilite, bool doHiliteAttr, bool gotoTag) 
+bool XmlMatchedTagsHighlighter::tagMatch(bool doHilite, bool doHiliteAttr, bool gotoTag) 
 {
 	bool bFound = false;
 
@@ -529,5 +527,121 @@ void XmlMatchedTagsHighlighter::tagMatch(bool doHilite, bool doHiliteAttr, bool 
 			else
 				_pEditView->execute(SCI_GOTOPOS, xmlTags.tagOpenStart+1);
 		}
+	}
+	return bFound;
+}
+
+bool erasedTag(TAG value) { return (value.second == -1); }
+
+// lookup all tags in document
+vector< pair<CString, int> > XmlMatchedTagsHighlighter::lookupTags()
+{
+	vector<TAG> tags;
+
+	// search options
+    _pEditView->execute(SCI_SETSEARCHFLAGS, SCFIND_REGEXP | SCFIND_POSIX);
+    int docLen = _pEditView->getCurrentDocLen();
+
+	// regexp pattern to match any XML tag
+	CString pattern(L"(<[^(><)]+>)");
+	int pattLen = pattern.GetLength();
+	char *patt=(char *)malloc(pattLen+1);
+	char *tmp=(char *)malloc(1024);
+	if (patt && tmp) 
+	{
+		::WideCharToMultiByte(CP_UTF8, 0, pattern, pattLen, patt, pattLen, NULL, NULL);
+
+		int pos = 0;
+		while (pos >=0 && pos < docLen)
+		{
+			_pEditView->execute(SCI_SETTARGETSTART,pos);
+			_pEditView->execute(SCI_SETTARGETEND,docLen);
+			pos = _pEditView->execute(SCI_SEARCHINTARGET,pattLen, (LPARAM) patt);
+
+			if (pos >=0 && pos < docLen)
+			{
+				int tagPos = _pEditView->execute(SCI_GETTARGETSTART);
+				pos = _pEditView->execute(SCI_GETTARGETEND);
+
+				TextRange tr;
+				tr.chrg.cpMin = tagPos;
+				tr.chrg.cpMax = pos;
+				tr.lpstrText = tmp;
+				_pEditView->execute(SCI_GETTEXTRANGE, 0, reinterpret_cast<LPARAM>(&tr));
+				CString tagName(tmp);
+				// check tag type: open, close or single
+				bool isCloseTag = (tagName.Find (L"</")==0);
+				bool isSingleTag = false;
+				if (!isCloseTag) isSingleTag = (tagName.Find (L"/>")>0);
+				
+				if (!isSingleTag)
+				{
+					// remove tag attributes
+					if (isCloseTag) tagName = tagName.Mid(1, tagName.Find(L">",1)-1);
+					else
+					{
+						int attr = tagName.Find(L" ",1);
+						if (attr > 0) tagName = tagName.Mid(1, attr-1);
+						else tagName = tagName.Mid(1, tagName.GetLength()-2);
+					}
+
+					if (!tags.empty() && tagName.CompareNoCase(L"/"+tags.back().first) == 0) tags.pop_back();
+					else tags.push_back (TAG(tagName,tagPos));
+				}
+			}
+		}
+
+		free(patt);
+		free(tmp);
+	}
+
+	// remove matched (correct) tags
+	if (!tags.empty())
+	{
+		tagIterator firstTag = tags.begin();
+		tagIterator lastTag = tags.end()-1;
+
+		while ( &firstTag && &lastTag && firstTag < lastTag)
+		{
+			if ((*lastTag).first.CompareNoCase(L"/"+(*firstTag).first) == 0)
+			{
+				(*firstTag).second = -1;
+				(*lastTag).second = -1;
+				firstTag++;
+				lastTag--;
+			}
+			// locate matched tag pair
+			else 
+			{
+				tagIterator firstTmp = firstTag;
+				while ((firstTmp < lastTag) && ( (*lastTag).first.CompareNoCase(L"/"+(*firstTmp).first) != 0))
+				{
+					firstTmp++;
+				}
+				if (firstTmp < lastTag) firstTag = firstTmp;
+				else lastTag--;
+			}
+		}
+
+		tags.erase (remove_if(tags.begin(), tags.end(), erasedTag), tags.end());
+	}
+
+	return tags;
+}
+
+void XmlMatchedTagsHighlighter::gotoWrongTag()
+{
+	vector<TAG> wrongTags = lookupTags();
+	if (!wrongTags.empty())
+	{
+		int caretPos = _pEditView->execute(SCI_GETCURRENTPOS);
+		int newPos = wrongTags[0].second;
+		for (tagIterator it=wrongTags.begin(); it!=wrongTags.end(); it++)
+			if ((*it).second > caretPos)
+			{
+				newPos = (*it).second;
+				break;
+			}
+		_pEditView->execute(SCI_GOTOPOS, newPos);
 	}
 }

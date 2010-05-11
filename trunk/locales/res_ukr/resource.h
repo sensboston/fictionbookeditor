@@ -245,6 +245,7 @@
 #define IDS_HOTKEY_TOOLS_SPELLHIGHLIGHT 282
 #define IDS_HOTKEY_NAVIGATION_GOTO_FOOTNOTE 283
 #define IDS_HOTKEY_NAVIGATION_GOTO_MATCHTAG 284
+#define IDS_HOTKEY_NAVIGATION_GOTO_WRONGTAG 285
 #define IDS_LANG_UKRAINIAN              300
 #define IDC_SPELL_REPLACE               500
 #define ID_VER_ADVANCE                  550
@@ -278,6 +279,7 @@
 #define IDC_SHOWEOL                     1029
 #define IDC_SHOWLINENUMBERS             1030
 #define IDC_STYLE                       1031
+#define IDC_TAGHL                       1031
 #define IDC_COLSPAN                     1032
 #define IDC_ROWSPAN                     1033
 #define IDC_ALIGN                       1034
@@ -465,7 +467,8 @@
 #define ID_SAVEIMG_AS                   32904
 #define ID_TOOLS_SPELLCHECK             32905
 #define ID_TOOLS_SPELLCHECK_HIGHLIGHT   32906
-#define ID_GOTO_MATCHTAG				32907
+#define ID_GOTO_MATCHTAG                32907
+#define ID_GOTO_WRONGTAG                32908
 #define ID_EDIT_PASTE2                  0xE525
 #define IDS_ENCODINGS                   61403
 #define IDS_DOCUMENT_TREE_CAPTION       61404

@@ -6,9 +6,7 @@
 #include "MainFrm.h"
 #include "CFileDialogEx.h"
 #include "SettingsDlg.h"
-
 #include "xmlMatchedTagsHighlighter.h"
-
 
 // utility methods
 bool  CMainFrame::IsBandVisible(int id) {
@@ -408,8 +406,8 @@ BOOL CMainFrame::OnIdle()
 			ID_INSERT_TABLE,
 			ID_VIEW_TREE,
 			ID_GOTO_REFERENCE,
-			ID_GOTO_FOOTNOTE
-		};
+			ID_GOTO_FOOTNOTE,
+		};	
 
 		for (int i = 0; i < sizeof(disabled_commands)/sizeof(disabled_commands[0]); ++i)
 			UIEnable(disabled_commands[i], FALSE);
@@ -456,6 +454,8 @@ BOOL CMainFrame::OnIdle()
 		UIEnable(ID_EDIT_CUT, fCanCC);
 		UIEnable(ID_EDIT_PASTE, m_source.SendMessage(SCI_CANPASTE));
 		UIEnable(ID_EDIT_PASTE2, m_source.SendMessage(SCI_CANPASTE));
+
+		UIEnable(ID_GOTO_WRONGTAG, true);
 
 		if(m_source.SendMessage(SCI_CANUNDO))
 		{
@@ -568,6 +568,9 @@ BOOL CMainFrame::OnIdle()
 		UIUpdateViewCmd(view, ID_GOTO_REFERENCE);
 		UIUpdateViewCmd(view, ID_EDIT_MERGE);
 		UIUpdateViewCmd(view, ID_EDIT_REMOVE_OUTER_SECTION);
+
+		UIEnable(ID_GOTO_MATCHTAG, false);
+		UIEnable(ID_GOTO_WRONGTAG, false);
 
 		// Added by SeNS: process bitmap paste
 		UIEnable(ID_EDIT_PASTE, m_source.SendMessage(SCI_CANPASTE) || BitmapInClipboard());
@@ -4012,10 +4015,23 @@ void  CMainFrame::SciModified(const SCNotification& scn) {
   }
 }
 
-void CMainFrame::SciUpdateUI(bool gotoTag)
+bool CMainFrame::SciUpdateUI(bool gotoTag)
 {
+	if (_Settings.XmlSrcTagHL() || gotoTag)
+	{
+		XmlMatchedTagsHighlighter xmlTagMatchHiliter(&m_source);
+		UIEnable(ID_GOTO_MATCHTAG, xmlTagMatchHiliter.tagMatch(_Settings.XmlSrcTagHL(), false, gotoTag));
+		return true;
+	}
+	return false;
+}
+
+void CMainFrame::SciGotoWrongTag()
+{
+	CWaitCursor *hourglass = new CWaitCursor();
 	XmlMatchedTagsHighlighter xmlTagMatchHiliter(&m_source);
-	xmlTagMatchHiliter.tagMatch(_Settings.XmlSrcSyntaxHL(), false, gotoTag);
+	xmlTagMatchHiliter.gotoWrongTag();
+	delete hourglass;
 }
 
 void  CMainFrame::SciMarginClicked(const SCNotification& scn) 
@@ -4549,6 +4565,10 @@ void CMainFrame::ApplyConfChanges()
 		m_source.SendMessage(SCI_SETMARGINWIDTHN,0,64);
 	else
 		m_source.SendMessage(SCI_SETMARGINWIDTHN,0,0);
+
+	XmlMatchedTagsHighlighter xmlTagMatchHiliter(&m_source);
+	xmlTagMatchHiliter.tagMatch(_Settings.XmlSrcTagHL(), false, false);
+	UIEnable(ID_GOTO_MATCHTAG, _Settings.XmlSrcTagHL());
 
 	// added by SeNS
 	if (_Settings.GetUseSpellChecker())

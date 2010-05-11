@@ -66,6 +66,8 @@ BEGIN
         MENUITEM "&Заменить...",                ID_EDIT_REPLACE
         MENUITEM SEPARATOR
         MENUITEM "&Перейти к сноске или к ссылке", ID_GOTO_FOOTNOTE
+        MENUITEM "Перейти к парному &тегу",     ID_GOTO_MATCHTAG
+        MENUITEM "Перейти к о&шибочному тегу",	ID_GOTO_WRONGTAG
         MENUITEM SEPARATOR
         MENUITEM "К&лонировать",                ID_EDIT_CLONE
         MENUITEM "Разр&езать",                  ID_EDIT_SPLIT
@@ -256,15 +258,16 @@ BEGIN
     DEFPUSHBUTTON   "OK",IDOK,140,118,50,14
 END
 
-IDD_INPUTBOX DIALOGEX 0, 0, 288, 46
+IDD_INPUTBOX DIALOGEX 0, 0, 290, 70
 STYLE DS_SETFONT | DS_MODALFRAME | DS_CENTER | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Ввод"
 FONT 9, "Tahoma", 0, 0, 0x0
 BEGIN
-    LTEXT           "Текст:",IDC_PROMPT,7,7,221,10
-    EDITTEXT        IDC_INPUT,7,20,221,12,ES_AUTOHSCROLL
-    DEFPUSHBUTTON   "OK",IDOK,231,7,50,14
-    PUSHBUTTON      "Отмена",IDCANCEL,231,24,50,14
+    LTEXT           "Текст:",IDC_PROMPT,7,7,273,18
+    EDITTEXT        IDC_INPUT,7,31,273,12,ES_AUTOHSCROLL
+    DEFPUSHBUTTON   "&Да",IDYES,155,49,39,14
+    PUSHBUTTON      "&Нет",IDNO,198,49,39,14
+    PUSHBUTTON      "&Отмена",IDCANCEL,241,49,39,14
 END
 
 IDD_OPTIONS DIALOGEX 0, 0, 222, 233
@@ -283,7 +286,7 @@ BEGIN
     GROUPBOX        "Редактор кода",IDC_STATIC,7,110,207,52
     CONTROL         "Перенос строк",IDC_WRAP,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,13,121,88,10
     CONTROL         "Подсветка синтаксиса",IDC_SYNTAXHL,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,13,135,125,10
-    CONTROL         "Показывать символы конца строк",IDC_SHOWEOL,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,13,148,125,10
+    CONTROL         "Показывать символы конца строк",IDC_SHOWEOL,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,13,148,121,10
     CONTROL         "Ускоренный режим",IDC_FAST_MODE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,13,96,87,10
     LTEXT           "Язык:",IDC_STATIC,14,23,41,8
     COMBOBOX        IDC_LANG,71,21,143,30,CBS_DROPDOWNLIST | CBS_SORT | WS_VSCROLL | WS_TABSTOP
@@ -295,6 +298,7 @@ BEGIN
     PUSHBUTTON      "..",IDC_DICTPATH,201,200,12,12
     PUSHBUTTON      "",IDC_BG,182,80,31,12
     CONTROL         "Показывать номера строк",IDC_SHOWLINENUMBERS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,113,122,95,11
+    CONTROL         "Подсветка парных тегов",IDC_TAGHL,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,113,134,93,11
 END
 
 IDD_REPLACE DIALOGEX 0, 0, 295, 87
@@ -728,6 +732,7 @@ BEGIN
     IDS_HOTKEY_TOOLS_SPELLHIGHLIGHT "Переключить выделение слов с ошибками"
     IDS_HOTKEY_NAVIGATION_GOTO_FOOTNOTE "Переход к сноске или к ссылке"
     IDS_HOTKEY_NAVIGATION_GOTO_MATCHTAG "Переход на парный тег"
+    IDS_HOTKEY_NAVIGATION_GOTO_WRONGTAG "Переход к ошибочному тегу"
 END
 
 STRINGTABLE 
@@ -836,7 +841,10 @@ END
 STRINGTABLE 
 BEGIN
     ID_INSERT_TABLE         "Вставить таблицу на место курсора\nВставить таблицу"
-    ID_GOTO_FOOTNOTE        "Перейти на текст сноски\nПерейти на текст сноски"
+    ID_GOTO_FOOTNOTE        "Перейти на текст сноски или к ссылке\nПерейти на текст сноски или к ссылке"
+	ID_GOTO_MATCHTAG		"Перейти к парному тегу\nПерейти к парному тегу"
+	ID_GOTO_WRONGTAG		"Перейти к ошибочному тегу\nПерейти к ошибочному тегу"
+	ID_VIEW_FASTMODE		"Переключить в ускоренный режим\nПереключить в ускоренный режим"
 END
 
 STRINGTABLE 

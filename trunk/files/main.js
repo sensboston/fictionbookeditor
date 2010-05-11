@@ -1,3 +1,10 @@
+var IDOK     = 1;
+var IDCANCEL = 2;
+var IDABORT  = 3;
+var IDRETRY  = 4;
+var IDIGNORE = 5;
+var IDYES    = 6;
+var IDNO     = 7;
 
 window.onerror = errorHandler; // document.lvl=0;
 var ImagesInfo = new Array();
@@ -685,13 +692,17 @@ function apiSetFastMode(fast)
 // Internal private functions
 //======================================
 
-function   MsgBox(str)
+function MsgBox(str)
 {
 	window.external.MsgBox(str);
 }
 function AskYesNo(str)
 {
 	return window.external.AskYesNo(str);
+}
+function InputBox(msg, value, result)
+{
+	return window.external.InputBox(msg, "FBE script message", value, result);
 }
 //--------------------------------------
 // Our own, less scary error handler
@@ -892,8 +903,7 @@ function SetProgramUsed(desc)
       prgs.value = ver;
     else
     {
-      
-      if(prgs.value.search(ver) == -1)
+      if(prgs.value.search("FictionBook Editor") == -1)
       {
         prgs.value += ", "+ver;
       }

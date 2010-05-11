@@ -32,6 +32,7 @@ public:
 
   CButton	    m_src_wrap;
   CButton	    m_src_hl;
+  CButton	    m_src_taghl;
   CButton	    m_src_eol;
   CButton	    m_src_line_numbers;
   

@@ -118,9 +118,9 @@ BEGIN
     IDD_INPUTBOX, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 281
+        RIGHTMARGIN, 280
         TOPMARGIN, 7
-        BOTTOMMARGIN, 39
+        BOTTOMMARGIN, 63
     END
 
     IDD_FIND, DIALOG
@@ -312,17 +312,19 @@ BEGIN
     LTEXT           "Custom dictionary:",IDS_SPELL_CUSTOM_DICT,15,191,60,9
     PUSHBUTTON      "..",IDC_DICTPATH,201,189,12,12
     CONTROL         "Show line numbers",IDC_SHOWLINENUMBERS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,113,123,95,11
+    CONTROL         "Highlight matched tags",IDC_TAGHL,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,113,134,87,11
 END
 
-IDD_INPUTBOX DIALOG  0, 0, 288, 46
+IDD_INPUTBOX DIALOGEX 0, 0, 290, 70
 STYLE DS_SETFONT | DS_MODALFRAME | DS_CENTER | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Input"
-FONT 9, "Tahoma"
+FONT 9, "Tahoma", 0, 0, 0x0
 BEGIN
-    LTEXT           "Text:",IDC_PROMPT,7,7,221,10
-    EDITTEXT        IDC_INPUT,7,20,221,12,ES_AUTOHSCROLL
-    DEFPUSHBUTTON   "OK",IDOK,231,7,50,14
-    PUSHBUTTON      "Cancel",IDCANCEL,231,24,50,14
+    LTEXT           "Text:",IDC_PROMPT,7,7,273,18
+    EDITTEXT        IDC_INPUT,7,31,273,12,ES_AUTOHSCROLL
+    DEFPUSHBUTTON   "&Yes",IDYES,155,49,39,14
+    PUSHBUTTON      "&No",IDNO,198,49,39,14
+    PUSHBUTTON      "&Cancel",IDCANCEL,241,49,39,14
 END
 
 IDD_FIND DIALOGEX 0, 0, 295, 76
@@ -654,7 +656,9 @@ BEGIN
         MENUITEM "Find &Next",                  ID_EDIT_FINDNEXT
         MENUITEM "R&eplace...",                 ID_EDIT_REPLACE
         MENUITEM SEPARATOR
-        MENUITEM "&Goto footnote or reference", ID_GOTO_FOOTNOTE
+        MENUITEM "&Go to footnote or reference", ID_GOTO_FOOTNOTE
+        MENUITEM "Go to matching &tag",         ID_GOTO_MATCHTAG
+        MENUITEM "Go to &wrong tag",            ID_GOTO_WRONGTAG
         MENUITEM SEPARATOR
         MENUITEM "C&lone container",            ID_EDIT_CLONE
         MENUITEM "Sp&lit container",            ID_EDIT_SPLIT
@@ -779,14 +783,32 @@ BEGIN
     IDS_HOTKEY_FASTMODE     "Fast mode"
     IDS_HOTKEY_TREEVIEW     "Toggle tree view"
     IDS_HOTKEY_TOOLS_SPELLHIGHLIGHT "Toggle highlight"
-    IDS_HOTKEY_NAVIGATION_GOTO_FOOTNOTE "Goto footnote or reference"
-    IDS_HOTKEY_NAVIGATION_GOTO_MATCHTAG "Goto matchig tag"
+    IDS_HOTKEY_NAVIGATION_GOTO_FOOTNOTE "Go to footnote or reference"
+    IDS_HOTKEY_NAVIGATION_GOTO_MATCHTAG "Go to matchig tag"
+    IDS_HOTKEY_NAVIGATION_GOTO_WRONGTAG "Go to wrong tag"
 END
 
 STRINGTABLE 
 BEGIN
     ID_INSERT_TABLE         "Insert an table at cursor\nInsert table"
-    ID_GOTO_FOOTNOTE        "Goto footnote or reference\nGoto footnote or reference"
+    ID_GOTO_FOOTNOTE        "Go to footnote or reference\nGo to footnote or reference"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_TOOLS_SPELLCHECK     "Check document spelling...\nCheck document spelling"
+    ID_GOTO_MATCHTAG        "Go to matching tag\nGo to matching tag"
+    ID_GOTO_WRONGTAG        "Go to wrong tag\nGo to wrong tag"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_DT_LEFT              "\nMove to the left"
+    ID_DT_DELETE            "\nDelete selected node"
+    ID_DT_RIGHT_ONE         "\nMove node once to the right"
+    ID_DT_RIGHT_SMART       "\nMove one node to the right with smart mode"
+    ID_DT_MERGE             "\nMerge containers"
+    ID_VIEW_FASTMODE        "Toggle fast mode\nToggle fast mode"
 END
 
 STRINGTABLE 
@@ -1100,20 +1122,6 @@ END
 STRINGTABLE 
 BEGIN
     IDC_SPELL_REPLACE       "Replace word"
-END
-
-STRINGTABLE 
-BEGIN
-    ID_TOOLS_SPELLCHECK     "Check document spelling...\nCheck document spelling"
-END
-
-STRINGTABLE 
-BEGIN
-    ID_DT_LEFT              "\nMove to the left"
-    ID_DT_DELETE            "\nDelete selected node"
-    ID_DT_RIGHT_ONE         "\nMove node once to the right"
-    ID_DT_RIGHT_SMART       "\nMove one node to the right with smart mode"
-    ID_DT_MERGE             "\nMerge containers"
 END
 
 #endif    // English (U.S.) resources
