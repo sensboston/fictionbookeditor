@@ -453,6 +453,7 @@ class CSettings : public ISerializable, public IObjectFactory
 
 	bool		m_xml_src_wrap;
 	bool		m_xml_src_syntaxHL;
+	bool		m_xml_src_tagHL;
 	bool		m_xml_src_showEOL;
 
 	bool		m_fast_mode;
@@ -540,6 +541,7 @@ public:
 	bool KeepEncoding()const;
 	bool XmlSrcWrap()const;
 	bool XmlSrcSyntaxHL()const;
+	bool XmlSrcTagHL()const;
 	bool XmlSrcShowEOL()const;
 	bool FastMode()const;
 	bool ViewStatusBar()const;
@@ -594,6 +596,7 @@ public:
 	void	SetFontSize(DWORD size, bool apply = false);
 	void	SetXmlSrcWrap(bool wrap, bool apply = false);
 	void	SetXmlSrcSyntaxHL(bool hl, bool apply = false);
+	void	SetXmlSrcTagHL(bool hl, bool apply = false);
 	void	SetXmlSrcShowEOL(bool eol, bool apply = false);
 	void	SetFastMode(bool mode,  bool apply = false);
 	void	SetFont(const CString& font, bool apply = false);

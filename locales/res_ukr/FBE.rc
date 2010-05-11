@@ -66,6 +66,8 @@ BEGIN
         MENUITEM "&Замінити...",                ID_EDIT_REPLACE
         MENUITEM SEPARATOR
         MENUITEM "&Перейти до примітки або до посилання", ID_GOTO_FOOTNOTE
+        MENUITEM "Перейти до парного тегу",     ID_GOTO_MATCHTAG
+        MENUITEM "Перейти до помилкового тегу", ID_GOTO_WRONGTAG
         MENUITEM SEPARATOR
         MENUITEM "К&лонувати",                  ID_EDIT_CLONE
         MENUITEM "Розр&ізати",                  ID_EDIT_SPLIT
@@ -255,15 +257,16 @@ BEGIN
     DEFPUSHBUTTON   "Гаразд",IDOK,140,118,50,14
 END
 
-IDD_INPUTBOX DIALOGEX 0, 0, 288, 46
+IDD_INPUTBOX DIALOGEX 0, 0, 290, 70
 STYLE DS_SETFONT | DS_MODALFRAME | DS_CENTER | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Введення"
 FONT 9, "Tahoma", 0, 0, 0x0
 BEGIN
-    LTEXT           "Текст:",IDC_PROMPT,7,7,221,10
-    EDITTEXT        IDC_INPUT,7,20,221,12,ES_AUTOHSCROLL
-    DEFPUSHBUTTON   "Гаразд",IDOK,231,7,50,14
-    PUSHBUTTON      "Скасувати",IDCANCEL,231,24,50,14
+    LTEXT           "Текст:",IDC_PROMPT,7,7,273,18
+    EDITTEXT        IDC_INPUT,7,31,273,12,ES_AUTOHSCROLL
+    DEFPUSHBUTTON   "&Так",IDYES,155,49,39,14
+    PUSHBUTTON      "&Ні",IDNO,198,49,39,14
+    PUSHBUTTON      "&Скасувати",IDCANCEL,241,49,39,14
 END
 
 IDD_OPTIONS DIALOGEX 0, 0, 223, 219
@@ -294,6 +297,7 @@ BEGIN
     PUSHBUTTON      "..",IDC_DICTPATH,198,190,12,12
     PUSHBUTTON      "",IDC_BG,180,75,31,12
     CONTROL         "Показувати номери рядків",IDC_SHOWLINENUMBERS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,111,116,96,11
+    CONTROL         "Підсвітка парних тегів",IDC_TAGHL,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,111,128,93,11
 END
 
 IDD_REPLACE DIALOGEX 0, 0, 295, 87
@@ -727,6 +731,7 @@ BEGIN
     IDS_HOTKEY_TOOLS_SPELLHIGHLIGHT "Переключити виділення помилок"
     IDS_HOTKEY_NAVIGATION_GOTO_FOOTNOTE "Перехід до виноски або до посилання"
     IDS_HOTKEY_NAVIGATION_GOTO_MATCHTAG "Перехід на парний тег"
+    IDS_HOTKEY_NAVIGATION_GOTO_WRONGTAG "Перехід до помилкового тегу"
 END
 
 STRINGTABLE 
@@ -836,6 +841,9 @@ STRINGTABLE
 BEGIN
     ID_INSERT_TABLE         "Вставити таблицю на місце курсору\nВставити таблицю"
     ID_GOTO_FOOTNOTE        "Перейти до тексту примітки або до посилання\nПерейти до тексту примітки або до посилання"
+    ID_GOTO_MATCHTAG		"Перейти до парного тегу\nПерейти до парного тегу"
+    ID_GOTO_WRONGTAG		"Перейти до помилкового тегу\nПерейти до помилкового тегу" 
+	ID_VIEW_FASTMODE		"Перемкнути в прискорений режим\nПеремкнути в прискорений режим"
 END
 
 STRINGTABLE 

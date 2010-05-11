@@ -268,6 +268,22 @@ public:
 		*ver = version.AllocSysString();
 		return S_OK;
 	}
+
+	STDMETHOD(InputBox)(BSTR prompt, BSTR title, BSTR value, BSTR* input, int* retCode)
+	{
+		CString sPrompt(prompt);
+		CString sTitle(title);
+		CString sInput(value);
+
+		*retCode = AU::InputBox (sInput, sTitle, sPrompt);
+
+		if (*retCode == IDYES)
+			*input = sInput.AllocSysString();
+		else
+			*input = L"";
+
+		return S_OK;
+	}
 };
 
 #endif

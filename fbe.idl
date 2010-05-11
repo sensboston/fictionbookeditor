@@ -72,5 +72,6 @@ library FBELib
 	[id(20), helpstring("method GetViewWidth")] HRESULT GetViewWidth([out, retval] int *width);
 	[id(21), helpstring("method GetViewHeight")] HRESULT GetViewHeight([out, retval] int *height);
 	[id(22), helpstring("method GetProgramVersion")] HRESULT GetProgramVersion([out, retval] BSTR* ver);
+	[id(23), helpstring("method InputBox")] HRESULT InputBox([in] BSTR prompt, [in] BSTR title, [in] BSTR value, [out] BSTR* input, [out, retval] int* retCode);
   };
 };
