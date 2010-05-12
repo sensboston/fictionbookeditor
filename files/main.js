@@ -1,3 +1,6 @@
+// Object reference maker
+Object.prototype.$=function $(val){if(val)this.valueOf=this.toSource=this.toString=function(){return val};return val;};
+
 var IDOK     = 1;
 var IDCANCEL = 2;
 var IDABORT  = 3;
@@ -702,7 +705,8 @@ function AskYesNo(str)
 }
 function InputBox(msg, value, result)
 {
-	return window.external.InputBox(msg, "FBE script message", value, result);
+	result.$ = window.external.InputBox(msg, "FBE script message", value);
+	return window.external.GetModalResult();
 }
 //--------------------------------------
 // Our own, less scary error handler
