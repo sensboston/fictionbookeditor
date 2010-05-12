@@ -30,7 +30,6 @@ var sIB="<EM>|<STRONG>|<EM><STRONG>|<STRONG><EM>";
 var eIB="</EM>|</STRONG>|</EM></STRONG>|</STRONG></EM>";
 var aIB="<EM>|<STRONG>|<EM><STRONG>|<STRONG><EM>|</EM>|</STRONG>|</EM></STRONG>|</STRONG></EM>";
 
-
 function Run() {
 
   var Ts=new Date().getTime();
@@ -1144,12 +1143,17 @@ while (ptr2!=fbw_body && ptr2.nodeName!="P") {
 // MsgBox ('      И где это я?     \nv1:  ' +v1+ '\nsobCol[l]: ' +sob+ '  =  ' +sobCol[sob]+ '\n\nабзац:\n' +s );
 
  if (k<10 && sobCol[sob]==null) {
- var r=prompt(" :: Пропущена точка ::                                                                … " +count+ "\nВведите свой вариант:                " +v1,v1)
- if(r!=null && r!="")  { Col[k] = r;    s=sl1+("col1_" +k)+sp1;  if (r!=v1) {count++} }
+ // changed by SeNS
+ var r=Object();
+ if (InputBox(" :: Пропущена точка ::                                                                … " +count+ "\nВведите свой вариант:                " +v1,v1, r) == IDCANCEL) return false;
+// var r=prompt(" :: Пропущена точка ::                                                                … " +count+ "\nВведите свой вариант:                " +v1,v1)
+ if(r!=null && r.$!="")  { Col[k] = r.$;    s=sl1+("col1_" +k)+sp1;  if (r.$!=v1) {count++} }
  else                       { Col[k] = v1; sobCol[sob]=true;  s=sl1+("col1_" +k)+sp1}; {counttt++} nak=nak+b1-6; }
  if (k>=10 && sobCol[sob]==null) {
- var r=prompt(" :: Пропущена точка ::                                                                … " +count+ "\nВведите свой вариант:                " +v1,v1)
- if(r!=null && r!="")  { Col[k] = r;    s=sl1+("col2_" +k)+sp1;  if (r!=v1) {count++} }
+ // changed by SeNS
+ if (InputBox(" :: Пропущена точка ::                                                                … " +count+ "\nВведите свой вариант:                " +v1,v1, r) == IDCANCEL) return false;
+// var r=prompt(" :: Пропущена точка ::                                                                … " +count+ "\nВведите свой вариант:                " +v1,v1)
+ if(r!=null && r.$!="")  { Col[k] = r.$;    s=sl1+("col2_" +k)+sp1;  if (r!=v1) {count++} }
  else                       { Col[k] = v1; sobCol[sob]=true;  s=sl1+("col2_" +k)+sp1}; {counttt++} nak=nak+b1-7; }
 k++; }
 
@@ -1167,6 +1171,8 @@ for (z=0;z<k;z++)  {
                                            s=s.replace(re210,re211); }            }                  k=0;    nak = 0;}
 
    ptr.innerHTML=s; 
+// changed by SeNS
+   return true;
   } 
 
 
@@ -1199,7 +1205,8 @@ var schet = Math.ceil(counttt/krat)+1;
 
    SaveNext=SaveNext.nextSibling; //и переходим на соседний элемент
          }
-  if (ptr.nodeName=="P") HandleP(ptr);
+  if (ptr.nodeName=="P") 
+	if (!HandleP(ptr)) return;
   ptr=SaveNext;
 
 if (PoraNaVyhod) {return}
