@@ -463,7 +463,6 @@
 #define ID_LAST_SCRIPT                  32899
 #define ID_LAST_PLUGIN                  32900
 #define ID_ADD_IMAGE                    32902
-#define ID_DT_DELETE32903               32903
 #define ID_SAVEIMG_AS                   32904
 #define ID_TOOLS_SPELLCHECK             32905
 #define ID_TOOLS_SPELLCHECK_HIGHLIGHT   32906

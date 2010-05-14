@@ -9,6 +9,8 @@
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // v.1.4 — кастомизированные неразрывные пробелы — Sclex (20.03.2010)
 //======================================
+// v.1.5 — прерывание процесса 
+//======================================
 var VersionNumber="1.5";
 
 //обрабатывать ли history
@@ -103,7 +105,7 @@ function Run() {
  // функция, обрабатывающая абзац P
  function HandleP(ptr) {
   s=ptr.innerHTML;
-
+/*
 ptr2=ptr;                                      // следующий абзац за совпадением — переход на него, чтобы в FBE было видно  проблемное место
 if (ptr2.hasChildNodes()) {
    ptr2=ptr2.firstChild;
@@ -119,12 +121,13 @@ while (ptr2!=fbw_body && ptr2.nodeName!="P") {
      if (ptr2!=fbw_body) ptr2=ptr2.nextSibling;
    }
 }
+*/
 
+// Попытался отменить переход на следующий абзац за совпадением, но всё равно оно подлазит под окошко
 
        if (s.search(re10)!=-1 || s.search(re20)!=-1 || s.search(re30)!=-1 || s.search(re40)!=-1 || s.search(re50)!=-1 || s.search(re60)!=-1 || s.search(re70)!=-1 )  
-         {
-           if (ptr2==fbw_body) GoTo(ptr); else GoTo(ptr2);
-
+         { GoTo(ptr);
+//           if (ptr2==fbw_body) GoTo(ptr); else GoTo(ptr2);
 
 //                    ===================   ДО   ==============
 
@@ -137,12 +140,14 @@ while (ptr2!=fbw_body && ptr2.nodeName!="P") {
     var sll1   = s.replace(re10, re15);
     var vvv1  = s.replace(re10, re16);
 
- var r=prompt(" Предлагается следующий           При «Отмене» останется:        … "+count+" …\n вариант :. v .:                                      " +vv1,v1)
+ var r=Object();
+ if (InputBox(" Предлагается следующий           При «Отмене» останется:        … "+count+" …\n вариант :. v .:                                      " +vv1,v1, r) == IDCANCEL) return false; // patch 1.5
+// var r=prompt(" Предлагается следующий           При «Отмене» останется:        … "+count+" …\n вариант :. v .:                                      " +vv1,v1)
 	 if (k<10)
-	 { if(r!=null && r!="")  { Col[k] = r;  s=sl1+("col1_" +k)+sp1; count++; } 
+	 { if(r!=null && r.$!="")  { Col[k] = r.$;  s=sl1+("col1_" +k)+sp1; count++; } 
 	 else { Col[k] = vvv1;  s=sll1+("col1_" +k)+sp1; } }
 	 if (k>=10)
-		 { if(r!=null && r!="")  { Col[k] = r;  s=sl1+("col2_" +k)+sp1; count++; } 
+		 { if(r!=null && r.$!="")  { Col[k] = r.$;  s=sl1+("col2_" +k)+sp1; count++; } 
 		 else { Col[k] = vvv1;  s=sll1+("col2_" +k)+sp1; } }
  k++;  }
 
@@ -155,12 +160,14 @@ while (ptr2!=fbw_body && ptr2.nodeName!="P") {
     var sll2   = s.replace(re20, re25);
     var vvv2  = s.replace(re20, re26);
 
- var r=prompt(" Предлагается следующий           При «Отмене» останется:        … "+count+" …\n вариант :. v .:                                      " +vv2,v2)
+ var r=Object();
+ if (InputBox(" Предлагается следующий           При «Отмене» останется:        … "+count+" …\n вариант :. v .:                                      " +vv2,v2, r) == IDCANCEL) return false; // patch 1.5
+// var r=prompt(" Предлагается следующий           При «Отмене» останется:        … "+count+" …\n вариант :. v .:                                      " +vv2,v2)
 	 if (k<10)
-	 { if(r!=null && r!="")  { Col[k] = r;  s=sl2+("col1_" +k)+sp2; count++; } 
+	 { if(r!=null && r.$!="")  { Col[k] = r.$;  s=sl2+("col1_" +k)+sp2; count++; } 
 	 else { Col[k] = vvv2;  s=sll2+("col1_" +k)+sp2; } }
 	 if (k>=10)
-		 { if(r!=null && r!="")  { Col[k] = r;  s=sl2+("col2_" +k)+sp2; count++; } 
+		 { if(r!=null && r.$!="")  { Col[k] = r.$;  s=sl2+("col2_" +k)+sp2; count++; } 
 		 else { Col[k] = vvv2;  s=sll2+("col2_" +k)+sp2; } }
  k++;  }
 
@@ -173,12 +180,14 @@ while (ptr2!=fbw_body && ptr2.nodeName!="P") {
     var sll3     = s.replace(re30, re35);
     var vvv3  = s.replace(re30, re36);
 
- var r=prompt(" Предлагается следующий           При «Отмене» останется:        … "+count+" …\n вариант :. v .:                                      " +vv3,v3)
+ var r=Object();
+ if (InputBox(" Предлагается следующий           При «Отмене» останется:        … "+count+" …\n вариант :. v .:                                      " +vv3,v3, r) == IDCANCEL) return false; // patch 1.5
+// var r=prompt(" Предлагается следующий           При «Отмене» останется:        … "+count+" …\n вариант :. v .:                                      " +vv3,v3)
 	 if (k<10)
-	 { if(r!=null && r!="")  { Col[k] = r;  s=sl3+("col1_" +k)+sp3; count++; } 
+	 { if(r!=null && r.$!="")  { Col[k] = r.$;  s=sl3+("col1_" +k)+sp3; count++; } 
 	 else { Col[k] = vvv3;  s=sll3+("col1_" +k)+sp3; } }
 	 if (k>=10)
-		 { if(r!=null && r!="")  { Col[k] = r;  s=sl3+("col2_" +k)+sp3; count++; } 
+		 { if(r!=null && r.$!="")  { Col[k] = r.$;  s=sl3+("col2_" +k)+sp3; count++; } 
 		 else { Col[k] = vvv3;  s=sll3+("col2_" +k)+sp3; } }
  k++;  }
 
@@ -193,12 +202,14 @@ while (ptr2!=fbw_body && ptr2.nodeName!="P") {
     var vvv4  = s.replace(re40, re45);
     var spp4   = s.replace(re40, re46);
 
- var r=prompt(" Предлагается следующий           При «Отмене» останется:        … "+count+" …\n вариант :. v .:                                      " +vv4,v4)
+ var r=Object();
+ if (InputBox(" Предлагается следующий           При «Отмене» останется:        … "+count+" …\n вариант :. v .:                                      " +vv4,v4, r) == IDCANCEL) return false; // patch 1.5
+// var r=prompt(" Предлагается следующий           При «Отмене» останется:        … "+count+" …\n вариант :. v .:                                      " +vv4,v4)
 	 if (k<10)
-					{ if(r!=null && r!="")  { Col[k] = r;  s=sl4+("col1_" +k)+sp4; count++; }
+					{ if(r!=null && r.$!="")  { Col[k] = r.$;  s=sl4+("col1_" +k)+sp4; count++; }
 					 else { Col[k] = vvv4;  s=sl4+("col1_" +k)+spp4; } }
 	 if (k>=10)
-					{ if(r!=null && r!="")  { Col[k] = r;  s=sl4+("col2_" +k)+spp4; count++; }
+					{ if(r!=null && r.$!="")  { Col[k] = r.$;  s=sl4+("col2_" +k)+spp4; count++; }
 					 else { Col[k] = vvv4;  s=sl4+("col2_" +k)+spp4; } }
  k++; }
 
@@ -212,12 +223,14 @@ while (ptr2!=fbw_body && ptr2.nodeName!="P") {
     var vvv5  = s.replace(re50, re55);
     var spp5   = s.replace(re50, re56);
 
- var r=prompt(" Предлагается следующий           При «Отмене» останется:        … "+count+" …\n вариант :. v .:                                      " +vv5,v5)
+ var r=Object();
+ if (InputBox(" Предлагается следующий           При «Отмене» останется:        … "+count+" …\n вариант :. v .:                                      " +vv5,v5, r) == IDCANCEL) return false; // patch 1.5
+// var r=prompt(" Предлагается следующий           При «Отмене» останется:        … "+count+" …\n вариант :. v .:                                      " +vv5,v5)
 	 if (k<10)
-					{ if(r!=null && r!="")  { Col[k] = r;  s=sl5+("col1_" +k)+sp5; count++; }
+					{ if(r!=null && r.$!="")  { Col[k] = r.$;  s=sl5+("col1_" +k)+sp5; count++; }
 					 else { Col[k] = vvv5;  s=sl5+("col1_" +k)+spp5; } }
 	 if (k>=10)
-					{ if(r!=null && r!="")  { Col[k] = r;  s=sl5+("col2_" +k)+sp5; count++; }
+					{ if(r!=null && r.$!="")  { Col[k] = r.$;  s=sl5+("col2_" +k)+sp5; count++; }
 					 else { Col[k] = vvv5;  s=sl5+("col2_" +k)+spp5; } }
  k++; }
 
@@ -230,12 +243,14 @@ while (ptr2!=fbw_body && ptr2.nodeName!="P") {
     var vvv6  = s.replace(re60, re65);
     var spp6   = s.replace(re60, re66);
 
- var r=prompt(" Предлагается следующий           При «Отмене» останется:        … "+count+" …\n вариант :. v .:                                      " +vv6,v6)
+ var r=Object();
+ if (InputBox(" Предлагается следующий           При «Отмене» останется:        … "+count+" …\n вариант :. v .:                                      " +vv6,v6, r) == IDCANCEL) return false; // patch 1.5
+// var r=prompt(" Предлагается следующий           При «Отмене» останется:        … "+count+" …\n вариант :. v .:                                      " +vv6,v6)
 	 if (k<10)
-					{ if(r!=null && r!="")  { Col[k] = r;  s=sl6+("col1_" +k)+sp6; count++; }
+					{ if(r!=null && r.$!="")  { Col[k] = r.$;  s=sl6+("col1_" +k)+sp6; count++; }
 					 else { Col[k] = vvv6;  s=sl6+("col1_" +k)+spp6; } }
 	 if (k>=10)
-					{ if(r!=null && r!="")  { Col[k] = r;  s=sl6+("col2_" +k)+sp6; count++; }
+					{ if(r!=null && r.$!="")  { Col[k] = r.$;  s=sl6+("col2_" +k)+sp6; count++; }
 					 else { Col[k] = vvv6;  s=sl6+("col2_" +k)+spp6; } }
  k++; }
 
@@ -246,13 +261,14 @@ while (ptr2!=fbw_body && ptr2.nodeName!="P") {
     var sl7   = s.replace(re70, re72);
     var sp7   = s.replace(re70, re73);
 
-
- var r=prompt(" Предлагается следующий           При «Отмене» останется:        … "+count+" …\n вариант :. v .:                                      " +vv7,v7)
+ var r=Object();
+ if (InputBox(" Предлагается следующий           При «Отмене» останется:        … "+count+" …\n вариант :. v .:                                      " +vv7,v7, r) == IDCANCEL) return false; // patch 1.5
+// var r=prompt(" Предлагается следующий           При «Отмене» останется:        … "+count+" …\n вариант :. v .:                                      " +vv7,v7)
 	 if (k<10)
-					{ if(r!=null && r!="")  { Col[k] = r;  s=sl7+("col1_" +k)+sp7; count++; }
+					{ if(r!=null && r.$!="")  { Col[k] = r.$;  s=sl7+("col1_" +k)+sp7; count++; }
 					 else { Col[k] = vv7;  s=sl7+("col1_" +k)+sp7; } }
 	 if (k>=10)
-					{ if(r!=null && r!="")  { Col[k] = r;  s=sl7+("col2_" +k)+sp7; count++; }
+					{ if(r!=null && r.$!="")  { Col[k] = r.$;  s=sl7+("col2_" +k)+sp7; count++; }
 					 else { Col[k] = vv7;  s=sl7+("col2_" +k)+sp7; } }
  k++; }
 
@@ -269,7 +285,8 @@ for (z=0;z<k;z++)  {
                                         var re201 = Col[z];
                                            s=s.replace(re200,re201); }            } k=0; }
 
-   ptr.innerHTML=s;      
+   ptr.innerHTML=s;
+   return true;                    // patch 1.5
   } 
 
  var body=document.getElementById("fbw_body");
@@ -291,7 +308,9 @@ for (z=0;z<k;z++)  {
                                                          }
    SaveNext=SaveNext.nextSibling; //и переходим на соседний элемент
          }
-  if (ptr.nodeName=="P") HandleP(ptr);
+//  if (ptr.nodeName=="P") HandleP(ptr);
+    if (ptr.nodeName=="P") 
+	if (!HandleP(ptr)) return;                    // patch 1.5
   ptr=SaveNext;
  }
 

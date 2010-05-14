@@ -62,7 +62,7 @@ LRESULT CTreeWithToolBar::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL
 	m_maxTbwidth = 1000;
 	::MoveWindow(m_rebar, 0, 0, m_maxTbwidth, 0, true);
 
-	m_toolbar.HideButton(ID_DT_DELETE);
+//	m_toolbar.HideButton(ID_DT_DELETE);
 	bHandled = FALSE;
 	return lRet;
 }

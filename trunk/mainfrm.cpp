@@ -33,7 +33,6 @@ void  CMainFrame::AttachDocument(FB::Doc *doc) {
   m_current_view = BODY;
   m_last_view = DESC;
   m_last_ctrl_tab_view= DESC;
-  m_view.SetFocus();
   m_cb_updated=false;
   m_need_title_update=m_sel_changed=true;
   if(_Settings.ViewDocumentTree())
@@ -1441,7 +1440,7 @@ LRESULT CMainFrame::OnCreate(UINT, WPARAM, LPARAM, BOOL&)
   UISetCheck(ID_VIEW_BODY,1);
 
   m_document_tree.Create(m_splitter);
-
+  
   if (AU::_ARGS.start_in_desc_mode)
     ShowView(DESC);
 
@@ -1560,7 +1559,14 @@ LRESULT CMainFrame::OnDestroy(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHa
 
 LRESULT CMainFrame::OnClose(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/)
 {
-  if (DiscardChanges()) {
+  if (DiscardChanges()) 
+  {
+	// added by SeNS
+	if (m_Speller) 
+	{
+		m_Speller->EndDocumentCheck();
+		m_Speller->SetEnabled(false);
+	}
 	_Settings.SetViewStatusBar(m_status.IsWindowVisible() != 0);
 	//_Settings.SetViewDocumentTree(IsSourceActive() ? m_document_tree.IsWindowVisible()==0 : !m_save_sp_mode);
     _Settings.SetSplitterPos(m_splitter.GetSplitterPos());	
@@ -1587,9 +1593,6 @@ LRESULT CMainFrame::OnClose(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/,
 	_Settings.Save();
 	_Settings.SaveWords();
 	_Settings.Close();
-
-	// added by SeNS
-	if (m_Speller) m_Speller->EndDocumentCheck();
 
 	DefWindowProc(WM_CLOSE,0,0);
 	return 1;
@@ -3095,30 +3098,40 @@ LRESULT CMainFrame::OnTreeViewElementSource(WORD, WORD, HWND, BOOL&)
 
 LRESULT CMainFrame::OnTreeDeleteElement(WORD, WORD, HWND, BOOL&)
 {
-	CTreeItem item = m_document_tree.m_tree.m_tree.GetLastSelectedItem();
-	m_doc->m_body.BeginUndoUnit(L"structure editing");
-	do 
-	{	
-		if(!item.IsNull() && item.GetData())
-		{
-			MSHTML::IHTMLElement* elem = (MSHTML::IHTMLElement*)item.GetData();
-			if(!elem)
-				return 0;
+	wchar_t cpt[MAX_LOAD_STRING + 1];
+	wchar_t msg[MAX_LOAD_STRING + 1];
+	::LoadString(_Module.GetResourceInstance(), IDS_DOCUMENT_TREE_CAPTION, cpt, MAX_LOAD_STRING);
+	::LoadString(_Module.GetResourceInstance(), ID_DT_DELETE, msg, MAX_LOAD_STRING);
+	CString message(msg);
+	message += L"?";
 
-			MSHTML::IHTMLDOMNodePtr node = (MSHTML::IHTMLDOMNodePtr)elem;
-			
-			
-			node->removeNode(VARIANT_TRUE);
-			
-		}
-		else
-		{
-			break;
-		}
+	if (MessageBox(message, cpt, MB_YESNO | MB_ICONINFORMATION) == IDYES)
+	{
+		CTreeItem item = m_document_tree.m_tree.m_tree.GetLastSelectedItem();
+		m_doc->m_body.BeginUndoUnit(L"structure editing");
+		do 
+		{	
+			if(!item.IsNull() && item.GetData())
+			{
+				MSHTML::IHTMLElement* elem = (MSHTML::IHTMLElement*)item.GetData();
+				if(!elem)
+					return 0;
 
-		item = m_document_tree.m_tree.m_tree.GetPrevSelectedItem(item);
-	} while(!item.IsNull());
-	m_doc->m_body.EndUndoUnit();
+				MSHTML::IHTMLDOMNodePtr node = (MSHTML::IHTMLDOMNodePtr)elem;
+				
+				
+				node->removeNode(VARIANT_TRUE);
+				
+			}
+			else
+			{
+				break;
+			}
+
+			item = m_document_tree.m_tree.m_tree.GetPrevSelectedItem(item);
+		} while(!item.IsNull());
+		m_doc->m_body.EndUndoUnit();
+	}
 	return 0;
 }
 
