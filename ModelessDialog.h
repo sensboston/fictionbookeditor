@@ -4,6 +4,10 @@
 #define HIDWORD(l) ((DWORD)(((DWORDLONG)(l)>>32)&0xFFFFFFFF))
 #define MAKEDWORDLONG(a,b) ((DWORDLONG)(((DWORD)(a))|(((DWORDLONG)((DWORD)(b)))<<32)))
 
+#define WM_CLOSEDIALOG WM_USER+100
+
+static RECT dialogRect = {-1,-1,-1,-1};
+
 template <class T, class TBase = CWindow>
 class ATL_NO_VTABLE CModelessDialogImpl : public CDialogImplBaseT<TBase>
 {
@@ -62,7 +66,7 @@ protected:
 
 	void RemoveWindow(HWND hWnd)
 	{
-		if(windows().Remove(hWnd))
+		if(!hWnd || windows().Remove(hWnd))
 		{
 			DWORD threadId = ::GetCurrentThreadId();
 			ULONGLONG data = table().Lookup(threadId);
@@ -87,6 +91,7 @@ protected:
 	}
 
 	bool m_valid;
+	int m_retCode;
 
 public:
 	CModelessDialogImpl():m_valid(false) {};
@@ -123,20 +128,45 @@ public:
 
 		windows().Add(m_hWnd);
 
-		::ShowWindow(m_hWnd, SW_SHOWNA);
+		if (dialogRect.left != -1)
+			::SetWindowPos(m_hWnd, HWND_TOPMOST, dialogRect.left, dialogRect.top, 0, 0, SWP_NOSIZE | SWP_SHOWWINDOW);
+		else
+			::ShowWindow(m_hWnd, SW_SHOW);
 
 		m_valid = true;
 		return hWnd;
 	}
 
+	INT_PTR DoModal(HWND hWndParent = ::GetActiveWindow(), LPARAM dwInitParam = NULL )
+	{
+		MSG msg;
+		m_retCode = -1;
+		ShowDialog(hWndParent, dwInitParam);
+		while (GetMessage(&msg, 0, 0, 0) > 0 && m_retCode == -1)
+		{
+			TranslateMessage(&msg);
+			DispatchMessage(&msg);
+			if (msg.message == WM_CLOSEDIALOG) m_retCode = IDCANCEL;
+		}
+		EndDialog(m_retCode);
+		return m_retCode;
+	}
+
 	BOOL DestroyWindow()
 	{
 		ATLASSERT(m_hWnd);
-
 		RemoveWindow(m_hWnd);
-
 		m_valid = false;
+		::GetWindowRect(m_hWnd, &dialogRect);
 		return ::DestroyWindow(m_hWnd);
+	}
+
+	BOOL EndDialog(int nRetCode)
+	{
+		ATLASSERT(m_hWnd);
+		DestroyWindow();
+		m_retCode = nRetCode;
+		return ::EndDialog(m_hWnd, nRetCode);
 	}
 
 	BOOL IsValid()

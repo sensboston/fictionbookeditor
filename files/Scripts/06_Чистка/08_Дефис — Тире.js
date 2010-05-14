@@ -14745,7 +14745,7 @@ tirCol["ясные — решения"] = true;
  function HandleP(ptr) {
   s=ptr.innerHTML;
 
-ptr2=ptr;                                      // следующий абзац за совпадением — переход на него, чтобы в FBE было видно  проблемное место
+/*ptr2=ptr;                                      // следующий абзац за совпадением — переход на него, чтобы в FBE было видно  проблемное место
 if (ptr2.hasChildNodes()) {
    ptr2=ptr2.firstChild;
 } else {
@@ -14759,11 +14759,11 @@ while (ptr2!=fbw_body && ptr2.nodeName!="P") {
      while (ptr2!=fbw_body && !ptr2.nextSibling) ptr2=ptr2.parentNode;
      if (ptr2!=fbw_body) ptr2=ptr2.nextSibling;
    }
-}
+} */
 
        while (s.search(re10)!=-1)
-         {
-           if (ptr2==fbw_body) GoTo(ptr); else GoTo(ptr2);
+         { GoTo(ptr);
+//           if (ptr2==fbw_body) GoTo(ptr); else GoTo(ptr2);
 
     var vis  = s.replace(re10, re11);                                                               // слово до + дефис с пробелами + слово после
     var s1   = s.replace(re10, re12);                                                               // все символы с начала строки до зоны дефиса
@@ -14798,12 +14798,15 @@ while (ptr2!=fbw_body && ptr2.nodeName!="P") {
 
                                                                                                                    // только слова, которых нет ни в одной из коллекций
 					{
- var r=prompt(':: Тире - vs - Дефис ::                                       '+countt1+' … '+countt2+' … '+count+'\n'+
-                      'Введите свой вариант:        ' +vis,vis)
+ var r=Object();
+ if (InputBox(':: Тире - vs - Дефис ::                                       '+countt1+' … '+countt2+' … '+count+'\n'+
+                      'Введите свой вариант:        ' +vis,vis, r) == IDCANCEL) return false;                                                // patch
+/* var r=prompt(':: Тире - vs - Дефис ::                                       '+countt1+' … '+countt2+' … '+count+'\n'+
+                      'Введите свой вариант:        ' +vis,vis)*/
 
-if (k<10)     { if(r!=null && r!="") { provCol[k] = r;  s=stt+ ("♣" +k)+fin; count++} 
+if (k<10)     { if(r!=null && r.$!="") { provCol[k] = r.$;  s=stt+ ("♣" +k)+fin; count++} 
                                      else   { provCol[k] = vis; eduCol[vis]=true; s=stt+ ("♣" +k)+fin; counttt++ } } 
-if (k>=10)   { if(r!=null && r!="") { provCol[k] = r;  s=stt+ ("♠" +k)+fin; count++} 
+if (k>=10)   { if(r!=null && r.$!="") { provCol[k] = r.$;  s=stt+ ("♠" +k)+fin; count++} 
                                     else    { provCol[k] = vis; eduCol[vis]=true; s=stt+ ("♠" +k)+fin; } counttt++ } 
    k++;
 					}
@@ -14832,6 +14835,7 @@ for (z=0;z<k;z++)
 
 // window.external.BeginUndoUnit(document,"дефис — тире");
                    ptr.innerHTML=s;
+				      return true;                    // patch
 // window.external.EndUndoUnit(document);
 				}
 
@@ -14867,7 +14871,9 @@ var schet = Math.ceil(counttt/krat)+1;
 
    SaveNext=SaveNext.nextSibling; //и переходим на соседний элемент
          }
-  if (ptr.nodeName=="P") HandleP(ptr);
+//  if (ptr.nodeName=="P") HandleP(ptr);
+    if (ptr.nodeName=="P") 
+	if (!HandleP(ptr)) return;                    // patch
   ptr=SaveNext;
 
 if (PoraNaVyhod) {return}

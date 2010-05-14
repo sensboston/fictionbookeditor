@@ -4,6 +4,9 @@
 
 #include "utils.h"
 #include "apputils.h"
+#include "ModelessDialog.h"
+
+extern RECT dialogRect;
 
 namespace AU {
 
@@ -98,7 +101,6 @@ bool  ParseCmdLineArgs() {
   }
 }
 
-
 // an input box
 class CInputBox: public CDialogImpl<CInputBox>,
 		 public CWinDataExchange<CInputBox>
@@ -126,7 +128,15 @@ public:
     DoDataExchange(FALSE);  // Populate the controls
     SetDlgItemText(IDC_PROMPT,m_prompt);
     SetWindowText(m_title);
+	if (dialogRect.left != -1)
+		::SetWindowPos(m_hWnd, HWND_TOPMOST, dialogRect.left, dialogRect.top, 0, 0, SWP_NOSIZE | SWP_SHOWWINDOW);
     return 0;
+  }
+
+  BOOL EndDialog(int nRetCode)
+  {
+    ::GetWindowRect(m_hWnd, &dialogRect);
+	return ::EndDialog(m_hWnd, nRetCode);
   }
 
   LRESULT OnYes(WORD, WORD wID, HWND, BOOL&) {

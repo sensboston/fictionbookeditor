@@ -88,7 +88,8 @@ BEGIN
 
     IDD_TOOLS_SETTINGS, DIALOG
     BEGIN
-        BOTTOMMARGIN, 255
+        RIGHTMARGIN, 266
+        BOTTOMMARGIN, 270
     END
 
     IDD_TABLE, DIALOG
@@ -213,15 +214,15 @@ BEGIN
     LTEXT           "Change to:",IDC_STATIC,99,192,36,8
 END
 
-IDD_TOOLS_SETTINGS DIALOGEX 0, 0, 266, 270
+IDD_TOOLS_SETTINGS DIALOGEX 0, 0, 267, 277
 STYLE DS_SETFONT | DS_MODALFRAME | DS_CENTER | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
 EXSTYLE WS_EX_APPWINDOW
 CAPTION "Settings"
 FONT 8, "Microsoft Sans Serif", 400, 0, 0xCC
 BEGIN
-    CONTROL         "",IDC_TAB_CTRL,"SysTabControl32",0x0,0,0,265,251
-    PUSHBUTTON      "OK",IDOK,140,254,55,15
-    PUSHBUTTON      "Cancel",IDCANCEL,203,254,55,15
+    CONTROL         "",IDC_TAB_CTRL,"SysTabControl32",0x0,0,0,266,249
+    PUSHBUTTON      "OK",IDOK,140,255,55,15
+    PUSHBUTTON      "Cancel",IDCANCEL,203,255,55,15
 END
 
 IDD_TABLE DIALOGEX 0, 0, 260, 46
@@ -943,8 +944,7 @@ STRINGTABLE
 BEGIN
     ATL_IDS_MRU_FILE        "Open this document"
     IDS_ENCODINGS           "utf-8,utf-16,windows-1251,windows-1252,iso-8859-1,iso-8859-2,iso-8859-5,iso-8859-15,koi8-r"
-    IDS_DOCUMENT_TREE_CAPTION 
-                            "Insert an inline image at cursor\nInsert inline image"
+    IDS_DOCUMENT_TREE_CAPTION "Document tree"
 END
 
 STRINGTABLE 

@@ -640,6 +640,8 @@ public:
 
 	LRESULT OnFileExit(WORD, WORD, HWND, BOOL&)
 	{
+		// close (possible) opened in script modeless dialogs
+		PostMessage(WM_CLOSEDIALOG);
 		PostMessage(WM_CLOSE);
 		return 0;
 	}

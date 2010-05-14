@@ -2279,6 +2279,8 @@ void  CFBEView::DoReplace() {
     MSHTML::IHTMLTxtRangePtr  x2(sel->duplicate());
     int			      adv=0;
 
+	m_mk_srv->BeginUndoUnit(L"replace");
+
     if (m_fo.match) { // use regexp match
       RRList	rl;
       CString rep(GetReplStr(m_fo.replacement,m_fo.match,rl));
@@ -2305,6 +2307,7 @@ void  CFBEView::DoReplace() {
   catch (_com_error& e) {
     U::ReportError(e);
   }
+  m_mk_srv->EndUndoUnit();
 }
 
 int CFBEView::GlobalReplace(MSHTML::IHTMLElementPtr elem, CString cntTag)
@@ -2655,6 +2658,7 @@ public:
       m_view->DoReplace();
       m_selvalid=false;
     }
+	m_view->m_startMatch = m_view->m_endMatch = 0;
     DoFind();
   }
   virtual void DoReplaceAll() {
