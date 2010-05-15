@@ -605,7 +605,7 @@ LRESULT CTreeView::OnContextMenu(UINT /*uMsg*/, WPARAM wParam, LPARAM lParam, BO
 	HMENU pPopup;
 
 	// the font popup is stored in a resource
-	menu = ::LoadMenu(_Module.m_hInst, MAKEINTRESOURCEW(IDR_DOCUMENT_TREE));
+	menu = ::LoadMenu(_Module.GetResourceInstance(), MAKEINTRESOURCEW(IDR_DOCUMENT_TREE));
 	pPopup = ::GetSubMenu(menu, 0);
 	ClientToScreen(&ptMousePos);
 	BOOL res = ::TrackPopupMenu(pPopup, TPM_LEFTALIGN, ptMousePos.x, ptMousePos.y, 0, *this, 0);

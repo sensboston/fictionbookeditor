@@ -67,7 +67,7 @@ BEGIN
         MENUITEM SEPARATOR
         MENUITEM "&Перейти к сноске или к ссылке", ID_GOTO_FOOTNOTE
         MENUITEM "Перейти к парному &тегу",     ID_GOTO_MATCHTAG
-        MENUITEM "Перейти к о&шибочному тегу",	ID_GOTO_WRONGTAG
+        MENUITEM "Перейти к о&шибочному тегу",  ID_GOTO_WRONGTAG
         MENUITEM SEPARATOR
         MENUITEM "К&лонировать",                ID_EDIT_CLONE
         MENUITEM "Разр&езать",                  ID_EDIT_SPLIT
@@ -139,9 +139,11 @@ BEGIN
         MENUITEM "&Перейти к элементу",         ID_DT_VIEW
         MENUITEM "П&ерейти к коду",             ID_DT_VIEWSOURCE
         MENUITEM SEPARATOR
-        MENUITEM "Move Right",                  ID_DT_RIGHT_ONE
-        MENUITEM "Move with children",          ID_DT_RIGHT_SMART
-        MENUITEM "Move Left",                   ID_DT_LEFT
+        MENUITEM "Сдвинуть вправо",             ID_DT_RIGHT_ONE
+        MENUITEM "Сделать дочерним элементом",  ID_DT_RIGHT_SMART
+        MENUITEM "Сдвинуть влево",              ID_DT_LEFT
+        MENUITEM SEPARATOR
+        MENUITEM "Удалить",                     ID_DT_DELETE
     END
 END
 
@@ -683,6 +685,17 @@ END
 
 STRINGTABLE 
 BEGIN
+    IDS_MB_OK               "O&K"
+    IDS_MB_CANCEL           "&Отмена"
+    IDS_MB_ABORT            "П&рервать"
+    IDS_MB_RETRY            "&Повторить"
+    IDS_MB_IGNORE           "&Игнорировать"
+    IDS_MB_YES              "&Да"
+    IDS_MB_NO               "&Нет"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_LANG_UKRAINIAN      "Украинский"
 END
 
@@ -842,9 +855,23 @@ STRINGTABLE
 BEGIN
     ID_INSERT_TABLE         "Вставить таблицу на место курсора\nВставить таблицу"
     ID_GOTO_FOOTNOTE        "Перейти на текст сноски или к ссылке\nПерейти на текст сноски или к ссылке"
-	ID_GOTO_MATCHTAG		"Перейти к парному тегу\nПерейти к парному тегу"
-	ID_GOTO_WRONGTAG		"Перейти к ошибочному тегу\nПерейти к ошибочному тегу"
-	ID_VIEW_FASTMODE		"Переключить в ускоренный режим\nПереключить в ускоренный режим"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_TOOLS_SPELLCHECK     "Проверка орфографии документа...\nПроверка орфографии"
+    ID_GOTO_MATCHTAG        "Перейти к парному тегу\nПерейти к парному тегу"
+    ID_GOTO_WRONGTAG        "Перейти к ошибочному тегу\nПерейти к ошибочному тегу"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_DT_LEFT              "\nПеренести влево"
+    ID_DT_DELETE            "\nУдалить выделенный узел"
+    ID_DT_RIGHT_ONE         "\nПеренести узел вправо"
+    ID_DT_RIGHT_SMART       "\nПеренести узел вправо в smart режиме"
+    ID_DT_MERGE             "\nСлить контейнеры"
+    ID_VIEW_FASTMODE        "Переключить в ускоренный режим\nПереключить в ускоренный режим"
 END
 
 STRINGTABLE 
@@ -1013,20 +1040,6 @@ END
 STRINGTABLE 
 BEGIN
     IDC_SPELL_IGNORE        "Пропустить"
-END
-
-STRINGTABLE 
-BEGIN
-    ID_DT_LEFT              "\nПеренести влево"
-    ID_DT_DELETE            "\nУдалить выделенный узел"
-    ID_DT_RIGHT_ONE         "\nПеренести узел вправо"
-    ID_DT_RIGHT_SMART       "\nПеренести узел вправо в smart режиме"
-    ID_DT_MERGE             "\nСлить контейнеры"
-END
-
-STRINGTABLE 
-BEGIN
-    ID_TOOLS_SPELLCHECK     "Проверка орфографии документа...\nПроверка орфографии"
 END
 
 STRINGTABLE 
