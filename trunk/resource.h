@@ -250,6 +250,15 @@
 #define IDS_LANG_UKRAINIAN              300
 #define IDC_SPELL_REPLACE               500
 #define ID_VER_ADVANCE                  550
+
+#define IDS_MB_OK			600
+#define	IDS_MB_CANCEL			IDS_MB_OK+1
+#define	IDS_MB_ABORT			IDS_MB_OK+2
+#define IDS_MB_RETRY                    IDS_MB_OK+3
+#define IDS_MB_IGNORE			IDS_MB_OK+4
+#define IDS_MB_YES			IDS_MB_OK+5
+#define IDS_MB_NO			IDS_MB_OK+6
+
 #define ID_EXPORT_BASE                  860
 #define ID_IMPORT_BASE                  880
 #define ID_SEL_BASE                     900
