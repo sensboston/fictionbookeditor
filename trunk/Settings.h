@@ -450,6 +450,7 @@ class CSettings : public ISerializable, public IObjectFactory
 	DWORD		m_collorFG;
 	DWORD		m_font_size;
 	CString		m_font;
+	CString		m_srcfont;
 
 	bool		m_xml_src_wrap;
 	bool		m_xml_src_syntaxHL;
@@ -556,6 +557,7 @@ public:
 	DWORD	GetColorFG()const;
 	DWORD	GetFontSize()const;
 	CString	GetFont()const;
+	CString	GetSrcFont()const;
 	DWORD	GetSplitterPos()const;	
 	CString GetToolbarsSettings()const;
 	const CRegKey& GetKey()const;
@@ -600,6 +602,7 @@ public:
 	void	SetXmlSrcShowEOL(bool eol, bool apply = false);
 	void	SetFastMode(bool mode,  bool apply = false);
 	void	SetFont(const CString& font, bool apply = false);
+	void	SetSrcFont(const CString& font, bool apply = false);
 	void	SetViewStatusBar(bool view,  bool apply = false);
 	void	SetViewDocumentTree(bool view,  bool apply = false);
 	void	SetSplitterPos(DWORD pos,  bool apply = false);

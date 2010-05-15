@@ -250,15 +250,13 @@
 #define IDS_LANG_UKRAINIAN              300
 #define IDC_SPELL_REPLACE               500
 #define ID_VER_ADVANCE                  550
-
-#define IDS_MB_OK			600
-#define	IDS_MB_CANCEL			IDS_MB_OK+1
-#define	IDS_MB_ABORT			IDS_MB_OK+2
-#define IDS_MB_RETRY                    IDS_MB_OK+3
-#define IDS_MB_IGNORE			IDS_MB_OK+4
-#define IDS_MB_YES			IDS_MB_OK+5
-#define IDS_MB_NO			IDS_MB_OK+6
-
+#define IDS_MB_OK                       600
+#define IDS_MB_CANCEL                   601
+#define IDS_MB_ABORT                    602
+#define IDS_MB_RETRY                    603
+#define IDS_MB_IGNORE                   604
+#define IDS_MB_YES                      605
+#define IDS_MB_NO                       606
 #define ID_EXPORT_BASE                  860
 #define ID_IMPORT_BASE                  880
 #define ID_SEL_BASE                     900
@@ -274,6 +272,8 @@
 #define IDC_FONT                        1015
 #define IDC_FONT_SIZE                   1016
 #define IDC_TEXT                        1017
+#define IDC_FONT2                       1017
+#define IDC_SRCFONT                     1017
 #define IDC_REPLACE                     1018
 #define IDC_MATCHCASE                   1019
 #define IDC_REGEXP                      1020
