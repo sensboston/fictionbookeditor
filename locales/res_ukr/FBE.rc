@@ -142,6 +142,8 @@ BEGIN
         MENUITEM "Перемістити праворуч",        ID_DT_RIGHT_ONE
         MENUITEM "Зробити дочірнім елементом",  ID_DT_RIGHT_SMART
         MENUITEM "Перемістити ліворуч",         ID_DT_LEFT
+        MENUITEM SEPARATOR
+        MENUITEM "Видалити",                    ID_DT_DELETE
     END
 END
 
@@ -682,6 +684,17 @@ END
 
 STRINGTABLE 
 BEGIN
+    IDS_MB_OK               "&Гаразд"
+    IDS_MB_CANCEL           "&Скасувати"
+    IDS_MB_ABORT            "Пе&рервати"
+    IDS_MB_RETRY            "&Повторити"
+    IDS_MB_IGNORE           "&Ігнорувати"
+    IDS_MB_YES              "&Так"
+    IDS_MB_NO               "&Ні"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_LANG_UKRAINIAN      "Українська"
 END
 
@@ -841,9 +854,23 @@ STRINGTABLE
 BEGIN
     ID_INSERT_TABLE         "Вставити таблицю на місце курсору\nВставити таблицю"
     ID_GOTO_FOOTNOTE        "Перейти до тексту примітки або до посилання\nПерейти до тексту примітки або до посилання"
-    ID_GOTO_MATCHTAG		"Перейти до парного тегу\nПерейти до парного тегу"
-    ID_GOTO_WRONGTAG		"Перейти до помилкового тегу\nПерейти до помилкового тегу" 
-	ID_VIEW_FASTMODE		"Перемкнути в прискорений режим\nПеремкнути в прискорений режим"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_TOOLS_SPELLCHECK     "Перевірка орфографії документа...\nПеревірка орфографії"
+    ID_GOTO_MATCHTAG        "Перейти до парного тегу\nПерейти до парного тегу"
+    ID_GOTO_WRONGTAG        "Перейти до помилкового тегу\nПерейти до помилкового тегу"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_DT_LEFT              "\nПеренести ліворуч"
+    ID_DT_DELETE            "\nВидалити позначений вузол"
+    ID_DT_RIGHT_ONE         "\nПеренести вузол праворуч"
+    ID_DT_RIGHT_SMART       "\nПеренести вузол праворуч у smart-режимі"
+    ID_DT_MERGE             "\nОб'єднати контейнери"
+    ID_VIEW_FASTMODE        "Перемкнути в прискорений режим\nПеремкнути в прискорений режим"
 END
 
 STRINGTABLE 
@@ -1012,20 +1039,6 @@ END
 STRINGTABLE 
 BEGIN
     IDC_SPELL_IGNORE        "Пропустити"
-END
-
-STRINGTABLE 
-BEGIN
-    ID_DT_LEFT              "\nПеренести ліворуч"
-    ID_DT_DELETE            "\nВидалити позначений вузол"
-    ID_DT_RIGHT_ONE         "\nПеренести вузол праворуч"
-    ID_DT_RIGHT_SMART       "\nПеренести вузол праворуч у smart-режимі"
-    ID_DT_MERGE             "\nОб'єднати контейнери"
-END
-
-STRINGTABLE 
-BEGIN
-    ID_TOOLS_SPELLCHECK     "Перевірка орфографії документа...\nПеревірка орфографії"
 END
 
 STRINGTABLE 
