@@ -23,8 +23,8 @@ static int __stdcall EnumFontProc(const ENUMLOGFONTEX *lfe,
 				 DWORD type,
 				 LPARAM data)
 {
-  CComboBox	  *cb=(CComboBox*)data;
-  cb->AddString(lfe->elfLogFont.lfFaceName);
+  CSimpleArray<CString>	*stringList=(CSimpleArray<CString>*)data;
+  stringList->Add(lfe->elfLogFont.lfFaceName);
   return TRUE;
 }
 
@@ -35,6 +35,7 @@ LRESULT COptDlg::OnInitDialog(UINT, WPARAM, LPARAM, BOOL&)
   m_fg.SubclassWindow(GetDlgItem(IDC_FG));
   m_bg.SubclassWindow(GetDlgItem(IDC_BG));  
   m_fonts=GetDlgItem(IDC_FONT);
+  m_srcfonts=GetDlgItem(IDC_SRCFONT);
   m_fontsize=GetDlgItem(IDC_FONT_SIZE);
   m_fast_mode = GetDlgItem(IDC_FAST_MODE); 
   m_lang = GetDlgItem(IDC_LANG);
@@ -65,19 +66,32 @@ LRESULT COptDlg::OnInitDialog(UINT, WPARAM, LPARAM, BOOL&)
 	m_lang.SetCurSel(0);
 
   // get font list
+  CSimpleArray<CString> installedFonts;
   HDC	hDC=::CreateDC(_T("DISPLAY"),NULL,NULL,NULL);
   LOGFONT lf;
   memset(&lf,0,sizeof(lf));
   lf.lfCharSet=ANSI_CHARSET;
-  ::EnumFontFamiliesEx(hDC,&lf,(FONTENUMPROC)&EnumFontProc,(LPARAM)&m_fonts,0);
+  ::EnumFontFamiliesEx(hDC,&lf,(FONTENUMPROC)&EnumFontProc,(LPARAM)&installedFonts,0);
   ::DeleteDC(hDC);
 
-  // get text
+  for (int i=0; i<installedFonts.GetSize(); i++)
+  {
+	m_fonts.AddString(installedFonts[i]);
+	m_srcfonts.AddString(installedFonts[i]);
+  }
+
+  // get body font name
   CString     fnt(_Settings.GetFont());
   int	      idx=m_fonts.FindStringExact(0,fnt);
-  if (idx<0)
-    idx=0;
+  if (idx<0) idx=0;
   m_fonts.SetCurSel(idx);
+
+  // get source font name
+  fnt.SetString(_Settings.GetSrcFont());
+  idx=m_srcfonts.FindStringExact(0,fnt);
+  if (idx<0) idx=0;
+  m_srcfonts.SetCurSel(idx);
+
 
   // init zoom
   int	      m_fsz_val = _Settings.GetFontSize();
@@ -144,9 +158,14 @@ LRESULT COptDlg::OnOK(WORD, WORD wID, HWND, BOOL&)
   _Settings.SetColorBG(m_bg.GetColor());
   _Settings.SetColorFG(m_fg.GetColor());
 
-  // save font face
+  // save source font face
+  m_face=U::GetWindowText(m_srcfonts);
+  _Settings.SetSrcFont(m_face);
+
+  // save body font face
   m_face=U::GetWindowText(m_fonts);
   _Settings.SetFont(m_face);
+
   // save zoom
   _Settings.SetFontSize(m_fsz_val);
 

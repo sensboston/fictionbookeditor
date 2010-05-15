@@ -288,23 +288,23 @@ IDD_OPTIONS DIALOGEX 0, 0, 222, 215
 STYLE DS_SETFONT | WS_CHILD | WS_SYSMENU
 FONT 9, "Tahoma", 0, 0, 0x0
 BEGIN
-    LTEXT           "Text color:",IDC_STATIC,15,83,49,9
-    PUSHBUTTON      "",IDC_FG,70,81,31,12
-    LTEXT           "Background:",IDC_STATIC,128,83,49,9
-    PUSHBUTTON      "",IDC_BG,180,81,31,12
-    LTEXT           "Editor font:",IDC_STATIC,15,66,49,9
-    COMBOBOX        IDC_FONT,70,64,141,70,CBS_DROPDOWNLIST | CBS_SORT | WS_VSCROLL | WS_TABSTOP
-    LTEXT           "Font size:",IDC_STATIC,15,39,49,9
-    COMBOBOX        IDC_FONT_SIZE,70,37,56,70,CBS_DROPDOWN | WS_VSCROLL | WS_TABSTOP
-    GROUPBOX        "Common",IDC_STATIC,7,10,210,44
-    GROUPBOX        "Body",IDC_STATIC,7,54,210,57
-    GROUPBOX        "XML source editor",IDC_STATIC,7,113,210,46
-    CONTROL         "Wrap lines",IDC_WRAP,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,15,123,56,11
-    CONTROL         "Syntax highlighting",IDC_SYNTAXHL,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,15,134,87,11
+    LTEXT           "Text color:",IDC_STATIC,15,70,49,9
+    PUSHBUTTON      "",IDC_FG,60,68,19,12
+    LTEXT           "Background:",IDC_STATIC,92,70,49,9
+    PUSHBUTTON      "",IDC_BG,135,68,16,12
+    LTEXT           "Editor font:",IDC_STATIC,15,53,49,9
+    COMBOBOX        IDC_FONT,60,51,151,70,CBS_DROPDOWNLIST | CBS_SORT | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Font size:",IDC_STATIC,137,24,33,9
+    COMBOBOX        IDC_FONT_SIZE,174,21,36,70,CBS_DROPDOWN | WS_VSCROLL | WS_TABSTOP
+    GROUPBOX        "Common",IDC_STATIC,7,10,210,31
+    GROUPBOX        "Body",IDC_STATIC,7,41,210,46
+    GROUPBOX        "XML source editor",IDC_STATIC,7,89,210,72
+    CONTROL         "Wrap lines",IDC_WRAP,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,15,119,56,11
+    CONTROL         "Syntax highlighting",IDC_SYNTAXHL,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,15,132,87,11
     CONTROL         "Show end of line marks",IDC_SHOWEOL,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,15,145,104,11
-    CONTROL         "Fast Mode",IDC_FAST_MODE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,97,101,11
+    CONTROL         "Fast Mode",IDC_FAST_MODE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,167,68,43,11
     LTEXT           "Language:",IDC_STATIC,15,23,48,8
-    COMBOBOX        IDC_LANG,70,21,141,30,CBS_DROPDOWNLIST | CBS_SORT | WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_LANG,59,21,68,30,CBS_DROPDOWNLIST | CBS_SORT | WS_VSCROLL | WS_TABSTOP
     GROUPBOX        "Spellcheck",IDC_STATIC,7,162,210,45
     CONTROL         "Highlight misspelled words",IDC_BACKGROUNDSPELLCHECK,
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,117,174,94,10
@@ -312,8 +312,10 @@ BEGIN
     EDITTEXT        IDC_CUSTOM_DICT,78,189,122,12,ES_AUTOHSCROLL
     LTEXT           "Custom dictionary:",IDS_SPELL_CUSTOM_DICT,15,191,60,9
     PUSHBUTTON      "..",IDC_DICTPATH,201,189,12,12
-    CONTROL         "Show line numbers",IDC_SHOWLINENUMBERS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,113,123,95,11
-    CONTROL         "Highlight matched tags",IDC_TAGHL,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,113,134,87,11
+    CONTROL         "Show line numbers",IDC_SHOWLINENUMBERS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,113,119,95,11
+    CONTROL         "Highlight matched tags",IDC_TAGHL,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,113,132,87,11
+    LTEXT           "Editor font:",IDC_STATIC,14,105,49,9
+    COMBOBOX        IDC_SRCFONT,59,103,151,70,CBS_DROPDOWNLIST | CBS_SORT | WS_VSCROLL | WS_TABSTOP
 END
 
 IDD_INPUTBOX DIALOGEX 0, 0, 290, 70
@@ -967,15 +969,15 @@ BEGIN
     IDS_TB_CAPT_HREF        "Href:"
 END
 
-STRINGTABLE
+STRINGTABLE 
 BEGIN
-    IDS_MB_OK			"&OK"
-    IDS_MB_CANCEL		"&Cancel"
-    IDS_MB_ABORT		"&Abort"
-    IDS_MB_RETRY                "&Retry"
-    IDS_MB_IGNORE		"&Ignore"
-    IDS_MB_YES			"&Yes"
-    IDS_MB_NO			"&No"
+    IDS_MB_OK               "&OK"
+    IDS_MB_CANCEL           "&Cancel"
+    IDS_MB_ABORT            "&Abort"
+    IDS_MB_RETRY            "&Retry"
+    IDS_MB_IGNORE           "&Ignore"
+    IDS_MB_YES              "&Yes"
+    IDS_MB_NO               "&No"
 END
 
 STRINGTABLE 

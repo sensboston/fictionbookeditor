@@ -3823,8 +3823,9 @@ void  CMainFrame::ShowView(VIEW_TYPE vt) {
 void  CMainFrame::SetSciStyles() {
   m_source.SendMessage(SCI_STYLERESETDEFAULT);
 
-  /// Todo: zzz change font
-  m_source.SendMessage(SCI_STYLESETFONT,STYLE_DEFAULT,(LPARAM)"Lucida Console");
+  /// Set source font
+  CT2A srcFont(_Settings.GetSrcFont());
+  m_source.SendMessage(SCI_STYLESETFONT,STYLE_DEFAULT,(LPARAM) srcFont.m_psz);
   m_source.SendMessage(SCI_STYLESETSIZE,STYLE_DEFAULT, _Settings.GetFontSize());
 
 /*  DWORD fs = _Settings.GetColorFG();

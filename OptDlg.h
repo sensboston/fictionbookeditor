@@ -18,6 +18,7 @@ public:
 
   CColorButton	m_fg,m_bg;
   CComboBox	    m_fonts;
+  CComboBox	    m_srcfonts;
   CComboBox	    m_fontsize;
   CComboBox		m_lang;
 
