@@ -18,48 +18,46 @@ bool  CMainFrame::IsBandVisible(int id) {
   return (rbi.fStyle&RBBS_HIDDEN)==0;
 }
 
-void  CMainFrame::AttachDocument(FB::Doc *doc) {
-  /*if (IsSourceActive()) {
-    UIEnable(ID_VIEW_TREE, 1);
-    UISetCheck(ID_VIEW_TREE, m_save_sp_mode);
-    m_splitter.SetSinglePaneMode(m_save_sp_mode ? SPLIT_PANE_NONE : SPLIT_PANE_RIGHT);
-  }*/
-  m_view.AttachWnd(doc->m_body);
-//  m_view.AttachWnd(doc->m_desc);
-  UISetCheck(ID_VIEW_BODY, 1);
-  UISetCheck(ID_VIEW_DESC, 0);
-  UISetCheck(ID_VIEW_SOURCE, 0);
-  m_view.ActivateWnd(doc->m_body);
-  m_current_view = BODY;
-  m_last_view = DESC;
-  m_last_ctrl_tab_view= DESC;
-  m_cb_updated=false;
-  m_need_title_update=m_sel_changed=true;
-  if(_Settings.ViewDocumentTree())
-  {
-	  m_document_tree.GetDocumentStructure(/*doc->m_body*/doc->m_body.Document());
-	  m_document_tree.HighlightItemAtPos(doc->m_body.SelectionContainer());
-  }
-  // added by SeNS
-  if (m_Speller && m_Speller->Enabled())
-  {
-	  m_Speller->SetFrame(m_hWnd);
-	  m_Speller->SetCustomDictionary(_Settings.GetCustomDict());
-	  m_Speller->AttachDocument(doc->m_body.Document());
-  }
+void  CMainFrame::AttachDocument(FB::Doc *doc) 
+{
+	/*if (IsSourceActive()) {
+	UIEnable(ID_VIEW_TREE, 1);
+	UISetCheck(ID_VIEW_TREE, m_save_sp_mode);
+	m_splitter.SetSinglePaneMode(m_save_sp_mode ? SPLIT_PANE_NONE : SPLIT_PANE_RIGHT);
+	}*/
+	m_view.AttachWnd(doc->m_body);
+	UISetCheck(ID_VIEW_BODY, 1);
+	UISetCheck(ID_VIEW_DESC, 0);
+	UISetCheck(ID_VIEW_SOURCE, 0); 
+	m_view.ActivateWnd(doc->m_body);
+	m_current_view = BODY;
+	m_last_view = DESC;
+	m_last_ctrl_tab_view= DESC;
+	m_cb_updated=false;
+	m_need_title_update=m_sel_changed=true;
+	if(_Settings.ViewDocumentTree())
+	{
+		m_document_tree.GetDocumentStructure(doc->m_body.Document());
+		m_document_tree.HighlightItemAtPos(doc->m_body.SelectionContainer());
+	}
+	// added by SeNS
+	if (m_Speller && m_Speller->Enabled())
+	{
+		m_Speller->SetFrame(m_hWnd);
+		m_Speller->SetCustomDictionary(_Settings.GetCustomDict());
+		m_Speller->AttachDocument(doc->m_body.Document());
+	}
+    ShowView(DESC);
+    ShowView(BODY);
+	m_view.ActivateWnd(doc->m_body);
 }
 
-CString	CMainFrame::GetOpenFileName() {
-  CFileDialog	dlg(
-    TRUE,
-    _T("fb2"),
-    NULL,
-    OFN_HIDEREADONLY|OFN_PATHMUSTEXIST,
-    _T("FictionBook files (*.fb2)\0*.fb2\0All files (*.*)\0*.*\0\0")
-  );
-  if (dlg.DoModal(*this)==IDOK)
-    return dlg.m_szFileName;
-  return CString();
+CString	CMainFrame::GetOpenFileName() 
+{
+	CFileDialog dlg(TRUE, L"fb2", NULL, OFN_HIDEREADONLY|OFN_PATHMUSTEXIST, 
+		L"FictionBook files (*.fb2)\0*.fb2\0All files (*.*)\0*.*\0\0");
+	if (dlg.DoModal(*this)==IDOK) return dlg.m_szFileName;
+	return CString();
 }
 
 class CCustomSaveDialog : public CFileDialogImpl<CCustomSaveDialog>
@@ -101,9 +99,9 @@ public:
 
     TCHAR   *cp=buf;
     while (*cp) {
-      size_t len=_tcscspn(cp,_T(","));
+      size_t len=_tcscspn(cp,L",");
       if (cp[len])
-	cp[len++]=_T('\0');
+	cp[len++]= L'\0';
       if (*cp)
 	::SendDlgItemMessage(hWnd,IDC_ENCODING,CB_ADDSTRING,0,(LPARAM)cp);
       cp+=len;
@@ -148,15 +146,10 @@ CString	CMainFrame::GetSaveFileName(CString& encoding) {
 	if (!filename || (filename == bstr_t(L"Untitled.fb2")))
 		filename = L"";
 
-  CCustomSaveDialog	dlg(
-    FALSE,
-	_Settings.KeepEncoding() ? m_doc->m_encoding : _Settings.GetDefaultEncoding(),
-    _T("fb2"),
-	filename,
-    OFN_HIDEREADONLY|OFN_NOREADONLYRETURN|OFN_OVERWRITEPROMPT|
-    OFN_ENABLETEMPLATE,
-    _T("FictionBook files (*.fb2)\0*.fb2\0All files (*.*)\0*.*\0\0")
-  );
+  CCustomSaveDialog	dlg(FALSE,
+	_Settings.KeepEncoding() ? m_doc->m_encoding : _Settings.GetDefaultEncoding(), L"fb2", filename,
+    OFN_HIDEREADONLY|OFN_NOREADONLYRETURN|OFN_OVERWRITEPROMPT| OFN_ENABLETEMPLATE,
+    L"FictionBook files (*.fb2)\0*.fb2\0All files (*.*)\0*.*\0\0");
   if (dlg.DoModal(*this)==IDOK) {
     encoding=dlg.m_encoding;
     return dlg.m_szFileName;
@@ -199,9 +192,9 @@ bool	CMainFrame::DiscardChanges() {
 
 void  CMainFrame::SetIsText() {
   if (m_is_fail)
-    m_status.SetText(ID_DEFAULT_PANE,_T("Failing Incremental Search: ")+m_is_str);
+    m_status.SetText(ID_DEFAULT_PANE,L"Failing Incremental Search: "+m_is_str);
   else
-    m_status.SetText(ID_DEFAULT_PANE,_T("Incremental Search: ")+m_is_str);
+    m_status.SetText(ID_DEFAULT_PANE,L"Incremental Search: "+m_is_str);
 }
 
 void  CMainFrame::StopIncSearch(bool fCancel) {
@@ -276,9 +269,8 @@ CMainFrame::FILE_OP_STATUS  CMainFrame::LoadFile(const wchar_t *initfilename)
 		doc->m_body.m_file_path = filename.Mid(0, filename.ReverseFind(L'\\') + 1);
 		doc->m_body.m_file_name = filename.Mid(filename.ReverseFind(L'\\') + 1, filename.GetLength() - 1);
 	}
-
   EnableWindow(FALSE);
-  m_status.SetPaneText(ID_DEFAULT_PANE,_T("Loading..."));
+  m_status.SetPaneText(ID_DEFAULT_PANE,L"Loading...");
   bool fLoaded = doc->Load(m_view, filename);
   EnableWindow(TRUE);
   if (!fLoaded) {

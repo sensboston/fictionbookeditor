@@ -112,7 +112,7 @@ bool XmlMatchedTagsHighlighter::getMatchedTagPos(int searchStart, int searchEnd,
 
 	pair<int, int> foundPos;
 	int ltPosOnR = getFirstTokenPosFrom(searchStart, searchEnd, tag2find, foundPos);
-	if (ltPosOnR == -1)
+	if (ltPosOnR < 0)
 		return false;
 
 #if 0
