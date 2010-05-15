@@ -1,5 +1,5 @@
 //======================================
-//               Инициалы
+//               Инициалы до и после фамилий
 //                                    Engine by ©Sclex
 //                                                                   02.05.2008
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -11,7 +11,9 @@
 //======================================
 // v.1.5 — прерывание процесса 
 //======================================
-var VersionNumber="1.5";
+// v.2.0 — самообучение — jurgennt, май 2010
+//======================================
+var VersionNumber="2.0";
 
 //обрабатывать ли history
 var ObrabotkaHistory=true;
@@ -29,6 +31,8 @@ function Run() {
   var count=0;                                                  //  счётчик
 
           Col = new Object();                               // коллекция временных замен
+          NoCol = new Object();                          // коллекция «отменённых», чтобы по десять раз от них не отмахиваться
+          YesCol = new Object();                         // коллекция одобренных изменений
           var k = 0;
 
                                     // Тройные инициалы до фамилии — «И.И.О.Фамилия»  или «Пр.Вт.Тр. Фамилия» (для иноземцев с прибитыми именами)
@@ -94,11 +98,11 @@ function Run() {
  var re74 = "$2 $3";
 
 
-  var re_fin1 = new RegExp("col1_\\\d","g");
-  var re_fin2 = new RegExp("col2_\\\d{2}","g");
+  var re_fin1 = new RegExp("col1¦\\\d¦","g");
+  var re_fin2 = new RegExp("col2¦\\\d{2}¦","g");
 
 
-//    window.external.BeginUndoUnit(document,"«инициалы»");                               // ОТКАТ (undo) отключён — слишком жадно жрёт оперативку
+    window.external.BeginUndoUnit(document,"«Фамилия И.О.»");                               // ОТКАТ (UNDO) начало — слишком жадно жрёт оперативку (/*закомментпровав*/ можно отключить)
 
  var s="";
 
@@ -129,7 +133,9 @@ while (ptr2!=fbw_body && ptr2.nodeName!="P") {
          { GoTo(ptr);
 //           if (ptr2==fbw_body) GoTo(ptr); else GoTo(ptr2);
 
+
 //                    ===================   ДО   ==============
+
 
         while (s.search(re10)!=-1)                                   // тройные инициалы "до"
 				{
@@ -140,16 +146,25 @@ while (ptr2!=fbw_body && ptr2.nodeName!="P") {
     var sll1   = s.replace(re10, re15);
     var vvv1  = s.replace(re10, re16);
 
+  if (NoCol[vv1]==true)  {
+        if (k<10)   { Col[k] = vvv1;    s=sll1+("col1¦" +k+ "¦")+sp1; } 
+        if (k>10)   { Col[k] = vvv1;    s=sll1+("col2¦" +k+ "¦")+sp1; }
+		 k++;} 
+  if (YesCol[vv1]!=null)  {
+        if (k<10)   { Col[k] = YesCol[vv1];    s=sl1+("col1¦" +k+ "¦")+sp1; count++; } 
+        if (k>10)   { Col[k] = YesCol[vv1];    s=sl1+("col2¦" +k+ "¦")+sp1; count++; }
+		 k++;}
  var r=Object();
- if (InputBox(" Предлагается следующий           При «Отмене» останется:        … "+count+" …\n вариант :. v .:                                      " +vv1,v1, r) == IDCANCEL) return false; // patch 1.5
-// var r=prompt(" Предлагается следующий           При «Отмене» останется:        … "+count+" …\n вариант :. v .:                                      " +vv1,v1)
-	 if (k<10)
-	 { if(r!=null && r.$!="")  { Col[k] = r.$;  s=sl1+("col1_" +k)+sp1; count++; } 
-	 else { Col[k] = vvv1;  s=sll1+("col1_" +k)+sp1; } }
-	 if (k>=10)
-		 { if(r!=null && r.$!="")  { Col[k] = r.$;  s=sl1+("col2_" +k)+sp1; count++; } 
-		 else { Col[k] = vvv1;  s=sll1+("col2_" +k)+sp1; } }
+	 if (k<10 && NoCol[vv1]==null && YesCol[vv1]==null)
+	 { if (InputBox(" Предлагается следующий           При «Отмене» останется:        … "+count+" …\n вариант :. v .:                                      " +vv1,v1, r) == IDCANCEL) return false;
+		 if(r!=null && r.$!="")  { Col[k] = r.$; YesCol[vv1]=r.$; s=sl1+("col1¦" +k+ "¦")+sp1; count++; } 
+	 else { Col[k] = vvv1;  NoCol[vv1]=true;  s=sll1+("col1¦" +k+ "¦")+sp1; } }
+	 if (k>=10 && NoCol[vv1]==null && YesCol[vv1]==null)
+		 { if (InputBox(" Предлагается следующий           При «Отмене» останется:        … "+count+" …\n вариант :. v .:                                      " +vv1,v1, r) == IDCANCEL) return false;
+		 if(r!=null && r.$!="")  { Col[k] = r.$; YesCol[vv1]=r.$; s=sl1+("col2¦" +k+ "¦")+sp1; count++; } 
+		 else { Col[k] = vvv1;  NoCol[vv1]=true;  s=sll1+("col2¦" +k+ "¦")+sp1; } }
  k++;  }
+
 
         while (s.search(re20)!=-1)                                 // двойные инициалы "до"
 				{
@@ -160,16 +175,29 @@ while (ptr2!=fbw_body && ptr2.nodeName!="P") {
     var sll2   = s.replace(re20, re25);
     var vvv2  = s.replace(re20, re26);
 
+  if (NoCol[vv2]==true)  {
+        if (k<10)   { Col[k] = vvv2;    s=sll2+("col1¦" +k+ "¦")+sp2; } 
+        if (k>10)   { Col[k] = vvv2;    s=sll2+("col2¦" +k+ "¦")+sp2; }
+		 k++;}                                                                                                                              //                            MsgBox ('после автозамен: \n' +s );
+
+  if (YesCol[vv2]!=null)  {
+        if (k<10)   { Col[k] = YesCol[vv2];    s=sl2+("col1¦" +k+ "¦")+sp2; count++; } 
+        if (k>10)   { Col[k] = YesCol[vv2];    s=sl2+("col2¦" +k+ "¦")+sp2; count++; }
+		                                                                                                                                         //      MsgBox ('после автозамен: \n' +s+ '\n\nvv2 =  ' +vv2+ '\n\nYesCol: =  ' +YesCol[vv2] );
+		 k++;}
+
  var r=Object();
- if (InputBox(" Предлагается следующий           При «Отмене» останется:        … "+count+" …\n вариант :. v .:                                      " +vv2,v2, r) == IDCANCEL) return false; // patch 1.5
-// var r=prompt(" Предлагается следующий           При «Отмене» останется:        … "+count+" …\n вариант :. v .:                                      " +vv2,v2)
-	 if (k<10)
-	 { if(r!=null && r.$!="")  { Col[k] = r.$;  s=sl2+("col1_" +k)+sp2; count++; } 
-	 else { Col[k] = vvv2;  s=sll2+("col1_" +k)+sp2; } }
-	 if (k>=10)
-		 { if(r!=null && r.$!="")  { Col[k] = r.$;  s=sl2+("col2_" +k)+sp2; count++; } 
-		 else { Col[k] = vvv2;  s=sll2+("col2_" +k)+sp2; } }
- k++;  }
+	 if (k<10 && NoCol[vv2]==null && YesCol[vv2]==null)
+	 {  if (InputBox(" Предлагается следующий           При «Отмене» останется:        … "+count+" …\n вариант :. v .:                                      " +vv2,v2, r) == IDCANCEL) return false;
+		 if(r!=null && r.$!="")  { Col[k] = r.$; YesCol[vv2]=r.$; s=sl2+("col1¦" +k+ "¦")+sp2; count++; } 
+	 else { Col[k] = vvv2;  NoCol[vv2]=true;  s=sll2+("col1¦" +k+ "¦")+sp2; } }
+	 		//                                      MsgBox ('      И где это я?     \n\nv2:  ' +v2+ '\nvv2:  ' +vv2+ '\n\nNoCol: =  ' +NoCol[vv2]+ '\n\nCol [' +k+ '] =  ' +Col[k]+ '\n\nабзац:\n' +s+ '\n\nYesCol[' +vv2+']: =  ' +YesCol[vv2]  );
+	 if (k>=10 && NoCol[vv2]==null && YesCol[vv2]==null)
+		 {  if (InputBox(" Предлагается следующий           При «Отмене» останется:        … "+count+" …\n вариант :. v .:                                      " +vv2,v2, r) == IDCANCEL) return false;
+		 if(r!=null && r.$!="")  { Col[k] = r.$; YesCol[vv2]=r.$; s=sl2+("col2¦" +k+ "¦")+sp2; count++; } 
+		 else { Col[k] = vvv2;  NoCol[vv2]=true;  s=sll2+("col2¦" +k+ "¦")+sp2; } }
+ k++;  }                                                                                                                                     //                                       MsgBox ('вручную: \n' +s );
+
 
         while (s.search(re30)!=-1)                                 // одинарные инициалы "до"
 				{
@@ -180,18 +208,28 @@ while (ptr2!=fbw_body && ptr2.nodeName!="P") {
     var sll3     = s.replace(re30, re35);
     var vvv3  = s.replace(re30, re36);
 
+  if (NoCol[vv3]==true)  {
+        if (k<10)   { Col[k] = vvv3;    s=sll3+("col1¦" +k+ "¦")+sp3; } 
+        if (k>10)   { Col[k] = vvv3;    s=sll3+("col2¦" +k+ "¦")+sp3; }
+		 k++;} 
+  if (YesCol[vv3]!=null)  {
+        if (k<10)   { Col[k] = YesCol[vv3];    s=sl3+("col1¦" +k+ "¦")+sp3; count++; } 
+        if (k>10)   { Col[k] = YesCol[vv3];    s=sl3+("col2¦" +k+ "¦")+sp3; count++; }
+		 k++;}
  var r=Object();
- if (InputBox(" Предлагается следующий           При «Отмене» останется:        … "+count+" …\n вариант :. v .:                                      " +vv3,v3, r) == IDCANCEL) return false; // patch 1.5
-// var r=prompt(" Предлагается следующий           При «Отмене» останется:        … "+count+" …\n вариант :. v .:                                      " +vv3,v3)
-	 if (k<10)
-	 { if(r!=null && r.$!="")  { Col[k] = r.$;  s=sl3+("col1_" +k)+sp3; count++; } 
-	 else { Col[k] = vvv3;  s=sll3+("col1_" +k)+sp3; } }
-	 if (k>=10)
-		 { if(r!=null && r.$!="")  { Col[k] = r.$;  s=sl3+("col2_" +k)+sp3; count++; } 
-		 else { Col[k] = vvv3;  s=sll3+("col2_" +k)+sp3; } }
+	 if (k<10 && NoCol[vv3]==null && YesCol[vv3]==null)
+	 { if (InputBox(" Предлагается следующий           При «Отмене» останется:        … "+count+" …\n вариант :. v .:                                      " +vv3,v3, r) == IDCANCEL) return false;
+		 if(r!=null && r.$!="")  { Col[k] = r.$; YesCol[vv3]=r.$; s=sl3+("col1¦" +k+ "¦")+sp3; count++; } 
+	 else { Col[k] = vvv3;  NoCol[vv3]=true;  s=sll3+("col1¦" +k+ "¦")+sp3; } }
+	 if (k>=10 && NoCol[vv3]==null && YesCol[vv3]==null)
+		 { if (InputBox(" Предлагается следующий           При «Отмене» останется:        … "+count+" …\n вариант :. v .:                                      " +vv3,v3, r) == IDCANCEL) return false;
+		 if(r!=null && r.$!="")  { Col[k] = r.$; YesCol[vv3]=r.$; s=sl3+("col2¦" +k+ "¦")+sp3; count++; } 
+		 else { Col[k] = vvv3;  NoCol[vv3]=true;  s=sll3+("col2¦" +k+ "¦")+sp3; } }
  k++;  }
 
+
 //                 =================== ПОСЛЕ =================
+
 
        while (s.search(re40)!=-1)                                  // тройные инициалы "после"
 				{
@@ -202,15 +240,23 @@ while (ptr2!=fbw_body && ptr2.nodeName!="P") {
     var vvv4  = s.replace(re40, re45);
     var spp4   = s.replace(re40, re46);
 
+  if (NoCol[vv4]==true)  {
+        if (k<10)   { Col[k] = vvv4;    s=sl4+("col1¦" +k+ "¦")+spp4; } 
+        if (k>10)   { Col[k] = vvv4;    s=sl4+("col2¦" +k+ "¦")+spp4; }
+		 k++;} 
+  if (YesCol[vv4]!=null)  {
+        if (k<10)   { Col[k] = YesCol[vv4];    s=sl4+("col1¦" +k+ "¦")+sp4; count++; } 
+        if (k>10)   { Col[k] = YesCol[vv4];    s=sl4+("col2¦" +k+ "¦")+sp4; count++; }
+		 k++;}
  var r=Object();
- if (InputBox(" Предлагается следующий           При «Отмене» останется:        … "+count+" …\n вариант :. v .:                                      " +vv4,v4, r) == IDCANCEL) return false; // patch 1.5
-// var r=prompt(" Предлагается следующий           При «Отмене» останется:        … "+count+" …\n вариант :. v .:                                      " +vv4,v4)
-	 if (k<10)
-					{ if(r!=null && r.$!="")  { Col[k] = r.$;  s=sl4+("col1_" +k)+sp4; count++; }
-					 else { Col[k] = vvv4;  s=sl4+("col1_" +k)+spp4; } }
-	 if (k>=10)
-					{ if(r!=null && r.$!="")  { Col[k] = r.$;  s=sl4+("col2_" +k)+spp4; count++; }
-					 else { Col[k] = vvv4;  s=sl4+("col2_" +k)+spp4; } }
+	 if (k<10 && NoCol[vv4]==null && YesCol[vv4]==null)
+					{ if (InputBox(" Предлагается следующий           При «Отмене» останется:        … "+count+" …\n вариант :. v .:                                      " +vv4,v4, r) == IDCANCEL) return false;
+		 if(r!=null && r.$!="")  { Col[k] = r.$; YesCol[vv4]=r.$; s=sl4+("col1_" +k)+sp4; count++; }
+					 else { Col[k] = vvv4;  NoCol[vv4]=true;  s=sl4+("col1¦" +k+ "¦")+spp4; } }
+	 if (k>=10 && NoCol[vv4]==null && YesCol[vv4]==null)
+					{ if (InputBox(" Предлагается следующий           При «Отмене» останется:        … "+count+" …\n вариант :. v .:                                      " +vv4,v4, r) == IDCANCEL) return false;
+		 if(r!=null && r.$!="")  { Col[k] = r.$; YesCol[vv4]=r.$; s=sl4+("col2¦" +k+ "¦")+spp4; count++; }
+					 else { Col[k] = vvv4;  NoCol[vv4]=true;  s=sl4+("col2¦" +k+ "¦")+spp4; } }
  k++; }
 
 
@@ -223,16 +269,25 @@ while (ptr2!=fbw_body && ptr2.nodeName!="P") {
     var vvv5  = s.replace(re50, re55);
     var spp5   = s.replace(re50, re56);
 
+  if (NoCol[vv5]==true)  {
+        if (k<10)   { Col[k] = vvv5;    s=sl5+("col1¦" +k+ "¦")+spp5; } 
+        if (k>10)   { Col[k] = vvv5;    s=sl5+("col2¦" +k+ "¦")+spp5; }
+		 k++;} 
+  if (YesCol[vv5]!=null)  {
+        if (k<10)   { Col[k] = YesCol[vv5];    s=sl5+("col1¦" +k+ "¦")+sp5; count++; } 
+        if (k>10)   { Col[k] = YesCol[vv5];    s=sl5+("col2¦" +k+ "¦")+sp5; count++; }
+		 k++;}
  var r=Object();
- if (InputBox(" Предлагается следующий           При «Отмене» останется:        … "+count+" …\n вариант :. v .:                                      " +vv5,v5, r) == IDCANCEL) return false; // patch 1.5
-// var r=prompt(" Предлагается следующий           При «Отмене» останется:        … "+count+" …\n вариант :. v .:                                      " +vv5,v5)
-	 if (k<10)
-					{ if(r!=null && r.$!="")  { Col[k] = r.$;  s=sl5+("col1_" +k)+sp5; count++; }
-					 else { Col[k] = vvv5;  s=sl5+("col1_" +k)+spp5; } }
-	 if (k>=10)
-					{ if(r!=null && r.$!="")  { Col[k] = r.$;  s=sl5+("col2_" +k)+sp5; count++; }
-					 else { Col[k] = vvv5;  s=sl5+("col2_" +k)+spp5; } }
+	 if (k<10 && NoCol[vv5]==null && YesCol[vv5]==null)
+					{ if (InputBox(" Предлагается следующий           При «Отмене» останется:        … "+count+" …\n вариант :. v .:                                      " +vv5,v5, r) == IDCANCEL) return false;
+		 if(r!=null && r.$!="")  { Col[k] = r.$; YesCol[vv5]=r.$; s=sl5+("col1¦" +k+ "¦")+sp5; count++; }
+					 else { Col[k] = vvv5;  NoCol[vv5]=true;  s=sl5+("col1¦" +k+ "¦")+spp5; } }
+	 if (k>=10 && NoCol[vv5]==null && YesCol[vv5]==null)
+					{ if (InputBox(" Предлагается следующий           При «Отмене» останется:        … "+count+" …\n вариант :. v .:                                      " +vv5,v5, r) == IDCANCEL) return false;
+		 if(r!=null && r.$!="")  { Col[k] = r.$; YesCol[vv5]=r.$; s=sl5+("col2¦" +k+ "¦")+sp5; count++; }
+					 else { Col[k] = vvv5;  NoCol[vv5]=true;  s=sl5+("col2¦" +k+ "¦")+spp5; } }
  k++; }
+
 
        while (s.search(re60)!=-1)                                  // одинарные инициалы "после"
 				{
@@ -243,16 +298,25 @@ while (ptr2!=fbw_body && ptr2.nodeName!="P") {
     var vvv6  = s.replace(re60, re65);
     var spp6   = s.replace(re60, re66);
 
+  if (NoCol[vv6]==true)  {
+        if (k<10)   { Col[k] = vvv6;    s=sl6+("col1¦" +k+ "¦")+spp6; } 
+        if (k>10)   { Col[k] = vvv6;    s=sl6+("col2¦" +k+ "¦")+spp6; }
+		 k++;} 
+  if (YesCol[vv6]!=null)  {
+        if (k<10)   { Col[k] = YesCol[vv6];    s=sl6+("col1¦" +k+ "¦")+sp6; count++; } 
+        if (k>10)   { Col[k] = YesCol[vv6];    s=sl6+("col2¦" +k+ "¦")+sp6; count++; }
+		 k++;}
  var r=Object();
- if (InputBox(" Предлагается следующий           При «Отмене» останется:        … "+count+" …\n вариант :. v .:                                      " +vv6,v6, r) == IDCANCEL) return false; // patch 1.5
-// var r=prompt(" Предлагается следующий           При «Отмене» останется:        … "+count+" …\n вариант :. v .:                                      " +vv6,v6)
-	 if (k<10)
-					{ if(r!=null && r.$!="")  { Col[k] = r.$;  s=sl6+("col1_" +k)+sp6; count++; }
-					 else { Col[k] = vvv6;  s=sl6+("col1_" +k)+spp6; } }
-	 if (k>=10)
-					{ if(r!=null && r.$!="")  { Col[k] = r.$;  s=sl6+("col2_" +k)+sp6; count++; }
-					 else { Col[k] = vvv6;  s=sl6+("col2_" +k)+spp6; } }
+	 if (k<10 && NoCol[vv6]==null && YesCol[vv6]==null)
+					{ if (InputBox(" Предлагается следующий           При «Отмене» останется:        … "+count+" …\n вариант :. v .:                                      " +vv6,v6, r) == IDCANCEL) return false;
+		 if(r!=null && r.$!="")  { Col[k] = r.$; YesCol[vv6]=r.$; s=sl6+("col1¦" +k+ "¦")+sp6; count++; }
+					 else { Col[k] = vvv6;  NoCol[vv6]=true;  s=sl6+("col1¦" +k+ "¦")+spp6; } }
+	 if (k>=10 && NoCol[vv6]==null && YesCol[vv6]==null)
+					{ if (InputBox(" Предлагается следующий           При «Отмене» останется:        … "+count+" …\n вариант :. v .:                                      " +vv6,v6, r) == IDCANCEL) return false;
+		 if(r!=null && r.$!="")  { Col[k] = r.$; YesCol[vv6]=r.$; s=sl6+("col2¦" +k+ "¦")+sp6; count++; }
+					 else { Col[k] = vvv6;  NoCol[vv6]=true;  s=sl6+("col2¦" +k+ "¦")+spp6; } }
  k++; }
+
 
         while (s.search(re70)!=-1)                                  // "Екатерины-Людовики"
 				{
@@ -261,15 +325,23 @@ while (ptr2!=fbw_body && ptr2.nodeName!="P") {
     var sl7   = s.replace(re70, re72);
     var sp7   = s.replace(re70, re73);
 
+  if (NoCol[vv7]==true)  {
+        if (k<10)   { Col[k] = vv7;    s=sl7+("col1¦" +k+ "¦")+sp7; } 
+        if (k>10)   { Col[k] = vv7;    s=sl7+("col2¦" +k+ "¦")+sp7; }
+		 k++;} 
+  if (YesCol[vv7]!=null)  {
+        if (k<10)   { Col[k] = YesCol[vv7];    s=sl7+("col1¦" +k+ "¦")+sp7; count++; } 
+        if (k>10)   { Col[k] = YesCol[vv7];    s=sl7+("col2¦" +k+ "¦")+sp7; count++; }
+		 k++;}
  var r=Object();
- if (InputBox(" Предлагается следующий           При «Отмене» останется:        … "+count+" …\n вариант :. v .:                                      " +vv7,v7, r) == IDCANCEL) return false; // patch 1.5
-// var r=prompt(" Предлагается следующий           При «Отмене» останется:        … "+count+" …\n вариант :. v .:                                      " +vv7,v7)
-	 if (k<10)
-					{ if(r!=null && r.$!="")  { Col[k] = r.$;  s=sl7+("col1_" +k)+sp7; count++; }
-					 else { Col[k] = vv7;  s=sl7+("col1_" +k)+sp7; } }
-	 if (k>=10)
-					{ if(r!=null && r.$!="")  { Col[k] = r.$;  s=sl7+("col2_" +k)+sp7; count++; }
-					 else { Col[k] = vv7;  s=sl7+("col2_" +k)+sp7; } }
+	 if (k<10 && NoCol[vv7]==null && YesCol[vv7]==null)
+					{ if (InputBox(" Предлагается следующий           При «Отмене» останется:        … "+count+" …\n вариант :. v .:                                      " +vv7,v7, r) == IDCANCEL) return false;
+		 if(r!=null && r.$!="")  { Col[k] = r.$; YesCol[vv7]=r.$; s=sl7+("col1¦" +k+ "¦")+sp7; count++; }
+					 else { Col[k] = vv7;  NoCol[vv7]=true;  s=sl7+("col1¦" +k+ "¦")+sp7; } }
+	 if (k>=10 && NoCol[vv7]==null && YesCol[vv7]==null)
+					{ if (InputBox(" Предлагается следующий           При «Отмене» останется:        … "+count+" …\n вариант :. v .:                                      " +vv7,v7, r) == IDCANCEL) return false;
+		 if(r!=null && r.$!="")  { Col[k] = r.$; YesCol[vv7]=r.$; s=sl7+("col2¦" +k+ "¦")+sp7; count++; }
+					 else { Col[k] = vv7;  NoCol[vv7]=true;  s=sl7+("col2¦" +k+ "¦")+sp7; } }
  k++; }
 
 				}                                                                                                          // конец поиска и расстановки заглушек
@@ -278,15 +350,15 @@ while (ptr2!=fbw_body && ptr2.nodeName!="P") {
 
 if ( s.search(re_fin1)!=-1 || s.search(re_fin2)!=-1) {                                                 // Восстановление временных замен
 for (z=0;z<k;z++)  {
-                     if (z<10)     { var re100 = new RegExp("col1_("+z+")","g");
+                     if (z<10)     { var re100 = new RegExp("col1¦("+z+")¦","g");
                                         var re101 = Col[z];
                                            s=s.replace(re100,re101); }
-                  if (z>=10)      {var re200 = new RegExp("col2_("+z+")","g");
+                  if (z>=10)      {var re200 = new RegExp("col2¦("+z+")¦","g");
                                         var re201 = Col[z];
                                            s=s.replace(re200,re201); }            } k=0; }
 
    ptr.innerHTML=s;
-   return true;                    // patch 1.5
+   return true;
   } 
 
  var body=document.getElementById("fbw_body");
@@ -308,13 +380,12 @@ for (z=0;z<k;z++)  {
                                                          }
    SaveNext=SaveNext.nextSibling; //и переходим на соседний элемент
          }
-//  if (ptr.nodeName=="P") HandleP(ptr);
     if (ptr.nodeName=="P") 
-	if (!HandleP(ptr)) return;                    // patch 1.5
+	if (!HandleP(ptr)) return;
   ptr=SaveNext;
  }
 
-//    window.external.EndUndoUnit(document);
+    window.external.EndUndoUnit(document);                               // Undo конец
 
 var Tf=new Date().getTime();
 var Thour = Math.floor((Tf-Ts)/3600000);
