@@ -3823,6 +3823,7 @@ void  CMainFrame::ShowView(VIEW_TYPE vt) {
 void  CMainFrame::SetSciStyles() {
   m_source.SendMessage(SCI_STYLERESETDEFAULT);
 
+  /// Todo: zzz change font
   m_source.SendMessage(SCI_STYLESETFONT,STYLE_DEFAULT,(LPARAM)"Lucida Console");
   m_source.SendMessage(SCI_STYLESETSIZE,STYLE_DEFAULT, _Settings.GetFontSize());
 

@@ -967,6 +967,17 @@ BEGIN
     IDS_TB_CAPT_HREF        "Href:"
 END
 
+STRINGTABLE
+BEGIN
+    IDS_MB_OK			"OK"
+    IDS_MB_CANCEL		"Cancel"
+    IDS_MB_ABORT		"Abort"
+    IDS_MB_RETRY                "Retry"
+    IDS_MB_IGNORE		"Ignore"
+    IDS_MB_YES			"Yes"
+    IDS_MB_NO			"No"
+END
+
 STRINGTABLE 
 BEGIN
     IDS_LANG_UKRAINIAN      "Ukrainian"
