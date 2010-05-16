@@ -286,7 +286,7 @@ BEGIN
     GROUPBOX        "Тіло",IDC_STATIC,7,39,205,43
     GROUPBOX        "Редактор коду",IDC_STATIC,7,83,205,73
     CONTROL         "Переноси рядків",IDC_WRAP,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,13,114,65,10
-    CONTROL         "Підсвітка синтаксису",IDC_SYNTAXHL,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,13,127,77,10
+    CONTROL         "Підсвітка синтаксису",IDC_SYNTAXHL,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,13,127,80,10
     CONTROL         "Показувати символи кінця рядків",IDC_SHOWEOL,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,13,140,121,10
     CONTROL         "Швидкий режим",IDC_FAST_MODE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,144,65,64,10
     LTEXT           "Мова:",IDC_STATIC,13,22,41,8
@@ -316,7 +316,7 @@ BEGIN
     CONTROL         "&Слова повністю",IDC_WHOLE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,41,98,13
     CONTROL         "&Враховувати регістр",IDC_MATCHCASE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,54,98,13
     CONTROL         "&Регулярний вираз",IDC_REGEXP,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,67,98,13
-    DEFPUSHBUTTON   "З&найти далі",IDOK,238,7,50,14,WS_GROUP
+    DEFPUSHBUTTON   "З&найти далі",ID_FIND_NEXT,238,7,50,14,WS_GROUP
     PUSHBUTTON      "&Замінити",IDC_REPLACE_ONE,238,25,50,14
     PUSHBUTTON      "Замінити &усі",IDC_REPLACE_ALL,238,43,50,14
     PUSHBUTTON      "Скасувати",IDCANCEL,238,61,50,14
@@ -335,7 +335,7 @@ BEGIN
     GROUPBOX        "Напрямок",IDC_STATIC,172,30,60,38,WS_GROUP
     CONTROL         "В&гору",IDC_UP,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,179,41,44,11
     CONTROL         "Вниз",IDC_DOWN,"Button",BS_AUTORADIOBUTTON,179,52,44,11
-    DEFPUSHBUTTON   "З&найти далі",IDOK,238,7,50,14,WS_GROUP
+    DEFPUSHBUTTON   "З&найти далі",ID_FIND_NEXT,238,7,50,14,WS_GROUP
     PUSHBUTTON      "Скасувати",IDCANCEL,238,24,50,14
 END
 
@@ -686,8 +686,8 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_MB_OK               "&Гаразд"
-    IDS_MB_CANCEL           "&Скасувати"
+    IDS_MB_OK               "Гаразд"
+    IDS_MB_CANCEL           "Скасувати"
     IDS_MB_ABORT            "Пе&рервати"
     IDS_MB_RETRY            "&Повторити"
     IDS_MB_IGNORE           "&Ігнорувати"
