@@ -286,9 +286,9 @@ BEGIN
     GROUPBOX        "Общее",IDC_STATIC,7,12,207,28
     GROUPBOX        "Тело",IDC_STATIC,7,40,207,45
     GROUPBOX        "Редактор кода",IDC_STATIC,7,86,207,77
-    CONTROL         "Перенос строк",IDC_WRAP,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,13,119,88,10
-    CONTROL         "Подсветка синтаксиса",IDC_SYNTAXHL,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,13,134,125,10
-    CONTROL         "Показывать символы конца строк",IDC_SHOWEOL,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,13,148,121,10
+    CONTROL         "Перенос строк",IDC_WRAP,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,13,119,63,10
+    CONTROL         "Подсветка синтаксиса",IDC_SYNTAXHL,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,13,134,84,10
+    CONTROL         "Показывать символы конца строк",IDC_SHOWEOL,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,13,148,120,10
     CONTROL         "Быстрый режим",IDC_FAST_MODE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,144,69,63,10
     LTEXT           "Язык:",IDC_STATIC,14,23,41,8
     COMBOBOX        IDC_LANG,49,21,67,30,CBS_DROPDOWNLIST | CBS_SORT | WS_VSCROLL | WS_TABSTOP
@@ -317,7 +317,7 @@ BEGIN
     CONTROL         "&Только слова целиком",IDC_WHOLE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,41,98,13
     CONTROL         "&Учитывать регистр",IDC_MATCHCASE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,54,98,13
     CONTROL         "&Регулярное выражение",IDC_REGEXP,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,67,98,13
-    PUSHBUTTON      "&Искать далее",IDOK,238,7,50,14,WS_GROUP
+    PUSHBUTTON      "&Искать далее",ID_FIND_NEXT,238,7,50,14,WS_GROUP
     PUSHBUTTON      "&Заменить",IDC_REPLACE_ONE,238,25,50,14
     PUSHBUTTON      "Заменить &все",IDC_REPLACE_ALL,238,43,50,14
     PUSHBUTTON      "Отмена",IDCANCEL,238,61,50,14
@@ -336,7 +336,7 @@ BEGIN
     GROUPBOX        "Направление",IDC_STATIC,172,30,60,38,WS_GROUP
     CONTROL         "&Вверх",IDC_UP,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,179,41,44,11
     CONTROL         "В&низ",IDC_DOWN,"Button",BS_AUTORADIOBUTTON,179,52,44,11
-    PUSHBUTTON      "&Искать далее",IDOK,238,7,50,14,WS_GROUP
+    PUSHBUTTON      "&Искать далее",ID_FIND_NEXT,238,7,50,14,WS_GROUP
     PUSHBUTTON      "Отмена",IDCANCEL,238,24,50,14
 END
 
@@ -687,8 +687,8 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_MB_OK               "O&K"
-    IDS_MB_CANCEL           "&Отмена"
+    IDS_MB_OK               "OK"
+    IDS_MB_CANCEL           "Отмена"
     IDS_MB_ABORT            "П&рервать"
     IDS_MB_RETRY            "&Повторить"
     IDS_MB_IGNORE           "&Игнорировать"

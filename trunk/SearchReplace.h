@@ -194,7 +194,7 @@ public:
 	CFindDlgBase(CFBEView *view) : FRBase(view){ }
 
 	BEGIN_MSG_MAP(CFindDlgBase)
-		COMMAND_ID_HANDLER(IDOK, OnDoFind)
+		COMMAND_ID_HANDLER(ID_FIND_NEXT, OnDoFind)
 		COMMAND_ID_HANDLER(IDCANCEL, OnCancel)
 
 		CHAIN_MSG_MAP_ALT(FRBase, 1)
@@ -230,7 +230,7 @@ public:
   CReplaceDlgBase(CFBEView *view) : FRBase(view), m_selvalid(false) { }
 
   BEGIN_MSG_MAP(CReplaceDlgBase)
-    COMMAND_ID_HANDLER(IDOK, OnDoFind)
+    COMMAND_ID_HANDLER(ID_FIND_NEXT, OnDoFind)
     COMMAND_ID_HANDLER(IDC_REPLACE_ONE, OnDoReplace)
     COMMAND_ID_HANDLER(IDC_REPLACE_ALL, OnDoReplaceAll)
     COMMAND_ID_HANDLER(IDCANCEL, OnCancel)

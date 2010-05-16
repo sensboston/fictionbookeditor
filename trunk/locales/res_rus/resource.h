@@ -272,7 +272,6 @@
 #define IDC_FONT                        1015
 #define IDC_FONT_SIZE                   1016
 #define IDC_TEXT                        1017
-#define IDC_FONT2                       1017
 #define IDC_SRCFONT                     1017
 #define IDC_REPLACE                     1018
 #define IDC_MATCHCASE                   1019
@@ -395,6 +394,7 @@
 #define IDC_SPELL_CHANGE                1103
 #define IDC_JPEGSPIN                    1103
 #define IDC_SPELL_CHANGEALL             1104
+#define ID_FIND_NEXT                    1104
 #define IDC_SPELL_ADD                   1107
 #define IDC_SPELL_SUGGEST               1108
 #define IDC_SPELL_UNDO                  1109
@@ -489,7 +489,7 @@
 #define _APS_NO_MFC                     1
 #define _APS_NEXT_RESOURCE_VALUE        254
 #define _APS_NEXT_COMMAND_VALUE         32907
-#define _APS_NEXT_CONTROL_VALUE         1104
+#define _APS_NEXT_CONTROL_VALUE         1105
 #define _APS_NEXT_SYMED_VALUE           133
 #endif
 #endif

@@ -3964,10 +3964,10 @@ void  CMainFrame::SetupSci()
   m_source.SendMessage(SCI_SETPROPERTY,(WPARAM)"fold.flags",(WPARAM)"16");
   m_source.SendMessage(SCI_SETSTYLEBITS,7);
   // added by SeNS: disable Scintilla's control characters
-  char sciCtrlChars[] = {'Q','E','R','S','K'};
+  char sciCtrlChars[] = {'Q','E','R','S','K',':'};
   for (int i=0; i<sizeof(sciCtrlChars); i++)
 	m_source.SendMessage(SCI_ASSIGNCMDKEY, sciCtrlChars[i]+(SCMOD_CTRL << 16), SCI_NULL);
-  char sciCtrlShiftChars[] = {'Q','W','E','R','Y','O','P','A','S','D','F','G','H','K','Z','X','C','V','B','N'};
+  char sciCtrlShiftChars[] = {'Q','W','E','R','Y','O','P','A','S','D','F','G','H','K','Z','X','C','V','B','N',':'};
   for (int i=0; i<sizeof(sciCtrlShiftChars); i++)
     m_source.SendMessage(SCI_ASSIGNCMDKEY, sciCtrlShiftChars[i]+((SCMOD_CTRL+SCMOD_SHIFT) << 16), SCI_NULL);
   ///
