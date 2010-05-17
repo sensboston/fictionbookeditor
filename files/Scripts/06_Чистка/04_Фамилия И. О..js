@@ -13,7 +13,9 @@
 //======================================
 // v.2.0 — самообучение — jurgennt, май 2010
 //======================================
-var VersionNumber="2.0";
+// v.2.1 — проверка от курсора — sclex, май 2010
+//======================================
+var VersionNumber="2.1";
 
 //обрабатывать ли history
 var ObrabotkaHistory=true;
@@ -101,8 +103,6 @@ function Run() {
   var re_fin1 = new RegExp("col1¦\\\d¦","g");
   var re_fin2 = new RegExp("col2¦\\\d{2}¦","g");
 
-
-    window.external.BeginUndoUnit(document,"«Фамилия И.О.»");                               // ОТКАТ (UNDO) начало — слишком жадно жрёт оперативку (/*закомментпровав*/ можно отключить)
 
  var s="";
 
@@ -361,31 +361,43 @@ for (z=0;z<k;z++)  {
    return true;
   } 
 
+    window.external.BeginUndoUnit(document,"«Фамилия И.О.»");                               // ОТКАТ (UNDO) начало
+
  var body=document.getElementById("fbw_body");
  var ptr=body;
  var ProcessingEnding=false;
+
+ var tr=document.selection.createRange();
+ if (!tr) return;
+ tr.collapse();
+ var ptr=tr.parentElement();
+ if (!body.contains(ptr)) return;
+ var ptr2=ptr;
+ while (ptr2 && ptr2.nodeName!="BODY" && ptr2.nodeName!="P")
+  ptr2=ptr2.parentNode;
+ if (ptr2 && ptr2.nodeName=="P") ptr=ptr2;
+
  while (!ProcessingEnding && ptr) {
   SaveNext=ptr;
   if (SaveNext.firstChild!=null && SaveNext.nodeName!="P" && 
       !(SaveNext.nodeName=="DIV" && 
         ((SaveNext.className=="history" && !ObrabotkaHistory) || 
          (SaveNext.className=="annotation" && !ObrabotkaAnnotation))))
-  {    SaveNext=SaveNext.firstChild;  }                                                         // либо углубляемся...
+  {    SaveNext=SaveNext.firstChild; }                                                         // либо углубляемся...
 
   else {
-    while (SaveNext.nextSibling==null)  {
+    while (SaveNext && SaveNext!=body && SaveNext.nextSibling==null)  {
      SaveNext=SaveNext.parentNode;                                                           // ...либо поднимаемся (если уже сходили вглубь)
                                                                                                                 // поднявшись до элемента P, не забудем поменять флаг
      if (SaveNext==body) {ProcessingEnding=true;}
                                                          }
-   SaveNext=SaveNext.nextSibling; //и переходим на соседний элемент
+   if (SaveNext && SaveNext!=body) SaveNext=SaveNext.nextSibling; //и переходим на соседний элемент
          }
-    if (ptr.nodeName=="P") 
-	if (!HandleP(ptr)) return;
+  if (ptr.nodeName=="P") HandleP(ptr);
   ptr=SaveNext;
  }
 
-    window.external.EndUndoUnit(document);                               // Undo конец
+    window.external.EndUndoUnit(document);                               // undo конец
 
 var Tf=new Date().getTime();
 var Thour = Math.floor((Tf-Ts)/3600000);

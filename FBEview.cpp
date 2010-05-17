@@ -3494,104 +3494,116 @@ long CFBEView::InsertCode()
 	{
 		try
 		{
-			MSHTML::IHTMLTxtRangePtr rng(Document()->selection->createRange());
-			if (!(bool)rng)
-				return -1;
-
 			BeginUndoUnit(L"insert code");
+
+			int offset = -1;
+			MSHTML::IHTMLTxtRangePtr rng(Document()->selection->createRange());
+			if (!(bool)rng) return -1;
 
 			CString rngHTML((wchar_t*)rng->htmlText);
 
+			// empty selection case - select current word
 			if(rngHTML == L"")
 			{
-				rng->moveToElementText(SelectionStructNearestCon());
-				rngHTML = (wchar_t*)rng->htmlText;
+				// select word
+				rng->moveStart(L"word",-1);
+				CString txt = rng->text;
+				offset = txt.GetLength();
+				rng->expand(L"word");
+				rngHTML.SetString(rng->htmlText);
 			}
 
-			MSHTML::IHTMLElementPtr spanElem = Document()->createElement(L"<SPAN class=code>");
+			// save selection
+			MSHTML::IMarkupPointerPtr selBegin, selEnd;
+			m_mk_srv->CreateMarkupPointer(&selBegin);
+			m_mk_srv->CreateMarkupPointer(&selEnd);
+			m_mk_srv->MovePointersToRange(rng, selBegin, selEnd);
 
 			if(rngHTML.Find(L"<P") != -1)
 			{
+				MSHTML::IHTMLElementPtr spanElem = Document()->createElement(L"<SPAN class=code>");
 				MSHTML::IHTMLElementPtr selElem = rng->parentElement();
 				
+				MSHTML::IHTMLTxtRangePtr rngStart = rng->duplicate();
 				MSHTML::IHTMLTxtRangePtr rngEnd = rng->duplicate();
-				rng->collapse(true);
+				rngStart->collapse(true);
 				rngEnd->collapse(false);
 
-				MSHTML::IHTMLElementPtr elBegin = rng->parentElement(), elEnd = rngEnd->parentElement();
-
-				while(U::scmp(elBegin->tagName, L"P"))
+				MSHTML::IHTMLElementPtr elBegin = rngStart->parentElement(), elEnd = rngEnd->parentElement();
+				while(U::scmp(elBegin->tagName, L"P")) 
 					elBegin = elBegin->parentElement;
-				while(U::scmp(elEnd->tagName, L"P"))
+				while(U::scmp(elEnd->tagName, L"P")) 
 					elEnd = elEnd->parentElement;
 
-				if(elBegin == elEnd || U::scmp(selElem->tagName, L"P") == 0)
+				MSHTML::IHTMLDOMNodePtr bNode = elBegin, eNode = elEnd;
+				int last = 0;
+				while(bNode)
 				{
-					spanElem->innerHTML = selElem->innerHTML;
+					CString elBeginHTML = elBegin->innerHTML;
 
-					MSHTML::IMarkupPointerPtr mpBegin, mpEnd;
-					m_mk_srv->CreateMarkupPointer(&mpBegin);
-					m_mk_srv->CreateMarkupPointer(&mpEnd);
-					mpBegin->MoveAdjacentToElement(selElem, MSHTML::ELEM_ADJ_AfterBegin);
-					mpEnd->MoveAdjacentToElement(selElem, MSHTML::ELEM_ADJ_BeforeEnd);			
-					m_mk_srv->remove(mpBegin, mpEnd);
-
-					MSHTML::IHTMLDOMNodePtr(selElem)->appendChild((MSHTML::IHTMLDOMNodePtr)spanElem);
-				}
-				else
-				{
-					MSHTML::IHTMLDOMNodePtr bNode = elBegin, eNode = elEnd;
-					int last = 0;
-					while(bNode)
+					if(U::scmp(elBegin->tagName, L"P") == 0 && elBeginHTML.Find(L"<SPAN") < 0)
 					{
-						CString elBeginHTML = elBegin->innerHTML;
-
-						if(U::scmp(elBegin->tagName, L"P") == 0 /*|| 
-							(U::scmp(elBegin->tagName, L"DIV") == 0 && 
-							U::scmp(elBegin->className, L"image") == 0)*/ && elBeginHTML != L"")
+						spanElem->innerHTML = elBegin->innerHTML;
+						if(!(elBeginHTML.Find(L"<SPAN class=code>") == 0 && 
+							elBeginHTML.Find(L"</SPAN>") == elBeginHTML.GetLength() - 7))
 						{
-							
-							spanElem->innerHTML = elBegin->innerHTML;
-
-							if(!(elBeginHTML.Find(L"<SPAN class=code>") == 0 && 
-								elBeginHTML.Find(L"</SPAN>") == elBeginHTML.GetLength() - 7))
-							{
-								elBegin->innerHTML = spanElem->outerHTML;
-							}
+							elBegin->innerHTML = spanElem->outerHTML;
 						}
-
-						if(bNode == eNode)
-							break;
-
-						bNode = bNode->nextSibling;
-						elBegin = bNode;						
 					}
-				}			
+					// remove code tag
+					else
+					{
+						elBeginHTML.Replace (L"<SPAN class=code>", L"");
+						elBeginHTML.Replace (L"</SPAN>", L"");
+						elBegin->innerHTML = elBeginHTML.AllocSysString();
+					}
+
+					if(bNode == eNode) 
+						break;
+
+					bNode = bNode->nextSibling;
+					elBegin = bNode;
+				}
+				// expand selection to the last paragraph
+				rng->moveToElementText(elBegin);
+				m_mk_srv->MovePointersToRange(rng, NULL, selEnd); 
 			}
-			else if(rngHTML.Find(L"<SPAN class=code>") != -1 					
-					&& rngHTML.Find(L"</SPAN>") != -1)
+			else if(rngHTML.Find(L"<SPAN class=code>") != -1 && rngHTML.Find(L"</SPAN>") != -1)
 			{
-				int start = rngHTML.Find(L"<SPAN class=code>");
-				if(start)
-				{
-					rngHTML.Delete(start, 17);
-					rngHTML.Insert(0, L"<SPAN class=code>");
-				}
-				int end = rngHTML.Find(L"</SPAN>");
-				if(end != rngHTML.GetLength() - 7)
-				{
-					rngHTML.Delete(end, 7);
-					rngHTML.Insert(rngHTML.GetLength() - 1, L"</SPAN>");
-				}
-				rng->pasteHTML(rngHTML.AllocSysString());
+					rngHTML.Replace (L"<SPAN class=code>", L"");
+					rngHTML.Replace (L"</SPAN>", L"");
+					if (iswspace(rngHTML[0]))
+						rng->moveStart(L"character",1);
+
+					rng->pasteHTML(rngHTML.AllocSysString());
 			}
 			else
 			{
-				spanElem->innerHTML = rngHTML.AllocSysString();
-				//rng->collapse(true);
-				//for(int i = 0; i < rngHTML.GetLength(); ++i)
-				//	rng->expand(L"character");
-				rng->pasteHTML(spanElem->outerHTML);
+				if (iswspace(rngHTML[0]))
+				{
+					rng->moveStart(L"character",1);
+					rngHTML.SetString(rng->htmlText);
+				}
+				if (iswspace(rngHTML[rngHTML.GetLength()-1]))
+				{
+					rng->moveEnd(L"character",-1);
+					rngHTML.SetString(rng->htmlText);
+				}			
+				rngHTML = L"<SPAN class=code>" + rngHTML + L"</SPAN>";
+				rng->pasteHTML(rngHTML.AllocSysString());
+			}
+
+			// restore selection
+			if (offset >= 0)
+			{
+				rng->move(L"word", -1);
+				rng->move(L"character", offset);
+				rng->select();
+			}
+			else
+			{
+				m_mk_srv->MoveRangeToPointers(selBegin, selEnd, rng);
+				rng->select();
 			}
 
 			EndUndoUnit();

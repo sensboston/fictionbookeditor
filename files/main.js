@@ -75,9 +75,9 @@ function apiAddBinary(fullpath, id, type, data)
 	{
 		imghref = "fbw-internal:#" + curid;
 		div.innerHTML += '<button id="show"' +
-		'onmouseover="ShowPrevImage(\'' + imghref + '\');"' +
+		'onmouseover="ShowImageOfBin(this.parentNode,\'prev\');"' +
 		'onmouseout="HidePrevImage();"' +
-		'onclick="ShowFullImage(\'' + imghref + '\');"' +
+		'onclick="ShowImageOfBin(this.parentNode,\'full\');"' +
 		'unselectable="on">&#x4e;</button>';
 		div.innerHTML += '<button id="save"' +
 		'onclick="SaveImage(\'' + imghref + '\');"' +
@@ -2436,4 +2436,18 @@ function ShowElementsMenu(button)
 	var elem_id = window.external.DescShowMenu(button, window.event.screenX, window.event.screenY);
 	if(elem_id)
 		ShowElement(elem_id, !window.external.GetExtendedStyle(elem_id));
+}
+
+function ShowImageOfBin(binDiv,mode)
+{
+	var inps=binDiv.getElementsByTagName("INPUT");
+	for (var i=0;i<inps.length;i++)
+		if (inps[i].id=="id")
+		{
+   			var src=inps[i].value;
+   			if (!src || src=="") return;
+   			//alert(src+"\n\n"+mode);
+   			if (mode=="full") ShowFullImage("fbw-internal:#"+src);
+   			else if (mode=="prev") ShowPrevImage("fbw-internal:#"+src);
+		} 
 }
