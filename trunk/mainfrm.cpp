@@ -8,6 +8,72 @@
 #include "SettingsDlg.h"
 #include "xmlMatchedTagsHighlighter.h"
 
+// MessageBox localization
+HHOOK hCBTHook;
+LRESULT CALLBACK CBTProc(INT nCode, WPARAM wParam, LPARAM lParam)
+{
+	HWND  hChildWnd;    // msgbox is "child"
+	CString s;
+	// notification that a window is about to be activated
+	// window handle is wParam
+	if (nCode == HCBT_ACTIVATE)
+	{
+		TCHAR caption[255];
+		GetWindowText((HWND)wParam, caption, 255);
+
+		// set window handles
+		hChildWnd  = (HWND)wParam;
+		//to get the text of yes button
+		UINT result;
+		if(GetDlgItem(hChildWnd,IDOK)!=NULL)
+		{
+			s.LoadString(IDS_MB_OK);
+			result= SetDlgItemText(hChildWnd,IDOK,s);
+		}
+		if(GetDlgItem(hChildWnd,IDCANCEL)!=NULL)
+		{
+			s.LoadString(IDS_MB_CANCEL);
+			result= SetDlgItemText(hChildWnd,IDCANCEL,s);
+		}
+		if(GetDlgItem(hChildWnd,IDABORT)!=NULL)
+		{
+			s.LoadString(IDS_MB_ABORT);
+			result= SetDlgItemText(hChildWnd,IDABORT,s);
+		}
+		if(GetDlgItem(hChildWnd,IDRETRY)!=NULL)
+		{
+			s.LoadString(IDS_MB_RETRY);
+			result= SetDlgItemText(hChildWnd,IDRETRY,s);
+		}
+		if(GetDlgItem(hChildWnd,IDIGNORE)!=NULL)
+		{
+			s.LoadString(IDS_MB_IGNORE);
+			result= SetDlgItemText(hChildWnd,IDIGNORE,s);
+		}
+		if(GetDlgItem(hChildWnd,IDYES)!=NULL)
+		{
+			s.LoadString(IDS_MB_YES);
+			result= SetDlgItemText(hChildWnd,IDYES,s);
+		}
+		if(GetDlgItem(hChildWnd,IDNO)!=NULL)
+		{
+			s.LoadString(IDS_MB_NO);
+			result= SetDlgItemText(hChildWnd,IDNO,s);
+		}
+	}
+	// otherwise, continue with any possible chained hooks
+	else CallNextHookEx(hCBTHook, nCode, wParam, lParam);
+	return 0;
+}
+void HookSysDialogs()
+{
+	hCBTHook = SetWindowsHookEx(WH_CBT, &CBTProc, 0, GetCurrentThreadId());
+}
+
+void UnhookSysDialogs()
+{
+	UnhookWindowsHookEx(hCBTHook);
+}
 // utility methods
 bool  CMainFrame::IsBandVisible(int id) {
   int nBandIndex = m_rebar.IdToIndex(id);
@@ -1200,19 +1266,22 @@ LRESULT CMainFrame::OnCreate(UINT, WPARAM, LPARAM, BOOL&)
   // create command bar window
   m_CmdBar.SetAlphaImages(true);
   HWND hWndCmdBar = m_CmdBar.Create(m_hWnd, rcDefault, NULL, ATL_SIMPLE_CMDBAR_PANE_STYLE);
-  
   // attach menu
   m_CmdBar.AttachMenu(GetMenu());
-
   // remove old menu
   SetMenu(NULL);
-
   // load command bar images
   m_CmdBar.LoadImages(IDR_MAINFRAME_SMALL);
 
-  HWND hWndToolBar = CreateSimpleToolBarCtrl(m_hWnd, IDR_MAINFRAME, FALSE,  ATL_SIMPLE_TOOLBAR_PANE_STYLE | TBSTYLE_LIST);
+  HWND hWndToolBar = CreateSimpleToolBarCtrl(m_hWnd, IDR_MAINFRAME, FALSE,  ATL_SIMPLE_TOOLBAR_PANE_STYLE | TBSTYLE_LIST | CCS_ADJUSTABLE);
+  InitToolBar(hWndToolBar, IDR_MAINFRAME);
+
+  // Load previously saved button layout
+  CToolBarCtrl tb = hWndToolBar;
+  tb.RestoreState(HKEY_CURRENT_USER, L"SOFTWARE\\FBETeam\\FictionBook Editor", L"Toolbar");
+
   UIAddToolBar(hWndToolBar);
- 
+
   HWND hWndLinksBar = CreateWindowEx(0, TOOLBARCLASSNAME, NULL, ATL_SIMPLE_TOOLBAR_PANE_STYLE | TBSTYLE_LIST, 0, 0, 100, 100, 
 	  m_hWnd, NULL, _Module.GetModuleInstance(), NULL);
    
@@ -1249,7 +1318,6 @@ LRESULT CMainFrame::OnCreate(UINT, WPARAM, LPARAM, BOOL&)
   AddStaticText(m_image_title_caption, hWndLinksBar, 6, buf, hFont);
   AddTbButton(hWndLinksBar, L"123456789012345678901234567890");
 
-
   // Table's first toolbar preparation
   ::SendMessage(hWndTableBar, TB_BUTTONSTRUCTSIZE, sizeof(TBBUTTON), 0);
   ::SendMessage(hWndTableBar, TB_SETDRAWTEXTFLAGS, (WPARAM)DT_CALCRECT, (LPARAM)DT_CALCRECT);
@@ -1268,7 +1336,6 @@ LRESULT CMainFrame::OnCreate(UINT, WPARAM, LPARAM, BOOL&)
   AddTbButton(hWndTableBar, buf);
   AddStaticText(m_id_table_caption,	hWndTableBar, 4, buf, hFont);
   AddTbButton(hWndTableBar, L"12345678901234567890");
-
   
   ::LoadString(_Module.GetResourceInstance(), IDS_TB_CAPT_STYLE, buf, MAX_LOAD_STRING);
   AddTbButton(hWndTableBar, buf);
@@ -1317,7 +1384,6 @@ LRESULT CMainFrame::OnCreate(UINT, WPARAM, LPARAM, BOOL&)
   RECT rc;    
   
   // m_id_caption.SetParent(this->m_hWnd);
-  
 
   /*HDC hdc = ::GetDC(hWndLinksBar);
   COLORREF bkCollor = GetBkColor(hdc);*/
@@ -1580,6 +1646,11 @@ LRESULT CMainFrame::OnClose(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/,
       bi.Format(_T("%d,%d,%d;"),rbi.wID,rbi.fStyle,rbi.cx);
       tbs+=bi;
     }
+
+	// Save toolbar layout
+    CToolBarCtrl tb = GetCommandBar_HWND();
+    tb.SaveState(HKEY_CURRENT_USER, L"SOFTWARE\\FBETeam\\FictionBook Editor", L"Toolbar");
+
     _Settings.SetToolbarsSettings(tbs);
 	_Settings.SaveHotkeyGroups();
 	_Settings.Save();

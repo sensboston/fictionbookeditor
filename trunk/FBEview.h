@@ -392,7 +392,7 @@ public:
 	LRESULT OnStrik(WORD, WORD, HWND, BOOL&) { return ExecCommand(IDM_STRIKETHROUGH); }
 	LRESULT OnSup(WORD, WORD, HWND, BOOL&) { return ExecCommand(IDM_SUPERSCRIPT); }
 	LRESULT OnSub(WORD, WORD, HWND, BOOL&) { return ExecCommand(IDM_SUBSCRIPT); }
-	LRESULT OnCode(WORD, WORD, HWND, BOOL&);
+	LRESULT OnCode(WORD, WORD, HWND, BOOL&);// { return ExecCommand(IDM_TELETYPE); }
 
   LRESULT OnFind(WORD, WORD, HWND, BOOL&);
   LRESULT OnFindNext(WORD, WORD, HWND, BOOL&);

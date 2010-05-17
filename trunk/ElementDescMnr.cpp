@@ -234,8 +234,9 @@ bool CElementDescMnr::InitStandartEDs()
 		epigraph->Init(IsEpigraph, GetEpigraphTitle, 18, false, L"Epigraph");
 		CElementDescriptor* cite = new CElementDescriptor;
 		cite->Init(IsCite, GetCiteTitle, 9, false, L"Cite");
-		CElementDescriptor* code = new CElementDescriptor;
-		code->Init(IsCode, GetCodeTitle, 24, false, L"Code");
+		// issue #83
+/*		CElementDescriptor* code = new CElementDescriptor;
+		code->Init(IsCode, GetCodeTitle, 24, false, L"Code"); */
 		CElementDescriptor* subtitle = new CElementDescriptor;
 		subtitle->Init(IsSubtitle, GetSubtitleTitle, 6, true, L"Subtitle");
 		CElementDescriptor* table = new CElementDescriptor;
@@ -258,7 +259,7 @@ bool CElementDescMnr::InitStandartEDs()
 		m_stEDs.Add(title);
 		m_stEDs.Add(epigraph);
 		m_stEDs.Add(cite);
-		m_stEDs.Add(code);
+//		m_stEDs.Add(code);	// issue #83
 		m_stEDs.Add(subtitle);
 		m_stEDs.Add(table);
 		m_stEDs.Add(th);

@@ -10,6 +10,8 @@
 #include "resource.h"
 #include "res1.h"
 
+#include "atlctrlsext.h"
+
 #include "utils.h"
 #include "apputils.h"
 
@@ -135,7 +137,12 @@ public:
   END_UPDATE_UI_MAP()
 };
 
+// for MessageBox localization
+void HookSysDialogs();
+void UnhookSysDialogs();
+
 class CMainFrame :	public CFrameWindowImpl<CMainFrame>,
+					public CCustomizableToolBarCommands<CMainFrame>,
 					public CUpdateUI<CMainFrame>,
 					public CMessageFilter,
 					public CIdleHandler
@@ -455,6 +462,10 @@ public:
 		MESSAGE_HANDLER(WM_DESTROY, OnDestroy)
 		MESSAGE_HANDLER(WM_SETFOCUS, OnSetFocus)
 		MESSAGE_HANDLER(WM_SETTINGCHANGE, OnSettingChange)
+
+		// added by SeNS: toolbar customization menu
+		MESSAGE_HANDLER(WM_CONTEXTMENU, OnContextMenu)
+
 		#if _WIN32_WINNT>=0x0501
 			MESSAGE_HANDLER(WM_THEMECHANGED, OnSettingChange)
 		#endif
@@ -539,6 +550,9 @@ public:
 		// tools menu
 		COMMAND_ID_HANDLER(ID_TOOLS_WORDS, OnToolsWords)
 		COMMAND_ID_HANDLER(ID_TOOLS_OPTIONS, OnToolsOptions)
+      
+		COMMAND_ID_HANDLER(ID_TOOLS_CUSTOMIZE, OnToolCustomize)
+
 		COMMAND_RANGE_HANDLER(ID_SCRIPT_BASE, ID_SCRIPT_BASE + 999, OnToolsScript)
 		COMMAND_ID_HANDLER(ID_LAST_SCRIPT, OnLastScript)
 
@@ -597,6 +611,7 @@ public:
 
 		CHAIN_MSG_MAP(CUpdateUI<CMainFrame>)
 		CHAIN_MSG_MAP(CFrameWindowImpl<CMainFrame>)
+		CHAIN_MSG_MAP(CCustomizableToolBarCommands<CMainFrame>)
 	END_MSG_MAP()
 
   LRESULT OnCreate(UINT, WPARAM, LPARAM, BOOL&);
@@ -608,6 +623,19 @@ public:
       m_doc->ApplyConfChanges();
     return 0;
   }
+
+  LRESULT OnContextMenu(UINT, WPARAM, LPARAM lParam, BOOL&) 
+  {
+	HMENU menu, popup;
+	CPoint ptMousePos = (CPoint)lParam;
+	ScreenToClient(&ptMousePos);
+	menu = ::LoadMenu(_Module.GetResourceInstance(), MAKEINTRESOURCEW(IDR_TOOLBAR_MENU));
+	popup = ::GetSubMenu(menu, 0);
+	ClientToScreen(&ptMousePos);
+	::TrackPopupMenu(popup, TPM_LEFTALIGN, ptMousePos.x, ptMousePos.y, 0, *this, 0);
+	return 0;
+  }
+
   LRESULT OnUnhandledCommand(UINT, WPARAM, LPARAM, BOOL&);
   LRESULT OnSetFocus(UINT, WPARAM, LPARAM, BOOL&) {
     m_view.SetFocus();
@@ -716,6 +744,30 @@ public:
   LRESULT OnToolsWords(WORD, WORD, HWND, BOOL&);
   LRESULT OnToolsOptions(WORD, WORD, HWND, BOOL&);
   LRESULT OnToolsScript(WORD, WORD, HWND, BOOL&);
+
+  // Added by SeNS: toolbar customization
+  HWND GetCommandBar_HWND()
+  {
+      // Get the toolbar HWND.
+      CReBarCtrl rebar = m_hWndToolBar;
+      UINT iBandIndex = rebar.IdToIndex(ATL_IDW_BAND_FIRST+1); // toolbar is 2nd added band
+      REBARBANDINFO rbi = { 0 };
+      rbi.cbSize = sizeof(REBARBANDINFO);
+      rbi.fMask = RBBIM_CHILD;
+      rebar.GetBandInfo(iBandIndex, &rbi);
+	  return rbi.hwndChild;
+  }
+
+  LRESULT OnToolCustomize(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/)
+  {
+      // Call Customize to show dialog now
+      CToolBarCtrl tb = GetCommandBar_HWND();
+   	  // exit CBT hook
+	  UnhookSysDialogs();
+      tb.Customize();
+	  HookSysDialogs();
+      return 0;
+  }
 
 	LRESULT OnLastScript(WORD, WORD, HWND, BOOL&)
 	{

@@ -84,15 +84,19 @@
 //~~~~~~~~~~~~~~~~~~
 //v.2.0 — изменения для правильной работы с учетом возможности выбора вида неразрывного пробела в FBE
 //======================================
-var VersionNumber="2.1";
+//v.2.1 — отключил «окавычивание» №15,17, 18, 37, 38 — для этого есть скрипты по кавычкам; перестал обращать внимание на сноски 40, 41, 43, 47 — есть скрипты о сноскам
+//======================================
+//v.2.2 — убрал Ко
+//======================================
+var VersionNumber="2.2";
 
 //обрабатывать ли history
 var ObrabotkaHistory=true;
 //обрабатывать ли annotation
 var ObrabotkaAnnotation=true;
-// обрабатывать ли сноски
- var Snoska=false;
-  var PromptSnoska=true;
+// обрабатывать ли сноски                       // отключаю касательство к сноскам
+// var Snoska=false;
+//  var PromptSnoska=true;
 
 var sIB="<EM>|<STRONG>|<EM><STRONG>|<STRONG><EM>";
 var fIB="</EM>|</STRONG>|</EM></STRONG>|</STRONG></EM>";
@@ -103,9 +107,9 @@ function Run() {
  try { var nbspChar=window.external.GetNBSP(); var nbspEntity; if (nbspChar.charCodeAt(0)==160) nbspEntity="&nbsp;"; else nbspEntity=nbspChar;}
  catch(e) { var nbspChar=String.fromCharCode(160); var nbspEntity="&nbsp;";}
 
- if (PromptSnoska) {
-  Snoska=AskYesNo("    	      –=Jürgen Script=–\n\n	Обращать внимание [на] сноски?  		   \n");
- }
+// if (PromptSnoska) {                                                                     // отключаю касательство к сноскам
+//  Snoska=AskYesNo("    	      –=Jürgen Script=–\n\n	Обращать внимание [на] сноски?  		   \n");
+// }
 
   var Ts=new Date().getTime();
   var TimeStr=0;
@@ -215,20 +219,20 @@ function Run() {
  var re14c_ = "$1$2$3"+nbspChar+"— $4$5$7$8";
 
 // кавычки одиночного символа или небольшого слова
- var re15 = new RegExp("(\\\s|"+nbspEntity+")\\\"(\\\s|"+nbspEntity+"){0,1}([\\\w0-9А-яЁё\\\-]{1,20})(\\\s|"+nbspEntity+"){0,1}\\\"([\\\.,:;\\\?!…]){0,1}(\\\s|"+nbspEntity+")","gi");
- var re15_ = "$1«$3»$5$6";
+// var re15 = new RegExp("(\\\s|"+nbspEntity+")\\\"(\\\s|"+nbspEntity+"){0,1}([\\\w0-9А-яЁё\\\-]{1,20})(\\\s|"+nbspEntity+"){0,1}\\\"([\\\.,:;\\\?!…]){0,1}(\\\s|"+nbspEntity+")","gi");
+// var re15_ = "$1«$3»$5$6";
 
 // дубли препинаний
  var re16 = new RegExp(",[\\\.,:;]","gi");
  var re16_ = ",";
 
 // попытка вернуть кавычки на место, после пробела
- var re17 = new RegExp("\\\"([\\\w0-9А-яЁё\\\-]{1,20})([^:])(\\\s|"+nbspEntity+")\\\"(\\\s|"+nbspEntity+")","gi");
- var re17_ = "«$1$2»$4";
+// var re17 = new RegExp("\\\"([\\\w0-9А-яЁё\\\-]{1,20})([^:])(\\\s|"+nbspEntity+")\\\"(\\\s|"+nbspEntity+")","gi");
+// var re17_ = "«$1$2»$4";
 
 // замыкающие кавычки в конце строки после пробела
- var re18 = new RegExp("(\\\s|"+nbspEntity+")\\\"$","gi");
- var re18_ = "»";
+// var re18 = new RegExp("(\\\s|"+nbspEntity+")\\\"$","gi");
+// var re18_ = "»";
 
 // замена конечных дефисов на тире !!!Только в стихах!!!
  var re19 = new RegExp("(\\\s|"+nbspEntity+"){0,1}([\\\-–]){1,2}(\\\s|"+nbspEntity+"){0,1}(</((EM)|(STRONG))>){0,1}$","gi");
@@ -283,7 +287,8 @@ function Run() {
  var re31_ = "$1$2$4$3 $6";
 
 // удаление точки/запятой после запятой/точки между строчными
- var re31a= new RegExp("([^\\\.][^"+nbspChar+"][а-яё»\\\)])("+aIB+"){0,1}([,\\\.])("+aIB+"){0,1}([\\\.,]){0,1}([A-zА-яЁё][^\\\.])","g");
+// var re31a= new RegExp("([^\\\.][^"+nbspChar+"][а-яё»\\\)])("+aIB+"){0,1}([,\\\.])("+aIB+"){0,1}([\\\.,]){0,1}([A-zА-яЁё][^\\\.])","g");
+  var re31a= new RegExp("([^\\\.][^"+nbspChar+"][а-яё»\\\)])("+aIB+"){0,1}([,\\\.])("+aIB+"){0,1}([\\\.,]){0,1}([А-яЁё][^\\\.])","g");  // Отключил A-z, потому что ловится квадратная скобка "]"! Отмена неразрывного пробела не срабатывает.
  var re31a_ = "$1$2$4$3 $6";
 
 // пробел после закрывающих кавычек перед буквами (почему-то не реагирует на обычные двойные кавычки (")?)
@@ -307,34 +312,34 @@ function Run() {
  var re36_ = "$1«";
 
 // кавычки в конце строки
- var re37= new RegExp("«(.){0,1}("+aIB+"){0,1}$","g");
- var re37_ = "»$1";
+// var re37= new RegExp("«(.){0,1}("+aIB+"){0,1}$","g");
+// var re37_ = "»$1";
 
 // открывающие кавычки после двоеточия
- var re38= new RegExp(": ("+sIB+"){0,1}»","g");
- var re38_ = ": $1«";
+// var re38= new RegExp(": ("+sIB+"){0,1}»","g");
+// var re38_ = ": $1«";
 
 // две точки после слова — в многоточие
  var re39= new RegExp("([а-яё])\\\.\\\. ","gi");
  var re39_ = "$1… ";
 
 
-// квадратное окавычивание порядкового номера в ссылке сноски
- var re40 = new RegExp("(<A class=note href=\\\"[^>]+\\\d{1,4}\\\">)[\\\[{]{0,1}[a-zа-я_\\\-]{0,10}(\\\s|"+nbspEntity+"){0,1}(\\\d{1,4})[\\\]}]{0,1}(</A>)","gi");
- var re40_ = "$1[$3]$4";
+// квадратное окавычивание порядкового номера в ссылке сноски                       // отключаю касательство к сноскам
+// var re40 = new RegExp("(<A class=note href=\\\"[^>]+\\\d{1,4}\\\">)[\\\[{]{0,1}[a-zа-я_\\\-]{0,10}(\\\s|"+nbspEntity+"){0,1}(\\\d{1,4})[\\\]}]{0,1}(</A>)","gi");
+// var re40_ = "$1[$3]$4";
 
-// снятие курсива со сноски
- var re41 = new RegExp("(<A class=note href=\\\"[^>]+\\\d{1,4}\\\">[^><]+?</A>)("+fIB+")","gi");
- var re41_ = "$2$1";
+// снятие курсива со сноски                       // отключаю касательство к сноскам
+// var re41 = new RegExp("(<A class=note href=\\\"[^>]+\\\d{1,4}\\\">[^><]+?</A>)("+fIB+")","gi");
+// var re41_ = "$2$1";
 
 // снятие курсива со сноски
 // var re42 = new RegExp("("+sIB+")([\\\.\\\s]{0,2}<A class=note [^<]+?</A>)","gi");
 // var re42_ = "$2$1";
 
-// удаление пробела после [сноски] , если за пробелом следует препинание
- var re43 = new RegExp("(\\\s|"+nbspEntity+"){0,1}(<A class=note [^<]+?</A>)(\\\s|"+nbspEntity+"){0,1}(([\\\.,;])|([!\\\?:…])){0,1}(\\\s|"+nbspEntity+"){0,1}("+fIB+"){0,1}","gi");
- var re43_ = "$8$4$2$7";
- var re43a_ = "$8 $6$2$5$7";
+// удаление пробела после [сноски] , если за пробелом следует препинание                       // отключаю касательство к сноскам
+// var re43 = new RegExp("(\\\s|"+nbspEntity+"){0,1}(<A class=note [^<]+?</A>)(\\\s|"+nbspEntity+"){0,1}(([\\\.,;])|([!\\\?:…])){0,1}(\\\s|"+nbspEntity+"){0,1}("+fIB+"){0,1}","gi");
+// var re43_ = "$8$4$2$7";
+// var re43a_ = "$8 $6$2$5$7";
 
 // удаление пробела перед [сноской]
 // var re44 = new RegExp("(\\\s|"+nbspEntity+"){0,1}("+aIB+"){0,1}(\\\s|"+nbspEntity+"){0,1}(<A class=note [^<]+?</A>)","gi");
@@ -352,10 +357,10 @@ function Run() {
 // var re46a = new RegExp("(<A class=note href=\\\"[^>]+\\\d{1,4}\\\">[^><]+?</A>)([…]("+fIB+"){0,1})$","gi");
 // var re46a_ = "$2$1";
 
-// вставка пробела после [сноски] —
- var re47 = new RegExp("(<A class=note [^<]+?</A>)("+sIB+"){0,1}([А-яЁёA-z\\\-–—\\\(\\\[])","gi");
- var re47_ = "$1 $2$3";
- var count_47 = 0;
+// вставка пробела после [сноски] —                        // отключаю касательство к сноскам
+// var re47 = new RegExp("(<A class=note [^<]+?</A>)("+sIB+"){0,1}([А-яЁёA-z\\\-–—\\\(\\\[])","gi");
+// var re47_ = "$1 $2$3";
+// var count_47 = 0;
 
  // удаление одного пробела вокруг <emphasis'а>
  var re48 = new RegExp("(\\\s|"+nbspEntity+")("+sIB+")(\\\s|"+nbspEntity+")","gi");
@@ -424,6 +429,10 @@ function Run() {
  var re58 = new RegExp("([A-zА-яЁё\\\)\\\"»])("+fIB+"){0,1}(\\\s|"+nbspEntity+")("+fIB+"){0,1}—("+fIB+"){0,1}("+sIB+"){0,1}([A-zА-яЁё\\\(«])","gi");
  var re58_ = "$1$2$4 — $5$6$7";
 
+// пропущенные пробелы вокруг тире между буквами                                              NEW
+ var re59 = new RegExp("([A-zА-яЁё\\\)\\\"»])—([A-zА-яЁё\\\(«])","gi");
+ var re59_ = "$1 — $2";
+
 //  последовательность чисел
 // var re59 = new RegExp("([123]{0,1}[3-8][257]\\\]{0,1}</a>)(\\\.|,|;) ","gi");
 // var re59_ = '$1<a href="http://reeed.ru/">$2</a> ';
@@ -458,8 +467,8 @@ function Run() {
  var re65_ = "$1°$3";
 
 //  знак K°
- var re66 = new RegExp("([и&])(\\\s|"+nbspEntity+"){0,1}([KК])([oо°])([^A-zА-яЁё])","g");
- var re66_ = "$1 K°$5";
+// var re66 = new RegExp("([и&])(\\\s|"+nbspEntity+"){0,1}([KК])([oо°])([^A-zА-яЁё])","g");
+// var re66_ = "$1 K°$5";
 
 //  градус Цельсия
  var re67 = new RegExp("(\\\d)(\\\s|"+nbspEntity+"){0,1}[oо0°](\\\s){0,1}[CС]([^A-zА-яЁё]){0,1}","g");
@@ -496,7 +505,7 @@ function Run() {
  var re82_ = "$1";
  var count_82 = 0;
 
-// удаление странного дефиса (мягкий перенос)
+// удаление мягкого переноса
  var re83 = new RegExp("(­|&shy;)","gi");
  var re83_ = "";
  var count_83 = 0;
@@ -538,7 +547,6 @@ function Run() {
 
 //~~~~~~~~~~~~~~ Конец шаблонов ~~~~~~~~~~~~~~~~~~
 
-//    window.external.BeginUndoUnit(document,"«генеральная уборка»");                               // отключил откат — жрёт оперативку
 
  var id;
  var s="";
@@ -577,10 +585,10 @@ function Run() {
        if (s.search(re14a)!=-1)       { s=s.replace(re14a, re14a_); count_14++}
        if (s.search(re14b)!=-1)       { s=s.replace(re14b, re14b_); count_14++}
        if (s.search(re14c)!=-1)       { s=s.replace(re14c, re14c_); }
-       if (s.search(re15)!=-1)         { s=s.replace(re15, re15_); }
+//       if (s.search(re15)!=-1)         { s=s.replace(re15, re15_); }
        if (s.search(re16)!=-1)         { s=s.replace(re16, re16_); }
-       if (s.search(re17)!=-1)         { s=s.replace(re17, re17_); }
-       if (s.search(re18)!=-1)         { s=s.replace(re18, re18_); }
+//       if (s.search(re17)!=-1)         { s=s.replace(re17, re17_); }
+//       if (s.search(re18)!=-1)         { s=s.replace(re18, re18_); }
        if (s.search(re19)!=-1 && ptr.parentNode.className=="stanza")         { s=s.replace(re19, re19_); }
 
        if (s.search(re20)!=-1)         { s=s.replace(re20, re20_); }
@@ -601,20 +609,20 @@ function Run() {
        if (s.search(re34)!=-1)         { s=s.replace(re34, re34_); }
        if (s.search(re35)!=-1)         { s=s.replace(re35, re35_); }
        if (s.search(re36)!=-1)         { s=s.replace(re36, re36_); }
-       if (s.search(re37)!=-1)         { s=s.replace(re37, re37_); }
-       if (s.search(re38)!=-1)         { s=s.replace(re38, re38_); }
+//       if (s.search(re37)!=-1)         { s=s.replace(re37, re37_); }
+//       if (s.search(re38)!=-1)         { s=s.replace(re38, re38_); }
        if (s.search(re39)!=-1)         { s=s.replace(re39, re39_); }
 
-       if (s.search(re40)!=-1 && Snoska)         { s=s.replace(re40, re40_); }
-       if (s.search(re41)!=-1)         { s=s.replace(re41, re41_); }
+//       if (s.search(re40)!=-1 && Snoska)         { s=s.replace(re40, re40_); }                       // отключаю касательство к сноскам
+//       if (s.search(re41)!=-1)         { s=s.replace(re41, re41_); }                                        // отключаю касательство к сноскам
 //       if (s.search(re42)!=-1)         { s=s.replace(re42, re42_); }
-       if (s.search(re43)!=-1 && Snoska)         { s=s.replace(re43, re43_); }
-       if (s.search(re43)!=-1 && !Snoska)         { s=s.replace(re43, re43a_); }
+//       if (s.search(re43)!=-1 && Snoska)         { s=s.replace(re43, re43_); }                       // отключаю касательство к сноскам
+//       if (s.search(re43)!=-1 && !Snoska)         { s=s.replace(re43, re43a_); }                    // отключаю касательство к сноскам
 //       if (s.search(re44)!=-1)         { s=s.replace(re44, re44_); }
        if (s.search(re45)!=-1)         { s=s.replace(re45, re45_); }
 //       if (s.search(re46)!=-1 && Snoska)         { s=s.replace(re46, re46_); }
 //       if (s.search(re46a)!=-1 && Snoska)       { s=s.replace(re46a, re46a_); }
-       if (s.search(re47)!=-1)         { s=s.replace(re47, re47_); count_47++}
+//       if (s.search(re47)!=-1)         { s=s.replace(re47, re47_); count_47++}                       // отключаю касательство к сноскам
        if (s.search(re48)!=-1)         { s=s.replace(re48, re48_); }
 //       if (s.search(re49)!=-1)         { s=s.replace(re49, re49_); }
 
@@ -631,7 +639,7 @@ function Run() {
        if (s.search(re56)!=-1)         { s=s.replace(re56, re56_); count_10++}
        if (s.search(re57)!=-1)         { s=s.replace(re57, re57_); count_55++}
        if (s.search(re58)!=-1)         { s=s.replace(re58, re58_); count_26++}
-//       if (s.search(re59)!=-1 && !Snoska)         { s=s.replace(re59, re59_); }
+       if (s.search(re59)!=-1)         { s=s.replace(re59, re59_); }
        if (s.search(re60)!=-1)         { s=s.replace(re60, re60_); }
        if (s.search(re60a)!=-1)       { s=s.replace(re60a, re60a_); }
        if (s.search(re61)!=-1)         { s=s.replace(re61, re61_); }
@@ -639,7 +647,7 @@ function Run() {
        if (s.search(re63)!=-1)         { s=s.replace(re63, re63_); }
        if (s.search(re64)!=-1)         { s=s.replace(re64, re64_); }
        if (s.search(re65)!=-1)         { s=s.replace(re65, re65_); }
-       if (s.search(re66)!=-1)         { s=s.replace(re66, re66_); }
+//       if (s.search(re66)!=-1)         { s=s.replace(re66, re66_); }                        // и компания Ко
        if (s.search(re67)!=-1)         { s=s.replace(re67, re67_); }
        if (s.search(re68)!=-1)         { s=s.replace(re68, re68_); }
        if (s.search(re69)!=-1)         { s=s.replace(re69, re69_); }
@@ -659,6 +667,8 @@ function Run() {
 
    ptr.innerHTML=s;      
   } 
+
+    window.external.BeginUndoUnit(document,"«Генеральная уборка»");                               // ОТКАТ (UNDO) начало
 
  var body=document.getElementById("fbw_body");
  var ptr=body;
@@ -683,7 +693,7 @@ function Run() {
   ptr=SaveNext;
  }
 
-//    window.external.EndUndoUnit(document);                                             // конец отката – отключено
+    window.external.EndUndoUnit(document);                                             // undo конец
 
 var Tf=new Date().getTime();
 var Thour = Math.floor((Tf-Ts)/3600000);
@@ -704,7 +714,7 @@ var Tsec3 = Math.ceil(1000*((Tf-Ts)/1000-Tmin*60))/1000;
  var st2="";
 
 // без тире в диалогах 08 и дублей пробелов 80
- if (count_01!=0 || count_03!=0 || count_04!=0 || count_06!=0 || count_09!=0  || count_10!=0 || count_11!=0 || count_13!=0 || count_14!=0 || count_26!=0 || count_29!=0 || count_30!=0 || count_47!=0 || count_50!=0 || count_51!=0 || count_53!=0 || count_55!=0 || count_81!=0 || count_82!=0 || count_83!=0 || count_84!=0 || count_90!=0)   {st2+='\n Статистика'}
+ if (count_01!=0 || count_03!=0 || count_04!=0 || count_06!=0 || count_09!=0  || count_10!=0 || count_11!=0 || count_13!=0 || count_14!=0 || count_26!=0 || count_29!=0 || count_30!=0 || count_50!=0 || count_51!=0 || count_53!=0 || count_55!=0 || count_81!=0 || count_82!=0 || count_83!=0 || count_84!=0 || count_90!=0)   {st2+='\n Статистика'}
 
 
  if (count_01!=0)   {st2+='\n• неразрывный пробел на обычный:	'+count_01;}
@@ -724,7 +734,7 @@ var Tsec3 = Math.ceil(1000*((Tf-Ts)/1000-Tmin*60))/1000;
  if (count_29!=0)   {st2+='\n• тире вместо дефиса после точки: 	'+count_29;}
  if (count_30!=0)   {st2+='\n• точки в строчных после пробела:	'+count_30;}
 
- if (count_47!=0)   {st2+='\n• пробел после сноски:  		'+count_47;}
+// if (count_47!=0)   {st2+='\n• пробел после сноски:  		'+count_47;}                       // отключаю касательство к сноскам
 
  if (count_50!=0)   {st2+='\n• пронумерованный список:  	'+count_50;}
  if (count_51!=0)   {st2+='\n• номера страниц:    		'+count_51;}

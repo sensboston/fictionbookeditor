@@ -35,7 +35,6 @@
 // {7301FF90-9029-4819-B778-19D9999DB419}
 DEFINE_CLSID(CLSID_MemProtocol, 0x7301ff90, 0x9029, 0x4819, 0xb7, 0x78, 0x19, 0xd9, 0x99, 0x9d, 0xb4, 0x19);
 
-
 CAppModule _Module;
 extern CElementDescMnr _EDMnr;
 
@@ -45,61 +44,6 @@ END_OBJECT_MAP()
 
 CSettings _Settings;
 CSimpleArray<CString> _ARGV;
-
-HHOOK hCBTHook;
-// MessageBox localization
-LRESULT CALLBACK CBTProc(INT nCode, WPARAM wParam, LPARAM lParam)
-{
-	HWND  hChildWnd;    // msgbox is "child"
-	CString s;
-	// notification that a window is about to be activated
-	// window handle is wParam
-	if (nCode == HCBT_ACTIVATE)
-	{
-		// set window handles
-		hChildWnd  = (HWND)wParam;
-		//to get the text of yes button
-		UINT result;
-		if(GetDlgItem(hChildWnd,IDOK)!=NULL)
-		{
-			s.LoadString(IDS_MB_OK);
-			result= SetDlgItemText(hChildWnd,IDOK,s);
-		}
-		if(GetDlgItem(hChildWnd,IDCANCEL)!=NULL)
-		{
-			s.LoadString(IDS_MB_CANCEL);
-			result= SetDlgItemText(hChildWnd,IDCANCEL,s);
-		}
-		if(GetDlgItem(hChildWnd,IDABORT)!=NULL)
-		{
-			s.LoadString(IDS_MB_ABORT);
-			result= SetDlgItemText(hChildWnd,IDABORT,s);
-		}
-		if(GetDlgItem(hChildWnd,IDRETRY)!=NULL)
-		{
-			s.LoadString(IDS_MB_RETRY);
-			result= SetDlgItemText(hChildWnd,IDRETRY,s);
-		}
-		if(GetDlgItem(hChildWnd,IDIGNORE)!=NULL)
-		{
-			s.LoadString(IDS_MB_IGNORE);
-			result= SetDlgItemText(hChildWnd,IDIGNORE,s);
-		}
-		if(GetDlgItem(hChildWnd,IDYES)!=NULL)
-		{
-			s.LoadString(IDS_MB_YES);
-			result= SetDlgItemText(hChildWnd,IDYES,s);
-		}
-		if(GetDlgItem(hChildWnd,IDNO)!=NULL)
-		{
-			s.LoadString(IDS_MB_NO);
-			result= SetDlgItemText(hChildWnd,IDNO,s);
-		}
-	}
-	// otherwise, continue with any possible chained hooks
-	else CallNextHookEx(hCBTHook, nCode, wParam, lParam);
-	return 0;
-}
 
 // External helpers
 IDispatchPtr  CFBEView::CreateHelper()
@@ -179,7 +123,7 @@ int Run(LPTSTR /*lpstrCmdLine*/ = NULL, int nCmdShow = SW_SHOWDEFAULT)
 	else
 	ATL::_AtlBaseModule.SetResourceInstance(ATL::_AtlBaseModule.GetModuleInstance());
 
-	hCBTHook = SetWindowsHookEx(WH_CBT, &CBTProc, 0, GetCurrentThreadId());
+	HookSysDialogs();
 
 	U::InitKeycodes();
 	U::InitSettingsHotkeyGroups();
@@ -205,7 +149,7 @@ int Run(LPTSTR /*lpstrCmdLine*/ = NULL, int nCmdShow = SW_SHOWDEFAULT)
 	_Module.RemoveMessageLoop();
 
 	// exit CBT hook
-	UnhookWindowsHookEx(hCBTHook);
+	UnhookSysDialogs();
 
 	return nRet;
 }

@@ -147,6 +147,14 @@ BEGIN
     END
 END
 
+IDR_TOOLBAR_MENU MENU 
+BEGIN
+    POPUP "CUSTOMIZE"
+    BEGIN
+        MENUITEM "Настройка панели инструментов...", ID_TOOLS_CUSTOMIZE
+    END
+END
+
 
 #ifdef APSTUDIO_INVOKED
 /////////////////////////////////////////////////////////////////////////////
@@ -312,15 +320,18 @@ FONT 9, "Tahoma", 0, 0, 0x0
 BEGIN
     LTEXT           "Найти:",IDC_STATIC,7,9,45,8,NOT WS_GROUP
     COMBOBOX        IDC_TEXT,53,7,179,62,CBS_DROPDOWN | CBS_AUTOHSCROLL | WS_VSCROLL | WS_TABSTOP
+    DEFPUSHBUTTON   "&Искать далее",ID_FIND_NEXT,238,7,50,14,WS_GROUP
     LTEXT           "Заменить:",IDC_STATIC,7,25,45,8,NOT WS_GROUP
     COMBOBOX        IDC_REPLACE,53,23,179,62,CBS_DROPDOWN | CBS_AUTOHSCROLL | WS_VSCROLL | WS_TABSTOP
     CONTROL         "&Только слова целиком",IDC_WHOLE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,41,98,13
     CONTROL         "&Учитывать регистр",IDC_MATCHCASE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,54,98,13
     CONTROL         "&Регулярное выражение",IDC_REGEXP,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,67,98,13
-    PUSHBUTTON      "&Искать далее",ID_FIND_NEXT,238,7,50,14,WS_GROUP
     PUSHBUTTON      "&Заменить",IDC_REPLACE_ONE,238,25,50,14
     PUSHBUTTON      "Заменить &все",IDC_REPLACE_ALL,238,43,50,14
     PUSHBUTTON      "Отмена",IDCANCEL,238,61,50,14
+    GROUPBOX        "Направление",IDC_STATIC,171,40,60,38,WS_GROUP
+    CONTROL         "&Вверх",IDC_UP,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,178,51,44,11
+    CONTROL         "В&низ",IDC_DOWN,"Button",BS_AUTORADIOBUTTON,178,62,44,11
 END
 
 IDD_FIND DIALOGEX 0, 0, 295, 76
@@ -330,13 +341,13 @@ FONT 9, "Tahoma", 0, 0, 0x0
 BEGIN
     LTEXT           "Что искать:",IDC_STATIC,7,9,40,8
     COMBOBOX        IDC_TEXT,49,7,183,62,CBS_DROPDOWN | CBS_AUTOHSCROLL | WS_VSCROLL | WS_GROUP | WS_TABSTOP
+    DEFPUSHBUTTON   "&Искать далее",ID_FIND_NEXT,238,7,50,14,WS_GROUP
     CONTROL         "&Только целые слова",IDC_WHOLE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,30,98,13
     CONTROL         "&Учитывать регистр",IDC_MATCHCASE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,43,98,13
     CONTROL         "&Регулярное выражение",IDC_REGEXP,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,56,98,13
     GROUPBOX        "Направление",IDC_STATIC,172,30,60,38,WS_GROUP
     CONTROL         "&Вверх",IDC_UP,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,179,41,44,11
     CONTROL         "В&низ",IDC_DOWN,"Button",BS_AUTORADIOBUTTON,179,52,44,11
-    PUSHBUTTON      "&Искать далее",ID_FIND_NEXT,238,7,50,14,WS_GROUP
     PUSHBUTTON      "Отмена",IDCANCEL,238,24,50,14
 END
 

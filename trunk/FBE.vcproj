@@ -876,6 +876,10 @@
 			Filter="cpp;h"
 			>
 			<File
+				RelativePath=".\extras\atlctrlsext.h"
+				>
+			</File>
+			<File
 				RelativePath=".\extras\atlgdix.h"
 				>
 			</File>

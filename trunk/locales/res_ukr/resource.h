@@ -209,6 +209,8 @@
 #define IDD_SPELL_CHECK                 253
 #define IDS_HOTKEY_SYMBOL_LEFT_DOUBLE_QUOTATION_MARK 254
 #define IDS_WORDS_FR_BTN_FIND1          254
+#define IDR_MENU1                       254
+#define IDR_TOOLBAR_MENU                254
 #define IDS_HOTKEY_SYMBOL_RIGHT_DOUBLE_QUOTATION_MARK 255
 #define IDS_CTXMENU_CUT                 255
 #define IDS_HOTKEY_SYMBOL_LEFT_POINTING_DOUBLE_QUOTATION_MARK 256
@@ -478,6 +480,7 @@
 #define ID_TOOLS_SPELLCHECK_HIGHLIGHT   32906
 #define ID_GOTO_MATCHTAG                32907
 #define ID_GOTO_WRONGTAG                32908
+#define ID_TOOLS_CUSTOMIZE              32909
 #define ID_EDIT_PASTE2                  0xE525
 #define IDS_ENCODINGS                   61403
 #define IDS_DOCUMENT_TREE_CAPTION       61404
@@ -487,8 +490,8 @@
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NO_MFC                     1
-#define _APS_NEXT_RESOURCE_VALUE        254
-#define _APS_NEXT_COMMAND_VALUE         32907
+#define _APS_NEXT_RESOURCE_VALUE        255
+#define _APS_NEXT_COMMAND_VALUE         32909
 #define _APS_NEXT_CONTROL_VALUE         1105
 #define _APS_NEXT_SYMED_VALUE           133
 #endif
