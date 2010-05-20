@@ -373,8 +373,11 @@ class CCustomizableToolBarCommands
 {
 public:
    typedef CCustomizableToolBarCommands<T> thisClass;
+   typedef CSimpleArray<TBBUTTON> TBBUTTONS;
 
-   CSimpleArray<TBBUTTON> m_aButtons;
+   CSimpleMap<int, TBBUTTONS> m_aButtons;
+   CSimpleMap<int, TBBUTTONS> m_aDefaultButtons;
+   CSimpleMap<int, CString> m_BtnText;
 
    // Operations
 
@@ -410,6 +413,8 @@ public:
       if( pData == NULL ) return FALSE;
       ATLASSERT(pData->wVersion==1);
 
+	  TBBUTTONS aButtons;
+
       WORD* pItems = pData->items();
       // Set initial separator (half width)
       if( bInitialSeparator ) {
@@ -420,7 +425,7 @@ public:
          bt.fsStyle = TBSTYLE_SEP;
          bt.dwData = 0;
          bt.iString = 0;
-         m_aButtons.Add(bt);
+         aButtons.Add(bt);
       }
       // Scan other buttons
       int nBmp = 0;
@@ -433,7 +438,7 @@ public:
             bt.fsStyle = TBSTYLE_BUTTON;
             bt.dwData = 0;
             bt.iString = 0;
-            m_aButtons.Add(bt);
+            aButtons.Add(bt);
          }
          else {
             TBBUTTON bt;
@@ -443,10 +448,19 @@ public:
             bt.fsStyle = TBSTYLE_SEP;
             bt.dwData = 0;
             bt.iString = 0;
-            m_aButtons.Add(bt);
+            aButtons.Add(bt);
          }
       }
+	  m_aButtons.Add((int)hWndToolBar, aButtons);
+	  m_aDefaultButtons.Add((int)hWndToolBar, aButtons);
       return TRUE;
+   }
+
+   BOOL AddToolbarButton(HWND hWndToolBar, TBBUTTON button, CString text)
+   {
+      CToolBarCtrl tb = hWndToolBar;
+	  m_BtnText.Add(button.idCommand, text);
+	  return m_aButtons.GetValueAt(m_aButtons.FindKey((int)hWndToolBar)).Add(button);
    }
 
    // Message map and handler
@@ -461,9 +475,12 @@ public:
       NOTIFY_CODE_HANDLER(TBN_GETBUTTONINFO, OnTbGetButtonInfo)      
    END_MSG_MAP()
 
-   LRESULT OnTbBeginAdjust(int /*idCtrl*/, LPNMHDR /*pnmh*/, BOOL& bHandled)
+   LRESULT OnTbBeginAdjust(int /*idCtrl*/, LPNMHDR pnmh, BOOL& bHandled)
    {
-      ATLASSERT(m_aButtons.GetSize()>0); // Remember to call InitToolBar()!
+      LPTBNOTIFY lpTbNotify = (LPTBNOTIFY) pnmh;
+      int tb = (int)lpTbNotify->hdr.hwndFrom;
+	  TBBUTTONS aButtons = m_aButtons.GetValueAt(m_aButtons.FindKey(tb));
+	  ATLASSERT(aButtons.GetSize()>0); // Remember to call InitToolBar()!
       bHandled = FALSE;
       return 0;
    }
@@ -486,7 +503,8 @@ public:
       // Restore the old button-set
       CToolBarCtrl tb = lpTbNotify->hdr.hwndFrom;
       while( tb.GetButtonCount() > 0 ) tb.DeleteButton(0);
-      tb.AddButtons(m_aButtons.GetSize(), m_aButtons.GetData());
+	  TBBUTTONS aButtons = m_aDefaultButtons.GetValueAt(m_aDefaultButtons.FindKey((int)lpTbNotify->hdr.hwndFrom));
+      tb.AddButtons(aButtons.GetSize(), aButtons.GetData());
       return TRUE;
    }
    
@@ -506,26 +524,35 @@ public:
    {
       LPTBNOTIFY lpTbNotify = (LPTBNOTIFY) pnmh;
       CToolBarCtrl tb = lpTbNotify->hdr.hwndFrom;
+	  TBBUTTONS aButtons = m_aButtons.GetValueAt(m_aButtons.FindKey((int)lpTbNotify->hdr.hwndFrom));
       // The toolbar requests information about buttons that we don't know of...
-      if( lpTbNotify->iItem >= m_aButtons.GetSize() ) return FALSE;
-      // Locate tooltip text and copy second half of it.
+      if( lpTbNotify->iItem >= aButtons.GetSize() ) return FALSE;
+	  // Locate tooltip text and copy second half of it.
       // This is the same code as CFrameWindowImplBase uses, despite how 
       // dangerous it may look...
       TCHAR szBuff[256] = { 0 };
       LPCTSTR pstr = szBuff;
+	  TBBUTTON btn = aButtons[lpTbNotify->iItem];
+
 #if (_ATL_VER < 0x0700)
-      int nRet = ::LoadString(_Module.GetResourceInstance(), m_aButtons[lpTbNotify->iItem].idCommand, szBuff, 255);
+      int nRet = ::LoadString(_Module.GetResourceInstance(), btn.idCommand, szBuff, 255);
 #else
-      int nRet = ATL::AtlLoadString(m_aButtons[lpTbNotify->iItem].idCommand, szBuff, 255);
+	  int nRet = ATL::AtlLoadString(btn.idCommand, szBuff, 255);
 #endif
-      for( int i = 0; i < nRet; i++ ) {
-         if( szBuff[i] == _T('\n') ) {
-            pstr = szBuff + i + 1;
-            break;
-         }
-      }
-      lpTbNotify->tbButton = m_aButtons[lpTbNotify->iItem];
-      ::lstrcpyn(lpTbNotify->pszText, pstr, lpTbNotify->cchText);
+	  if (btn.iString)
+	  {
+		  pstr = m_BtnText.GetValueAt(m_BtnText.FindKey(btn.idCommand));
+		  btn.iString = tb.AddStrings(pstr);
+	  }
+	  else	
+		  for( int i = 0; i < nRet; i++ ) {
+			 if( szBuff[i] == _T('\n') ) {
+				pstr = szBuff + i + 1;
+				break;
+			 }
+		  }
+      lpTbNotify->tbButton = btn;
+	  ::lstrcpyn(lpTbNotify->pszText, pstr, lpTbNotify->cchText);
       lpTbNotify->cchText = ::lstrlen(pstr);
       return TRUE;
    }

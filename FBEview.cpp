@@ -2814,7 +2814,9 @@ void  CFBEView::Init() {
   m_elementsNum = Document()->all->length;
 
   // turn off browser's d&d
-  m_browser->RegisterAsDropTarget=VARIANT_FALSE;
+  HRESULT hr = m_browser->put_RegisterAsDropTarget(VARIANT_FALSE);
+//  m_browser->RegisterAsDropTarget = VARIANT_TRUE;
+
   m_initialized=true;
 }
 
@@ -2831,7 +2833,9 @@ void  CFBEView::OnBeforeNavigate(IDispatch *pDisp,VARIANT *vtUrl,VARIANT *vtFlag
     if (m_nav_url.Left(13)==_T("fbw-internal:"))
       return;
 
-    ::SendMessage(m_frame,WM_COMMAND,MAKELONG(0,IDN_NAVIGATE),(LPARAM)m_hWnd);
+	// changed by SeNS: possible fix for issue #87
+	// tested on Windows Vista Ultimate
+    ::PostMessage(m_frame,WM_COMMAND,MAKELONG(0,IDN_NAVIGATE),(LPARAM)m_hWnd);
   }
 
   // disable navigating away
@@ -2945,6 +2949,8 @@ VARIANT_BOOL  CFBEView::OnClick(IDispatch *evt)
 {
 	MSHTML::IHTMLEventObjPtr oe(evt);
 	MSHTML::IHTMLElementPtr elem(oe->srcElement);	
+
+  	m_startMatch = m_endMatch = 0;
 
 	if(!(bool)elem)
 		return VARIANT_FALSE;
@@ -3513,6 +3519,13 @@ long CFBEView::InsertCode()
 				rngHTML.SetString(rng->htmlText);
 			}
 
+			if (iswspace(rngHTML[rngHTML.GetLength()-1])) 
+			{
+				rng->moveEnd(L"character",-1);
+				rngHTML.SetString(rng->htmlText);
+				if (offset > rngHTML.GetLength()) offset--;
+			}
+
 			// save selection
 			MSHTML::IMarkupPointerPtr selBegin, selEnd;
 			m_mk_srv->CreateMarkupPointer(&selBegin);
@@ -3530,10 +3543,8 @@ long CFBEView::InsertCode()
 				rngEnd->collapse(false);
 
 				MSHTML::IHTMLElementPtr elBegin = rngStart->parentElement(), elEnd = rngEnd->parentElement();
-				while(U::scmp(elBegin->tagName, L"P")) 
-					elBegin = elBegin->parentElement;
-				while(U::scmp(elEnd->tagName, L"P")) 
-					elEnd = elEnd->parentElement;
+				while(U::scmp(elBegin->tagName, L"P")) elBegin = elBegin->parentElement;
+				while(U::scmp(elEnd->tagName, L"P")) elEnd = elEnd->parentElement;
 
 				MSHTML::IHTMLDOMNodePtr bNode = elBegin, eNode = elEnd;
 				int last = 0;
@@ -3553,8 +3564,8 @@ long CFBEView::InsertCode()
 					// remove code tag
 					else
 					{
-						elBeginHTML.Replace (L"<SPAN class=code>", L"");
-						elBeginHTML.Replace (L"</SPAN>", L"");
+						elBeginHTML.Replace (L"<SPAN class=code>", L" ");
+						elBeginHTML.Replace (L"</SPAN>", L" ");
 						elBegin->innerHTML = elBeginHTML.AllocSysString();
 					}
 
@@ -3570,11 +3581,8 @@ long CFBEView::InsertCode()
 			}
 			else if(rngHTML.Find(L"<SPAN class=code>") != -1 && rngHTML.Find(L"</SPAN>") != -1)
 			{
-					rngHTML.Replace (L"<SPAN class=code>", L"");
-					rngHTML.Replace (L"</SPAN>", L"");
-					if (iswspace(rngHTML[0]))
-						rng->moveStart(L"character",1);
-
+					rngHTML.Replace (L"<SPAN class=code>", L" ");
+					rngHTML.Replace (L"</SPAN>", L" ");
 					rng->pasteHTML(rngHTML.AllocSysString());
 			}
 			else

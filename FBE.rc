@@ -558,6 +558,11 @@ BEGIN
     BUTTON      ID_DT_DELETE
 END
 
+IDR_SCRIPTS TOOLBAR  16, 16
+BEGIN
+    BUTTON      ID_LAST_SCRIPT
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -566,6 +571,7 @@ END
 
 IDR_MAINFRAME           BITMAP                  "res\\Toolbar.bmp"
 IDR_MAINFRAME_SMALL     BITMAP                  "res\\Toolbar_small.bmp"
+IDR_SCRIPTS             BITMAP                  "res\\Scripts.bmp"
 IDB_STRUCTURE           BITMAP                  "res\\struct.bmp"
 IDB_WORDSTATES          BITMAP                  "res\\wordstat.bmp"
 IDR_DOCUMENT_TREE       BITMAP                  "res\\document.bmp"
@@ -673,9 +679,10 @@ BEGIN
     END
     POPUP "&View"
     BEGIN
-        MENUITEM "&Toolbar",                    60161
-        MENUITEM "&Links Bar",                  60162
-        MENUITEM "Table Bar",                   60163
+        MENUITEM "&Commands toolbar",           60161
+        MENUITEM "Scripts toolbar",             60162
+        MENUITEM "&Links Bar",                  60163
+        MENUITEM "Table Bar",                   60164
         MENUITEM "&Status Bar",                 ID_VIEW_STATUS_BAR
         MENUITEM "&Document Tree",              ID_VIEW_TREE
         MENUITEM SEPARATOR
@@ -749,6 +756,8 @@ BEGIN
     POPUP "CUSTOMIZE"
     BEGIN
         MENUITEM "Customize toolbar...",        ID_TOOLS_CUSTOMIZE
+        MENUITEM SEPARATOR
+        MENUITEM "Hide toolbar",                ID_HIDETOOLBAR
     END
 END
 
@@ -873,9 +882,10 @@ END
 
 STRINGTABLE 
 BEGIN
-    60161                   "Show or hide the toolbar\nToggle ToolBar"
-    60162                   "Show or hide the links bar\nToggle LinksBar"
-    60163                   "Show or hide the table bar\nToggle TableBar"
+    60161                   "Show or hide the command toolbar\nToggle Command ToolBar"
+    60162                   "Show or hide the scripts toolbar\nToggle Scripts ToolBar"
+    60163                   "Show or hide the links bar\nToggle LinksBar"
+    60164                   "Show or hide the table bar\nToggle TableBar"
 END
 
 STRINGTABLE 
@@ -931,8 +941,7 @@ END
 STRINGTABLE 
 BEGIN
     IDS_CHOOSE_SCRIPTS_FLD  "Specify scripts folder"
-    IDS_SCRIPT_HOTKEY_CONFLICT 
-                            "Script\n%s\n returned a virtual-key that conflicts with previously loaded script\n %s"
+    IDS_SCRIPT_HOTKEY_CONFLICT "Script\n%s\n returned a virtual-key that conflicts with previously loaded script\n %s"
     IDS_HOTKEY_EDIT_MERGE   "Merge"
     IDS_HOTKEY_EDIT_PASTE   "Paste"
     IDS_HOTKEY_EDIT_REDO    "Redo"
@@ -1141,11 +1150,12 @@ END
 STRINGTABLE 
 BEGIN
     IDC_SPELL_IGNORE        "Ignore"
+    IDC_SPELL_REPLACE       "Replace word"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
-    IDC_SPELL_REPLACE       "Replace word"
+   ID_LAST_SCRIPT	    "Execute last called script\nLast script"
 END
 
 #endif    // English (U.S.) resources

@@ -33,6 +33,9 @@
 #pragma warning(disable : 4996)
 #endif // _MSC_VER >= 1000
 
+#define MSGFLT_ADD 1
+#define MSGFLT_REMOVE 2
+
 typedef CWinTraits<WS_CHILD|WS_VISIBLE|ES_AUTOHSCROLL|ES_LEFT,WS_EX_CLIENTEDGE> CCustomEditWinTraits;
 
 class CCustomEdit : public CWindowImpl<CCustomEdit,CEdit,CCustomEditWinTraits>, public CEditCommands<CCustomEdit>
@@ -172,8 +175,10 @@ public:
   wchar_t strINS[MAX_LOAD_STRING + 1];
   wchar_t strOVR[MAX_LOAD_STRING + 1];
 
-	CCommandBarCtrl	m_CmdBar; // menu bar
-	CReBarCtrl		m_rebar; // toolbars
+	CCommandBarCtrl	m_MenuBar;			// menu bar
+	CToolBarCtrl	m_CmdToolbar;		// commands toolbar
+	CToolBarCtrl	m_ScriptsToolbar;	// commands toolbar
+	CReBarCtrl		m_rebar;			// toolbars
 	CComboBox		m_id_box;
 	CComboBox		m_href_box;
 	CComboBox		m_image_title_box;
@@ -363,6 +368,7 @@ public:
 	void InitPluginHotkey(CString guid, UINT cmd, CString name);
 	UINT m_last_plugin;
 
+  void AddTbButton(HWND hWnd, const TCHAR *text, const int idCommand = 0, const BYTE bState = 0, const HICON icon = 0);
   void		AddStaticText(CCustomStatic &st, HWND toolbarHwnd, int id, const TCHAR *text, HFONT hFont);
 
 
@@ -406,6 +412,7 @@ public:
 		UPDATE_ELEMENT(ATL_IDW_BAND_FIRST+2, UPDUI_MENUPOPUP)
 		UPDATE_ELEMENT(ATL_IDW_BAND_FIRST+3, UPDUI_MENUPOPUP)
 		UPDATE_ELEMENT(ATL_IDW_BAND_FIRST+4, UPDUI_MENUPOPUP)
+		UPDATE_ELEMENT(ATL_IDW_BAND_FIRST+5, UPDUI_MENUPOPUP)
 
 		UPDATE_ELEMENT(ID_VIEW_STATUS_BAR, UPDUI_MENUPOPUP)
 		UPDATE_ELEMENT(ID_VIEW_FASTMODE, UPDUI_MENUPOPUP|UPDUI_TOOLBAR)
@@ -539,6 +546,7 @@ public:
 		COMMAND_ID_HANDLER(ATL_IDW_BAND_FIRST+5, OnViewToolBar)
 		COMMAND_ID_HANDLER(ATL_IDW_BAND_FIRST+6, OnViewToolBar)
 		COMMAND_ID_HANDLER(ATL_IDW_BAND_FIRST+7, OnViewToolBar)
+		COMMAND_ID_HANDLER(ATL_IDW_BAND_FIRST+8, OnViewToolBar)
 		COMMAND_ID_HANDLER(ID_VIEW_STATUS_BAR, OnViewStatusBar)
 		COMMAND_ID_HANDLER(ID_VIEW_FASTMODE, OnViewFastMode)
 		COMMAND_ID_HANDLER(ID_VIEW_TREE, OnViewTree)
@@ -552,6 +560,7 @@ public:
 		COMMAND_ID_HANDLER(ID_TOOLS_OPTIONS, OnToolsOptions)
       
 		COMMAND_ID_HANDLER(ID_TOOLS_CUSTOMIZE, OnToolCustomize)
+		COMMAND_ID_HANDLER(ID_HIDETOOLBAR, OnHideToolbar)
 
 		COMMAND_RANGE_HANDLER(ID_SCRIPT_BASE, ID_SCRIPT_BASE + 999, OnToolsScript)
 		COMMAND_ID_HANDLER(ID_LAST_SCRIPT, OnLastScript)
@@ -624,13 +633,32 @@ public:
     return 0;
   }
 
+  int m_selBandID;
+
   LRESULT OnContextMenu(UINT, WPARAM, LPARAM lParam, BOOL&) 
   {
 	HMENU menu, popup;
+	RECT rect;
 	CPoint ptMousePos = (CPoint)lParam;
 	ScreenToClient(&ptMousePos);
 	menu = ::LoadMenu(_Module.GetResourceInstance(), MAKEINTRESOURCEW(IDR_TOOLBAR_MENU));
 	popup = ::GetSubMenu(menu, 0);
+	// find clicked toolbar
+	REBARBANDINFO rbi;
+	ZeroMemory((void*)&rbi, sizeof(rbi));
+	rbi.cbSize = sizeof(REBARBANDINFO);
+	rbi.fMask = RBBIM_ID;
+	m_selBandID = -1;
+	for (int i=0; i< m_rebar.GetBandCount(); i++)
+	{
+		m_rebar.GetRect(i, &rect);
+		if (PtInRect(&rect,ptMousePos))
+		{
+			m_rebar.GetBandInfo(i, &rbi);
+			m_selBandID = rbi.wID;
+			break;
+		}
+	}
 	ClientToScreen(&ptMousePos);
 	::TrackPopupMenu(popup, TPM_LEFTALIGN, ptMousePos.x, ptMousePos.y, 0, *this, 0);
 	return 0;
@@ -653,7 +681,7 @@ public:
 		AU::TRACKPARAMS* tp = (AU::TRACKPARAMS*)lParam;
 		// added by SeNS
 		if (m_Speller) m_Speller->AppendSpellMenu(tp->hMenu);
-		m_CmdBar.TrackPopupMenu(tp->hMenu, tp->uFlags, tp->x, tp->y);
+		m_MenuBar.TrackPopupMenu(tp->hMenu, tp->uFlags, tp->x, tp->y);
 		return 0;
 	}
 
@@ -745,26 +773,16 @@ public:
   LRESULT OnToolsOptions(WORD, WORD, HWND, BOOL&);
   LRESULT OnToolsScript(WORD, WORD, HWND, BOOL&);
 
-  // Added by SeNS: toolbar customization
-  HWND GetCommandBar_HWND()
+  LRESULT OnHideToolbar(WORD wNotifyCode, WORD /*wID*/, HWND hWndCtl, BOOL& bHandled)
   {
-      // Get the toolbar HWND.
-      CReBarCtrl rebar = m_hWndToolBar;
-      UINT iBandIndex = rebar.IdToIndex(ATL_IDW_BAND_FIRST+1); // toolbar is 2nd added band
-      REBARBANDINFO rbi = { 0 };
-      rbi.cbSize = sizeof(REBARBANDINFO);
-      rbi.fMask = RBBIM_CHILD;
-      rebar.GetBandInfo(iBandIndex, &rbi);
-	  return rbi.hwndChild;
+	  return OnViewToolBar(wNotifyCode, m_selBandID, hWndCtl, bHandled);
   }
 
-  LRESULT OnToolCustomize(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/)
+  LRESULT OnToolCustomize(WORD /*wNotifyCode*/, WORD /*wID*/, HWND hWndCtl, BOOL& /*bHandled*/)
   {
-      // Call Customize to show dialog now
-      CToolBarCtrl tb = GetCommandBar_HWND();
-   	  // exit CBT hook
 	  UnhookSysDialogs();
-      tb.Customize();
+	  if (m_selBandID == ATL_IDW_BAND_FIRST+1) m_CmdToolbar.Customize(); else
+	  if (m_selBandID == ATL_IDW_BAND_FIRST+2) m_ScriptsToolbar.Customize();
 	  HookSysDialogs();
       return 0;
   }

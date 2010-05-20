@@ -149,7 +149,7 @@ public:
 		MESSAGE_HANDLER(WM_SYSKEYUP, OnKeyUp)
 	END_MSG_MAP()
 
-	LRESULT OnKeyDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+	LRESULT OnKeyDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL&)
 	{
 		NMITEMACTIVATE nia;
 		::ZeroMemory(&nia, sizeof(NMITEMACTIVATE));
@@ -197,7 +197,7 @@ public:
 		return DefWindowProc(uMsg, wParam, lParam);
 	}
 
-	LRESULT OnKeyUp(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+	LRESULT OnKeyUp(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL&)
 	{
 		isCtrl = false;
 

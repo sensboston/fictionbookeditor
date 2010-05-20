@@ -175,7 +175,7 @@
 				AssemblerListingLocation=".\Debug/"
 				ObjectFile=".\Debug/"
 				ProgramDataBaseFileName=".\Debug/"
-				WarningLevel="1"
+				WarningLevel="2"
 				SuppressStartupBanner="true"
 				DebugInformationFormat="3"
 				CompileAs="0"
@@ -266,10 +266,6 @@
 						BasicRuntimeChecks="3"
 					/>
 				</FileConfiguration>
-			</File>
-			<File
-				RelativePath=".\BrowserUIHandler.cpp"
-				>
 			</File>
 			<File
 				RelativePath=".\DocumentTree.cpp"

@@ -10,6 +10,7 @@
 
 // MessageBox localization
 HHOOK hCBTHook;
+HWND activatedWnd = 0;
 LRESULT CALLBACK CBTProc(INT nCode, WPARAM wParam, LPARAM lParam)
 {
 	HWND  hChildWnd;    // msgbox is "child"
@@ -18,52 +19,56 @@ LRESULT CALLBACK CBTProc(INT nCode, WPARAM wParam, LPARAM lParam)
 	// window handle is wParam
 	if (nCode == HCBT_ACTIVATE)
 	{
-		TCHAR caption[255];
-		GetWindowText((HWND)wParam, caption, 255);
-
 		// set window handles
 		hChildWnd  = (HWND)wParam;
-		//to get the text of yes button
-		UINT result;
-		if(GetDlgItem(hChildWnd,IDOK)!=NULL)
+		if (activatedWnd != (HWND)wParam)
 		{
-			s.LoadString(IDS_MB_OK);
-			result= SetDlgItemText(hChildWnd,IDOK,s);
-		}
-		if(GetDlgItem(hChildWnd,IDCANCEL)!=NULL)
-		{
-			s.LoadString(IDS_MB_CANCEL);
-			result= SetDlgItemText(hChildWnd,IDCANCEL,s);
-		}
-		if(GetDlgItem(hChildWnd,IDABORT)!=NULL)
-		{
-			s.LoadString(IDS_MB_ABORT);
-			result= SetDlgItemText(hChildWnd,IDABORT,s);
-		}
-		if(GetDlgItem(hChildWnd,IDRETRY)!=NULL)
-		{
-			s.LoadString(IDS_MB_RETRY);
-			result= SetDlgItemText(hChildWnd,IDRETRY,s);
-		}
-		if(GetDlgItem(hChildWnd,IDIGNORE)!=NULL)
-		{
-			s.LoadString(IDS_MB_IGNORE);
-			result= SetDlgItemText(hChildWnd,IDIGNORE,s);
-		}
-		if(GetDlgItem(hChildWnd,IDYES)!=NULL)
-		{
-			s.LoadString(IDS_MB_YES);
-			result= SetDlgItemText(hChildWnd,IDYES,s);
-		}
-		if(GetDlgItem(hChildWnd,IDNO)!=NULL)
-		{
-			s.LoadString(IDS_MB_NO);
-			result= SetDlgItemText(hChildWnd,IDNO,s);
+			activatedWnd = hChildWnd;
+
+			if(GetDlgItem(hChildWnd,IDOK)!=NULL)
+			{
+				s.LoadString(IDS_MB_OK);
+				SetDlgItemText(hChildWnd,IDOK,s);
+			}
+			if(GetDlgItem(hChildWnd,IDCANCEL)!=NULL)
+			{
+				s.LoadString(IDS_MB_CANCEL);
+				SetDlgItemText(hChildWnd,IDCANCEL,s);
+			}
+			if(GetDlgItem(hChildWnd,IDABORT)!=NULL)
+			{
+				s.LoadString(IDS_MB_ABORT);
+				SetDlgItemText(hChildWnd,IDABORT,s);
+			}
+			if(GetDlgItem(hChildWnd,IDRETRY)!=NULL)
+			{
+				s.LoadString(IDS_MB_RETRY);
+				SetDlgItemText(hChildWnd,IDRETRY,s);
+			}
+			if(GetDlgItem(hChildWnd,IDIGNORE)!=NULL)
+			{
+				s.LoadString(IDS_MB_IGNORE);
+				SetDlgItemText(hChildWnd,IDIGNORE,s);
+			}
+			if(GetDlgItem(hChildWnd,IDYES)!=NULL)
+			{
+				s.LoadString(IDS_MB_YES);
+				SetDlgItemText(hChildWnd,IDYES,s);
+			}
+			if(GetDlgItem(hChildWnd,IDNO)!=NULL)
+			{
+				s.LoadString(IDS_MB_NO);
+				SetDlgItemText(hChildWnd,IDNO,s);
+			}
 		}
 	}
+	if (nCode == HCBT_DESTROYWND)
+	{
+		if (activatedWnd == (HWND)wParam)
+			activatedWnd = 0;
+	}
 	// otherwise, continue with any possible chained hooks
-	else CallNextHookEx(hCBTHook, nCode, wParam, lParam);
-	return 0;
+	return CallNextHookEx(hCBTHook, nCode, wParam, lParam);
 }
 void HookSysDialogs()
 {
@@ -469,7 +474,7 @@ BOOL CMainFrame::OnIdle()
 		for (int i = 0; i < sizeof(disabled_commands)/sizeof(disabled_commands[0]); ++i)
 			UIEnable(disabled_commands[i], FALSE);
 
-		HMENU scripts = GetSubMenu(m_CmdBar.GetMenu(), 7);
+		HMENU scripts = GetSubMenu(m_MenuBar.GetMenu(), 7);
 		for(int i = 0; i < m_scripts.GetSize(); ++i)
 		{
 			if(!m_scripts[i].isFolder)
@@ -542,7 +547,7 @@ BOOL CMainFrame::OnIdle()
 	// BODY view
 	else
 	{
-		HMENU scripts = GetSubMenu(m_CmdBar.GetMenu(), 7);
+		HMENU scripts = GetSubMenu(m_MenuBar.GetMenu(), 7);
 		for (int i = 0; i < m_scripts.GetSize(); ++i)
 		{
 			if(!m_scripts[i].isFolder)
@@ -1078,13 +1083,29 @@ BOOL CMainFrame::OnIdle()
 	return FALSE;
 }
 
-static void AddTbButton(HWND hWnd, const TCHAR *text) {
-	TBBUTTON sep;
-	memset(&sep, 0, sizeof(sep));
-	sep.iBitmap = I_IMAGENONE;
-	sep.fsStyle = BTNS_BUTTON | BTNS_AUTOSIZE;
-	sep.iString = (int)text;
-	SendMessage(hWnd, TB_ADDBUTTONS, 1, (LPARAM)&sep);
+void CMainFrame::AddTbButton(HWND hWnd, const TCHAR *text, const int idCommand, const BYTE bState, const HICON icon)
+{
+    CToolBarCtrl tb = hWnd;
+	int iImage = I_IMAGENONE;
+	BYTE bStyle = BTNS_BUTTON | BTNS_AUTOSIZE;
+	if (icon)
+	{
+		CImageList iList = tb.GetImageList();
+		if (iList) iImage = iList.AddIcon(icon);
+	}
+
+	tb.AddButton(idCommand, bStyle, bState, iImage, text, 0); 
+	// custom added command
+	if (icon)
+	{
+		int idx = tb.CommandToIndex(idCommand);
+		TBBUTTON tbButton;
+		tb.GetButton(idx, &tbButton);
+		AddToolbarButton(tb,tbButton, text);
+		// move button to unassigned
+		tb.DeleteButton(idx);
+	}
+	tb.AutoSize();
 }
 
 static void SubclassBox(HWND hWnd, RECT& rc, const int pos, CComboBox& box, DWORD dwStyle, CCustomEdit& custedit, const int resID, HFONT& hFont)
@@ -1156,7 +1177,7 @@ void CMainFrame::InitPluginsType(HMENU hMenu, const TCHAR* type, UINT cmdbase, C
 			HICON hIcon;
 			if(::ExtractIconEx(icon, iconID, NULL, &hIcon, 1) > 0 && hIcon)
 			{
-				m_CmdBar.AddIcon(hIcon, cmdbase + ncmd);
+				m_MenuBar.AddIcon(hIcon, cmdbase + ncmd);
 				::DestroyIcon(hIcon);
 			}
 		}
@@ -1210,7 +1231,7 @@ void CMainFrame::InitPluginsType(HMENU hMenu, const TCHAR* type, UINT cmdbase, C
 				HICON hIcon;
 				if(::ExtractIconEx(icon, iconID, NULL, &hIcon, 1) > 0 && hIcon)
 				{
-					m_CmdBar.AddIcon(hIcon, cmdbase + ncmd);
+					m_MenuBar.AddIcon(hIcon, cmdbase + ncmd);
 					::DestroyIcon(hIcon);
 				}
 			}
@@ -1228,7 +1249,7 @@ void CMainFrame::InitPlugins()
 	QuickScriptsSort(m_scripts, 0, m_scripts.GetSize() - 1);
 	UpScriptsFolders(m_scripts);
 
-	HMENU file = ::GetSubMenu(m_CmdBar.GetMenu(), 0);
+	HMENU file = ::GetSubMenu(m_MenuBar.GetMenu(), 0);
 	HMENU sub = ::GetSubMenu(file, 6);
 	InitPluginsType(sub, L"Import", ID_IMPORT_BASE, m_import_plugins);
 
@@ -1241,7 +1262,7 @@ void CMainFrame::InitPlugins()
 	m_mru.SetMaxEntries(m_mru.m_nMaxEntries_Max - 1);
 
 	// Scripts
-	HMENU ManMenu = m_CmdBar.GetMenu();
+	HMENU ManMenu = m_MenuBar.GetMenu();
 	HMENU scripts = GetSubMenu(ManMenu, 6);
 
 	while(::GetMenuItemCount(scripts) > 0)
@@ -1264,23 +1285,26 @@ LRESULT CMainFrame::OnCreate(UINT, WPARAM, LPARAM, BOOL&)
   m_ctrl_tab = false;
 
   // create command bar window
-  m_CmdBar.SetAlphaImages(true);
-  HWND hWndCmdBar = m_CmdBar.Create(m_hWnd, rcDefault, NULL, ATL_SIMPLE_CMDBAR_PANE_STYLE);
+  m_MenuBar.SetAlphaImages(true);
+  HWND hWndCmdBar = m_MenuBar.Create(m_hWnd, rcDefault, NULL, ATL_SIMPLE_CMDBAR_PANE_STYLE);
   // attach menu
-  m_CmdBar.AttachMenu(GetMenu());
+  m_MenuBar.AttachMenu(GetMenu());
   // remove old menu
   SetMenu(NULL);
   // load command bar images
-  m_CmdBar.LoadImages(IDR_MAINFRAME_SMALL);
+  m_MenuBar.LoadImages(IDR_MAINFRAME_SMALL);
 
-  HWND hWndToolBar = CreateSimpleToolBarCtrl(m_hWnd, IDR_MAINFRAME, FALSE,  ATL_SIMPLE_TOOLBAR_PANE_STYLE | TBSTYLE_LIST | CCS_ADJUSTABLE);
-  InitToolBar(hWndToolBar, IDR_MAINFRAME);
+  m_CmdToolbar = CreateSimpleToolBarCtrl(m_hWnd, IDR_MAINFRAME, FALSE,  ATL_SIMPLE_TOOLBAR_PANE_STYLE | TBSTYLE_LIST | CCS_ADJUSTABLE);
+  m_CmdToolbar.SetExtendedStyle(TBSTYLE_EX_MIXEDBUTTONS);
+  InitToolBar(m_CmdToolbar, IDR_MAINFRAME);
+  // Restore commands toolbar layout and position
+  m_CmdToolbar.RestoreState(HKEY_CURRENT_USER, L"SOFTWARE\\FBETeam\\FictionBook Editor\\Toolbars", L"CommandToolbar");
+  UIAddToolBar(m_CmdToolbar);
 
-  // Load previously saved button layout
-  CToolBarCtrl tb = hWndToolBar;
-  tb.RestoreState(HKEY_CURRENT_USER, L"SOFTWARE\\FBETeam\\FictionBook Editor", L"Toolbar");
-
-  UIAddToolBar(hWndToolBar);
+  m_ScriptsToolbar = CreateSimpleToolBarCtrl(m_hWnd, IDR_SCRIPTS, FALSE,  ATL_SIMPLE_TOOLBAR_PANE_STYLE | TBSTYLE_LIST | CCS_ADJUSTABLE);
+  m_ScriptsToolbar.SetExtendedStyle(TBSTYLE_EX_MIXEDBUTTONS);
+  InitToolBar(m_ScriptsToolbar, IDR_SCRIPTS);
+  UIAddToolBar(m_ScriptsToolbar);
 
   HWND hWndLinksBar = CreateWindowEx(0, TOOLBARCLASSNAME, NULL, ATL_SIMPLE_TOOLBAR_PANE_STYLE | TBSTYLE_LIST, 0, 0, 100, 100, 
 	  m_hWnd, NULL, _Module.GetModuleInstance(), NULL);
@@ -1374,7 +1398,8 @@ LRESULT CMainFrame::OnCreate(UINT, WPARAM, LPARAM, BOOL&)
   CreateSimpleReBar(ATL_SIMPLE_REBAR_NOBORDER_STYLE);
   
   AddSimpleReBarBand(hWndCmdBar, 0, TRUE, 0);
-  AddSimpleReBarBand(hWndToolBar, 0, TRUE, 0);
+  AddSimpleReBarBand(m_CmdToolbar, 0, TRUE, 0, FALSE);
+  AddSimpleReBarBand(m_ScriptsToolbar, 0, TRUE, 0, FALSE);
   AddSimpleReBarBand(hWndLinksBar, 0, TRUE, 0, TRUE);
   AddSimpleReBarBand(hWndTableBar, 0, TRUE, 0, TRUE) ;
   AddSimpleReBarBand(hWndTableBar2, 0, TRUE, 0, TRUE);
@@ -1648,8 +1673,8 @@ LRESULT CMainFrame::OnClose(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/,
     }
 
 	// Save toolbar layout
-    CToolBarCtrl tb = GetCommandBar_HWND();
-    tb.SaveState(HKEY_CURRENT_USER, L"SOFTWARE\\FBETeam\\FictionBook Editor", L"Toolbar");
+    m_CmdToolbar.SaveState(HKEY_CURRENT_USER, L"SOFTWARE\\FBETeam\\FictionBook Editor\\Toolbars", L"CommandToolbar");
+    m_ScriptsToolbar.SaveState(HKEY_CURRENT_USER, L"SOFTWARE\\FBETeam\\FictionBook Editor\\Toolbars", L"ScriptsToolbar");
 
     _Settings.SetToolbarsSettings(tbs);
 	_Settings.SaveHotkeyGroups();
@@ -1688,7 +1713,7 @@ LRESULT CMainFrame::OnPostCreate(UINT, WPARAM, LPARAM, BOOL&)
 	m_hAccel = CreateAcceleratorTable(lpaccelNew, _Settings.keycodes);
 	delete[] lpaccelNew;
 
-	FillMenuWithHkeys(m_CmdBar.GetMenu());
+	FillMenuWithHkeys(m_MenuBar.GetMenu());
 	return 0;
 }
 
@@ -2142,14 +2167,14 @@ LRESULT CMainFrame::OnViewToolBar(WORD, WORD wID, HWND, BOOL&)
   m_rebar.ShowBand(nBandIndex, bVisible);
   UISetCheck(wID, bVisible);
 
-  if(60163 == wID)
+  if(wID == 60164 || wID == 60165)
   {
-	wID++;
+	if (wID == 60164) wID++; else wID--;
 	nBandIndex = m_rebar.IdToIndex(wID);
 	bVisible = !IsBandVisible(wID);
 	m_rebar.ShowBand(nBandIndex, bVisible);
 	UISetCheck(wID, bVisible);
-  }  
+  }
 
   UpdateLayout();
   return 0;
@@ -5019,19 +5044,26 @@ void CMainFrame::AddScriptsSubMenu(HMENU parentItem, CString refid, CSimpleArray
 			if(scripts[i].isFolder)
 				InsertMenuItem(parentItem, 0, true, &mi);
 			else
+			{
 				InsertMenuItem(parentItem, menupos--, true, &mi);
+				// added by SeNS: add scripts with icon to toolbar
+				if (scripts[i].pictType == CMainFrame::ICON)
+					AddTbButton(m_ScriptsToolbar, scripts[i].name, mi.wID, TBSTATE_ENABLED, (HICON)scripts[i].picture);
+			}
 
 			switch(scripts[i].pictType)
 			{
 				case CMainFrame::BITMAP:
-					m_CmdBar.AddBitmap((HBITMAP)scripts[i].picture, mi.wID);
+					m_MenuBar.AddBitmap((HBITMAP)scripts[i].picture, mi.wID);
 					break;
 				case CMainFrame::ICON:
-					m_CmdBar.AddIcon((HICON)scripts[i].picture, mi.wID);
+					m_MenuBar.AddIcon((HICON)scripts[i].picture, mi.wID);
 					break;
 			}
 		}
 	}
+    // Restore scripts toolbar layout and position
+    m_ScriptsToolbar.RestoreState(HKEY_CURRENT_USER, L"SOFTWARE\\FBETeam\\FictionBook Editor\\Toolbars", L"ScriptsToolbar");
 }
 
 void CMainFrame::QuickScriptsSort(CSimpleArray<ScrInfo>& scripts, int min, int max)
