@@ -11,7 +11,6 @@
 #pragma warning(disable : 4996)
 #endif // _MSC_VER >= 1000
 
-#include "BrowserUIHandler.h"
 #include "resource.h"
 #include "Settings.h"
 #include "CFileDialogEx.h"
@@ -282,7 +281,7 @@ public:
 	}
 
   bool			    HasDoc() { return m_hdoc; }
-  IDispatchPtr		    Script(){ return MSHTML::IHTMLDocumentPtr(m_hdoc)->Script; }
+  IDispatchPtr	    Script(){ return MSHTML::IHTMLDocumentPtr(m_hdoc)->Script; }
   CString		    NavURL() { return m_nav_url; }
 
   bool			    Loaded() { bool cmp=m_complete; m_complete=false; return cmp; }
@@ -371,7 +370,7 @@ public:
 	END_SINK_MAP()
 
   LRESULT OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
-  LRESULT OnFocus(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) {
+  LRESULT OnFocus(UINT, WPARAM, LPARAM, BOOL&) {
     // pass to document
     if (HasDoc())
       MSHTML::IHTMLDocument4Ptr(Document())->focus();
@@ -658,11 +657,16 @@ public:
 
 	// HTMLTextContainerEvents2
 	VARIANT_BOOL __stdcall OnRealPaste(IDispatch *evt);
-	void __stdcall OnDrop(IDispatch *evt)
+	void __stdcall OnDrop(IDispatch*)
 	{
 		if(m_normalize)
 			Normalize(Document()->body);
 	}
+
+   VARIANT_BOOL __stdcall OnDragDrop(IDispatch*)
+   {
+	    return VARIANT_FALSE;
+   }
 
   // form changes
   bool	    IsFormChanged();

@@ -77,8 +77,9 @@ BEGIN
     POPUP "&Вигляд"
     BEGIN
         MENUITEM "&Панель інструментів",        60161
-        MENUITEM "Па&нель посилань",            60162
-        MENUITEM "П&анель таблиць",             60163
+        MENUITEM "Панель скриптів",             60162
+        MENUITEM "Па&нель посилань",            60163
+        MENUITEM "П&анель таблиць",             60164
         MENUITEM "&Смуга стану",                ID_VIEW_STATUS_BAR
         MENUITEM "С&труктура книги",            ID_VIEW_TREE
         MENUITEM SEPARATOR
@@ -152,6 +153,8 @@ BEGIN
     POPUP "CUSTOMIZE"
     BEGIN
         MENUITEM "Налаштування панелі інструментів...", ID_TOOLS_CUSTOMIZE
+        MENUITEM SEPARATOR	
+        MENUITEM "Приховати панель",                ID_HIDETOOLBAR
     END
 END
 
@@ -641,6 +644,10 @@ BEGIN
     BUTTON      ID_DT_DELETE
 END
 
+IDR_SCRIPTS TOOLBAR  16, 16
+BEGIN
+    BUTTON      ID_LAST_SCRIPT
+END
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -649,6 +656,7 @@ END
 
 IDR_MAINFRAME           BITMAP                  "res\\Toolbar.bmp"
 IDR_MAINFRAME_SMALL     BITMAP                  "res\\Toolbar_small.bmp"
+IDR_SCRIPTS             BITMAP                  "res\\Scripts.bmp"
 IDR_DOCUMENT_TREE       BITMAP                  "res\\document.bmp"
 IDB_WORDSTATES          BITMAP                  "res\\wordstat.bmp"
 IDB_STRUCTURE           BITMAP                  "res\\struct.bmp"
@@ -813,8 +821,9 @@ END
 STRINGTABLE 
 BEGIN
     60161                   "Показати чи сховати панель інструментів\nПанель інструментів"
-    60162                   "Показати чи сховати панель посилань\nПанель посилань"
-    60163                   "Показати чи сховати панель редагування параметрів таблиць\nПанель таблиць"
+	60162                   "Показати чи сховати панель скриптів\nПанель скриптів"
+    60163                   "Показати чи сховати панель посилань\nПанель посилань"
+    60164                   "Показати чи сховати панель редагування параметрів таблиць\nПанель таблиць"
 END
 
 STRINGTABLE 
@@ -1052,12 +1061,14 @@ END
 STRINGTABLE 
 BEGIN
     IDC_SPELL_IGNORE        "Пропустити"
-END
-
-STRINGTABLE 
-BEGIN
     IDC_SPELL_REPLACE       "Замінити слово"
 END
+
+STRINGTABLE
+BEGIN
+   ID_LAST_SCRIPT	    "Виконати останній запущений скрипт \ nОстанній скрипт"
+END
+
 
 #endif    // Ukrainian resources
 /////////////////////////////////////////////////////////////////////////////

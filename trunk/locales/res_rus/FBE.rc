@@ -77,8 +77,9 @@ BEGIN
     POPUP "&Вид"
     BEGIN
         MENUITEM "&Панель инструментов",        60161
-        MENUITEM "Па&нель ссылок",              60162
-        MENUITEM "П&анель таблиц",              60163
+        MENUITEM "Панель скриптов",             60162
+        MENUITEM "Па&нель ссылок",              60163
+        MENUITEM "П&анель таблиц",              60164
         MENUITEM "&Строка состояния",           ID_VIEW_STATUS_BAR
         MENUITEM "С&труктура книги",            ID_VIEW_TREE
         MENUITEM SEPARATOR
@@ -152,6 +153,8 @@ BEGIN
     POPUP "CUSTOMIZE"
     BEGIN
         MENUITEM "Настройка панели инструментов...", ID_TOOLS_CUSTOMIZE
+        MENUITEM SEPARATOR
+        MENUITEM "Скрыть панель",                ID_HIDETOOLBAR
     END
 END
 
@@ -642,6 +645,10 @@ BEGIN
     BUTTON      ID_DT_DELETE
 END
 
+IDR_SCRIPTS TOOLBAR  16, 16
+BEGIN
+    BUTTON      ID_LAST_SCRIPT
+END
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -650,6 +657,7 @@ END
 
 IDR_MAINFRAME           BITMAP                  "res\\Toolbar.bmp"
 IDR_MAINFRAME_SMALL     BITMAP                  "res\\Toolbar_small.bmp"
+IDR_SCRIPTS             BITMAP                  "res\\Scripts.bmp"
 IDR_DOCUMENT_TREE       BITMAP                  "res\\document.bmp"
 IDB_WORDSTATES          BITMAP                  "res\\wordstat.bmp"
 IDB_STRUCTURE           BITMAP                  "res\\struct.bmp"
@@ -814,8 +822,9 @@ END
 STRINGTABLE 
 BEGIN
     60161                   "Показать или скрыть панель инструментов\nПанель инструментов"
-    60162                   "Показать или скрыть панель ссылок\nПанель ссылок"
-    60163                   "Показать или скрыть панель редактирования параметров таблиц\nПанель таблиц"
+	60162                   "Показать или скрыть панель скриптов\nПанель скриптов"
+    60163                   "Показать или скрыть панель ссылок\nПанель ссылок"
+    60164                   "Показать или скрыть панель редактирования параметров таблиц\nПанель таблиц"
 END
 
 STRINGTABLE 
@@ -1053,12 +1062,14 @@ END
 STRINGTABLE 
 BEGIN
     IDC_SPELL_IGNORE        "Пропустить"
-END
-
-STRINGTABLE 
-BEGIN
     IDC_SPELL_REPLACE       "Заменить слово"
 END
+
+STRINGTABLE
+BEGIN
+   ID_LAST_SCRIPT	    "Выполнить последний запущенный скрипт\nПоследний скрипт"
+END
+
 
 #endif    // Russian resources
 /////////////////////////////////////////////////////////////////////////////

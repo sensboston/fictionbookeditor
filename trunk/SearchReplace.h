@@ -113,6 +113,8 @@ public:
 		m_view->m_fo.fRegexp = (flags & CFBEView::FRF_REGEX) != 0;
 		m_view->m_fo.flags = flags & ~CFBEView::FRF_REGEX;
 
+		m_view->m_startMatch = m_view->m_endMatch = 0;
+
 		m_text = GetDlgItem(IDC_TEXT);
 
 		// Set fields
