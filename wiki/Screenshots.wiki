@@ -1,3 +1,5 @@
+#summary Внешний вид FBE
+
 *Main window*
 
 <img src="http://fictionbookeditor.googlecode.com/files/fbe0.png"/>
