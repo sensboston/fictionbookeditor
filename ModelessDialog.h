@@ -129,7 +129,7 @@ public:
 		windows().Add(m_hWnd);
 
 		if (dialogRect.left != -1)
-			::SetWindowPos(m_hWnd, HWND_TOPMOST, dialogRect.left, dialogRect.top, 0, 0, SWP_NOSIZE | SWP_SHOWWINDOW);
+			::SetWindowPos(m_hWnd, HWND_TOP, dialogRect.left, dialogRect.top, 0, 0, SWP_NOSIZE | SWP_SHOWWINDOW);
 		else
 			::ShowWindow(m_hWnd, SW_SHOW);
 

@@ -2071,7 +2071,7 @@ LRESULT CMainFrame::OnDropFiles(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& b
 {
   HDROP	  hDrop=(HDROP)wParam;
   UINT	  nf=::DragQueryFile(hDrop,0xFFFFFFFF,NULL,0);
-  CString buf;
+  CString buf, ext;
   if (nf>0) {
     UINT    len=::DragQueryFile(hDrop,0,NULL,0);
     TCHAR   *cp=buf.GetBuffer(len+1);
@@ -2079,15 +2079,40 @@ LRESULT CMainFrame::OnDropFiles(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& b
     buf.ReleaseBuffer(len);
   }
   ::DragFinish(hDrop);
-  if (!buf.IsEmpty() && LoadFile(buf)==OK)
-    m_mru.AddToList(m_doc->m_filename);
+  if (!buf.IsEmpty())
+  {
+	  ext.SetString(ATLPath::FindExtension(buf));
+	  if (ext.CompareNoCase(L".FB2") == 0 )
+	  {
+		if (LoadFile(buf)==OK)
+			m_mru.AddToList(m_doc->m_filename);
+	  }
+	  else if ((ext.CompareNoCase(L".JPG") == 0) || (ext.CompareNoCase(L".JPEG") == 0) || (ext.CompareNoCase(L".PNG") == 0))
+	  {
+		  m_doc->m_body.SetFocus();
+		  m_doc->m_body.AddImage(buf, false);
+	  }
+  }
   return 0;
 }
 
-LRESULT CMainFrame::OnNavigate(WORD, WORD, HWND, BOOL&) {
+// drag & drop to the BODY window
+LRESULT CMainFrame::OnNavigate(WORD, WORD, HWND, BOOL&) 
+{
   CString   url(m_doc->m_body.NavURL());
-  if (!url.IsEmpty() && LoadFile(url)==OK)
-    m_mru.AddToList(m_doc->m_filename);
+  if (!url.IsEmpty())
+  {
+	  CString ext(ATLPath::FindExtension(url));
+	  if (ext.CompareNoCase(L".FB2") == 0 )
+	  {
+		if (LoadFile(url)==OK)
+			m_mru.AddToList(m_doc->m_filename);
+	  }
+	  else if ((ext.CompareNoCase(L".JPG") == 0) || (ext.CompareNoCase(L".JPEG") == 0) || (ext.CompareNoCase(L".PNG") == 0))
+	  {
+		  m_doc->m_body.AddImage(url, false);
+	  }
+  }
   return 0;
 }
 
@@ -2171,7 +2196,6 @@ LRESULT CMainFrame::OnViewToolBar(WORD, WORD wID, HWND, BOOL&)
   {
 	if (wID == 60164) wID++; else wID--;
 	nBandIndex = m_rebar.IdToIndex(wID);
-	bVisible = !IsBandVisible(wID);
 	m_rebar.ShowBand(nBandIndex, bVisible);
 	UISetCheck(wID, bVisible);
   }

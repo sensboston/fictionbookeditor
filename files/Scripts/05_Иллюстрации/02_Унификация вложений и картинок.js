@@ -2,7 +2,9 @@
 // автор Sclex
 
 function Run() {
-var VersionNumber="1.3";
+ var Ts=new Date().getTime();
+ 
+ var versionNumber="1.4";
 
  // шаблон id картинок и вложений
  // вместо %N будет подставлен номер картинки
@@ -53,28 +55,39 @@ var VersionNumber="1.3";
   return s;
  }
 
- var Ts=new Date().getTime();
+ function ChangeSrcInImageInfo(id,newId) {
+  if (ImgInfoNumById[id]==null) return;
+  ImagesInfo[ImgInfoNumById[id]].src="fbw-internal:#"+newId;
+  ImgInfoNumById[NewId]=ImgInfoNumById[id];
+  ImgInfoNumById[id]=null;
+ }
+
  window.external.BeginUndoUnit(document,"binaries and images unification");
  var body=document.getElementById("fbw_body");
  if (!body) return;
  var imgs=body.getElementsByTagName("IMG");
  var bins=document.all.binobj.getElementsByTagName("DIV");
  var i,id,type;
- var ImgsById=new Object();
+ var ImgsById={};
  var NewBinobj=document.all.binobj.cloneNode(false);
  //количество картинок с определенным id
- var ImgCntById=new Object();
- var BinById=new Object();
- var ImgByNum=new Object();
- var BinIdByNum=new Object();
- var NonJpegPngImgs=new Object();
+ var ImgCntById={};
+ var BinById={};
+ var ImgByNum={};
+ var BinIdByNum={};
+ var NonJpegPngImgs={};
  NonJpegPngImgs["0"]=0;
+ var ImgInfoNumById={};
  var BinCnt=0;
  var CoversCnt=0;
  var ImgsWithoutBin_list="";
  var BinsWithoutImg_list="";
  var NonLocalImgs_list="";
  var NonJpegPngImgs_list="";
+ //проход по ImagesInfo
+ for (i=0;i<ImagesInfo.length;i++) {
+  ImgInfoNumById[ImagesInfo[i].src.replace(/^fbw-internal:#/i,"")]=i;
+ } 
  //проход по вложениям
  for (i=0;i<bins.length;i++) {
   id=bins[i].all.id.value;
@@ -144,7 +157,7 @@ var VersionNumber="1.3";
  // сгенерим длинное случайное число для временных id
  var RandomNum=GetRandomNum(DigitsInTempName);
  var NewId,BinNum,j;
- var IdUsed=new Object();
+ var IdUsed={};
  var NewTiCover="";
  var NewStiCover="";
  // разберемся с обложкой
@@ -197,6 +210,7 @@ var VersionNumber="1.3";
     ImgsById[NewId+'"'+j].setAttribute("href","#"+NewId);
     ImgsById[NewId+'"'+j].firstChild.setAttribute("src","fbw-internal:#"+NewId);
    }
+   ChangeSrcInImageInfo(id,NewId);
    BinById[NewId]=BinById[id];
    BinById[id]=null;
    BinById[NewId].all.id.value=NewId;
@@ -232,6 +246,7 @@ var VersionNumber="1.3";
     ImgsById[NewId+'"'+j].setAttribute("href","#"+NewId);
     ImgsById[NewId+'"'+j].firstChild.setAttribute("src","fbw-internal:#"+NewId);
    }
+   ChangeSrcInImageInfo(id,NewId);
    var Bin=BinById[id];
    BinById[NewId]=Bin;
    BinById[id]=null;
@@ -265,6 +280,7 @@ var VersionNumber="1.3";
      ImgsById[NewId+'"'+j].firstChild.setAttribute("src","fbw-internal:#"+NewId);
     }
    else { IdUsed[id]++; }
+   ChangeSrcInImageInfo(id,NewId);
    Bin=BinById[id];
    BinById[NewId]=Bin;
    BinById[id]=null;
@@ -290,6 +306,7 @@ var VersionNumber="1.3";
       NewId=PoShablonu(strconst1,cnt);
       if (type=="image/png") NewId+=".png"
       else if (type=="image/jpeg") NewId+=".jpg";
+      ChangeSrcInImageInfo(id,NewId);
       var Bin=BinById[id];
       BinById[NewId]=Bin;
       BinById[id]=null;
@@ -330,6 +347,7 @@ var VersionNumber="1.3";
       n++;
      }
     }
+    ChangeSrcInImageInfo(id,NewId);
     BinById[NewId]=bins[i];
     bins[i].all.id.value=NewId;
     tmp_node=bins[i].cloneNode(true);
@@ -396,7 +414,7 @@ var VersionNumber="1.3";
  if (st2!="") st2="\n"+st2;
  MsgBox('            –= Sclex Script =– \n'+
     ' "Унификация вложений и картинок"\n'+
-    '                          v'+VersionNumber+'\n\n'+
+    '                          v'+versionNumber+'\n\n'+
 
         'Переименовано иллюстраций: …… '+ImgCnt+'\n'+
         '    Переименовано обложек:  ……… '+CoversCnt+'\n'+

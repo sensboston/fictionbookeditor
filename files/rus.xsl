@@ -47,6 +47,7 @@
 	<xsl:variable name="IDS_NAME" select="'Название:'"/>		
 	<xsl:variable name="IDS_NUMBER" select="'Номер:'"/>		
         <xsl:variable name="IDS_STYLES_TABLE" select="'Таблица стилей'"/>
+	<xsl:variable name="IDS_ID_WARN" select="'\nВы уверены, что хотите изменить ID?\n\nЭто повлияет на уникальность книги в библиотеке.\nПредыдущее значение будет утеряно!\n\n'"/>
 	
 	<xsl:template name="fill_languages_combo">
 		<xsl:param name="lang"/>

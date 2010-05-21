@@ -560,7 +560,7 @@ public:
 		COMMAND_ID_HANDLER(ID_TOOLS_OPTIONS, OnToolsOptions)
       
 		COMMAND_ID_HANDLER(ID_TOOLS_CUSTOMIZE, OnToolCustomize)
-		COMMAND_ID_HANDLER(ID_HIDETOOLBAR, OnHideToolbar)
+		//COMMAND_ID_HANDLER(ID_HIDETOOLBAR, OnHideToolbar)
 
 		COMMAND_RANGE_HANDLER(ID_SCRIPT_BASE, ID_SCRIPT_BASE + 999, OnToolsScript)
 		COMMAND_ID_HANDLER(ID_LAST_SCRIPT, OnLastScript)
@@ -641,8 +641,6 @@ public:
 	RECT rect;
 	CPoint ptMousePos = (CPoint)lParam;
 	ScreenToClient(&ptMousePos);
-	menu = ::LoadMenu(_Module.GetResourceInstance(), MAKEINTRESOURCEW(IDR_TOOLBAR_MENU));
-	popup = ::GetSubMenu(menu, 0);
 	// find clicked toolbar
 	REBARBANDINFO rbi;
 	ZeroMemory((void*)&rbi, sizeof(rbi));
@@ -659,8 +657,14 @@ public:
 			break;
 		}
 	}
-	ClientToScreen(&ptMousePos);
-	::TrackPopupMenu(popup, TPM_LEFTALIGN, ptMousePos.x, ptMousePos.y, 0, *this, 0);
+	// display context menu for command & script toolbars only
+	if ((m_selBandID == ATL_IDW_BAND_FIRST+1) || (m_selBandID == ATL_IDW_BAND_FIRST+2))
+	{
+		menu = ::LoadMenu(_Module.GetResourceInstance(), MAKEINTRESOURCEW(IDR_TOOLBAR_MENU));
+		popup = ::GetSubMenu(menu, 0);
+		ClientToScreen(&ptMousePos);
+		::TrackPopupMenu(popup, TPM_LEFTALIGN, ptMousePos.x, ptMousePos.y, 0, *this, 0);
+	}
 	return 0;
   }
 

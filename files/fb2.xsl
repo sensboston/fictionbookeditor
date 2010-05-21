@@ -537,7 +537,8 @@
 				</label>
 				<input type="text" maxlength="10" id="diVersion" class="short" value="{$cur/f:version}"/>
 				<span id = "di_id" unselectable="on">
-					<button onclick="NewDocumentID()" style="font-family:Tahoma,Arial;margin-right:0.6em;" unselectable="on">
+					<button style="font-family:Tahoma,Arial;margin-right:0.6em;" unselectable="on">
+						<xsl:attribute name="onclick">NewDocumentID("<xsl:value-of select="$IDS_ID_WARN"></xsl:value-of>")</xsl:attribute>
 						<xsl:value-of select="$IDS_NEW"/>
 					</button>
 					<button onclick="ShowElement(this.parentNode.id, false)" unselectable="on" style="font-family : Tahoma;">-</button>

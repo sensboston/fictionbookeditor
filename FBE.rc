@@ -756,8 +756,6 @@ BEGIN
     POPUP "CUSTOMIZE"
     BEGIN
         MENUITEM "Customize toolbar...",        ID_TOOLS_CUSTOMIZE
-        MENUITEM SEPARATOR
-        MENUITEM "Hide toolbar",                ID_HIDETOOLBAR
     END
 END
 
@@ -819,6 +817,7 @@ END
 
 STRINGTABLE 
 BEGIN
+    ID_LAST_SCRIPT          "Execute last called script\nLast script"
     ID_TOOLS_SPELLCHECK     "Check document spelling...\nCheck document spelling"
     ID_GOTO_MATCHTAG        "Go to matching tag\nGo to matching tag"
     ID_GOTO_WRONGTAG        "Go to wrong tag\nGo to wrong tag"
@@ -941,7 +940,8 @@ END
 STRINGTABLE 
 BEGIN
     IDS_CHOOSE_SCRIPTS_FLD  "Specify scripts folder"
-    IDS_SCRIPT_HOTKEY_CONFLICT "Script\n%s\n returned a virtual-key that conflicts with previously loaded script\n %s"
+    IDS_SCRIPT_HOTKEY_CONFLICT 
+                            "Script\n%s\n returned a virtual-key that conflicts with previously loaded script\n %s"
     IDS_HOTKEY_EDIT_MERGE   "Merge"
     IDS_HOTKEY_EDIT_PASTE   "Paste"
     IDS_HOTKEY_EDIT_REDO    "Redo"
@@ -1150,12 +1150,11 @@ END
 STRINGTABLE 
 BEGIN
     IDC_SPELL_IGNORE        "Ignore"
-    IDC_SPELL_REPLACE       "Replace word"
 END
 
-STRINGTABLE
+STRINGTABLE 
 BEGIN
-   ID_LAST_SCRIPT	    "Execute last called script\nLast script"
+    IDC_SPELL_REPLACE       "Replace word"
 END
 
 #endif    // English (U.S.) resources
