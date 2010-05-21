@@ -847,6 +847,10 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath=".\res\Scripts.bmp"
+				>
+			</File>
+			<File
 				RelativePath="res\struct.bmp"
 				>
 			</File>

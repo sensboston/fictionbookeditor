@@ -352,9 +352,7 @@ public:
 	COMMAND_ID_HANDLER_EX(ID_INSERT_TABLE, OnEditInsertTable)
 
     COMMAND_ID_HANDLER(ID_VIEW_HTML, OnViewHTML)
-
 	COMMAND_ID_HANDLER(ID_SAVEIMG_AS, OnSaveImageAs)
-
     COMMAND_RANGE_HANDLER(ID_SEL_BASE,ID_SEL_BASE+99, OnSelectElement)
   END_MSG_MAP()
 
@@ -370,7 +368,8 @@ public:
 	END_SINK_MAP()
 
   LRESULT OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
-  LRESULT OnFocus(UINT, WPARAM, LPARAM, BOOL&) {
+  LRESULT OnFocus(UINT, WPARAM, LPARAM, BOOL&) 
+  {
     // pass to document
     if (HasDoc())
       MSHTML::IHTMLDocument4Ptr(Document())->focus();
@@ -417,24 +416,12 @@ public:
     return 0;
   }
 	LRESULT OnSelectElement(WORD, WORD, HWND, BOOL&);
-	LRESULT OnEditAddTitle(WORD, WORD, HWND, BOOL&)
-	{
-		Call(L"AddTitle", SelectionStructCon());
-		return 0;
-	}
-	LRESULT OnEditAddEpigraph(WORD, WORD, HWND, BOOL&)
-	{
-		Call(L"AddEpigraph", SelectionStructCon());
-		return 0;
-	}
+	LRESULT OnEditAddTitle(WORD, WORD, HWND, BOOL&)	{ Call(L"AddTitle", SelectionStructCon()); return 0; }
+	LRESULT OnEditAddEpigraph(WORD, WORD, HWND, BOOL&) { Call(L"AddEpigraph", SelectionStructCon()); return 0; }
 	LRESULT OnEditAddBody(WORD, WORD, HWND, BOOL&) { Call(L"AddBody"); return 0; }
 	LRESULT OnEditAddTA(WORD, WORD, HWND, BOOL&) { Call(L"AddTA",SelectionStructCon()); return 0; }
 	LRESULT OnEditClone(WORD, WORD, HWND, BOOL&) { Call(L"CloneContainer",SelectionStructCon()); return 0; }
-	LRESULT OnEditAddImage(WORD, WORD, HWND, BOOL&)
-	{
-		Call(L"AddImage", SelectionStructCon());
-		return 0;
-	}
+	LRESULT OnEditAddImage(WORD, WORD, HWND, BOOL&) { Call(L"AddImage", SelectionStructCon()); return 0; }
 	LRESULT OnEditInsImage(WORD, WORD, HWND, BOOL&);
 	LRESULT OnEditInsInlineImage(WORD, WORD, HWND, BOOL&);
 	LRESULT OnEditAddAnn(WORD, WORD, HWND, BOOL&) { Call(L"AddAnnotation", SelectionStructCon()); return 0; }

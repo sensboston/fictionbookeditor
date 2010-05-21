@@ -47,6 +47,7 @@
   <xsl:variable name="IDS_NAME" select="'Name:'"/>
   <xsl:variable name="IDS_NUMBER" select="'Number:'"/>
   <xsl:variable name="IDS_STYLES_TABLE" select="'Styles'"/>
+  <xsl:variable name="IDS_ID_WARN" select="'\nAre you sure you want to generate a new ID? \n\nThis will affect library submission.\nPrevious value will be lost!\n\n'"/>
 
   <xsl:template name="fill_languages_combo">
     <xsl:param name="lang"/>

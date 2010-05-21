@@ -835,13 +835,13 @@ function SelectLanguages()
 //-----------------------------------------------
 // Generates new ID and puts it into the field
 
-function NewDocumentID()
+function NewDocumentID(msg)
 {
 	var desc=document.getElementById("fbw_desc");
 	if(!desc)
 		return;
 
-	if(AskYesNo("\nAre you sure you want to generate a new ID? \n\nThis will affect library submission.\nPrevious value will be lost!\n\n"))
+	if(AskYesNo(msg))
 	{
 		desc.all.diID.value=window.external.GetUUID();
 	}
@@ -2011,7 +2011,7 @@ function InsInlineImage(check, id)
  var pe=rng.parentElement(); while(pe && pe.tagName!="DIV") pe=pe.parentElement;
 
  if(!pe || (pe.className!="section" && pe.className!="annotation" && pe.className!="history"
-    && pe.className!="title" && pe.className!="epigraph")) return;
+    && pe.className!="title" && pe.className!="epigraph" && pe.className!="stanza")) return;
 
  if(check) return true;
 
@@ -2446,7 +2446,6 @@ function ShowImageOfBin(binDiv,mode)
 		{
    			var src=inps[i].value;
    			if (!src || src=="") return;
-   			//alert(src+"\n\n"+mode);
    			if (mode=="full") ShowFullImage("fbw-internal:#"+src);
    			else if (mode=="prev") ShowPrevImage("fbw-internal:#"+src);
 		} 
