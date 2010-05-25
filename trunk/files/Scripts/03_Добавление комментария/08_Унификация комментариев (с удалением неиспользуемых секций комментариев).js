@@ -324,11 +324,11 @@ function Run () {
  for (var i=0;i<document.links.length;i++) {
   if (document.links[i].href && document.links[i].href!="") {
    myId=getLocalHref(document.links[i].href);
-   if (myId) sectNumById_[myId]=undefined;
+   if (myId) delete sectNumById_[myId];
   } 
  }
  for (i in sectNumById_)
-   if (sectNumById_[i]) document.getElementById(i).removeNode(true);
+   if (sectNumById_[i]=="1") document.getElementById(i).removeNode(true);
  sectNumById_=undefined; 
  //введем, если надо, текст примечания
  if (InputSnoskaText) {
