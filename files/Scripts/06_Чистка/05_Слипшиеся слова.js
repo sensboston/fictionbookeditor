@@ -39,7 +39,9 @@
 //======================================
 // v.2.8 — проверка от курсора — sclex, май 2010
 //======================================
-var VersionNumber="2.8";
+// v.2.9 — доработка движка под прерывание и выход — sclex, май 2010
+//======================================
+var VersionNumber="2.9";
 
 //обрабатывать ли history
 var ObrabotkaHistory=true;
@@ -251,11 +253,11 @@ Coldef["право"] = true;
  var r=Object();                                                 
 
  if (k<10 && sobCol[v1]==null) {
- if (InputBox(" :: Подозрительные символы ::\nВведите свой вариант:        " +v1,v1, r) == IDCANCEL) return false;
+ if (InputBox(" :: Подозрительные символы ::\nВведите свой вариант:        " +v1,v1, r) == IDCANCEL) return "exit";
  if(r!=null && r.$!="")  { Col[k] = r.$;    s=sl1+("col1_" +k+ "†")+sp1;  count++; }
  else                       { Col[k] = v1; sobCol[v1]=true;  s=sl1+("col1_" +k+ "†")+sp1}  }
  if (k>=10 && sobCol[v1]==null) {
- if (InputBox(" :: Подозрительные символы ::\nВведите свой вариант:        " +v1,v1, r) == IDCANCEL) return false;
+ if (InputBox(" :: Подозрительные символы ::\nВведите свой вариант:        " +v1,v1, r) == IDCANCEL) return "exit";
  if(r!=null && r.$!="")  { Col[k] = r.$;    s=sl1+("col2_" +k+ "†")+sp1;  count++; }
  else                       { Col[k] = v1; sobCol[v1]=true;  s=sl1+("col2_" +k+ "†")+sp1} }
 k++; }
@@ -273,11 +275,11 @@ k++; }
 		 k++;}
  var r=Object();                                                 
  if (k<10 && sobCol[v6]==null) {
- if (InputBox(" :: Подозрительная пунктуация ::\nВведите свой вариант:        " +v6,v6, r) == IDCANCEL) return false;
+ if (InputBox(" :: Подозрительная пунктуация ::\nВведите свой вариант:        " +v6,v6, r) == IDCANCEL) return "exit";
  if(r!=null && r.$!="")  { Col[k] = r.$;    s=sl6+("col1_" +k+ "†")+sp6;  count++; }
  else                       { Col[k] = v6; sobCol[v6]=true;  s=sl6+("col1_" +k+ "†")+sp6} }
  if (k>=10 && sobCol[v6]==null) {
- if (InputBox(" :: Подозрительная пунктуация ::\nВведите свой вариант:        " +v6,v6, r) == IDCANCEL) return false;
+ if (InputBox(" :: Подозрительная пунктуация ::\nВведите свой вариант:        " +v6,v6, r) == IDCANCEL) return "exit";
  if(r!=null && r.$!="")  { Col[k] = r.$;    s=sl6+("col2_" +k+ "†")+sp6;  count++; }
  else                       { Col[k] = v6; sobCol[v6]=true;  s=sl6+("col2_" +k+ "†")+sp6} }
 k++; }
@@ -295,11 +297,11 @@ k++; }
 		 k++;} 
  var r=Object();                                                 
  if (k<10 && sobCol[v2]==null) {
- if (InputBox(" :: Подозрительные символы ::\nВведите свой вариант:        " +v2,v2, r) == IDCANCEL) return false;
+ if (InputBox(" :: Подозрительные символы ::\nВведите свой вариант:        " +v2,v2, r) == IDCANCEL) return "exit";
  if(r!=null && r.$!="")  { Col[k] = r.$;    s=sl2+("col1_" +k+ "†")+sp2; count++; }
  else                       { Col[k] = v2; sobCol[v2]=true;  s=sl2+("col1_" +k+ "†")+sp2; } }
  if (k>=10 && sobCol[v2]==null) {
- if (InputBox(" :: Подозрительные символы ::\nВведите свой вариант:        " +v2,v2, r) == IDCANCEL) return false;
+ if (InputBox(" :: Подозрительные символы ::\nВведите свой вариант:        " +v2,v2, r) == IDCANCEL) return "exit";
  if(r!=null && r.$!="")  { Col[k] = r.$;    s=sl2+("col2_" +k+ "†")+sp2; count++; }
  else                       { Col[k] = v2; sobCol[v2]=true;  s=sl2+("col2_" +k+ "†")+sp2; } }
 k++; }
@@ -318,11 +320,11 @@ k++; }
 		 k++;} 
  var r=Object();                                                 
  if (k<10 && sobCol[v3]==null) {
- if (InputBox(" :: Подозрительные символы ::\nВведите свой вариант:        " +v3,vv3, r) == IDCANCEL) return false;
+ if (InputBox(" :: Подозрительные символы ::\nВведите свой вариант:        " +v3,vv3, r) == IDCANCEL) return "exit";
  if(r!=null && r.$!="")  { Col[k] = r.$;    s=sl3+("col1_" +k+ "†")+sp3; count++; }
  else                       { Col[k] = v3; sobCol[v3]=true;  s=sl3+("col1_" +k+ "†")+sp3; } }
  if (k>=10 && sobCol[v3]==null) {
- if (InputBox(" :: Подозрительные символы ::\nВведите свой вариант:        " +v3,vv3, r) == IDCANCEL) return false;
+ if (InputBox(" :: Подозрительные символы ::\nВведите свой вариант:        " +v3,vv3, r) == IDCANCEL) return "exit";
  if(r!=null && r.$!="")  { Col[k] = r.$;    s=sl3+("col2_" +k+ "†")+sp3; count++; }
  else                       { Col[k] = v3; sobCol[v3]=true;  s=sl3+("col2_" +k+ "†")+sp3; } }
 k++; }
@@ -340,11 +342,11 @@ k++; }
 		 k++;} 
  var r=Object();                                                 
  if (k<10 && sobCol[v4]==null) {
- if (InputBox(" :: Подозрительные символы ::\nВведите свой вариант:        " +v4,v4, r) == IDCANCEL) return false;
+ if (InputBox(" :: Подозрительные символы ::\nВведите свой вариант:        " +v4,v4, r) == IDCANCEL) return "exit";
  if(r!=null && r.$!="")  { Col[k] = r.$;    s=sl4+("col1_" +k+ "†")+sp4; count++; }
  else                       { Col[k] = v4; sobCol[v4]=true;  s=sl4+("col1_" +k+ "†")+sp4; } }
  if (k>=10 && sobCol[sv4]==null) {
- if (InputBox(" :: Подозрительные символы ::\nВведите свой вариант:        " +v4,v4, r) == IDCANCEL) return false;
+ if (InputBox(" :: Подозрительные символы ::\nВведите свой вариант:        " +v4,v4, r) == IDCANCEL) return "exit";
  if(r!=null && r.$!="")  { Col[k] = r.$;    s=sl4+("col2_" +k+ "†")+sp4; count++; }
  else                       { Col[k] = v4; sobCol[v4]=true;  s=sl4+("col2_" +k+ "†")+sp4; } }
 k++; }
@@ -362,11 +364,11 @@ k++; }
 		 k++;} 
  var r=Object();                                                 
  if (k<10 && sobCol[v5]==null) {
- if (InputBox(" :: Подозрительные символы ::\nВведите свой вариант:        " +v5,v5, r) == IDCANCEL) return false;
+ if (InputBox(" :: Подозрительные символы ::\nВведите свой вариант:        " +v5,v5, r) == IDCANCEL) return "exit";
  if(r!=null && r.$!="")  { Col[k] = r.$;    s=sl5+("col1_" +k+ "†")+sp5; count++; }
  else                       { Col[k] = v5; sobCol[v5]=true;  s=sl5+("col1_" +k+ "†")+sp5; } }
  if (k && sobCol[v5]==null>=10) {
- if (InputBox(" :: Подозрительные символы ::\nВведите свой вариант:        " +v5,v5, r) == IDCANCEL) return false;
+ if (InputBox(" :: Подозрительные символы ::\nВведите свой вариант:        " +v5,v5, r) == IDCANCEL) return "exit";
  if(r!=null && r.$!="")  { Col[k] = r.$;    s=sl5+("col2_" +k+ "†")+sp5; count++; }
  else                       { Col[k] = v5; sobCol[v5]=true;  s=sl5+("col2_" +k+ "†")+sp5; } }
 k++; }
@@ -384,11 +386,11 @@ k++; }
 		 k++;} 
  var r=Object();                                                 
  if (k<10 && sobCol[v7]==null) {
- if (InputBox(" :: Цифры 1 ::\nВведите свой вариант:        " +v7,v7, r) == IDCANCEL) return false;
+ if (InputBox(" :: Цифры 1 ::\nВведите свой вариант:        " +v7,v7, r) == IDCANCEL) return "exit";
  if(r!=null && r.$!="")  { Col[k] = r.$;    s=sl7+("col1_" +k+ "†")+sp7;  count++; }
  else                       { Col[k] = v7; sobCol[v7]=true;  s=sl7+("col1_" +k+ "†")+sp7} }
  if (k>=10 && sobCol[v7]==null) {
- if (InputBox(" :: Цифры 1 ::\nВведите свой вариант:        " +v7,v7, r) == IDCANCEL) return false;
+ if (InputBox(" :: Цифры 1 ::\nВведите свой вариант:        " +v7,v7, r) == IDCANCEL) return "exit";
  if(r!=null && r.$!="")  { Col[k] = r.$;    s=sl7+("col2_" +k+ "†")+sp7;  count++; }
  else                       { Col[k] = v7; sobCol[v7]=true;  s=sl7+("col2_" +k+ "†")+sp7} }
 k++; }
@@ -407,11 +409,11 @@ k++; }
 		 k++;} 
  var r=Object();                                                 
  if (k<10 && sobCol[v_7]==null) {
- if (InputBox(" :: Цифры 2 ::\nВведите свой вариант:        " +v_7,vv_7, r) == IDCANCEL) return false;
+ if (InputBox(" :: Цифры 2 ::\nВведите свой вариант:        " +v_7,vv_7, r) == IDCANCEL) return "exit";
  if(r!=null && r.$!="")  { Col[k] = r.$;    s=sl_7+("col1_" +k+ "†")+sp_7;  count++; }
  else                       { Col[k] = v_7; sobCol[v_7]=true;  s=sl_7+("col1_" +k+ "†")+sp_7} }
  if (k>=10 && sobCol[v_7]==null) {
- if (InputBox(" :: Цифры 2 ::\nВведите свой вариант:        " +v_7,vv_7, r) == IDCANCEL) return false;
+ if (InputBox(" :: Цифры 2 ::\nВведите свой вариант:        " +v_7,vv_7, r) == IDCANCEL) return "exit";
  if(r!=null && r.$!="")  { Col[k] = r.$;    s=sl_7+("col2_" +k+ "†")+sp_7;  count++; }
  else                       { Col[k] = v_7; sobCol[v_7]=true;  s=sl_7+("col2_" +k+ "†")+sp_7} }
 k++; }
@@ -429,11 +431,11 @@ k++; }
 		 k++;} 
  var r=Object();                                                 
  if (k<10 && sobCol[v8]==null) {
- if (InputBox(" :: Кавычки ::\nВведите свой вариант:        " +v8,v8, r) == IDCANCEL) return false;
+ if (InputBox(" :: Кавычки ::\nВведите свой вариант:        " +v8,v8, r) == IDCANCEL) return "exit";
  if(r!=null && r.$!="")  { Col[k] = r.$;    s=sl8+("col1_" +k+ "†")+sp8;  count++; }
  else                       { Col[k] = v8; sobCol[v8]=true;  s=sl8+("col1_" +k+ "†")+sp8} }
  if (k>=10 && sobCol[v8]==null) {
- if (InputBox(" :: Кавычки ::\nВведите свой вариант:        " +v8,v8, r) == IDCANCEL) return false;
+ if (InputBox(" :: Кавычки ::\nВведите свой вариант:        " +v8,v8, r) == IDCANCEL) return "exit";
  if(r!=null && r.$!="")  { Col[k] = r.$;    s=sl8+("col2_" +k+ "†")+sp8;  count++; }
  else                       { Col[k] = v8; sobCol[v8]=true;  s=sl8+("col2_" +k+ "†")+sp8} }
 k++; }
@@ -451,11 +453,11 @@ k++; }
 		 k++;} 
  var r=Object();                                                 
  if (k<10 && sobCol[v9]==null) {
- if (InputBox(" :: Дефис ::\nВведите свой вариант:        " +v9,v9, r) == IDCANCEL) return false;
+ if (InputBox(" :: Дефис ::\nВведите свой вариант:        " +v9,v9, r) == IDCANCEL) return "exit";
  if(r!=null && r.$!="")  { Col[k] = r.$;    s=sl9+("col1_" +k+ "†")+sp9;  count++; }
  else                       { Col[k] = v9; sobCol[v9]=true;  s=sl9+("col1_" +k+ "†")+sp9} }
  if (k>=10 && sobCol[v9]==null) {
- if (InputBox(" :: Дефис ::\nВведите свой вариант:        " +v9,v9, r) == IDCANCEL) return false;
+ if (InputBox(" :: Дефис ::\nВведите свой вариант:        " +v9,v9, r) == IDCANCEL) return "exit";
  if(r!=null && r.$!="")  { Col[k] = r.$;    s=sl9+("col2_" +k+ "†")+sp9;  count++; }
  else                       { Col[k] = v9; sobCol[v9]=true;  s=sl9+("col2_" +k+ "†")+sp9} }
 k++; }
@@ -475,11 +477,11 @@ k++; }
 		 k++;} 
  var r=Object();                                                 
  if (k<10 && sobCol[v10]==null && Coldef[def]==null) {
- if (InputBox(" :: Дефис до пробела ::\nВведите свой вариант:        " +v10,vv10, r) == IDCANCEL) return false;
+ if (InputBox(" :: Дефис до пробела ::\nВведите свой вариант:        " +v10,vv10, r) == IDCANCEL) return "exit";
  if(r!=null && r.$!="")  { Col[k] = r.$;    s=sl10+("col1_" +k+ "†")+sp10;  count++; }
  else                       { Col[k] = v10; sobCol[v10]=true;  s=sl10+("col1_" +k+ "†")+sp10} }
  if (k>=10 && sobCol[v10]==null && Coldef[def]==null) {
- if (InputBox(" :: Дефис до пробела ::\nВведите свой вариант:        " +v10,vv10, r) == IDCANCEL) return false;
+ if (InputBox(" :: Дефис до пробела ::\nВведите свой вариант:        " +v10,vv10, r) == IDCANCEL) return "exit";
  if(r!=null && r.$!="")  { Col[k] = r.$;    s=sl10+("col2_" +k+ "†")+sp10;  count++; }
  else                       { Col[k] = v10; sobCol[v10]=true;  s=sl10+("col2_" +k+ "†")+sp10} }
 k++; }
@@ -497,11 +499,11 @@ k++; }
 		 k++;} 
  var r=Object();                                                 
  if (k<10 && sobCol[v11]==null) {
- if (InputBox(" :: Дефис после пробела ::\nВведите свой вариант:        " +v11,v11, r) == IDCANCEL) return false;
+ if (InputBox(" :: Дефис после пробела ::\nВведите свой вариант:        " +v11,v11, r) == IDCANCEL) return "exit";
  if(r!=null && r.$!="")  { Col[k] = r.$;    s=sl11+("col1_" +k+ "†")+sp11;  count++; }
  else                       { Col[k] = v11; sobCol[v11]=true;  s=sl11+("col1_" +k+ "†")+sp11} }
  if (k>=10 && sobCol[v11]==null) {
- if (InputBox(" :: Дефис после пробела ::\nВведите свой вариант:        " +v11,v11, r) == IDCANCEL) return false;
+ if (InputBox(" :: Дефис после пробела ::\nВведите свой вариант:        " +v11,v11, r) == IDCANCEL) return "exit";
  if(r!=null && r.$!="")  { Col[k] = r.$;    s=sl11+("col2_" +k+ "†")+sp11;  count++; }
  else                       { Col[k] = v11; sobCol[v11]=true;  s=sl11+("col2_" +k+ "†")+sp11} }
 k++; }
@@ -522,11 +524,11 @@ if (Apostrophe)
 		 k++;} 
  var r=Object();                                                 
  if (k<10 && sobCol[v12]==null) {
- if (InputBox(" :: Апостроф' ::\nВведите свой вариант:        " +v12,vv12, r) == IDCANCEL) return false;
+ if (InputBox(" :: Апостроф' ::\nВведите свой вариант:        " +v12,vv12, r) == IDCANCEL) return "exit";
  if(r!=null && r.$!="")  { Col[k] = r.$;    s=sl12+("col1_" +k+ "†")+sp12;  count++; }
  else                       { Col[k] = v12; sobCol[v12]=true;  s=sl12+("col1_" +k+ "†")+sp12} }
  if (k>=10 && sobCol[v12]==null) {
- if (InputBox(" :: Апостроф' ::\nВведите свой вариант:        " +v12,vv12, r) == IDCANCEL) return false;
+ if (InputBox(" :: Апостроф' ::\nВведите свой вариант:        " +v12,vv12, r) == IDCANCEL) return "exit";
  if(r!=null && r.$!="")  { Col[k] = r.$;    s=sl12+("col2_" +k+ "†")+sp12;  count++; }
  else                       { Col[k] = v12; sobCol[v12]=true;  s=sl12+("col2_" +k+ "†")+sp12} }
 k++; }
@@ -548,11 +550,11 @@ if (Slash)
 		 k++;} 
  var r=Object();                                                 
  if (k<10 && sobCol[v12a]==null) {
- if (InputBox(" :: Сл/эш ::\nВведите свой вариант:        " +v12a,vv12a, r) == IDCANCEL) return false;
+ if (InputBox(" :: Сл/эш ::\nВведите свой вариант:        " +v12a,vv12a, r) == IDCANCEL) return "exit";
  if(r!=null && r.$!="")  { Col[k] = r.$;    s=sl12a+("col1_" +k+ "†")+sp12a;  count++; }
  else                       { Col[k] = v12a; sobCol[v12a]=true;  s=sl12a+("col1_" +k+ "†")+sp12a}  }
  if (k>=10 && sobCol[v12a]==null) {
- if (InputBox(" :: Сл/эш ::\nВведите свой вариант:        " +v12a,vv12a, r) == IDCANCEL) return false;
+ if (InputBox(" :: Сл/эш ::\nВведите свой вариант:        " +v12a,vv12a, r) == IDCANCEL) return "exit";
  if(r!=null && r.$!="")  { Col[k] = r.$;    s=sl12a+("col2_" +k+ "†")+sp12a;  count++; }
  else                       { Col[k] = v12a; sobCol[v12a]=true;  s=sl12a+("col2_" +k+ "†")+sp12a}  }
 k++; }
@@ -571,11 +573,11 @@ k++; }
 		 k++;} 
  var r=Object();                                                 
  if (k<10 && sobCol[v13]==null) {
- if (InputBox(" :: Мусор ::\nВведите свой вариант:        " +v13,vv13, r) == IDCANCEL) return false;
+ if (InputBox(" :: Мусор ::\nВведите свой вариант:        " +v13,vv13, r) == IDCANCEL) return "exit";
  if(r!=null && r.$!="")  { Col[k] = r.$;    s=sl13+("col1_" +k+ "†")+sp13;  count++; }
  else                       { Col[k] = v13; sobCol[v13]=true;  s=sl13+("col1_" +k+ "†")+sp13}  }
  if (k>=10 && sobCol[v13]==null) {
- if (InputBox(" :: Мусор ::\nВведите свой вариант:        " +v13,vv13, r) == IDCANCEL) return false;
+ if (InputBox(" :: Мусор ::\nВведите свой вариант:        " +v13,vv13, r) == IDCANCEL) return "exit";
  if(r!=null && r.$!="")  { Col[k] = r.$;    s=sl13+("col2_" +k+ "†")+sp13;  count++; }
  else                       { Col[k] = v13; sobCol[v13]=true;  s=sl13+("col2_" +k+ "†")+sp13}  }
 k++; }
@@ -593,11 +595,11 @@ k++; }
 		 k++;} 
  var r=Object();                                                 
  if (k<10 && sobCol[v14]==null) {
- if (InputBox(" :: Скобка ::\nВведите свой вариант:        " +v14,vv14, r) == IDCANCEL) return false;
+ if (InputBox(" :: Скобка ::\nВведите свой вариант:        " +v14,vv14, r) == IDCANCEL) return "exit";
  if(r!=null && r.$!="")  { Col[k] = r.$;    s=sl14+("col1_" +k+ "†")+sp14;  count++; }
  else                       { Col[k] = v14; sobCol[v14]=true;  s=sl14+("col1_" +k+ "†")+sp14}  }
  if (k>=10 && sobCol[v14]==null) {
- if (InputBox(" :: Скобка ::\nВведите свой вариант:        " +v14,vv14, r) == IDCANCEL) return false;
+ if (InputBox(" :: Скобка ::\nВведите свой вариант:        " +v14,vv14, r) == IDCANCEL) return "exit";
  if(r!=null && r.$!="")  { Col[k] = r.$;    s=sl14+("col2_" +k+ "†")+sp14;  count++; }
  else                       { Col[k] = v14; sobCol[v14]=true;  s=sl14+("col2_" +k+ "†")+sp14}  }
 k++; }
@@ -614,11 +616,11 @@ k++; }
 		 k++;} 
  var r=Object();                                                 
  if (k<10 && sobCol[v15]==null) {
- if (InputBox(" :: Союз ::\nВведите свой вариант:        " +v15,v15, r) == IDCANCEL) return false;
+ if (InputBox(" :: Союз ::\nВведите свой вариант:        " +v15,v15, r) == IDCANCEL) return "exit";
  if(r!=null && r.$!="")  { Col[k] = r.$;    s=sl15+("col1_" +k+ "†")+sp15;  count++; }
  else                       { Col[k] = v15; sobCol[v15]=true;  s=sl15+("col1_" +k+ "†")+sp15}  }
  if (k>=10 && sobCol[v15]==null) {
- if (InputBox(" :: Союз ::\nВведите свой вариант:        " +v15,v15, r) == IDCANCEL) return false;
+ if (InputBox(" :: Союз ::\nВведите свой вариант:        " +v15,v15, r) == IDCANCEL) return "exit";
  if(r!=null && r.$!="")  { Col[k] = r.$;    s=sl15+("col2_" +k+ "†")+sp15;  count++; }
  else                       { Col[k] = v15; sobCol[v15]=true;  s=sl15+("col2_" +k+ "†")+sp15}  }
 k++; }
@@ -636,11 +638,11 @@ k++; }
 		 k++;} 
  var r=Object();                                                 
  if (k<10 && sobCol[v16]==null) {
- if (InputBox(" :: Тире – 1 ::\nВведите свой вариант:        " +v16,vv16, r) == IDCANCEL) return false;
+ if (InputBox(" :: Тире – 1 ::\nВведите свой вариант:        " +v16,vv16, r) == IDCANCEL) return "exit";
  if(r!=null && r.$!="")  { Col[k] = r.$;    s=sl16+("col1_" +k+ "†")+sp16;  count++; }
  else                       { Col[k] = v16; sobCol[v16]=true;  s=sl16+("col1_" +k+ "†")+sp16}  }
  if (k>=10 && sobCol[v16]==null) {
- if (InputBox(" :: Тире – 1 ::\nВведите свой вариант:        " +v16,vv16, r) == IDCANCEL) return false;
+ if (InputBox(" :: Тире – 1 ::\nВведите свой вариант:        " +v16,vv16, r) == IDCANCEL) return "exit";
  if(r!=null && r.$!="")  { Col[k] = r.$;    s=sl16+("col2_" +k+ "†")+sp16;  count++; }
  else                       { Col[k] = v16; sobCol[v16]=true;  s=sl16+("col2_" +k+ "†")+sp16}  }
 k++; }
@@ -658,11 +660,11 @@ k++; }
 		 k++;} 
  var r=Object();                                                 
  if (k<10 && sobCol[v17]==null) {
- if (InputBox(" :: Тире – 1 ::\nВведите свой вариант:        " +v17,vv17, r) == IDCANCEL) return false;
+ if (InputBox(" :: Тире – 1 ::\nВведите свой вариант:        " +v17,vv17, r) == IDCANCEL) return "exit";
  if(r!=null && r.$!="")  { Col[k] = r.$;    s=sl17+("col1_" +k+ "†")+sp17;  count++; }
  else                       { Col[k] = v17; sobCol[v17]=true;  s=sl17+("col1_" +k+ "†")+sp17}  }
  if (k>=10 && sobCol[v17]==null) {
- if (InputBox(" :: Тире – 1 ::\nВведите свой вариант:        " +v17,vv17, r) == IDCANCEL) return false;
+ if (InputBox(" :: Тире – 1 ::\nВведите свой вариант:        " +v17,vv17, r) == IDCANCEL) return "exit";
  if(r!=null && r.$!="")  { Col[k] = r.$;    s=sl17+("col2_" +k+ "†")+sp17;  count++; }
  else                       { Col[k] = v17; sobCol[v17]=true;  s=sl17+("col2_" +k+ "†")+sp17}  }
 k++; }
@@ -680,11 +682,11 @@ k++; }
 		 k++;} 
  var r=Object();                                                 
  if (k<10 && sobCol[v18]==null) {
- if (InputBox(" :: Мусор-2 ::\nВведите свой вариант:        " +v18,vv18, r) == IDCANCEL) return false;
+ if (InputBox(" :: Мусор-2 ::\nВведите свой вариант:        " +v18,vv18, r) == IDCANCEL) return "exit";
  if(r!=null && r.$!="")  { Col[k] = r.$;    s=sl18+("col1_" +k+ "†")+sp18;  count++; }
  else                       { Col[k] = v18; sobCol[v18]=true;  s=sl18+("col1_" +k+ "†")+sp18}  }
  if (k>=10 && sobCol[v18]==null) {
- if (InputBox(" :: Мусор-2 ::\nВведите свой вариант:        " +v18,vv18, r) == IDCANCEL) return false;
+ if (InputBox(" :: Мусор-2 ::\nВведите свой вариант:        " +v18,vv18, r) == IDCANCEL) return "exit";
  if(r!=null && r.$!="")  { Col[k] = r.$;    s=sl18+("col2_" +k+ "†")+sp18;  count++; }
  else                       { Col[k] = v18; sobCol[v18]=true;  s=sl18+("col2_" +k+ "†")+sp18}  }
 k++; }
@@ -697,11 +699,11 @@ k++; }
     var vv19  = s.replace(re190, re194);
 	 var r=Object();                                                 
  if (k<10) {
- if (InputBox(" :: Вкрапления ::\nВведите свой вариант:        " +v19,vv19, r) == IDCANCEL) return false;
+ if (InputBox(" :: Вкрапления ::\nВведите свой вариант:        " +v19,vv19, r) == IDCANCEL) return "exit";
  if(r!=null && r.$!="")  { Col[k] = r.$;    s=sl19+("col1_" +k+ "†")+sp19;  count++; }
  else                       { Col[k] = v19;  s=sl19+("col1_" +k+ "†")+sp19} }
  if (k>=10) {
- if (InputBox(" :: Вкрапления ::\nВведите свой вариант:        " +v19,vv19, r) == IDCANCEL) return false;
+ if (InputBox(" :: Вкрапления ::\nВведите свой вариант:        " +v19,vv19, r) == IDCANCEL) return "exit";
  if(r!=null && r.$!="")  { Col[k] = r.$;    s=sl19+("col2_" +k+ "†")+sp19;  count++; }
  else                       { Col[k] = v19;  s=sl19+("col2_" +k+ "†")+sp19} }
 k++; }
@@ -761,7 +763,8 @@ for (z=0;z<k;z++)  {
                                                          }
    if (SaveNext && SaveNext!=body) SaveNext=SaveNext.nextSibling; //и переходим на соседний элемент
          }
-  if (ptr.nodeName=="P") HandleP(ptr);
+  if (ptr.nodeName=="P") 
+   if (HandleP(ptr)=="exit") break;
   ptr=SaveNext;
  }
 

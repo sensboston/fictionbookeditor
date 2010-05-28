@@ -2110,14 +2110,17 @@ function AddEpigraph(cp,check)
             pptags[j++] = ppall[k].tagName;
         }
 
-        for(pptag in pptags)
-        {
-          if(pptag != upTag)
+	if (pptags.length > 0)
+	{
+          for(pptag in pptags)
           {
-            pwt.className = "text-author";
-            break;
+            if(pptag != upTag)
+            {
+              pwt.className = "text-author";
+              break;
+            }
           }
-        }
+	}
       }
       pwt.innerHTML = pps[i].innerText;
       ep.appendChild(pwt);

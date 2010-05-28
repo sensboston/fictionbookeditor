@@ -497,6 +497,7 @@ public:
 		COMMAND_CODE_HANDLER(IDN_TREE_DELETE_ELEMENT, OnTreeDeleteElement)
 		COMMAND_CODE_HANDLER(IDN_TREE_MERGE, OnTreeMerge)
 		COMMAND_CODE_HANDLER(IDN_TREE_UPDATE_ME, OnTreeUpdate)
+		COMMAND_CODE_HANDLER(IDN_TREE_RESTORE, OnTreeRestore)
 
 		// file menu
 		COMMAND_ID_HANDLER(ID_APP_EXIT, OnFileExit)
@@ -647,7 +648,7 @@ public:
 	rbi.cbSize = sizeof(REBARBANDINFO);
 	rbi.fMask = RBBIM_ID;
 	m_selBandID = -1;
-	for (int i=0; i< m_rebar.GetBandCount(); i++)
+	for (unsigned int i=0; i< m_rebar.GetBandCount(); i++)
 	{
 		m_rebar.GetRect(i, &rect);
 		if (PtInRect(&rect,ptMousePos))
@@ -858,15 +859,15 @@ public:
 
   LRESULT OnEdChange(WORD, WORD, HWND, BOOL&) {
     StopIncSearch(true);
-    m_doc_changed=true;
+	m_doc_changed=true;
     m_cb_updated=false;
-	// added by SeNS - update 
+	// added by SeNS: update 
 	UpdateViewSizeInfo();
 	// added by SeNS - process nbsp
 	if (_Settings.GetNBSPChar().Compare(L"\u00A0") != 0)
 		ChangeNBSP(m_doc->m_body.SelectionContainer());
 
-	// added by SeNS - do spellcheck
+	// added by SeNS: do spellcheck
 	if (m_Speller && m_current_view == BODY)
 		if (m_Speller->Enabled() && _Settings.GetHighlightMisspells())
 			m_Speller->CheckElement(m_doc->m_body.SelectionContainer(), -1, m_doc->m_body.IsHTMLChanged());
@@ -897,6 +898,7 @@ public:
   LRESULT OnTreeDeleteElement(WORD, WORD, HWND, BOOL&);
   LRESULT OnTreeMerge(WORD, WORD, HWND, BOOL&);
   LRESULT OnTreeUpdate(WORD, WORD, HWND, BOOL&);
+  LRESULT OnTreeRestore(WORD, WORD, HWND, BOOL&);
 
   LRESULT OnGoToFootnote(WORD wNotifyCode, WORD wID, HWND hWndCtl)
   {
@@ -985,7 +987,7 @@ public:
 
 	// added by SeNS
     CSpeller *m_Speller;
-	LRESULT OnSpellCheck(WORD, WORD, HWND, BOOL&)
+	LRESULT OnSpellCheck(WORD, WORD, HWND, BOOL& b)
 	{
 		if (m_Speller && m_current_view == BODY)
 			m_Speller->StartDocumentCheck(m_doc->m_body.m_mk_srv);

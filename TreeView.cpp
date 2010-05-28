@@ -200,7 +200,7 @@ static void  CompareTreesAndSet(TreeNode *n,CTreeItem ii,bool& fDisableRedraw) {
       }
       nc.SetImage(ic->img,ic->img);
       nc.SetText(ic->text);
-    }
+    } 
     MSHTML::IHTMLElement    *od=(MSHTML::IHTMLElement *)nc.GetData();
     if (od)
       od->Release();

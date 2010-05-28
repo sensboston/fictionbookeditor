@@ -284,7 +284,9 @@ static void RemoveEmptyNodes(MSHTML::IHTMLDOMNode *node) {
 	MSHTML::IHTMLDOMNodePtr cur(node->firstChild);
 	while (cur)
 	{
-		MSHTML::IHTMLDOMNodePtr next(cur->nextSibling);
+		MSHTML::IHTMLDOMNodePtr next;
+		try { next = cur->nextSibling; } catch(...) { return; }
+
 		RemoveEmptyNodes(cur);
 		if(IsEmptyNode(cur))
 			cur->removeNode(VARIANT_TRUE);
@@ -561,7 +563,9 @@ static bool	MergeEqualHTMLElements(MSHTML::IHTMLDOMNode *node, MSHTML::IHTMLDocu
 	MSHTML::IHTMLDOMNodePtr   cur(node->firstChild);
 	while ((bool)cur) 
 	{
-		MSHTML::IHTMLDOMNodePtr next(cur->nextSibling);
+		MSHTML::IHTMLDOMNodePtr next;
+		try { next = cur->nextSibling; } catch(...) { return false; }
+
 		if (MergeEqualHTMLElements(cur,doc))
 		{
 			cur = node->firstChild;
@@ -685,8 +689,10 @@ static bool   RemoveUnk(MSHTML::IHTMLDOMNode *node, MSHTML::IHTMLDocument2 *doc)
 
 restart:
 	MSHTML::IHTMLDOMNodePtr   cur(node->firstChild);
-	while ((bool)cur) {
-		MSHTML::IHTMLDOMNodePtr next(cur->nextSibling);
+	while ((bool)cur) 
+	{
+		MSHTML::IHTMLDOMNodePtr next;
+		try { next = cur->nextSibling; } catch(...) { return false; }
 
 		if (RemoveUnk(cur,doc))
 			goto restart;
@@ -1749,7 +1755,7 @@ void  CFBEView::Normalize(MSHTML::IHTMLDOMNodePtr dom) {
     m_mk_srv->BeginUndoUnit(L"Normalize");
 
     // remove unsupported elements
-    RemoveUnk(el,Document());
+	RemoveUnk(el,Document());
 
 	MergeEqualHTMLElements(el, Document());
     // get rid of nested DIVs and Ps
@@ -2743,6 +2749,7 @@ void	CFBEView::EditorChanged(int id) {
   case BACK_SINK:
     break;
   case RANGE_SINK:
+	m_startMatch = m_endMatch = 0;
     if (!m_ignore_changes)
       ::SendMessage(m_frame,WM_COMMAND,MAKELONG(0,IDN_ED_CHANGED),(LPARAM)m_hWnd);
     break;
