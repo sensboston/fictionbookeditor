@@ -17,7 +17,7 @@ void CSplitter::Init()
 {
 	// prepare cache array
 	for (int i=0; i<0xFFFF; i++)
-		isAlpha[i] = iswalpha(i);
+		isAlpha[i] = iswalpha(i) | iswdigit(i);
 }
 
 void CSplitter::Split(CString *src, CWords *words)

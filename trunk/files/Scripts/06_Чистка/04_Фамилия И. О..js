@@ -15,7 +15,9 @@
 //======================================
 // v.2.1 — проверка от курсора — sclex, май 2010
 //======================================
-var VersionNumber="2.1";
+// v.2.2 — доработка движкапод прерывание и выход — sclex, май 2010
+//======================================
+var VersionNumber="2.2";
 
 //обрабатывать ли history
 var ObrabotkaHistory=true;
@@ -156,11 +158,11 @@ while (ptr2!=fbw_body && ptr2.nodeName!="P") {
 		 k++;}
  var r=Object();
 	 if (k<10 && NoCol[vv1]==null && YesCol[vv1]==null)
-	 { if (InputBox(" Предлагается следующий           При «Отмене» останется:        … "+count+" …\n вариант :. v .:                                      " +vv1,v1, r) == IDCANCEL) return false;
+	 { if (InputBox(" Предлагается следующий           При «Отмене» останется:        … "+count+" …\n вариант :. v .:                                      " +vv1,v1, r) == IDCANCEL) return "exit";
 		 if(r!=null && r.$!="")  { Col[k] = r.$; YesCol[vv1]=r.$; s=sl1+("col1¦" +k+ "¦")+sp1; count++; } 
 	 else { Col[k] = vvv1;  NoCol[vv1]=true;  s=sll1+("col1¦" +k+ "¦")+sp1; } }
 	 if (k>=10 && NoCol[vv1]==null && YesCol[vv1]==null)
-		 { if (InputBox(" Предлагается следующий           При «Отмене» останется:        … "+count+" …\n вариант :. v .:                                      " +vv1,v1, r) == IDCANCEL) return false;
+		 { if (InputBox(" Предлагается следующий           При «Отмене» останется:        … "+count+" …\n вариант :. v .:                                      " +vv1,v1, r) == IDCANCEL) return "exit";
 		 if(r!=null && r.$!="")  { Col[k] = r.$; YesCol[vv1]=r.$; s=sl1+("col2¦" +k+ "¦")+sp1; count++; } 
 		 else { Col[k] = vvv1;  NoCol[vv1]=true;  s=sll1+("col2¦" +k+ "¦")+sp1; } }
  k++;  }
@@ -188,12 +190,12 @@ while (ptr2!=fbw_body && ptr2.nodeName!="P") {
 
  var r=Object();
 	 if (k<10 && NoCol[vv2]==null && YesCol[vv2]==null)
-	 {  if (InputBox(" Предлагается следующий           При «Отмене» останется:        … "+count+" …\n вариант :. v .:                                      " +vv2,v2, r) == IDCANCEL) return false;
+	 {  if (InputBox(" Предлагается следующий           При «Отмене» останется:        … "+count+" …\n вариант :. v .:                                      " +vv2,v2, r) == IDCANCEL) return "exit";
 		 if(r!=null && r.$!="")  { Col[k] = r.$; YesCol[vv2]=r.$; s=sl2+("col1¦" +k+ "¦")+sp2; count++; } 
 	 else { Col[k] = vvv2;  NoCol[vv2]=true;  s=sll2+("col1¦" +k+ "¦")+sp2; } }
 	 		//                                      MsgBox ('      И где это я?     \n\nv2:  ' +v2+ '\nvv2:  ' +vv2+ '\n\nNoCol: =  ' +NoCol[vv2]+ '\n\nCol [' +k+ '] =  ' +Col[k]+ '\n\nабзац:\n' +s+ '\n\nYesCol[' +vv2+']: =  ' +YesCol[vv2]  );
 	 if (k>=10 && NoCol[vv2]==null && YesCol[vv2]==null)
-		 {  if (InputBox(" Предлагается следующий           При «Отмене» останется:        … "+count+" …\n вариант :. v .:                                      " +vv2,v2, r) == IDCANCEL) return false;
+		 {  if (InputBox(" Предлагается следующий           При «Отмене» останется:        … "+count+" …\n вариант :. v .:                                      " +vv2,v2, r) == IDCANCEL) return "exit";
 		 if(r!=null && r.$!="")  { Col[k] = r.$; YesCol[vv2]=r.$; s=sl2+("col2¦" +k+ "¦")+sp2; count++; } 
 		 else { Col[k] = vvv2;  NoCol[vv2]=true;  s=sll2+("col2¦" +k+ "¦")+sp2; } }
  k++;  }                                                                                                                                     //                                       MsgBox ('вручную: \n' +s );
@@ -218,11 +220,11 @@ while (ptr2!=fbw_body && ptr2.nodeName!="P") {
 		 k++;}
  var r=Object();
 	 if (k<10 && NoCol[vv3]==null && YesCol[vv3]==null)
-	 { if (InputBox(" Предлагается следующий           При «Отмене» останется:        … "+count+" …\n вариант :. v .:                                      " +vv3,v3, r) == IDCANCEL) return false;
+	 { if (InputBox(" Предлагается следующий           При «Отмене» останется:        … "+count+" …\n вариант :. v .:                                      " +vv3,v3, r) == IDCANCEL) return "exit";
 		 if(r!=null && r.$!="")  { Col[k] = r.$; YesCol[vv3]=r.$; s=sl3+("col1¦" +k+ "¦")+sp3; count++; } 
 	 else { Col[k] = vvv3;  NoCol[vv3]=true;  s=sll3+("col1¦" +k+ "¦")+sp3; } }
 	 if (k>=10 && NoCol[vv3]==null && YesCol[vv3]==null)
-		 { if (InputBox(" Предлагается следующий           При «Отмене» останется:        … "+count+" …\n вариант :. v .:                                      " +vv3,v3, r) == IDCANCEL) return false;
+		 { if (InputBox(" Предлагается следующий           При «Отмене» останется:        … "+count+" …\n вариант :. v .:                                      " +vv3,v3, r) == IDCANCEL) return "exit";
 		 if(r!=null && r.$!="")  { Col[k] = r.$; YesCol[vv3]=r.$; s=sl3+("col2¦" +k+ "¦")+sp3; count++; } 
 		 else { Col[k] = vvv3;  NoCol[vv3]=true;  s=sll3+("col2¦" +k+ "¦")+sp3; } }
  k++;  }
@@ -250,11 +252,11 @@ while (ptr2!=fbw_body && ptr2.nodeName!="P") {
 		 k++;}
  var r=Object();
 	 if (k<10 && NoCol[vv4]==null && YesCol[vv4]==null)
-					{ if (InputBox(" Предлагается следующий           При «Отмене» останется:        … "+count+" …\n вариант :. v .:                                      " +vv4,v4, r) == IDCANCEL) return false;
+					{ if (InputBox(" Предлагается следующий           При «Отмене» останется:        … "+count+" …\n вариант :. v .:                                      " +vv4,v4, r) == IDCANCEL) return "exit";
 		 if(r!=null && r.$!="")  { Col[k] = r.$; YesCol[vv4]=r.$; s=sl4+("col1_" +k)+sp4; count++; }
 					 else { Col[k] = vvv4;  NoCol[vv4]=true;  s=sl4+("col1¦" +k+ "¦")+spp4; } }
 	 if (k>=10 && NoCol[vv4]==null && YesCol[vv4]==null)
-					{ if (InputBox(" Предлагается следующий           При «Отмене» останется:        … "+count+" …\n вариант :. v .:                                      " +vv4,v4, r) == IDCANCEL) return false;
+					{ if (InputBox(" Предлагается следующий           При «Отмене» останется:        … "+count+" …\n вариант :. v .:                                      " +vv4,v4, r) == IDCANCEL) return "exit";
 		 if(r!=null && r.$!="")  { Col[k] = r.$; YesCol[vv4]=r.$; s=sl4+("col2¦" +k+ "¦")+spp4; count++; }
 					 else { Col[k] = vvv4;  NoCol[vv4]=true;  s=sl4+("col2¦" +k+ "¦")+spp4; } }
  k++; }
@@ -279,11 +281,11 @@ while (ptr2!=fbw_body && ptr2.nodeName!="P") {
 		 k++;}
  var r=Object();
 	 if (k<10 && NoCol[vv5]==null && YesCol[vv5]==null)
-					{ if (InputBox(" Предлагается следующий           При «Отмене» останется:        … "+count+" …\n вариант :. v .:                                      " +vv5,v5, r) == IDCANCEL) return false;
+					{ if (InputBox(" Предлагается следующий           При «Отмене» останется:        … "+count+" …\n вариант :. v .:                                      " +vv5,v5, r) == IDCANCEL) return "exit";
 		 if(r!=null && r.$!="")  { Col[k] = r.$; YesCol[vv5]=r.$; s=sl5+("col1¦" +k+ "¦")+sp5; count++; }
 					 else { Col[k] = vvv5;  NoCol[vv5]=true;  s=sl5+("col1¦" +k+ "¦")+spp5; } }
 	 if (k>=10 && NoCol[vv5]==null && YesCol[vv5]==null)
-					{ if (InputBox(" Предлагается следующий           При «Отмене» останется:        … "+count+" …\n вариант :. v .:                                      " +vv5,v5, r) == IDCANCEL) return false;
+					{ if (InputBox(" Предлагается следующий           При «Отмене» останется:        … "+count+" …\n вариант :. v .:                                      " +vv5,v5, r) == IDCANCEL) return "exit";
 		 if(r!=null && r.$!="")  { Col[k] = r.$; YesCol[vv5]=r.$; s=sl5+("col2¦" +k+ "¦")+sp5; count++; }
 					 else { Col[k] = vvv5;  NoCol[vv5]=true;  s=sl5+("col2¦" +k+ "¦")+spp5; } }
  k++; }
@@ -308,11 +310,11 @@ while (ptr2!=fbw_body && ptr2.nodeName!="P") {
 		 k++;}
  var r=Object();
 	 if (k<10 && NoCol[vv6]==null && YesCol[vv6]==null)
-					{ if (InputBox(" Предлагается следующий           При «Отмене» останется:        … "+count+" …\n вариант :. v .:                                      " +vv6,v6, r) == IDCANCEL) return false;
+					{ if (InputBox(" Предлагается следующий           При «Отмене» останется:        … "+count+" …\n вариант :. v .:                                      " +vv6,v6, r) == IDCANCEL) return "exit";
 		 if(r!=null && r.$!="")  { Col[k] = r.$; YesCol[vv6]=r.$; s=sl6+("col1¦" +k+ "¦")+sp6; count++; }
 					 else { Col[k] = vvv6;  NoCol[vv6]=true;  s=sl6+("col1¦" +k+ "¦")+spp6; } }
 	 if (k>=10 && NoCol[vv6]==null && YesCol[vv6]==null)
-					{ if (InputBox(" Предлагается следующий           При «Отмене» останется:        … "+count+" …\n вариант :. v .:                                      " +vv6,v6, r) == IDCANCEL) return false;
+					{ if (InputBox(" Предлагается следующий           При «Отмене» останется:        … "+count+" …\n вариант :. v .:                                      " +vv6,v6, r) == IDCANCEL) return "exit";
 		 if(r!=null && r.$!="")  { Col[k] = r.$; YesCol[vv6]=r.$; s=sl6+("col2¦" +k+ "¦")+sp6; count++; }
 					 else { Col[k] = vvv6;  NoCol[vv6]=true;  s=sl6+("col2¦" +k+ "¦")+spp6; } }
  k++; }
@@ -335,11 +337,11 @@ while (ptr2!=fbw_body && ptr2.nodeName!="P") {
 		 k++;}
  var r=Object();
 	 if (k<10 && NoCol[vv7]==null && YesCol[vv7]==null)
-					{ if (InputBox(" Предлагается следующий           При «Отмене» останется:        … "+count+" …\n вариант :. v .:                                      " +vv7,v7, r) == IDCANCEL) return false;
+					{ if (InputBox(" Предлагается следующий           При «Отмене» останется:        … "+count+" …\n вариант :. v .:                                      " +vv7,v7, r) == IDCANCEL) return "exit";
 		 if(r!=null && r.$!="")  { Col[k] = r.$; YesCol[vv7]=r.$; s=sl7+("col1¦" +k+ "¦")+sp7; count++; }
 					 else { Col[k] = vv7;  NoCol[vv7]=true;  s=sl7+("col1¦" +k+ "¦")+sp7; } }
 	 if (k>=10 && NoCol[vv7]==null && YesCol[vv7]==null)
-					{ if (InputBox(" Предлагается следующий           При «Отмене» останется:        … "+count+" …\n вариант :. v .:                                      " +vv7,v7, r) == IDCANCEL) return false;
+					{ if (InputBox(" Предлагается следующий           При «Отмене» останется:        … "+count+" …\n вариант :. v .:                                      " +vv7,v7, r) == IDCANCEL) return "exit";
 		 if(r!=null && r.$!="")  { Col[k] = r.$; YesCol[vv7]=r.$; s=sl7+("col2¦" +k+ "¦")+sp7; count++; }
 					 else { Col[k] = vv7;  NoCol[vv7]=true;  s=sl7+("col2¦" +k+ "¦")+sp7; } }
  k++; }
@@ -393,7 +395,8 @@ for (z=0;z<k;z++)  {
                                                          }
    if (SaveNext && SaveNext!=body) SaveNext=SaveNext.nextSibling; //и переходим на соседний элемент
          }
-  if (ptr.nodeName=="P") HandleP(ptr);
+  if (ptr.nodeName=="P") 
+   if (HandleP(ptr)=="exit") break;
   ptr=SaveNext;
  }
 
@@ -414,11 +417,9 @@ var Tsec3 = Math.ceil(1000*((Tf-Ts)/1000-Tmin*60))/1000;
  else { if (Tmin>=1 && Thour<1)   TimeStr=Tmin+ " мин " +Tsec+ " с"
  else { if (Thour>=1)                    TimeStr=Thour+ " ч " +Tmin+ " мин " +Tsec+ " с"  }}}}}
 
-   MsgBox ('          –= Jürgen Script =– \n'+
-        '«Инициалы и литерные имена» v'+VersionNumber+'	 \n\n'+
-
-        '      Произведено замен: ' +count+'\n\n'+
-
-        ' Время: ' +TimeStr+ '.\n' ); 
+   MsgBox ('  –= Jürgen Script =– \n'+
+                 ' «Фамилия И. О.» v'+VersionNumber+'  	 \n\n'+
+                 ' Произведено замен: ' +count+'\n\n'+
+                 ' Время: ' +TimeStr+ '.\n' ); 
 
 } 

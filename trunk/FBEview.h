@@ -289,11 +289,16 @@ public:
 
   long			    GetVersionNumber() { return m_mkc ? m_mkc->GetVersionNumber() : -1; }
 
+  CAtlList<CString> m_UndoStrings;
   void			    BeginUndoUnit(const wchar_t *name) 
   { 
+	  m_UndoStrings.AddHead(name);
 	  m_mk_srv->BeginUndoUnit((wchar_t *)name); 
   }
-  void			    EndUndoUnit() { m_mk_srv->EndUndoUnit(); }
+  void			    EndUndoUnit() 
+  { 
+	  m_mk_srv->EndUndoUnit();
+  }
 
   DECLARE_WND_SUPERCLASS(NULL, CAxWindow::GetWndClassName())
 
@@ -380,7 +385,14 @@ public:
 	LRESULT ExecCommand(int cmd);
 	void QueryStatus(OLECMD *cmd, int ncmd);
 	CString QueryCmdText(int cmd);
-	LRESULT OnUndo(WORD, WORD, HWND, BOOL&) { return ExecCommand(IDM_UNDO); }
+
+	LRESULT OnUndo(WORD, WORD, HWND, BOOL&) 
+	{ 
+		LRESULT res = ExecCommand(IDM_UNDO);
+		if (m_UndoStrings.GetCount() && m_UndoStrings.RemoveHead().CompareNoCase(L"structure editing")==0)
+			::SendMessage(m_frame, WM_COMMAND, MAKELONG(0,IDN_TREE_RESTORE), 0);
+		return res;
+	}
 	LRESULT OnRedo(WORD, WORD, HWND, BOOL&) { return ExecCommand(IDM_REDO); }
 	LRESULT OnCut(WORD, WORD, HWND, BOOL&) { return ExecCommand(IDM_CUT); }
 	LRESULT OnCopy(WORD, WORD, HWND, BOOL&) { return ExecCommand(IDM_COPY); }

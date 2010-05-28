@@ -661,62 +661,77 @@ inline void CSpeller::HighlightMisspells()
 void CSpeller::CheckCurrentPage()
 {
 	CWords words;
+	CString tagName;
 	std::pair< std::set<long>::iterator, bool > pr;
-	int nodeCount = 0, currNum, numChanges = 0;
+	int currNum, numChanges = 0, nStartElem, nEndElem;
+	MSHTML::IHTMLElementPtr elem, endElem;
 
-	MSHTML::IHTMLElementPtr elem = m_doc2->elementFromPoint(63, 10);
-	MSHTML::IHTMLDOMNodePtr currNode(elem);
-	MSHTML::IHTMLElementPtr endElem = m_doc2->elementFromPoint(63, m_scrollElement->clientHeight-10);
-
-	do
+	// lookup first element on page
+	for (int y=10; y<m_scrollElement->clientHeight; y+=10)
 	{
-		if (currNode->nodeType == 3 )
+		elem = m_doc2->elementFromPoint(63, y);
+		tagName.SetString(elem->tagName);
+		if (tagName.CompareNoCase(L"P")==0) break;
+	}
+	// lookup last element on page
+	for (int y=m_scrollElement->clientHeight; y>10; y-=10)
+	{
+		endElem = m_doc2->elementFromPoint(63, y);
+		tagName.SetString(endElem->tagName);
+		if (tagName.CompareNoCase(L"P")==0) break;
+	}
+
+	// get all document paragraphs
+	MSHTML::IHTMLElementPtr fbw_body = m_doc3->getElementById(L"fbw_body");
+	MSHTML::IHTMLElementCollectionPtr paras = MSHTML::IHTMLElement2Ptr(fbw_body)->getElementsByTagName(L"P");
+
+	nStartElem = nEndElem = -1;
+	for (int i=0; i<paras->length; i++)
+	{
+		if ((nStartElem == -1) && paras->item(i) == elem) nStartElem = i;
+		else if (paras->item(i) == endElem) 
 		{
-			elem = currNode->parentNode;
+			nEndElem = i;
+			break;
+		}
+	}
 
-			// get element unique number
-			if (elem)
+	if (nStartElem == -1) nStartElem = 0;
+
+	if (nEndElem == -1) nEndElem = nStartElem+20;
+	else if (nEndElem+1 < paras->length) nEndElem++;
+
+	for (int i=nStartElem; i<nEndElem; i++)
+	{
+		elem = paras->item(i);
+		// get element unique number
+		if (elem)
+		{
+			currNum = MSHTML::IHTMLUniqueNamePtr(elem)->uniqueNumber;
+		
+			// Getting uniqueNumber from IHTMLUniqueName interface changes
+			// the internal HTML document version. We need to correct this
+			// issue, because document not really changed
+			pr = m_uniqIDs.insert(currNum);
+			if (pr.second) numChanges++;
+
+			CString innerText = elem->innerText;
+			if(!innerText.IsEmpty())
 			{
-				currNum = MSHTML::IHTMLUniqueNamePtr(elem)->uniqueNumber;
-			
-				// Getting uniqueNumber from IHTMLUniqueName interface changes
-				// the internal HTML document version. We need to correct this
-				// issue, because document not really changed
-				pr = m_uniqIDs.insert(currNum);
-				if (pr.second) numChanges++;
-
-				CString innerText = elem->innerText;
-				if(!innerText.IsEmpty())
+				// remove underline
+				ClearMarks(currNum);
+				splitter->Split(&innerText, &words);
+				for (int i=0; i<words.GetSize(); i++)
 				{
-					// remove underline
-					ClearMarks(currNum);
-					splitter->Split(&innerText, &words);
-					for (int i=0; i<words.GetSize(); i++)
-					{
-						CString wrd = words.GetValueAt(i);
-						if (SpellCheck(words.GetValueAt(i)) == SPELL_MISSPELL)
-							MarkElement(elem, currNum, words.GetValueAt(i), words.GetKeyAt(i));
-					}
+					CString wrd = words.GetValueAt(i);
+					if (SpellCheck(wrd) == SPELL_MISSPELL)
+						MarkElement(elem, currNum, wrd, words.GetKeyAt(i));
 				}
 			}
 		}
-
-		if (currNode->firstChild) currNode=currNode->firstChild;
-		else 
-		{
-			while (currNode && U::scmp(currNode->nodeName, L"BODY") && !currNode->nextSibling) currNode = currNode->parentNode;
-			if (currNode && U::scmp(currNode->nodeName, L"BODY")) currNode = currNode->nextSibling;
-		}
-
-		if (U::scmp(currNode->nodeName, L"BODY") == 0) elem=endElem;
-
-		nodeCount++;
-
 	}
-	while (elem!=endElem && nodeCount < 60);
-
-	if (numChanges)
-		AdvanceVersionNumber(numChanges);
+	
+	if (numChanges) AdvanceVersionNumber(numChanges);
 }
 
 //

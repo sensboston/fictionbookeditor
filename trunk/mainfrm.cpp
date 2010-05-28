@@ -1016,7 +1016,6 @@ BOOL CMainFrame::OnIdle()
 			m_document_tree.UpdateDocumentStructure(m_doc->m_body.Document(), chp);
 			m_document_tree.HighlightItemAtPos(m_doc->m_body.SelectionContainer());
 		}
-
 		m_doc_changed = false;
 	}
 
@@ -2953,10 +2952,17 @@ LRESULT CMainFrame::OnTreeReturn(WORD, WORD, HWND, BOOL&)
 
 LRESULT CMainFrame::OnTreeUpdate(WORD, WORD, HWND, BOOL&)
 {
-	GetDocumentStructure();
-	return 0;
+  GetDocumentStructure();
+  return 0;
 }
 
+//zzz
+LRESULT CMainFrame::OnTreeRestore(WORD, WORD, HWND, BOOL& b)
+{
+//  m_document_tree.GetDocumentStructure(m_doc->m_body.Document());
+//  m_document_tree.ShowWindow(SW_SHOW);
+  return 0;
+}
 
 LRESULT CMainFrame::OnTreeMoveElement(WORD, WORD, HWND, BOOL&)
 {
@@ -3230,15 +3236,9 @@ LRESULT CMainFrame::OnTreeDeleteElement(WORD, WORD, HWND, BOOL&)
 					return 0;
 
 				MSHTML::IHTMLDOMNodePtr node = (MSHTML::IHTMLDOMNodePtr)elem;
-				
-				
 				node->removeNode(VARIANT_TRUE);
-				
 			}
-			else
-			{
-				break;
-			}
+			else break;
 
 			item = m_document_tree.m_tree.m_tree.GetPrevSelectedItem(item);
 		} while(!item.IsNull());
@@ -3565,9 +3565,8 @@ bool CMainFrame::ShowSource(bool saveSelection)
 	int bodies_count = 0;
 	// берем HTML
 	// запоминаем путь до выделенного элемента
-	//if(saveSelection)
+	if(saveSelection)
 	{
-
 		MSHTML::IHTMLElementPtr selectedBeginElement;
 		MSHTML::IHTMLElementPtr selectedEndElement;
 
@@ -5212,13 +5211,14 @@ void CMainFrame::ChangeNBSP(MSHTML::IHTMLElementPtr elem)
 
 		MSHTML::IHTMLDOMNodePtr el = MSHTML::IHTMLDOMNodePtr(elem)->firstChild;
 		CString nbsp = _Settings.GetNBSPChar();
+		CString s;
 		int numChanges = 0;
 
 		while (el && el!=elem) 
 		{
 			if (el->nodeType==3)
 			{
-				CString s = el->nodeValue;
+				try { s = el->nodeValue; } catch(...) { break; }
 				int n = s.Replace( L"\u00A0", _Settings.GetNBSPChar());
 				int k = s.Replace( L"<p>\u00A0<p>", L"<p><p>");
 				if (n || k) 

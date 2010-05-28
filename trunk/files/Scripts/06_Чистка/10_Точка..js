@@ -1145,13 +1145,13 @@ while (ptr2!=fbw_body && ptr2.nodeName!="P") {
  if (k<10 && sobCol[sob]==null) {
  // changed by SeNS
  var r=Object();
- if (InputBox(" :: Пропущена точка ::                                                                … " +count+ "\nВведите свой вариант:                " +v1,v1, r) == IDCANCEL) return false;
+ if (InputBox(" :: Пропущена точка ::                                                                … " +count+ "\nВведите свой вариант:                " +v1,v1, r) == IDCANCEL) return "exit";
 // var r=prompt(" :: Пропущена точка ::                                                                … " +count+ "\nВведите свой вариант:                " +v1,v1)
  if(r!=null && r.$!="")  { Col[k] = r.$;    s=sl1+("col1_" +k)+sp1;  if (r.$!=v1) {count++} }
  else                       { Col[k] = v1; sobCol[sob]=true;  s=sl1+("col1_" +k)+sp1}; {counttt++} nak=nak+b1-6; }
  if (k>=10 && sobCol[sob]==null) {
  // changed by SeNS
- if (InputBox(" :: Пропущена точка ::                                                                … " +count+ "\nВведите свой вариант:                " +v1,v1, r) == IDCANCEL) return false;
+ if (InputBox(" :: Пропущена точка ::                                                                … " +count+ "\nВведите свой вариант:                " +v1,v1, r) == IDCANCEL) return "exit";
 // var r=prompt(" :: Пропущена точка ::                                                                … " +count+ "\nВведите свой вариант:                " +v1,v1)
  if(r!=null && r.$!="")  { Col[k] = r.$;    s=sl1+("col2_" +k)+sp1;  if (r!=v1) {count++} }
  else                       { Col[k] = v1; sobCol[sob]=true;  s=sl1+("col2_" +k)+sp1}; {counttt++} nak=nak+b1-7; }
@@ -1175,45 +1175,45 @@ for (z=0;z<k;z++)  {
    return true;
   } 
 
-
  var body=document.getElementById("fbw_body");
  var ptr=body;
  var ProcessingEnding=false;
-    var PoraNaVyhod = false;
-
-
+ if (document.selection==null || document.selection.type=="Control") {
+  alert("Нет выделения типа \"Текст\".");
+  return;
+ }
+ var tr=document.selection.createRange();
+ if (!tr) return;
+ tr.collapse();
+ var ptr=tr.parentElement();
+ if (!body.contains(ptr)) return;
+ var ptr2=ptr;
+ while (ptr2 && ptr2.nodeName!="BODY" && ptr2.nodeName!="P")
+  ptr2=ptr2.parentNode;
+ if (ptr2 && ptr2.nodeName=="P") ptr=ptr2;
+ alert(ptr.outerHTML);
  while (!ProcessingEnding && ptr) {
   SaveNext=ptr;
   if (SaveNext.firstChild!=null && SaveNext.nodeName!="P" && 
       !(SaveNext.nodeName=="DIV" && 
         ((SaveNext.className=="history" && !ObrabotkaHistory) || 
          (SaveNext.className=="annotation" && !ObrabotkaAnnotation))))
-  {    SaveNext=SaveNext.firstChild;  }                                                         // либо углубляемся...
+  {    SaveNext=SaveNext.firstChild; }                                                         // либо углубляемся...
 
   else {
-    while (SaveNext.nextSibling==null)  {
+    while (SaveNext && SaveNext!=body && SaveNext.nextSibling==null)  {
      SaveNext=SaveNext.parentNode;                                                           // ...либо поднимаемся (если уже сходили вглубь)
                                                                                                                 // поднявшись до элемента P, не забудем поменять флаг
      if (SaveNext==body) {ProcessingEnding=true;}
                                                          }
-
-var schet = Math.ceil(counttt/krat)+1;
-
-       if ( 200<schet && schet<240) {
-   if (!AskYesNo("       –= Jurgen Script =–     \n\n   Что-то процесс затянулся...\n\n     Продолжить обработку?\n ")) { PoraNaVyhod=true; } krat++;
-	 }
-
-   SaveNext=SaveNext.nextSibling; //и переходим на соседний элемент
+   if (SaveNext && SaveNext!=body) SaveNext=SaveNext.nextSibling; //и переходим на соседний элемент
          }
   if (ptr.nodeName=="P") 
-	if (!HandleP(ptr)) return;
+   if (HandleP(ptr)=="exit") break;
   ptr=SaveNext;
-
-if (PoraNaVyhod) {return}
-
  }
 
-//    window.external.EndUndoUnit(document);
+window.external.EndUndoUnit(document);
 
 var Tf=new Date().getTime();
 var Thour = Math.floor((Tf-Ts)/3600000);
