@@ -1,5 +1,5 @@
 //скрипт смены регистра by Sclex
-//v1.1
+//v1.3
 
 function Run() {
  //вид обработки, которой подвергается выделенный текст
@@ -10,12 +10,24 @@ function Run() {
  var MyTagName="B";
 
  function replaceFunc(full_match, offset_of_match, string_we_search_in) {
-  if (lastSymbolLetter) return full_match.toLowerCase();
-  else return full_match.substr(0,1).toUpperCase()+full_match.substr(1).toLowerCase();
+  if (lastSymbolLetter && offset_of_match==0) {
+   lastSymbolLetter=false;
+   return full_match.toLowerCase();
+  }
+  else {
+   lastSymbolLetter=false;
+   return full_match.substr(0,1).toUpperCase()+full_match.substr(1).toLowerCase();
+  }
  }
 
  capCol={};
  var k=0;
+ var lettersRE=new RegExp("[а-яёa-zÀÁÂÃÄÅÆÇÈÉÊËÌÍÏÐÑÒÓÔÕÖØÙÚÛÜÝÞ́ßàáâãäåæçèéêëìíîïðñòóôõöøùúûüýþÿĀāăĄąĆćĈĉĊċČčĎďĐđĒēĔĕĖėĘęĚěĜĝĞğĠġĢģĤĥĦħĨĩĪīĬĭĮįİıĲĳĴĵĶķĸĹĺĻļĽľĿŀŁłŃńŅņŇňŉŊŋŌōŎŏŐőŒœŔŕŖŗŘřŚśŜŝŞşŠšŢţŤťŦŧŨũŪūŬŭŮůŰűŲųŴŵŶŷŸŹźŻżŽžſƏƒƠơƯưƷǤǥǦǧǨǩǪǫǮǯǺǻǼǽǾǿȘșȚțȨȩəʒ"+
+  "ΆΈΉΊΌΎΐΑΒΓΔΕΖΗΘΙΚΛΜΝΞΟΠΡΣΤΥΦΧΨΩΪΫάέήίΰαβγδεζηθικλμνξοπρςστυφχψωϊϋόύώЀЁЂЃЄЅІЇЈЉЊЋЌЍЎЏ"+
+  "ѐђѓєѕіїјљњћќѝўџҐґҒғҖҗҚқҜҝҢңҮүҰұҲҳҸҹҺһӘәӨө"+
+  "ḀḁḂḃḄḅḆḇḈḉḊḋḌḍḎḏḐḑḒḓḔḕḖḗḘḙḚḛḜḝḞḟḠḡḢḣḤḥḦḧḨḩḪḫḬḭḮḯḰḱḲḳḴḵḶḷḸḹḺḻḼḽḾḿṀṁṂṃṄṅṆṇṈṉṊṋṌṍṎṏṐṑṒṓṔṕṖṗṘṙṚṛṜṝṞṟṠṡṢṣṤṥṦṧṨṩṪṫṬṭṮṯṰṱṲṳṴṵṶṷṸṹṺṻṼṽṾṿẀẁẂẃẄẅẆẇẈẉẊẋẌẍẎẏẐẑẒẓẔẕẖẗẘẙẚẛẠạẢảẤấẦầẨẩẪẫẬậẮắẰằẲẳẴẵẶặẸẹẺẻẼẽẾếỀềỂểỄễỆệỈỉỊịỌọỎỏỐốỒồỔổỖỗỘộỚớỜờỞởỠỡỢợỤụỦủỨứỪừỬửỮữỰựỲỳỴỵỶỷỸỹἀἁἂἃἄἅἆἇἈἉἊἋἌἍἎἏἐἑἒἓἔἕἘἙἚἛἜἝἠἡἢἣἤἥἦἧἨἩἪἫἬἭἮἯἰἱἲἳἴἵἶἷἸἹἺἻἼἽἾἿὀὁὂὃὄὅὈὉὊὋὌὍὐὑὒὓὔὕὖὗὙὛὝὟὠὡὢὣὤὥὦὧὨὩὪὫὬὭὮὯὰάὲέὴήὶίὸόὺύὼώᾀᾁᾂᾃᾄᾅᾆᾇᾈᾉᾊᾋᾌᾍᾎᾏᾐᾑᾒᾓᾔᾕᾖᾗᾘᾙᾚᾛᾜᾝᾞᾟᾠᾡᾢᾣᾤᾥᾦᾧᾨᾩᾪᾫᾬᾭᾮᾯᾰᾱᾲᾳᾴᾶᾷᾸᾹᾺΆᾼ"+
+  "ῂῃῄῆῇῈΈῊΉῌ"+
+  "ῐῑῒΐῖῗῘῙῚΊῠῡῢΰῤῥῦῧῨῩῪΎῬῲῳῴῶῷῸΌῺΏῼµ]+","ig");
 
  var tr;
  var errMsg="Нет выделения.\n\nПеред запуском скрипта нужно выделить текст, который будет обработан.";
@@ -36,9 +48,8 @@ function Run() {
   s=tr.text;
   //код обработки: начало
     
-  var re12 =  new RegExp("[а-яёa-z]+","gi"); 
-  s=s.replace(re12,replaceFunc);
-  
+  s=s.replace(lettersRE,replaceFunc);
+ 
   //код обработки: конец
   tr.parentElement().value=tr1.text+s+tr2.text;
  }
@@ -89,9 +100,9 @@ function Run() {
      // получаем текстовое содержимое узла
      var s=ptr.nodeValue;
      // обрабатываем как надо
-     lastSymbolLetter=false;
-     var re12 =  new RegExp("[а-яёa-z]+","gi"); 
-     s=s.replace(re12,replaceFunc);
+     s=s.replace(lettersRE,replaceFunc);
+     if (s.substr(s.length-1).search(lettersRE)>=0) lastSymbolLetter=true;
+     else lastSymbolLetter=false;
      // и возвращаем на место
      ptr.nodeValue=s;
    }
