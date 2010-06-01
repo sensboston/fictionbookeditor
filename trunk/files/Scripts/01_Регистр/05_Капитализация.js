@@ -9,6 +9,11 @@ function Run() {
  //имя тэга, который будет использован для маркеров начала и конца выделения
  var MyTagName="B";
 
+ function replaceFunc(full_match, offset_of_match, string_we_search_in) {
+  if (lastSymbolLetter) return full_match.toLowerCase();
+  else return full_match.substr(0,1).toUpperCase()+full_match.substr(1).toLowerCase();
+ }
+
  capCol={};
  var k=0;
 
@@ -30,25 +35,10 @@ function Run() {
   tr2.setEndPoint("StartToEnd",tr);
   s=tr.text;
   //код обработки: начало
-  var tmp = "";
-  var re10 =  new RegExp("[а-яёa-z]+[^а-яёa-z]*","gi"); 
-  var mass=s.match(re10);   //    MsgBox(s+ "\n" +mass);
-  var sum = "";
-
-  var re11 =  new RegExp("[а-яёa-z]","gi"); 
-  var frst=s.search(re11);
-  var fst = "key";
-
-  if (mass==null) { return; }
-  else {
-   for (k=0; k<mass.length; k++) {
-    tmp = mass[k];
-    capCol[k] = tmp.substr(0,1).toUpperCase()+tmp.substr(1,tmp.length).toLowerCase();
-    sum = sum + capCol[k];
-   }
-   if (frst>0) { capCol[fst] = s.substr(0,frst); s = capCol[fst]+sum; }
-   else         { s = sum; }
-  }
+    
+  var re12 =  new RegExp("[а-яёa-z]+","gi"); 
+  s=s.replace(re12,replaceFunc);
+  
   //код обработки: конец
   tr.parentElement().value=tr1.text+s+tr2.text;
  }
@@ -71,10 +61,14 @@ function Run() {
   var InsideSelection = false; // true, когда текущая позиция внутри выделенного текста
   var ProcessingEnded=false; // true, когда обработка закончена и пора выходить
   ptr=el;
+  var lastSymbolLetter=false;
   while (!ProcessingEnded) {
    // напомню: nodeType=1 для элемента (тэга) и nodeType=3 для текста
    // если встретили тэг P, меняем флаг, что мы внутри P
-   if (ptr.nodeType==1 && ptr.nodeName=="P") {InsideP=true};
+   if (ptr.nodeType==1 && ptr.nodeName=="P") {
+    InsideP=true;
+    lastSymbolLetter=false;
+   }
    // если встретили маркер начала блока, ...
    if (ptr.nodeType==1 && ptr.nodeName==MyTagName &&
        ptr.getAttribute("id")=="BlockStart") {
@@ -95,25 +89,9 @@ function Run() {
      // получаем текстовое содержимое узла
      var s=ptr.nodeValue;
      // обрабатываем как надо
-     var tmp = "";
-     var re10 =  new RegExp("[а-яёa-z]+[^а-яёa-z]*","gi"); 
-     var mass=s.match(re10);   //    MsgBox(s+ "\n" +mass);
-     var sum = "";
-
-     var re11 =  new RegExp("[а-яёa-z]","gi"); 
-     var frst=s.search(re11);
-     var fst = "key";
-
-     if (mass==null) { return; }
-     else {
-      for (k=0; k<mass.length; k++) {
-       tmp = mass[k];
-       capCol[k] = tmp.substr(0,1).toUpperCase()+tmp.substr(1,tmp.length).toLowerCase();
-       sum = sum + capCol[k];
-      }
-      if (frst>0) { capCol[fst] = s.substr(0,frst); s = capCol[fst]+sum; }
-      else         { s = sum; }
-     }
+     lastSymbolLetter=false;
+     var re12 =  new RegExp("[а-яёa-z]+","gi"); 
+     s=s.replace(re12,replaceFunc);
      // и возвращаем на место
      ptr.nodeValue=s;
    }
