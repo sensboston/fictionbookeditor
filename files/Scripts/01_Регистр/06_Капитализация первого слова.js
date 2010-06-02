@@ -30,7 +30,7 @@ function Run() {
  var tr;
  var errMsg="Нет выделения.\n\nПеред запуском скрипта нужно выделить текст, который будет обработан.";
  tr=document.selection.createRange();
- if (!tr || tr.compareEndPoints("StartToEnd",tr)==0) {
+ if (!tr) {
   MsgBox(errMsg);
   return;
  }
@@ -56,6 +56,16 @@ function Run() {
   var coll=tr.getClientRects();
   var ttr1 = body.document.selection.createRange();
   var el=body.document.elementFromPoint(coll[0].left, coll[0].top);
+
+  var cursorPos=null;
+  if (tr.compareEndPoints("StartToEnd",tr)==0) {
+   var el2=document.getElementById("CursorPosition");
+   if (el2) el2.removeAttribute("id");
+   ttr1.pasteHTML("<"+MyTagName+" id=CursorPosition></"+MyTagName+">");
+   cursorPos=document.getElementById("CursorPosition");
+   ttr1.expand("word");
+  }
+  
   // поставим маркеры блока в виде пустых ссылок
   tr=ttr1.duplicate();
   tr.collapse();
@@ -117,11 +127,16 @@ function Run() {
   }
   // удаляем маркеры блока
   var tr1=document.body.createTextRange();
-  tr1.moveToElementText(BlockStartNode);
-  var tr2=document.body.createTextRange();
-  tr2.moveToElementText(BlockEndNode);
-  tr1.setEndPoint("StartToStart",tr2);
-  tr1.select();
+  if (!cursorPos) {
+   tr1.moveToElementText(BlockStartNode);
+   var tr2=document.body.createTextRange();
+   tr2.moveToElementText(BlockEndNode);
+   tr1.setEndPoint("StartToStart",tr2);
+   tr1.select();
+  } else {
+   tr1.moveToElementText(cursorPos);
+   tr1.select();
+  }
   BlockStartNode.parentNode.removeChild(BlockStartNode);
   BlockEndNode.parentNode.removeChild(BlockEndNode);
  }
