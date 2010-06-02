@@ -16,7 +16,7 @@ function Run() {
   MsgBox(errMsg);
   return;
  }
- window.external.BeginUndoUnit(document,"Нижний регистр");
+ window.external.BeginUndoUnit(document,"Верхний регистр");
  if (tr.parentElement().nodeName=="TEXTAREA") {
    //код для обработки выделения в INPUT'е
   var tr1=document.body.createTextRange();

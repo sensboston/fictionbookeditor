@@ -1,5 +1,5 @@
 //скрипт смены регистра by Sclex
-//v1.1
+//v1.4
 
 function Run() {
  //вид обработки, которой подвергается выделенный текст
@@ -17,9 +17,16 @@ function Run() {
   } 
  }
 
+ function checkFunc(full_match, offset_of_match, string_we_search_in) {
+  if (full_match.length>1 || lastSymbolLetter) oneLetterWords=false;
+  return full_match;
+ }
+
  capCol={};
  var k=0;
  var firstCapitalization=true;
+ var oneLetterWords=true;
+ var letterRE=new RegExp("[а-яёa-z]+","gi");
  var bigLetterRE=new RegExp("[А-ЯЁA-Z]","g");
  var smallLetterRE=new RegExp("[а-яёa-z]","g");
 
@@ -30,7 +37,7 @@ function Run() {
   MsgBox(errMsg);
   return;
  }
- window.external.BeginUndoUnit(document,"Нижний регистр");
+ window.external.BeginUndoUnit(document,"Циклическое изменение регистра");
  if (tr.parentElement().nodeName=="TEXTAREA") {
    //код для обработки выделения в INPUT'е
   var tr1=document.body.createTextRange();
@@ -119,6 +126,9 @@ function Run() {
      if (s.search(bigLetterRE)>=0) bigLetterFlag=true;
      if (s.search(smallLetterRE)>=0) smallLetterFlag=true;
      if (bigLetterFlag && bigLetterFlag) ProcessingEnded=true;
+     s.replace(letterRE,checkFunc);
+     if (s.substr(s.length-1).search(letterRE)>=0) lastSymbolLetter=true;
+     if (oneLetterWords) ProcessindEnded=true;
      ptr.nodeValue=s;
    }
    // теперь надо найти следующий по дереву узел для обработки
@@ -135,9 +145,10 @@ function Run() {
   }
   
   //решим, какую обработку производить
-  if (bigLetterFlag && smallLetterFlag) ObrabotkaType=2
-  else if (bigLetterFlag) ObrabotkaType=3
-  else ObrabotkaType=1;
+  if (bigLetterFlag && smallLetterFlag) ObrabotkaType=2 //и большие и маленькие буквы
+  else if (smallLetterFlag) ObrabotkaType=1; //только маленькие буквы
+  else if (!oneLetterWords) ObrabotkaType=3; //только большие буквы
+  else ObrabotkaType=2;
   
   var ptr=body.document.elementFromPoint(coll[0].left, coll[0].top);
   while (ptr && ptr.nodeName!="DIV" && ptr.nodeName!="P") { ptr=ptr.parentNode; }
