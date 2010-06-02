@@ -10,6 +10,7 @@ function Run() {
  var MyTagName="B";
 
  function replaceFunc(full_match, offset_of_match, string_we_search_in) {
+  alert("full_match:\n\n"+full_match);
   if (lastSymbolLetter || !firstCapitalization) return full_match.toLowerCase();
   else {
    firstCapitalization=false;
@@ -26,12 +27,11 @@ function Run() {
  var tr;
  var errMsg="Нет выделения.\n\nПеред запуском скрипта нужно выделить текст, который будет обработан.";
  tr=document.selection.createRange();
- if (!tr) {
+ if (!tr || tr.compareEndPoints("StartToEnd",tr)==0) {
   MsgBox(errMsg);
   return;
  }
  window.external.BeginUndoUnit(document,"Нижний регистр");
- if (tr.compareEndPoints("StartToEnd",tr)==0) tr.expand("word");
  if (tr.parentElement().nodeName=="TEXTAREA") {
    //код для обработки выделения в INPUT'е
   var tr1=document.body.createTextRange();
@@ -133,6 +133,8 @@ function Run() {
   while (ptr && ptr.nodeName!="DIV" && ptr.nodeName!="P") { ptr=ptr.parentNode; }
   
   var ProcessingEnded=false; // true, когда обработка закончена и пора выходить
+  var InsideSelection=false;
+  var InsideP=false;
   while (!ProcessingEnded) {
    // напомню: nodeType=1 для элемента (тэга) и nodeType=3 для текста
    // если встретили тэг P, меняем флаг, что мы внутри P
@@ -164,7 +166,7 @@ function Run() {
      else if (ObrabotkaType==2) {s=s.toLowerCase();}
      else if (ObrabotkaType==3) {
       lastSymbolLetter=false;
-      var re12 =  new RegExp("[а-яёa-z]+","gi"); 
+      var re12 = new RegExp("[а-яёa-z]+","gi"); 
       s=s.replace(re12,replaceFunc);
      }
      // и возвращаем на место
