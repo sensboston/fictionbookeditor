@@ -32,11 +32,12 @@ function Run() {
  var tr;
  var errMsg="Нет выделения.\n\nПеред запуском скрипта нужно выделить текст, который будет обработан.";
  tr=document.selection.createRange();
- if (!tr || tr.compareEndPoints("StartToEnd",tr)==0) {
+ if (!tr) {
   MsgBox(errMsg);
   return;
  }
  window.external.BeginUndoUnit(document,"Нижний регистр");
+ if (tr.compareEndPoints("StartToEnd",tr)==0) tr.expand("word");
  if (tr.parentElement().nodeName=="TEXTAREA") {
    //код для обработки выделения в INPUT'е
   var tr1=document.body.createTextRange();
