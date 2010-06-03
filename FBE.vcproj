@@ -821,10 +821,6 @@
 				>
 			</File>
 			<File
-				RelativePath="res\FBE.ico"
-				>
-			</File>
-			<File
 				RelativePath="FBE.rc"
 				>
 				<FileConfiguration
@@ -845,6 +841,10 @@
 						AdditionalIncludeDirectories="$(OUTDIR)"
 					/>
 				</FileConfiguration>
+			</File>
+			<File
+				RelativePath=".\res\FBE2.ico"
+				>
 			</File>
 			<File
 				RelativePath=".\res\Scripts.bmp"

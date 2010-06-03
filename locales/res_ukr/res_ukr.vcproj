@@ -236,10 +236,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\res\FBE.ico"
-				>
-			</File>
-			<File
 				RelativePath=".\FBE.rc"
 				>
 				<FileConfiguration
@@ -250,6 +246,10 @@
 						Culture="1049"
 					/>
 				</FileConfiguration>
+			</File>
+			<File
+				RelativePath=".\res\FBE2.ico"
+				>
 			</File>
 			<File
 				RelativePath=".\res\Scripts.bmp"

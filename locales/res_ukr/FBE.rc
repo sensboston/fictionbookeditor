@@ -668,7 +668,7 @@ IDB_AB_BANNER           BITMAP                  "res\\Fb2-shema.bmp"
 
 // Icon with lowest ID value placed first to ensure application icon
 // remains consistent on all systems.
-IDR_MAINFRAME           ICON                    "res\\FBE.ico"
+IDR_MAINFRAME           ICON                    "res\\FBE2.ico"
 
 /////////////////////////////////////////////////////////////////////////////
 //
