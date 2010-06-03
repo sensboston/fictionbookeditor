@@ -490,7 +490,7 @@ function Run() {
 // var re71 = new RegExp("(,|;)(<A class=note href=\\\"[^>]+\\\d{1,4}\\\">\\\[{0,1}[3579][48]\\\]{0,1}</A> )","gi");
 // var re71_ = '<a href="http://reeed.ru/">$1</a>$2';
 
-// лишние пробелы
+// лишние пробелы (везде, кроме стихов и кода)
  var re80 = new RegExp("(\\\s|"+nbspEntity+"){2,}","g");
  var re80_ = "$1";
 // var count_80 = 0;
@@ -500,7 +500,7 @@ function Run() {
  var re81_ = "";
  var count_81 = 0;
 
-// удаление начальных пробелов строки
+// удаление начальных пробелов строки, кроме стихов
  var re82 = new RegExp("^("+sIB+"){0,1}(\\\s|"+nbspEntity+")+","gi");
  var re82_ = "$1";
  var count_82 = 0;
@@ -653,9 +653,9 @@ function Run() {
        if (s.search(re69)!=-1)         { s=s.replace(re69, re69_); }
        if (s.search(re70)!=-1)         { s=s.replace(re70, re70_); }
 //       if (s.search(re71)!=-1 && Snoska)         { s=s.replace(re71, re71_); }
-       if (s.search(re80)!=-1 && ptr.parentNode.className!="code")         { s=s.replace(re80, re80_);}
+       if (s.search(re80)!=-1 && ptr.parentNode.className!="code" && ptr.parentNode.className!="stanza")         { s=s.replace(re80, re80_);}
        if (s.search(re81)!=-1)         { s=s.replace(re81, re81_); count_81++}
-       if (s.search(re82)!=-1)         { s=s.replace(re82, re82_); count_82++}
+       if (s.search(re82)!=-1 && ptr.parentNode.className!="stanza")         { s=s.replace(re82, re82_); count_82++}
        if (s.search(re83)!=-1)         { s=s.replace(re83, re83_); count_83++}
        if (s.search(re84)!=-1 && s.search(re84ex)==-1 && ptr.parentNode.className=="title")         { s=s.replace(re84, re84_); count_84++}
        if (s.search(re85)!=-1)         { s=s.replace(re85, re85_); count_26++}
@@ -755,7 +755,7 @@ var Tsec3 = Math.ceil(1000*((Tf-Ts)/1000-Tmin*60))/1000;
  if (st2!="") st2="\n"+st2;
 
  MsgBox ('                  –= Jurgen Script =– \n'+
-        '           «Генеральная уборка» v.'+VersionNumber+'               \n\n'+
+        ' «Генеральная уборка» v.'+VersionNumber+' Golma Edition       \n\n'+
 
         ' Время: ' +TimeStr+'.'+st2); 
 

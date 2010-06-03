@@ -2439,10 +2439,9 @@ public:
 		HGLOBAL hbytes = ::LoadResource(NULL, hres);
 		CA2CT contribs((char*)::LockResource(hbytes), 65001);  // UTF-8
 		CString s(contribs);
-		m_Contributors.SetWindowText(s.Left(s.GetLength()-5));
+		m_Contributors.SetWindowText(s.Left(s.ReverseFind(L'\n')-1));
 
 		::SetFocus(GetDlgItem(IDOK));
-
 		return 0;
 	}
 
