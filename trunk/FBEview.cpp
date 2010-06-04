@@ -3301,9 +3301,10 @@ bool CFBEView::GoToReference(bool fCheck)
 	if(!(bool)body) 
 		return false;
 
-	CString	    sfbname(AU::GetAttrCS(body,L"fbname"));	
-	if(!(bool)body || sfbname.IsEmpty() || sfbname !="notes") 
-		return false;		
+	CString id = MSHTML::IHTMLElementPtr(rng->parentElement())->id;
+	CString	sfbname(AU::GetAttrCS(body,L"fbname"));	
+	if(id.IsEmpty() && (sfbname.IsEmpty() || !(sfbname.CompareNoCase(L"notes")==0 || sfbname.CompareNoCase(L"comments")==0)))
+		return false;
 	
 	// * ok, all checks passed
 	if (fCheck)
@@ -3333,10 +3334,11 @@ bool CFBEView::GoToReference(bool fCheck)
 		else if(href.Find(_T("://"),0) !=-1)
 			continue;
 
-		_variant_t aid = pe->getAttribute(L"id",2);
-		CString snote(L"#"+CString(aid));
+		id = L"#"+id;
+		CString snote = L"#"+pe->id;
 
-		if(href==snote){
+		if(href==snote || href==id)
+		{
 			GoTo(a);
 			MSHTML::IHTMLTxtRangePtr r(MSHTML::IHTMLBodyElementPtr(Document()->body)->createTextRange());
 			r->moveToElementText(a);
