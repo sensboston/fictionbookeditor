@@ -291,10 +291,10 @@ IDD_OPTIONS DIALOGEX 0, 0, 222, 215
 STYLE DS_SETFONT | WS_CHILD | WS_SYSMENU
 FONT 9, "Tahoma", 0, 0, 0x0
 BEGIN
-    LTEXT           "Text color:",IDC_STATIC,15,70,49,9
-    PUSHBUTTON      "",IDC_FG,60,68,19,12
-    LTEXT           "Background:",IDC_STATIC,92,70,49,9
-    PUSHBUTTON      "",IDC_BG,135,68,16,12
+    LTEXT           "Text color:",IDC_STATIC,15,70,38,9
+    PUSHBUTTON      "",IDC_FG,60,68,22,12
+    LTEXT           "Background:",IDC_STATIC,89,70,41,9
+    PUSHBUTTON      "",IDC_BG,134,68,22,12
     LTEXT           "Editor font:",IDC_STATIC,15,53,49,9
     COMBOBOX        IDC_FONT,60,51,151,70,CBS_DROPDOWNLIST | CBS_SORT | WS_VSCROLL | WS_TABSTOP
     LTEXT           "Font size:",IDC_STATIC,137,24,33,9
