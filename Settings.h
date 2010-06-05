@@ -498,6 +498,7 @@ class CSettings : public ISerializable, public IObjectFactory
 
 	// added by SeNS: view dimensions for external helper
 	int m_viewWidth, m_viewHeight;
+	HWND m_hMainWindow;
 
 public:
 	std::vector<CHotkeysGroup> m_hotkey_groups;
@@ -637,5 +638,7 @@ public:
 	void	SetViewHeight(int height) { m_viewHeight = height; }
 	int		GetViewWidth() { return m_viewWidth; }
 	int		GetViewHeight() { return m_viewHeight; }
+	void	SetMainWindow(HWND hwnd) { m_hMainWindow = hwnd; }
+	HWND	GetMainWindow() { return m_hMainWindow; }
 
 };

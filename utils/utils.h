@@ -18,11 +18,7 @@ namespace U // place all utilities into their own namespace
 	};
 
 	void InitKeycodes();
-
-	void ChangeAttribute(MSHTML::IHTMLElementPtr elem,
-		const wchar_t* attrib,
-		const wchar_t* value,
-		MSHTML::IMarkupServicesPtr mk_srv);
+	void ChangeAttribute(MSHTML::IHTMLElementPtr elem, const wchar_t* attrib, const wchar_t* value);
 
   // loading data into array
   HRESULT   LoadFile(const TCHAR *filename, VARIANT *vt);

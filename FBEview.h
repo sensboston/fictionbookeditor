@@ -292,7 +292,7 @@ public:
   CAtlList<CString> m_UndoStrings;
   void			    BeginUndoUnit(const wchar_t *name) 
   { 
-	  m_UndoStrings.AddHead(name);
+	  //m_UndoStrings.AddHead(name);
 	  m_mk_srv->BeginUndoUnit((wchar_t *)name); 
   }
   void			    EndUndoUnit() 
@@ -386,11 +386,11 @@ public:
 	void QueryStatus(OLECMD *cmd, int ncmd);
 	CString QueryCmdText(int cmd);
 
-	LRESULT OnUndo(WORD, WORD, HWND, BOOL&) 
+	LRESULT OnUndo(WORD, WORD, HWND hWnd, BOOL&) 
 	{ 
 		LRESULT res = ExecCommand(IDM_UNDO);
-		if (m_UndoStrings.GetCount() && m_UndoStrings.RemoveHead().CompareNoCase(L"structure editing")==0)
-			::SendMessage(m_frame, WM_COMMAND, MAKELONG(0,IDN_TREE_RESTORE), 0);
+		// update tree view
+		::SendMessage(m_frame,WM_COMMAND,MAKELONG(0,IDN_TREE_RESTORE),0);
 		return res;
 	}
 	LRESULT OnRedo(WORD, WORD, HWND, BOOL&) { return ExecCommand(IDM_REDO); }
@@ -402,7 +402,7 @@ public:
 	LRESULT OnStrik(WORD, WORD, HWND, BOOL&) { return ExecCommand(IDM_STRIKETHROUGH); }
 	LRESULT OnSup(WORD, WORD, HWND, BOOL&) { return ExecCommand(IDM_SUPERSCRIPT); }
 	LRESULT OnSub(WORD, WORD, HWND, BOOL&) { return ExecCommand(IDM_SUBSCRIPT); }
-	LRESULT OnCode(WORD, WORD, HWND, BOOL&);// { return ExecCommand(IDM_TELETYPE); }
+	LRESULT OnCode(WORD, WORD, HWND, BOOL&);
 
   LRESULT OnFind(WORD, WORD, HWND, BOOL&);
   LRESULT OnFindNext(WORD, WORD, HWND, BOOL&);
@@ -412,9 +412,8 @@ public:
   LRESULT OnStyleNolink(WORD, WORD, HWND, BOOL&) { return ExecCommand(IDM_UNLINK); }
   LRESULT OnStyleNormal(WORD, WORD, HWND, BOOL&)
   {
-	  //Call(L"StyleNormal",SelectionStructCon());
 	  BeginUndoUnit(L"normal style");
-	  ChangeAttribute(SelectionStructCon(), L"class", L"normal");
+	  U::ChangeAttribute(SelectionStructCon(), L"class", L"normal");
 	  EndUndoUnit();
 
 	  return 0;
@@ -613,7 +612,7 @@ public:
   void			    ImgSetURL(IDispatch *elem,const CString& url);
 
   bool			    SplitContainer(bool fCheck);
-  MSHTML::IHTMLDOMNodePtr	  ChangeAttribute(MSHTML::IHTMLElementPtr elem, const wchar_t* attrib, const wchar_t* value);
+//  MSHTML::IHTMLDOMNodePtr	  ChangeAttribute(MSHTML::IHTMLElementPtr elem, const wchar_t* attrib, const wchar_t* value);
   bool				InsertPoem(bool fCheck);
   bool				InsertCite(bool fCheck);
   bool				InsertTable(bool fCheck, bool bTitle=true, int nrows=1);
