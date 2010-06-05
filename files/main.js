@@ -2110,7 +2110,7 @@ function AddEpigraph(cp,check)
             pptags[j++] = ppall[k].tagName;
         }
 
-	if (pptags.length > 0)
+	if (pptags.length > 0 && pps.length > 1)
 	{
           for(pptag in pptags)
           {
