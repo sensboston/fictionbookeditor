@@ -499,33 +499,6 @@ bool CFBEView::SplitContainer(bool fCheck)
 	return false;
 }
 
-// charge element's attribute
-MSHTML::IHTMLDOMNodePtr	  CFBEView::ChangeAttribute(MSHTML::IHTMLElementPtr elem, const wchar_t* attrib, 
-													const wchar_t* value)
-{
-	if(U::scmp(attrib, L"class"))
-		elem->setAttribute(attrib, _variant_t(value), 1);
-	else
-		elem->className = value;
-
-	CString innerHTML = elem->innerHTML;
-
-	MSHTML::IMarkupPointerPtr pBegin, pEnd;
-	m_mk_srv->CreateMarkupPointer(&pBegin);
-	m_mk_srv->CreateMarkupPointer(&pEnd);
-
-	pBegin->MoveAdjacentToElement(elem, MSHTML::ELEM_ADJ_BeforeBegin);	
-	pEnd->MoveAdjacentToElement(elem, MSHTML::ELEM_ADJ_AfterEnd);
-
-	m_mk_srv->remove(pBegin, pEnd);
-	BSTR elemHTML = elem->outerHTML;
-	m_mk_srv->InsertElement(elem, pBegin, pEnd);
-	if(!innerHTML.IsEmpty())
-	  elem->innerHTML = innerHTML.AllocSysString();
-
-	return elem;
-}
-
 // cleaning up html
 static void KillDivs(MSHTML::IHTMLElement2Ptr elem) {
 	MSHTML::IHTMLElementCollectionPtr	  divs(elem->getElementsByTagName(L"DIV"));
@@ -3305,6 +3278,7 @@ bool CFBEView::GoToReference(bool fCheck)
 	CString	sfbname(AU::GetAttrCS(body,L"fbname"));	
 	if(id.IsEmpty() && (sfbname.IsEmpty() || !(sfbname.CompareNoCase(L"notes")==0 || sfbname.CompareNoCase(L"comments")==0)))
 		return false;
+	id = L"#"+id;
 	
 	// * ok, all checks passed
 	if (fCheck)
@@ -3327,14 +3301,14 @@ bool CFBEView::GoToReference(bool fCheck)
 		if (!(bool)a)
 			continue;
 
-		CString	    href(AU::GetAttrCS((MSHTML::IHTMLElementPtr)coll->item(l),L"href"));
+		CString href(AU::GetAttrCS((MSHTML::IHTMLElementPtr)coll->item(l),L"href"));
+
 		// changed by SeNS
 		if (href.Find(L"file") == 0)
 			href = href.Mid(href.ReverseFind (L'#'),1024);
 		else if(href.Find(_T("://"),0) !=-1)
 			continue;
 
-		id = L"#"+id;
 		CString snote = L"#"+pe->id;
 
 		if(href==snote || href==id)
@@ -3347,6 +3321,17 @@ bool CFBEView::GoToReference(bool fCheck)
 			CString sa = a->innerText;
 			r->move(L"character", sa.GetLength());
 			r->select();
+			// scroll to the center of view
+			MSHTML::IHTMLRectPtr rect = MSHTML::IHTMLElement2Ptr(a)->getBoundingClientRect();
+			MSHTML::IHTMLWindow2Ptr window(MSHTML::IHTMLDocument2Ptr(Document())->parentWindow);
+			if (rect && window)
+			{
+				if (rect->bottom-rect->top <= _Settings.GetViewHeight())
+					window->scrollBy(0,(rect->top+rect->bottom-_Settings.GetViewHeight())/2);
+				else
+					window->scrollBy(0,rect->top);
+			}
+			break;
 		}
 	}
 

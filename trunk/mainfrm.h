@@ -857,10 +857,11 @@ public:
   void ChangeNBSP(MSHTML::IHTMLElementPtr elem);
   void RemoveLastUndo();
 
-  LRESULT OnEdChange(WORD, WORD, HWND, BOOL&) {
+  LRESULT OnEdChange(WORD, WORD, HWND hWnd, BOOL& b) {
     StopIncSearch(true);
 	m_doc_changed=true;
     m_cb_updated=false;
+
 	// added by SeNS: update 
 	UpdateViewSizeInfo();
 	// added by SeNS - process nbsp
@@ -1027,6 +1028,7 @@ public:
 				{
 					_Settings.SetViewWidth (m_scrollElement->clientWidth);
 					_Settings.SetViewHeight(m_scrollElement->clientHeight);
+					_Settings.SetMainWindow(m_hWnd);
 				}
 			}
 	}

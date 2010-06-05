@@ -2769,7 +2769,7 @@ LRESULT CMainFrame::OnCbEdChange(WORD code, WORD wID, HWND hWndCtl, BOOL& bHandl
 
 		if ( (U::scmp(an->tagName,L"DIV")==0) || (U::scmp(an->tagName,L"SPAN")==0)) // must be an image
 		{			
-			m_doc->m_body.ChangeAttribute(an, L"href", newhref);
+			U::ChangeAttribute(an, L"href", newhref);
 			MSHTML::IHTMLElementPtr img = MSHTML::IHTMLDOMNodePtr(an)->firstChild;
 			m_doc->m_body.ImgSetURL(img, newhref);
 			IHTMLControlRangePtr r(((MSHTML::IHTMLElement2Ptr)(m_doc->m_body.Document()->body))->createControlRange());
@@ -2778,7 +2778,7 @@ LRESULT CMainFrame::OnCbEdChange(WORD code, WORD wID, HWND hWndCtl, BOOL& bHandl
 		}
 		else
 		{
-			m_doc->m_body.ChangeAttribute(an, L"href", newhref);
+			U::ChangeAttribute(an, L"href", newhref);
 			MSHTML::IHTMLTxtRangePtr r = m_doc->m_body.Document()->selection->createRange();
 			r->moveToElementText(an);
 			r->select();
@@ -2812,7 +2812,7 @@ LRESULT CMainFrame::OnCbEdChange(WORD code, WORD wID, HWND hWndCtl, BOOL& bHandl
 		if (scs)
 		{
 			//scs->title=(const wchar_t *)U::GetWindowText(m_image_title);
-			scs = m_doc->m_body.ChangeAttribute(scs, L"title", (const wchar_t *)U::GetWindowText(m_image_title));
+			U::ChangeAttribute(scs, L"title", (const wchar_t *)U::GetWindowText(m_image_title));
 
 			IHTMLControlRangePtr r(((MSHTML::IHTMLElement2Ptr)(m_doc->m_body.Document()->body))->createControlRange());
 			r->add((IHTMLControlElementPtr)scs);
@@ -2955,11 +2955,9 @@ LRESULT CMainFrame::OnTreeUpdate(WORD, WORD, HWND, BOOL&)
   return 0;
 }
 
-//zzz
 LRESULT CMainFrame::OnTreeRestore(WORD, WORD, HWND, BOOL& b)
 {
-//  m_document_tree.GetDocumentStructure(m_doc->m_body.Document());
-//  m_document_tree.ShowWindow(SW_SHOW);
+  m_document_tree.GetDocumentStructure(m_doc->m_body.Document());
   return 0;
 }
 

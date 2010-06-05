@@ -214,7 +214,7 @@ public:
 	STDMETHOD(SetStyleEx)(IDispatch* doc, IDispatch* elem, BSTR style)
 	{
 		MSHTML::IHTMLElementPtr el = elem;
-		U::ChangeAttribute(el, L"class", style, doc);
+		U::ChangeAttribute(el, L"class", style);
 		return S_OK;
 	}
 
