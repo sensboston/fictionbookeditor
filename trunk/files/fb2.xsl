@@ -378,7 +378,7 @@
       <label unselectable="on" class="hl"><xsl:value-of select="$IDS_LANGUAGE"/></label>
       <!--input type="text" maxlength="2" id="tiLang" class="short" value="{$cur/f:lang}"/-->
 
-      <select id="tiLang" title="Language of the text">
+      <select id="tiLang" title="Language of the text" onchange="document.getElementById('fbw_updater').innerHTML=document.getElementById('fbw_updater').innerHTML=='0'?'1':'0';">
 		<xsl:call-template name="fill_languages_combo">
 			<xsl:with-param name="lang" select="$cur/f:lang"/>
 		</xsl:call-template>
