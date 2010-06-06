@@ -1,0 +1,56 @@
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FBE", "FBE.vcproj", "{E1B04471-3393-4970-93ED-FB6A57BCDA8B}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Russian", "locales\res_rus\res_rus.vcproj", "{1BC3F431-9672-4191-9FC5-A8B1C9C08E36}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Localization", "Localization", "{6C7862A8-8BAE-4B07-B1EA-9642D9122354}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FBShell", "FBSHell\FBShell.vcproj", "{856C10BA-254C-4FA0-B45B-00F4B5A6DEB2}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Ukrainian", "locales\res_ukr\res_ukr.vcproj", "{B0D6E5EB-56C0-4DC2-A98F-98EFE5158B8B}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ExportHTML", "ExportHTML\ExportHTML.vcproj", "{07249A4A-8D68-4300-B70F-688FD4F80506}"
+	ProjectSection(ProjectDependencies) = postProject
+		{E1B04471-3393-4970-93ED-FB6A57BCDA8B} = {E1B04471-3393-4970-93ED-FB6A57BCDA8B}
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SubversionScc) = preSolution
+		Svn-Managed = True
+		Manager = AnkhSVN - Subversion Support for Visual Studio
+	EndGlobalSection
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E1B04471-3393-4970-93ED-FB6A57BCDA8B}.Debug|Win32.ActiveCfg = Debug|Win32
+		{E1B04471-3393-4970-93ED-FB6A57BCDA8B}.Debug|Win32.Build.0 = Debug|Win32
+		{E1B04471-3393-4970-93ED-FB6A57BCDA8B}.Release|Win32.ActiveCfg = Release|Win32
+		{E1B04471-3393-4970-93ED-FB6A57BCDA8B}.Release|Win32.Build.0 = Release|Win32
+		{1BC3F431-9672-4191-9FC5-A8B1C9C08E36}.Debug|Win32.ActiveCfg = Debug|Win32
+		{1BC3F431-9672-4191-9FC5-A8B1C9C08E36}.Debug|Win32.Build.0 = Debug|Win32
+		{1BC3F431-9672-4191-9FC5-A8B1C9C08E36}.Release|Win32.ActiveCfg = Release|Win32
+		{1BC3F431-9672-4191-9FC5-A8B1C9C08E36}.Release|Win32.Build.0 = Release|Win32
+		{856C10BA-254C-4FA0-B45B-00F4B5A6DEB2}.Debug|Win32.ActiveCfg = Debug|Win32
+		{856C10BA-254C-4FA0-B45B-00F4B5A6DEB2}.Debug|Win32.Build.0 = Debug|Win32
+		{856C10BA-254C-4FA0-B45B-00F4B5A6DEB2}.Release|Win32.ActiveCfg = Release|Win32
+		{856C10BA-254C-4FA0-B45B-00F4B5A6DEB2}.Release|Win32.Build.0 = Release|Win32
+		{B0D6E5EB-56C0-4DC2-A98F-98EFE5158B8B}.Debug|Win32.ActiveCfg = Debug|Win32
+		{B0D6E5EB-56C0-4DC2-A98F-98EFE5158B8B}.Debug|Win32.Build.0 = Debug|Win32
+		{B0D6E5EB-56C0-4DC2-A98F-98EFE5158B8B}.Release|Win32.ActiveCfg = Release|Win32
+		{B0D6E5EB-56C0-4DC2-A98F-98EFE5158B8B}.Release|Win32.Build.0 = Release|Win32
+		{07249A4A-8D68-4300-B70F-688FD4F80506}.Debug|Win32.ActiveCfg = Debug|Win32
+		{07249A4A-8D68-4300-B70F-688FD4F80506}.Debug|Win32.Build.0 = Debug|Win32
+		{07249A4A-8D68-4300-B70F-688FD4F80506}.Release|Win32.ActiveCfg = Release|Win32
+		{07249A4A-8D68-4300-B70F-688FD4F80506}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{1BC3F431-9672-4191-9FC5-A8B1C9C08E36} = {6C7862A8-8BAE-4B07-B1EA-9642D9122354}
+		{B0D6E5EB-56C0-4DC2-A98F-98EFE5158B8B} = {6C7862A8-8BAE-4B07-B1EA-9642D9122354}
+	EndGlobalSection
+EndGlobal

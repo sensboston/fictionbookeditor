@@ -1,0 +1,96 @@
+# Microsoft Developer Studio Generated Dependency File, included by ExportHTML.mak
+
+.\ExportHTML.cpp : \
+	"..\..\..\..\..\..\..\program files\microsoft sdk\include\basetsd.h"\
+	"..\..\..\..\..\..\..\program files\microsoft sdk\include\guiddef.h"\
+	"..\..\..\..\..\..\..\program files\microsoft sdk\include\propidl.h"\
+	"..\..\..\..\..\..\..\program files\microsoft sdk\include\reason.h"\
+	"..\..\..\..\..\..\..\program files\microsoft sdk\include\shldisp.h"\
+	"..\..\..\..\..\..\..\program files\microsoft sdk\include\shobjidl.h"\
+	"..\..\..\..\..\..\..\program files\microsoft sdk\include\shtypes.h"\
+	"..\..\..\..\..\..\..\program files\microsoft sdk\include\stralign.h"\
+	"..\..\..\..\..\..\..\program files\microsoft sdk\include\tvout.h"\
+	"..\..\..\..\..\..\..\windows\system32\msxml4.dll"\
+	"..\FBE.h"\
+	"..\utils\utils.h"\
+	"..\wtl\atlapp.h"\
+	"..\wtl\atlddx.h"\
+	"..\wtl\atldlgs.h"\
+	"..\wtl\atlgdi.h"\
+	"..\wtl\atlmisc.h"\
+	"..\wtl\atlres.h"\
+	"..\wtl\atluser.h"\
+	".\ExportHTML.h"\
+	".\StdAfx.h"\
+	
+
+.\ExportHTMLImpl.cpp : \
+	"..\..\..\..\..\..\..\program files\microsoft sdk\include\basetsd.h"\
+	"..\..\..\..\..\..\..\program files\microsoft sdk\include\guiddef.h"\
+	"..\..\..\..\..\..\..\program files\microsoft sdk\include\propidl.h"\
+	"..\..\..\..\..\..\..\program files\microsoft sdk\include\reason.h"\
+	"..\..\..\..\..\..\..\program files\microsoft sdk\include\shldisp.h"\
+	"..\..\..\..\..\..\..\program files\microsoft sdk\include\shobjidl.h"\
+	"..\..\..\..\..\..\..\program files\microsoft sdk\include\shtypes.h"\
+	"..\..\..\..\..\..\..\program files\microsoft sdk\include\stralign.h"\
+	"..\..\..\..\..\..\..\program files\microsoft sdk\include\tvout.h"\
+	"..\..\..\..\..\..\..\windows\system32\msxml4.dll"\
+	"..\FBE.h"\
+	"..\utils\utils.h"\
+	"..\wtl\atlapp.h"\
+	"..\wtl\atlddx.h"\
+	"..\wtl\atldlgs.h"\
+	"..\wtl\atlgdi.h"\
+	"..\wtl\atlmisc.h"\
+	"..\wtl\atlres.h"\
+	"..\wtl\atluser.h"\
+	".\ExportHTML.h"\
+	".\StdAfx.h"\
+	
+
+.\StdAfx.cpp : \
+	"..\..\..\..\..\..\..\program files\microsoft sdk\include\basetsd.h"\
+	"..\..\..\..\..\..\..\program files\microsoft sdk\include\guiddef.h"\
+	"..\..\..\..\..\..\..\program files\microsoft sdk\include\propidl.h"\
+	"..\..\..\..\..\..\..\program files\microsoft sdk\include\reason.h"\
+	"..\..\..\..\..\..\..\program files\microsoft sdk\include\shldisp.h"\
+	"..\..\..\..\..\..\..\program files\microsoft sdk\include\shobjidl.h"\
+	"..\..\..\..\..\..\..\program files\microsoft sdk\include\shtypes.h"\
+	"..\..\..\..\..\..\..\program files\microsoft sdk\include\stralign.h"\
+	"..\..\..\..\..\..\..\program files\microsoft sdk\include\tvout.h"\
+	"..\..\..\..\..\..\..\windows\system32\msxml4.dll"\
+	"..\wtl\atlapp.h"\
+	"..\wtl\atlddx.h"\
+	"..\wtl\atldlgs.h"\
+	"..\wtl\atlgdi.h"\
+	"..\wtl\atlmisc.h"\
+	"..\wtl\atlres.h"\
+	"..\wtl\atluser.h"\
+	".\StdAfx.h"\
+	
+
+..\utils\Utils.cpp : \
+	"..\..\..\..\..\..\..\program files\microsoft sdk\include\basetsd.h"\
+	"..\..\..\..\..\..\..\program files\microsoft sdk\include\guiddef.h"\
+	"..\..\..\..\..\..\..\program files\microsoft sdk\include\propidl.h"\
+	"..\..\..\..\..\..\..\program files\microsoft sdk\include\reason.h"\
+	"..\..\..\..\..\..\..\program files\microsoft sdk\include\shldisp.h"\
+	"..\..\..\..\..\..\..\program files\microsoft sdk\include\shobjidl.h"\
+	"..\..\..\..\..\..\..\program files\microsoft sdk\include\shtypes.h"\
+	"..\..\..\..\..\..\..\program files\microsoft sdk\include\stralign.h"\
+	"..\..\..\..\..\..\..\program files\microsoft sdk\include\tvout.h"\
+	"..\..\..\..\..\..\..\windows\system32\msxml4.dll"\
+	"..\utils\utils.h"\
+	"..\wtl\atlapp.h"\
+	"..\wtl\atlddx.h"\
+	"..\wtl\atldlgs.h"\
+	"..\wtl\atlgdi.h"\
+	"..\wtl\atlmisc.h"\
+	"..\wtl\atlres.h"\
+	"..\wtl\atluser.h"\
+	".\StdAfx.h"\
+	
+
+.\ExportHTML.rc : \
+	".\ExportHTML.rgs"\
+	
