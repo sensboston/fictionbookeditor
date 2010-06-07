@@ -296,11 +296,13 @@ MSHTML::IHTMLTxtRangePtr CSpeller::GetSelWordRange()
 {
 	// fetch selection
 	MSHTML::IHTMLTxtRangePtr selRange(m_doc2->selection->createRange());
-	if (selRange)
+	MSHTML::IHTMLTxtRangePtr rng = selRange->duplicate();
+	if (rng)
 	{
-		selRange->moveStart(L"word", -1);
-		selRange->moveEnd(L"word", 1);
-		return selRange->duplicate();
+		CString s = rng->text;
+		if (!s.IsEmpty()) rng->collapse(true);
+		rng->expand(L"word");
+		return rng;
 	}
 	else return 0;
 }
@@ -310,8 +312,9 @@ MSHTML::IHTMLTxtRangePtr CSpeller::GetSelWordRange()
 // 
 CString CSpeller::GetSelWord()
 {
+	CString word(L"");
 	MSHTML::IHTMLTxtRangePtr range = GetSelWordRange();
-	CString word = range->text;
+	if (range) word.SetString(range->text);
 	return word.Trim();
 }
 
@@ -320,10 +323,7 @@ CString CSpeller::GetSelWord()
 // 
 void CSpeller::AppendSpellMenu (HMENU menu)
 {
-	MSHTML::IHTMLTxtRangePtr range = GetSelWordRange();
-	if (!range) return;
-	CString word = range->text;
-	word.Trim();
+	CString word = GetSelWord();
 	if (word.IsEmpty()) return;
 	
 	if (SpellCheck(word) != SPELL_OK)
