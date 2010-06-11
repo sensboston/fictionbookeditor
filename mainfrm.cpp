@@ -1873,11 +1873,17 @@ public:
     m_source.SendMessage(SCI_SETTARGETEND,end);
 
     // convert search pattern and replacement to utf8
-    int	  patlen;
+    int	  patlen, num_pat_nbsp, num_rep_nbsp;
+	// added by SeNS
+	if (_Settings.GetNBSPChar().Compare(L"\u00A0") != 0)
+		num_pat_nbsp = m_view->m_fo.pattern.Replace( L"\u00A0", _Settings.GetNBSPChar());
     char  *pattern=AU::ToUtf8(m_view->m_fo.pattern,patlen);
     if (pattern==NULL)
       return;
     int	  replen;
+	// added by SeNS
+	if (_Settings.GetNBSPChar().Compare(L"\u00A0") != 0)
+		num_rep_nbsp = m_view->m_fo.replacement.Replace( L"\u00A0", _Settings.GetNBSPChar());
     char  *replacement=AU::ToUtf8(m_view->m_fo.replacement,replen);
     if (replacement==NULL) {
       free(pattern);
@@ -1895,6 +1901,8 @@ public:
       m_source.SendMessage(SCI_BEGINUNDOACTION);
       while (pos!=-1) {
 	int matchlen=m_source.SendMessage(SCI_GETTARGETEND)-m_source.SendMessage(SCI_GETTARGETSTART);
+	matchlen -= num_pat_nbsp*2;
+
 	int mvp=0;
 	if (matchlen<=0) {
 	  char	ch=(char)m_source.SendMessage(SCI_GETCHARAT,m_source.SendMessage(SCI_GETTARGETEND));
@@ -1906,8 +1914,9 @@ public:
 	  rlen=m_source.SendMessage(SCI_REPLACETARGETRE,replen,(LPARAM)replacement);
 	else
 	  m_source.SendMessage(SCI_REPLACETARGET,replen,(LPARAM)replacement);
+
 	end += rlen-matchlen;
-	last_match=pos+rlen+mvp;
+	last_match=pos+rlen+mvp+num_rep_nbsp*2;
 	if (last_match>=end)
 	  pos=-1;
 	else {
@@ -4067,6 +4076,8 @@ void  CMainFrame::SetupSci()
   m_source.SendMessage(SCI_SETEOLMODE,SC_EOL_CRLF);
   m_source.SendMessage(SCI_SETVIEWEOL, _Settings.XmlSrcShowEOL());
   m_source.SendMessage(SCI_SETWRAPMODE, _Settings.XmlSrcWrap() ? SC_WRAP_WORD : SC_WRAP_NONE);
+  // added by SeNS: try to speed-up wrap mode
+  m_source.SendMessage(SCI_SETLAYOUTCACHE,SC_CACHE_DOCUMENT);
   m_source.SendMessage(SCI_SETXCARETPOLICY,CARET_SLOP|CARET_EVEN,50);
   m_source.SendMessage(SCI_SETYCARETPOLICY,CARET_SLOP|CARET_EVEN,50);
   // added by SeNS: display line numbers

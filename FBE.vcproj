@@ -125,6 +125,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
+				CommandLine="upx.exe $(OutDir)\$(ProjectName).exe"
 			/>
 		</Configuration>
 		<Configuration

@@ -2263,6 +2263,11 @@ void  CFBEView::DoReplace() {
     if (m_fo.match) { // use regexp match
       RRList	rl;
       CString rep(GetReplStr(m_fo.replacement,m_fo.match,rl));
+
+	  // added by SeNS
+	  if (_Settings.GetNBSPChar().Compare(L"\u00A0") != 0)
+		  rep.Replace( L"\u00A0", _Settings.GetNBSPChar());
+
       sel->text=(const wchar_t *)rep;
       // change bold/italic where needed
       for (int i=0;i<rl.GetSize();++i) {
@@ -2306,6 +2311,11 @@ int CFBEView::GlobalReplace(MSHTML::IHTMLElementPtr elem, CString cntTag)
 		CheckError(re.CreateInstance(L"VBScript.RegExp"));
 		re->IgnoreCase = m_fo.flags & 4 ? VARIANT_FALSE : VARIANT_TRUE;
 		re->Global = VARIANT_TRUE;
+
+		// added by SeNS
+		if (_Settings.GetNBSPChar().Compare(L"\u00A0") != 0)
+			m_fo.pattern.Replace( L"\u00A0", _Settings.GetNBSPChar());
+
 		re->Pattern = (const wchar_t*)m_fo.pattern;
 
 		m_mk_srv->BeginUndoUnit(L"replace");
@@ -2353,6 +2363,11 @@ int CFBEView::GlobalReplace(MSHTML::IHTMLElementPtr elem, CString cntTag)
 					sel->moveEnd(charstr, delta);
 					rl.RemoveAll();
 					repl = GetReplStr(m_fo.replacement, cur, rl);
+
+					// added by SeNS
+					if (_Settings.GetNBSPChar().Compare(L"\u00A0") != 0)
+						repl.Replace( L"\u00A0", _Settings.GetNBSPChar());
+
 					sel->text = (const wchar_t*)repl;
 					for(int k = 0; k < rl.GetSize(); ++k)
 					{
@@ -3069,6 +3084,11 @@ bool CFBEView::SciFindNext(HWND src,bool fFwdOnly,bool fBarf) {
   if (m_fo.fRegexp)
     flags|=SCFIND_REGEXP|SCFIND_POSIX;
   int rev=m_fo.flags & FRF_REVERSE && !fFwdOnly;
+
+  // added by SeNS
+  if (_Settings.GetNBSPChar().Compare(L"\u00A0") != 0)
+ 	m_fo.pattern.Replace( L"\u00A0", _Settings.GetNBSPChar());
+
   DWORD   len=::WideCharToMultiByte(CP_UTF8,0,
 		  m_fo.pattern,m_fo.pattern.GetLength(),
 		  NULL,0,NULL,NULL);

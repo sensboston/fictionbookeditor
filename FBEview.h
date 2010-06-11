@@ -544,7 +544,6 @@ public:
 		m_fo.replacement = str;
 		m_fo.fRegexp = true;
 		m_fo.flags = 0;
-
 		return GlobalReplace(elem, cntTag);
 	}
 
@@ -563,7 +562,6 @@ public:
 		m_fo.fRegexp = true;
 		m_fo.flags = FRF_CASE | FRF_WHOLE;
 		m_fo.replNum = replNum;
-
 		return ToolWordsGlobalReplace(fbw_body, pIndex, globIndex, !replace, cntTag);
 	}
 
