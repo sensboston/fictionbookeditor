@@ -96,6 +96,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
+				CommandLine="upx.exe $(OutDir)/res_ukr.dll"
 			/>
 		</Configuration>
 		<Configuration

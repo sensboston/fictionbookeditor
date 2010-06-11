@@ -172,6 +172,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
+				CommandLine="upx.exe $(OutDir)/res_rus.dll"
 			/>
 		</Configuration>
 	</Configurations>
