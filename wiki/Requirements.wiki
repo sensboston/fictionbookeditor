@@ -9,4 +9,4 @@ FBE работает под операционными системами Micros
 
 Для работы FBE требуется установленный в системе *MSHTML* (Internet Explorer, миниальная версия 6.0).
 
-Пользователям _*Windows Vista и Windows 7*_ нужно дополнительно установить пакет *MSXML 4.0*. Последнюю версию, SP3, можно скачать отсюда: http://download.microsoft.com/download/A/2/D/A2D8587D-0027-4217-9DAD-38AFDB0A177E/msxml.msi
+Пользователям _*Windows Vista и Windows 7*_ нужно дополнительно установить пакет *MSXML 4.0* _перед установкой FBE_. Последнюю версию (SP3) можно скачать отсюда: http://download.microsoft.com/download/A/2/D/A2D8587D-0027-4217-9DAD-38AFDB0A177E/msxml.msi
