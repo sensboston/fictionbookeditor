@@ -2,6 +2,7 @@
 LicenseLangString License ${LANG_UKRAINIAN} "Input\gpl-3.0.ua.txt"
 
 ; components section strings
+LangString Main ${LANG_UKRAINIAN} "Файли програми"
 LangString Shell_Extension ${LANG_UKRAINIAN} "Розширення оболонки"
 LangString ShCutGroup ${LANG_UKRAINIAN} "Ярлики"
 LangString Desktop_ShortCut ${LANG_UKRAINIAN} "Стільниця"
@@ -25,6 +26,7 @@ LangString DownloadingDict ${LANG_UKRAINIAN} "Завантажую "
 LangString Dictionary ${LANG_UKRAINIAN} " словник"
 
 ; components descriptions
+LangString DESC_Main ${LANG_UKRAINIAN} "Виконуваний файл FBE, бібліотеки та службові файли."
 LangString DESC_ShExSection ${LANG_UKRAINIAN} "Розширення оболонки вбудовується у Провідник Windows. \
 	Замінюються значки файлів fb2, у зринаючій підказці до файлів відображається інформація про книгу."
 LangString DESC_ShCutGroup ${LANG_UKRAINIAN} "Встановити ярлики."

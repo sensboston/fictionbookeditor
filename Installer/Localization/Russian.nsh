@@ -2,6 +2,7 @@
 LicenseLangString License ${LANG_RUSSIAN} "Input\gpl-3.0.ru.txt"
 
 ; components section strings
+LangString Main ${LANG_RUSSIAN} "Файлы программы"
 LangString Shell_Extension ${LANG_RUSSIAN} "Расширение оболочки"
 LangString ShCutGroup ${LANG_RUSSIAN} "Ярлыки"
 LangString Desktop_ShortCut ${LANG_RUSSIAN} "Рабочий стол"
@@ -26,6 +27,7 @@ LangString Dictionary ${LANG_RUSSIAN} " словарь"
 
 
 ; components descriptions
+LangString DESC_Main ${LANG_RUSSIAN} "Исполняемый файл FBE, библиотеки и служебные файлы."
 LangString DESC_ShExSection ${LANG_RUSSIAN} "Расширение оболочки встраивается в Проводник. \
 	Подменяет иконки fb2 файлов, показывает во всплывающей подсказке информацию о книге."
 LangString DESC_ShCutGroup ${LANG_RUSSIAN} "Установить ярлыки."
