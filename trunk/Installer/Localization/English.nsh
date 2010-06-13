@@ -2,6 +2,7 @@
 LicenseLangString License ${LANG_ENGLISH} "Input\gpl-3.0.txt"
 
 ; components section strings
+LangString Main ${LANG_ENGLISH} "Program files"
 LangString Shell_Extension ${LANG_ENGLISH} "Shell extension"
 LangString ShCutGroup ${LANG_ENGLISH} "Shortcuts"
 LangString Desktop_ShortCut ${LANG_ENGLISH} "Desktop"
@@ -25,6 +26,7 @@ LangString DownloadingDict ${LANG_ENGLISH} "Downloading "
 LangString Dictionary ${LANG_ENGLISH} " dictionary"
 
 ; components descriptions
+LangString DESC_Main ${LANG_ENGLISH} "FBE main executable file, dlls and service files."
 LangString DESC_ShExSection ${LANG_ENGLISH} "Shell extension is embedded into Explorer. \
 	It switches fb2 file icons and shows book info in a tooltip."
 LangString DESC_ShCutGroup ${LANG_ENGLISH} "Install shortcuts."
