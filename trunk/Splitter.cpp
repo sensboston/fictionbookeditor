@@ -32,4 +32,5 @@ void CSplitter::Split(CString *src, CWords *words)
 			j=i+1;
 		}
 	}
+	if (!words->GetSize()) words->Add(0,src->Mid(0));
 }
