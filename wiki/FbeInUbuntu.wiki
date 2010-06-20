@@ -1,0 +1,15 @@
+Несмотря на то, что FBE - программа для Windows, она может быть запущена и работать в Linux. В частность, в наиболее популярном дистрибутиве Ubuntu.
+
+#summary One-sentence summary of this page.
+
+= Introduction =
+
+Add your content here.
+
+
+= Details =
+
+Add your content here.  Format your content with:
+  * Text in *bold* or _italic_
+  * Headings, paragraphs, and lists
+  * Automatic links to other wiki pages
