@@ -1,15 +1,19 @@
 #summary Настройка FBE для работы в линукс.
 
-Несмотря на то, что FBE - программа для Windows, она может быть запущена и работать в Linux. В частность, в наиболее популярном дистрибутиве Ubuntu.
+Несмотря на то, что FBE - программа для Windows, она может быть запущена и работать в Linux. В частность, в наиболее популярном дистрибутиве Ubuntu. Ниже описана настройка FBE 2.4 для работы в Ubuntu 10.04
 
-= Установка =
+= Настройка =
 
-Add your content here.
+ * Установить последнюю версию wine c сайта winehq.org (на данный момент это 1.2-rc4). Подробно процедура описана по адресу http://www.winehq.org/download/deb
+ * Доставить дополнительные пакеты, необходимые для нормальной работы FBE
+   * Скачать установочный скрипт winetricks по адресу http://wiki.winehq.org/winetricks
+   * Запустить установку командой {{{ winetricks msxml4 ie6 }}}
+ * Установить FBE 2.4
 
+= Известные проблемы =
+ * Ярлыки запуска FBE на десктопе нефункциональны
+ * Иконки в тулбарах выглядят плохо
 
-= Проблемы =
+http://img.photobucket.com/albums/v286/kontiky/fa966126.png
 
-Add your content here.  Format your content with:
-  * Text in *bold* or _italic_
-  * Headings, paragraphs, and lists
-  * Automatic links to other wiki pages
+ 
