@@ -191,4 +191,136 @@ char	*ToUtf8(const CString& s,int& patlen) {
   return tmp;
 }
 
+#ifdef USE_PCRE
+// Regexp constructor
+IMatchCollection* IRegExp2::Execute (CString sourceString)
+{
+#define OVECCOUNT 300
+
+	pcre *re;
+	const char *error;
+	bool is_error = true;
+	int options;
+	int erroffset;
+	int ovector[OVECCOUNT];
+	int subject_length;
+	int rc, offset, char_offset;
+	IMatchCollection* matches;
+	char dst[1024];
+	char *subj;
+	
+
+	matches = new IMatchCollection();
+
+	options = IgnoreCase?PCRE_CASELESS:0;
+	options |= PCRE_UTF8;
+
+	// convert pattern to UTF-8
+//	char *pat = ToUtf8(m_pattern, subject_length);
+	CT2A pat(m_pattern, CP_UTF8);
+
+	re = pcre_compile(
+	pat,				  /* the pattern */
+	options,              /* default options */
+	&error,               /* for error message */
+	&erroffset,           /* for error offset */
+	NULL);                /* use default character tables */
+
+	if (re)
+	{
+		is_error = false;
+		CT2A subj(sourceString, CP_UTF8);
+		subject_length = strlen(subj);
+//		subj = ToUtf8(sourceString, subject_length);
+
+		offset = char_offset = 0;
+
+		do
+		{
+			rc = pcre_exec(
+			  re,                   /* the compiled pattern */
+			  NULL,                 /* no extra data - we didn't study the pattern */
+			  subj,					/* the subject string */
+			  subject_length,       /* the length of the subject */
+			  offset,                /* start at offset 0 in the subject */
+			  0,					/* default options */
+			  ovector,              /* output vector for substring information */
+			  OVECCOUNT);           /* number of elements in the output vector */
+
+			if (rc > 0)
+			{
+				// add match
+				char *substring_start = subj + ovector[0];
+				int substring_length = ovector[1] - ovector[0];
+				if (substring_length < sizeof(dst))
+				{
+					// convert substring to Unicode
+					strncpy(dst, substring_start, substring_length);
+					dst[substring_length] = '\0';
+					// calculate character position
+					while (offset < ovector[0])
+					{
+						switch (subj[offset] & 0xF0)
+						{
+							case 0xE0: offset += 3; break;
+							case 0xF0: offset += 4; break;
+							case 0xD0:
+							case 0xC0: offset += 2; break;
+							default: offset++;
+						}
+						char_offset++;
+					}
+
+					CString str = CString(CA2T(dst, CP_UTF8));
+					IMatch2* item = new IMatch2(str, char_offset);
+
+					// add submatches (including match)
+					for (int i=1; i<rc; i++)
+					{
+						substring_start = subj + ovector[i*2];
+						substring_length = ovector[i*2+1] - ovector[i*2];
+						if (substring_length < sizeof(dst))
+						{
+							// convert substring to Unicode
+							strncpy(dst, substring_start, substring_length);
+							dst[substring_length] = '\0';
+							item->AddSubMatch(CString(CA2T(dst, CP_UTF8)));
+						}
+					}
+					matches->AddItem(item); 
+					char_offset += str.GetLength();
+					offset = ovector[1];
+					// empty line
+					if (ovector[0] == ovector[1])
+					{
+						offset++;
+						char_offset++;
+					}
+				}
+			}
+		} while (rc > 0);
+
+		pcre_free(re);     /* Release memory used for the compiled pattern */
+	}
+
+//	if (pat) free(pat);
+//	if (subj) free(subj);
+
+	if (is_error)
+	{
+		ICreateErrorInfoPtr cerrinf = 0;
+		if (::CreateErrorInfo(&cerrinf) == S_OK)
+		{
+			cerrinf->SetDescription(CString(error).AllocSysString());
+			cerrinf->SetSource(L"Perl Compatible Regular Expressions");
+			cerrinf->SetGUID(GUID_NULL);
+			IErrorInfoPtr ei = cerrinf;
+			throw _com_error(MK_E_SYNTAX, ei, true);
+		}
+	}
+
+	return matches;
+}
+#endif
+
 }

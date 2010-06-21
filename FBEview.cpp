@@ -1847,8 +1847,10 @@ LRESULT CFBEView::OnPaste(WORD, WORD, HWND, BOOL&)
 // searching
 bool CFBEView::DoSearch(bool fMore)
 {
+#ifndef USE_PCRE
 	if(m_fo.match)
 		m_fo.match.Release();
+#endif
 	if(m_fo.pattern.IsEmpty())
 	{
 		if(m_is_start)
@@ -1883,7 +1885,11 @@ bool CFBEView::DoSearchRegexp(bool fMore)
 	{
 		// well, try to compile it first
 		AU::RegExp re;
+#ifdef USE_PCRE
+		re = new AU::IRegExp2();
+#else
 		CheckError(re.CreateInstance(L"VBScript.RegExp"));
+#endif
 		re->IgnoreCase = m_fo.flags & 4 ? VARIANT_FALSE : VARIANT_TRUE;
 		re->Global = VARIANT_TRUE;
 		re->Pattern = (const wchar_t*)m_fo.pattern;
@@ -2101,7 +2107,7 @@ bool CFBEView::DoSearchStd(bool fMore)
 	return false;
 }
 
-static CString GetSM(VBScript_RegExp_55::ISubMatches *sm, int idx)
+static CString GetSM(AU::ReSubMatches sm, int idx)
 {
 	if(!sm)
 		return CString();
@@ -2135,7 +2141,7 @@ struct RR
 
 typedef CSimpleValArray<RR> RRList;
 
-static CString GetReplStr(const CString& rstr, VBScript_RegExp_55::IMatch2* rm, RRList& rl)
+static CString GetReplStr(const CString& rstr, AU::ReMatch rm, RRList& rl)
 {
 	CString rep;
 	rep.GetBuffer(rstr.GetLength());
@@ -2308,7 +2314,11 @@ int CFBEView::GlobalReplace(MSHTML::IHTMLElementPtr elem, CString cntTag)
 			return 0;
 
 		AU::RegExp re;
+#ifdef USE_PCRE
+		re = new AU::IRegExp2();
+#else
 		CheckError(re.CreateInstance(L"VBScript.RegExp"));
+#endif
 		re->IgnoreCase = m_fo.flags & 4 ? VARIANT_FALSE : VARIANT_TRUE;
 		re->Global = VARIANT_TRUE;
 
@@ -2421,8 +2431,11 @@ int CFBEView::ToolWordsGlobalReplace(	MSHTML::IHTMLElementPtr fbw_body,
 	try
 	{
 		AU::RegExp re;
-		CheckError(re.CreateInstance(L"VBScript.RegExp", NULL, CLSCTX_INPROC_SERVER));
-
+#ifdef USE_PCRE
+		re = new AU::IRegExp2();
+#else
+		CheckError(re.CreateInstance(L"VBScript.RegExp"));
+#endif
 		re->IgnoreCase = m_fo.flags & FRF_CASE ? VARIANT_FALSE : VARIANT_TRUE;
 		re->Global = m_fo.flags & FRF_WHOLE ? VARIANT_TRUE : VARIANT_FALSE;
 		re->Multiline = VARIANT_TRUE;
@@ -2476,8 +2489,11 @@ int CFBEView::ToolWordsGlobalReplace(	MSHTML::IHTMLElementPtr fbw_body,
 			}
 
 			// Replace
-			AU::ReMatches rm(re->Execute(innerText.AllocSysString()));
-			
+			#ifdef USE_PCRE
+				AU::ReMatches rm(re->Execute(innerText));
+			#else
+				AU::ReMatches rm(re->Execute(innerText.AllocSysString()));
+			#endif
 			if(rm->Count <= 0)
 			{
 				iNextElem++;
@@ -2599,8 +2615,11 @@ int CFBEView::ToolWordsGlobalReplace(	MSHTML::IHTMLElementPtr fbw_body,
 						again += pAdjElems[c].innerText.GetBSTR();
 						again += L"\n";
 					}
-
-					rm = re->Execute(again.AllocSysString());
+					#ifdef USE_PCRE
+						rm = re->Execute(again);
+					#else
+						rm = re->Execute(again.AllocSysString());
+					#endif
 					i--;
 
 					nRepl++;
@@ -2611,7 +2630,9 @@ int CFBEView::ToolWordsGlobalReplace(	MSHTML::IHTMLElementPtr fbw_body,
 		}
 
 stop:
+#ifndef USE_PCRE
 		re.Release();
+#endif
 
 		if(find)
 		{
@@ -3082,30 +3103,25 @@ bool CFBEView::SciFindNext(HWND src,bool fFwdOnly,bool fBarf) {
   if (m_fo.flags & FRF_CASE)
     flags|=SCFIND_MATCHCASE;
   if (m_fo.fRegexp)
-    flags|=SCFIND_REGEXP|SCFIND_POSIX;
+    flags|=SCFIND_REGEXP;
   int rev=m_fo.flags & FRF_REVERSE && !fFwdOnly;
 
   // added by SeNS
   if (_Settings.GetNBSPChar().Compare(L"\u00A0") != 0)
  	m_fo.pattern.Replace( L"\u00A0", _Settings.GetNBSPChar());
 
-  DWORD   len=::WideCharToMultiByte(CP_UTF8,0,
-		  m_fo.pattern,m_fo.pattern.GetLength(),
-		  NULL,0,NULL,NULL);
+  DWORD   len=::WideCharToMultiByte(CP_UTF8,0, m_fo.pattern,m_fo.pattern.GetLength(), NULL,0,NULL,NULL);
   char    *tmp=(char *)malloc(len+1);
-  if (tmp) {
-    ::WideCharToMultiByte(CP_UTF8,0,
-		  m_fo.pattern,m_fo.pattern.GetLength(),
-		  tmp,len,NULL,NULL);
+  if (tmp) 
+  {
+    ::WideCharToMultiByte(CP_UTF8,0, m_fo.pattern,m_fo.pattern.GetLength(), tmp,len,NULL,NULL);
     tmp[len]='\0';
     int p1=::SendMessage(src,SCI_GETSELECTIONSTART,0,0);
     int p2=::SendMessage(src,SCI_GETSELECTIONEND,0,0);
-    if (p1!=p2 && !rev)
-      ++p1;
-    if (rev)
-      --p1;
-    if (p1<0)
-      p1=0;
+	if (p2>p1 && !rev) p1=p2;
+//   if (p1!=p2 && !rev) ++p1;
+    if (rev) --p1;
+    if (p1<0) p1=0;
     p2=rev ? 0 : ::SendMessage(src,SCI_GETLENGTH,0,0);
     int p3=p2==0 ? ::SendMessage(src,SCI_GETLENGTH,0,0) : 0;
     ::SendMessage(src,SCI_SETTARGETSTART,p1,0);
@@ -3113,26 +3129,29 @@ bool CFBEView::SciFindNext(HWND src,bool fFwdOnly,bool fBarf) {
     ::SendMessage(src,SCI_SETSEARCHFLAGS,flags,0);
     // this sometimes hangs in reverse search :)
     int ret=::SendMessage(src,SCI_SEARCHINTARGET,len,(LPARAM)tmp);
-    if (ret==-1) { // try wrap
-      if (p1!=p3) {
-	::SendMessage(src,SCI_SETTARGETSTART,p3,0);
-	::SendMessage(src,SCI_SETTARGETEND,p1,0);
-	::SendMessage(src,SCI_SETSEARCHFLAGS,flags,0);
-	ret=::SendMessage(src,SCI_SEARCHINTARGET,len,(LPARAM)tmp);
-      }
-      if (ret==-1) {
-	free(tmp);
-	if (fBarf)
-	{
-		wchar_t cpt[MAX_LOAD_STRING + 1];
-		wchar_t msg[MAX_LOAD_STRING + 1];
-		::LoadString(_Module.GetResourceInstance(), IDR_MAINFRAME, cpt, MAX_LOAD_STRING);
-		::LoadString(_Module.GetResourceInstance(), IDS_SEARCH_FAIL_MSG, msg, MAX_LOAD_STRING);
-		U::MessageBox(MB_OK|MB_ICONEXCLAMATION, cpt, msg,m_fo.pattern);
-	}
-	return false;
-      }
-      ::MessageBeep(MB_ICONASTERISK);
+    if (ret==-1) 
+	{ // try wrap
+		if (p1!=p3) 
+		{
+			::SendMessage(src,SCI_SETTARGETSTART,p3,0);
+			::SendMessage(src,SCI_SETTARGETEND,p1,0);
+			::SendMessage(src,SCI_SETSEARCHFLAGS,flags,0);
+			ret=::SendMessage(src,SCI_SEARCHINTARGET,len,(LPARAM)tmp);
+		}
+		if (ret==-1) 
+		{
+			free(tmp);
+			if (fBarf)
+			{
+				wchar_t cpt[MAX_LOAD_STRING + 1];
+				wchar_t msg[MAX_LOAD_STRING + 1];
+				::LoadString(_Module.GetResourceInstance(), IDR_MAINFRAME, cpt, MAX_LOAD_STRING);
+				::LoadString(_Module.GetResourceInstance(), IDS_SEARCH_FAIL_MSG, msg, MAX_LOAD_STRING);
+				U::MessageBox(MB_OK|MB_ICONEXCLAMATION, cpt, msg,m_fo.pattern);
+			}
+			return false;
+		}
+		::MessageBeep(MB_ICONASTERISK);
     }
     free(tmp);
     p1=::SendMessage(src,SCI_GETTARGETSTART,0,0);

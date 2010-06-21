@@ -999,6 +999,7 @@ BEGIN
     IDS_MB_IGNORE           "&Ignore"
     IDS_MB_YES              "&Yes"
     IDS_MB_NO               "&No"
+	IDS_MB_CLOSE			"Close"
 END
 
 STRINGTABLE 

@@ -712,6 +712,7 @@ BEGIN
     IDS_MB_IGNORE           "&Игнорировать"
     IDS_MB_YES              "&Да"
     IDS_MB_NO               "&Нет"
+    IDS_MB_CLOSE            "&Закрыть"
 END
 
 STRINGTABLE 

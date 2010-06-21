@@ -260,6 +260,7 @@
 #define IDS_MB_IGNORE                   604
 #define IDS_MB_YES                      605
 #define IDS_MB_NO                       606
+#define IDS_MB_CLOSE                    607
 #define ID_EXPORT_BASE                  860
 #define ID_IMPORT_BASE                  880
 #define ID_SEL_BASE                     900
