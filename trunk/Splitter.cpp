@@ -31,6 +31,7 @@ void CSplitter::Split(CString *src, CWords *words)
 			if (i-j) words->Add(j,src->Mid(j, i-j));
 			j=i+1;
 		}
+		// add last word
+		else if (i+1==size) words->Add(j,src->Mid(j, i-j+1));
 	}
-	if (!words->GetSize()) words->Add(0,src->Mid(0));
 }

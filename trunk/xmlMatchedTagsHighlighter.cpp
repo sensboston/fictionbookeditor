@@ -25,7 +25,7 @@ int XmlMatchedTagsHighlighter::getFirstTokenPosFrom(int targetStart, int targetE
 {
 	_pEditView->execute(SCI_SETTARGETSTART, targetStart);
 	_pEditView->execute(SCI_SETTARGETEND, targetEnd);
-	_pEditView->execute(SCI_SETSEARCHFLAGS, SCFIND_REGEXP|SCFIND_POSIX);
+	_pEditView->execute(SCI_SETSEARCHFLAGS, SCFIND_REGEXP);
 	int posFind = _pEditView->execute(SCI_SEARCHINTARGET, (WPARAM)strlen(token), (LPARAM)token);
 	if (posFind != -1)
 	{
@@ -539,7 +539,7 @@ vector< pair<CString, int> > XmlMatchedTagsHighlighter::lookupTags()
 	vector<TAG> tags;
 
 	// search options
-    _pEditView->execute(SCI_SETSEARCHFLAGS, SCFIND_REGEXP | SCFIND_POSIX);
+    _pEditView->execute(SCI_SETSEARCHFLAGS, SCFIND_REGEXP);
     int docLen = _pEditView->getCurrentDocLen();
 
 	// regexp pattern to match any XML tag

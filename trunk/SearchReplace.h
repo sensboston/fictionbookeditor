@@ -28,7 +28,6 @@ public:
 	BEGIN_MSG_MAP(FRBase)
 		ALT_MSG_MAP(1)
 		MESSAGE_HANDLER(WM_INITDIALOG, OnInitDialog)
-
 		COMMAND_HANDLER(IDC_TEXT,CBN_EDITCHANGE, OnTextChanged)
 	END_MSG_MAP()
 
@@ -198,7 +197,6 @@ public:
 	BEGIN_MSG_MAP(CFindDlgBase)
 		COMMAND_ID_HANDLER(ID_FIND_NEXT, OnDoFind)
 		COMMAND_ID_HANDLER(IDCANCEL, OnCancel)
-
 		CHAIN_MSG_MAP_ALT(FRBase, 1)
 	END_MSG_MAP()
 
@@ -279,7 +277,9 @@ public:
   }
   void MakeClose() {
     // change cancel button to "Close"
-	  ::SetWindowText(CModelessDialogImpl<CReplaceDlgBase>::GetDlgItem(IDCANCEL),_T("Close"));
+	CString s;
+	s.LoadString(IDS_MB_CLOSE);
+	::SetWindowText(CModelessDialogImpl<CReplaceDlgBase>::GetDlgItem(IDCANCEL),s);
     SendMessage(DM_SETDEFID,IDC_REPLACE_ONE);
   }
   virtual HWND	X_GetDlgItem(int id) { return CModelessDialogImpl<CReplaceDlgBase>::GetDlgItem(id); }

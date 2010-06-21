@@ -1864,7 +1864,7 @@ public:
     if (m_view->m_fo.flags & CFBEView::FRF_CASE)
       flags|=SCFIND_MATCHCASE;
     if (m_view->m_fo.fRegexp)
-      flags|=SCFIND_REGEXP|SCFIND_POSIX;
+      flags|=SCFIND_REGEXP;
     m_source.SendMessage(SCI_SETSEARCHFLAGS,flags,0);
 
     // setup target range
