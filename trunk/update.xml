@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FBE>
-	<Version>2.4</Version>
-	<BetaStatus>true</BetaStatus>
+	<Name>FictionBook Editor 2.5 Beta</Name>
+	<Date>06-20-2010</Date>
+	<Version>2.5</Version>
+	<Beta>true</Beta>
 	<DownloadUrl>http://fictionbookeditor.googlecode.com/files/FictionBook%20Editor%20Release%20v2.4%20%28build%2006%20Jun%29.exe</DownloadUrl>
 </FBE>
