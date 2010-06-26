@@ -92,7 +92,7 @@
 				AdditionalDependencies="rpcrt4.lib &#x0A;gdiplus.lib libhunspell.lib pcre.lib $(INTDIR)\buildstamp.obj"
 				LinkIncremental="0"
 				SuppressStartupBanner="true"
-				AdditionalLibraryDirectories="..\..\hunspell\src\win_api\Release\libhunspell;.\pcre\dynamic"
+				AdditionalLibraryDirectories="..\..\hunspell\src\win_api\Release\libhunspell;.\pcre"
 				IgnoreAllDefaultLibraries="false"
 				IgnoreDefaultLibraryNames=""
 				DelayLoadDLLs=""
@@ -204,7 +204,7 @@
 				AdditionalDependencies="rpcrt4.lib &#x0A;gdiplus.lib libhunspell.lib pcre.lib $(INTDIR)\buildstamp.obj"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
-				AdditionalLibraryDirectories="..\..\hunspell\src\win_api\Release\libhunspell;.\pcre\dynamic"
+				AdditionalLibraryDirectories="..\..\hunspell\src\win_api\Release\libhunspell;.\pcre"
 				IgnoreAllDefaultLibraries="false"
 				IgnoreDefaultLibraryNames="libcmt.lib"
 				DelayLoadDLLs=""
@@ -247,6 +247,10 @@
 			Name="Source Files"
 			Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 			>
+			<File
+				RelativePath=".\AboutBox.cpp"
+				>
+			</File>
 			<File
 				RelativePath="apputils.cpp"
 				>
@@ -612,6 +616,10 @@
 			Filter="h;hpp;hxx;hm;inl"
 			>
 			<File
+				RelativePath=".\AboutBox.h"
+				>
+			</File>
+			<File
 				RelativePath="apputils.h"
 				>
 			</File>
@@ -818,6 +826,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\res\error.bmp"
+				>
+			</File>
+			<File
 				RelativePath=".\res\Fb2-shema.bmp"
 				>
 			</File>
@@ -852,6 +864,106 @@
 				>
 			</File>
 			<File
+				RelativePath=".\res\Icon_02.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\res\Icon_03.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\res\Icon_04.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\res\Icon_05.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\res\Icon_06.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\res\Icon_07.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\res\Icon_08.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\res\Icon_09.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\res\Icon_10.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\res\Icon_11.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\res\Icon_12.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\res\Icon_13.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\res\Icon_14.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\res\Icon_15.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\res\Icon_16.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\res\Icon_17.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\res\Icon_18.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\res\Icon_19.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\res\Icon_20.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\res\Icon_21.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\res\Icon_22.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\res\Icon_23.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\res\Icon_24.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\res\Icon_25.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\res\ok.bmp"
+				>
+			</File>
+			<File
 				RelativePath=".\res\Scripts.bmp"
 				>
 			</File>
@@ -865,6 +977,10 @@
 			</File>
 			<File
 				RelativePath=".\res\Toolbar_small.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\res\update.bmp"
 				>
 			</File>
 			<File
@@ -915,6 +1031,14 @@
 			</File>
 			<File
 				RelativePath="extras\ColorButton.h"
+				>
+			</File>
+			<File
+				RelativePath=".\extras\http_download.h"
+				>
+			</File>
+			<File
+				RelativePath=".\extras\MD5.h"
 				>
 			</File>
 			<File

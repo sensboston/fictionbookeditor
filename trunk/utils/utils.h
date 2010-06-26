@@ -140,6 +140,7 @@ namespace U // place all utilities into their own namespace
   void	  ReportError(HRESULT hr);
   void	  ReportError(_com_error& e);
   UINT	  MessageBox(UINT type,const TCHAR *title,const TCHAR *msg,...);
+  UINT	  MessageBox(UINT type, UINT titleID, UINT msgID, ...);
   CString GetProgDir();
   CString GetSettingsDir();
   CString GetDocTReeScriptsDir();
@@ -216,6 +217,7 @@ namespace U // place all utilities into their own namespace
 	CString GetImageFileName(MSHTML::IHTMLDOMNodePtr elem);
 
 	CString Transliterate (CString src);
+	CString URLDecode(const CString& inStr);
 } // namespace
 
 #endif

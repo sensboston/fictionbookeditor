@@ -83,11 +83,7 @@ static void LoadGenres()
   }
 
   if(!fp){
-	  wchar_t cpt [MAX_LOAD_STRING + 1];
-	  wchar_t msg [MAX_LOAD_STRING + 1];
-	  ::LoadString(_Module.GetResourceInstance(), IDR_MAINFRAME, cpt, MAX_LOAD_STRING);
-	  ::LoadString(_Module.GetResourceInstance(), IDS_GENRES_LIST_MSG, msg, MAX_LOAD_STRING);
-	  U::MessageBox(MB_OK|MB_ICONERROR, cpt, msg, file_name);
+	  U::MessageBox(MB_OK|MB_ICONERROR, IDR_MAINFRAME, IDS_GENRES_LIST_MSG, file_name);
 	  return;
   }
 

@@ -137,7 +137,7 @@ BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 260
         TOPMARGIN, 7
-        BOTTOMMARGIN, 132
+        BOTTOMMARGIN, 148
     END
 
     IDD_HOTKEYS, DIALOG
@@ -358,20 +358,23 @@ BEGIN
     COMBOBOX        IDC_ENCODING,130,0,164,104,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
 END
 
-IDD_ABOUTBOX DIALOGEX 0, 0, 267, 139
-STYLE DS_SETFONT | DS_MODALFRAME | DS_CENTER | WS_POPUP | WS_CAPTION | WS_SYSMENU
+IDD_ABOUTBOX DIALOGEX 0, 0, 267, 155
+STYLE DS_SETFONT | DS_MODALFRAME | DS_CENTER | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
 CAPTION "About"
 FONT 9, "Tahoma", 0, 0, 0x0
 BEGIN
-    CONTROL         248,IDC_AB_BANNER,"Static",SS_BITMAP | SS_REALSIZEIMAGE,7,7,56,123,WS_EX_CLIENTEDGE
+    PUSHBUTTON      "Update now",IDC_UPDATE,156,134,53,14,NOT WS_VISIBLE
+    DEFPUSHBUTTON   "OK",IDOK,216,134,44,14
+    CONTROL         248,IDC_AB_BANNER,"Static",SS_BITMAP,7,7,56,123,WS_EX_CLIENTEDGE
     ICON            IDR_MAINFRAME,IDC_STATIC_AB_APPICON,72,8,20,20
-    EDITTEXT        IDC_STATIC_AB_APPNAMEVER,99,8,157,12,ES_READONLY | NOT WS_BORDER
+    EDITTEXT        IDC_STATIC_AB_APPNAMEVER,99,8,157,12,ES_READONLY | NOT WS_BORDER | NOT WS_TABSTOP
     LTEXT           "Build",IDC_STATIC,101,20,15,8
-    EDITTEXT        IDC_BUILDSTAMP,123,20,132,12,ES_READONLY | NOT WS_BORDER
+    EDITTEXT        IDC_BUILDSTAMP,123,20,132,12,ES_READONLY | NOT WS_BORDER | NOT WS_TABSTOP
     CONTROL         "<a href=""http://code.google.com/p/fictionbookeditor/"">http://code.google.com/p/fictionbookeditor/</a>",IDC_SYSLINK_AB_LINKS,
-                    "SysLink",WS_TABSTOP,101,32,154,8
-    EDITTEXT        IDC_CONTRIBS,69,47,191,65,ES_MULTILINE | ES_AUTOVSCROLL | ES_READONLY | ES_WANTRETURN | NOT WS_BORDER | WS_VSCROLL
-    DEFPUSHBUTTON   "OK",IDOK,140,118,50,14
+                    "SysLink",0x0,101,32,154,8
+    EDITTEXT        IDC_CONTRIBS,69,51,191,74,ES_MULTILINE | ES_AUTOVSCROLL | ES_READONLY | ES_WANTRETURN | NOT WS_BORDER | WS_VSCROLL | NOT WS_TABSTOP
+    LTEXT           "Static",IDC_TEXT_STATUS,26,137,124,8
+    CONTROL         400,IDC_PIC_UPDATE,"Static",SS_BITMAP,12,136,9,9
 END
 
 IDD_ADDIMAGE DIALOGEX 0, 0, 147, 66
@@ -576,6 +579,33 @@ IDB_STRUCTURE           BITMAP                  "res\\struct.bmp"
 IDB_WORDSTATES          BITMAP                  "res\\wordstat.bmp"
 IDR_DOCUMENT_TREE       BITMAP                  "res\\document.bmp"
 IDB_AB_BANNER           BITMAP                  "res\\Fb2-shema.bmp"
+IDB_UPD_OK              BITMAP                  "res\\ok.bmp"
+IDB_UPD_ERR             BITMAP                  "res\\error.bmp"
+IDB_UPD_UPDATE          BITMAP                  "res\\update.bmp"
+IDB_UPD_CHECK1          BITMAP                  "res\\Icon_02.bmp"
+IDB_UPD_CHECK2          BITMAP                  "res\\Icon_03.bmp"
+IDB_UPD_CHECK3          BITMAP                  "res\\Icon_04.bmp"
+IDB_UPD_CHECK4          BITMAP                  "res\\Icon_05.bmp"
+IDB_UPD_CHECK5          BITMAP                  "res\\Icon_06.bmp"
+IDB_UPD_CHECK6          BITMAP                  "res\\Icon_07.bmp"
+IDB_UPD_CHECK7          BITMAP                  "res\\Icon_08.bmp"
+IDB_UPD_CHECK8          BITMAP                  "res\\Icon_09.bmp"
+IDB_UPD_CHECK9          BITMAP                  "res\\Icon_10.bmp"
+IDB_UPD_CHECK10         BITMAP                  "res\\Icon_11.bmp"
+IDB_UPD_CHECK11         BITMAP                  "res\\Icon_12.bmp"
+IDB_UPD_CHECK12         BITMAP                  "res\\Icon_13.bmp"
+IDB_UPD_CHECK13         BITMAP                  "res\\Icon_14.bmp"
+IDB_UPD_CHECK14         BITMAP                  "res\\Icon_15.bmp"
+IDB_UPD_CHECK15         BITMAP                  "res\\Icon_16.bmp"
+IDB_UPD_CHECK16         BITMAP                  "res\\Icon_17.bmp"
+IDB_UPD_CHECK17         BITMAP                  "res\\Icon_18.bmp"
+IDB_UPD_CHECK18         BITMAP                  "res\\Icon_19.bmp"
+IDB_UPD_CHECK19         BITMAP                  "res\\Icon_20.bmp"
+IDB_UPD_CHECK20         BITMAP                  "res\\Icon_21.bmp"
+IDB_UPD_CHECK21         BITMAP                  "res\\Icon_22.bmp"
+IDB_UPD_CHECK22         BITMAP                  "res\\Icon_23.bmp"
+IDB_UPD_CHECK23         BITMAP                  "res\\Icon_24.bmp"
+IDB_UPD_CHECK24         BITMAP                  "res\\Icon_25.bmp"
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -999,7 +1029,7 @@ BEGIN
     IDS_MB_IGNORE           "&Ignore"
     IDS_MB_YES              "&Yes"
     IDS_MB_NO               "&No"
-	IDS_MB_CLOSE			"Close"
+    IDS_MB_CLOSE            "Close"
 END
 
 STRINGTABLE 
