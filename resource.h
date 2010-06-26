@@ -2,6 +2,8 @@
 // Microsoft Visual C++ generated include file.
 // Used by FBE.rc
 //
+#define IDOK3                           2
+#define IDUPDATE                        2
 #define IDOK2                           3
 #define IDD_ABOUTBOX                    100
 #define ID_VIEW_TREE                    101
@@ -250,7 +252,34 @@
 #define IDS_HOTKEY_NAVIGATION_GOTO_MATCHTAG 284
 #define IDS_HOTKEY_NAVIGATION_GOTO_WRONGTAG 285
 #define IDR_SCRIPTS                     286
+#define IDB_UPD_OK                      287
+#define IDB_UPD_ERR                     288
+#define IDB_UPD_UPDATE                  289
 #define IDS_LANG_UKRAINIAN              300
+#define IDB_UPD_CHECK1                  400
+#define IDB_UPD_CHECK2                  401
+#define IDB_UPD_CHECK3                  402
+#define IDB_UPD_CHECK4                  403
+#define IDB_UPD_CHECK5                  404
+#define IDB_UPD_CHECK6                  405
+#define IDB_UPD_CHECK7                  406
+#define IDB_UPD_CHECK8                  407
+#define IDB_UPD_CHECK9                  408
+#define IDB_UPD_CHECK10                 409
+#define IDB_UPD_CHECK11                 410
+#define IDB_UPD_CHECK12                 411
+#define IDB_UPD_CHECK13                 412
+#define IDB_UPD_CHECK14                 413
+#define IDB_UPD_CHECK15                 414
+#define IDB_UPD_CHECK16                 415
+#define IDB_UPD_CHECK17                 416
+#define IDB_UPD_CHECK18                 417
+#define IDB_UPD_CHECK19                 418
+#define IDB_UPD_CHECK20                 419
+#define IDB_UPD_CHECK21                 420
+#define IDB_UPD_CHECK22                 421
+#define IDB_UPD_CHECK23                 422
+#define IDB_UPD_CHECK24                 423
 #define IDC_SPELL_REPLACE               500
 #define ID_VER_ADVANCE                  550
 #define IDS_MB_OK                       600
@@ -332,6 +361,9 @@
 #define IDC_STATIC_AB_APPNAMEVER        1059
 #define IDC_STATIC_AB_APPICON           1060
 #define IDC_STATIC_AB_CONTRIBUTORS      1061
+#define IDC_STATIC_AB_APPICON2          1061
+#define IDC_STATIC_UPD                  1061
+#define IDC_PIC_UPDATE                  1061
 #define IDC_AB_BANNER                   1062
 #define IDC_CHECK3                      1063
 #define IDC_SETTINGS_ASKIMAGE           1063
@@ -399,7 +431,12 @@
 #define IDC_JPEGSPIN                    1103
 #define IDC_SPELL_CHANGEALL             1104
 #define ID_FIND_NEXT                    1104
+#define IDC_TEXT_STATUS                 1105
+#define IDC_TEXT_HTTP_STATUS            1105
+#define IDC_UPDATE                      1106
 #define IDC_SPELL_ADD                   1107
+#define IDB_UPD_CHECK                   1107
+#define IDB_UPD_IMAGE                   1107
 #define IDC_SPELL_SUGGEST               1108
 #define IDC_SPELL_UNDO                  1109
 #define IDC_FAST_MODE                   1110
@@ -495,7 +532,7 @@
 #define _APS_NO_MFC                     1
 #define _APS_NEXT_RESOURCE_VALUE        255
 #define _APS_NEXT_COMMAND_VALUE         32912
-#define _APS_NEXT_CONTROL_VALUE         1105
+#define _APS_NEXT_CONTROL_VALUE         1108
 #define _APS_NEXT_SYMED_VALUE           133
 #endif
 #endif

@@ -1200,11 +1200,7 @@ bool ShowWordsDialog(FB::Doc& document, HWND parent)
 	if(nTried > 0)
 	{
 		document.m_body.EndUndoUnit();
-		wchar_t cpt[MAX_LOAD_STRING + 1];
-		wchar_t msg[MAX_LOAD_STRING + 1];
-		::LoadString(_Module.GetResourceInstance(), IDS_REPL_WORDS_CPT, cpt, MAX_LOAD_STRING);
-		::LoadString(_Module.GetResourceInstance(), IDS_REPL_WORDS_MSG, msg, MAX_LOAD_STRING);
-		U::MessageBox(MB_OK, cpt, msg, nRepl);
+		U::MessageBox(MB_OK, IDS_REPL_WORDS_CPT, IDS_REPL_WORDS_MSG, nRepl);
 	}
 
 	return true;

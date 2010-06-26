@@ -47,11 +47,7 @@ static int   xgetopt(
   }
   if(!found)
   {
-	wchar_t msg[MAX_LOAD_STRING + 1];
-	wchar_t cpt[MAX_LOAD_STRING + 1];
-	::LoadString(_Module.GetResourceInstance(), IDS_ERRMSGBOX_CAPTION, cpt, MAX_LOAD_STRING);
-	::LoadString(_Module.GetResourceInstance(), IDS_INVALID_CML_MSG, msg, MAX_LOAD_STRING);
-	U::MessageBox(MB_OK|MB_ICONERROR, cpt, msg,opt);
+	U::MessageBox(MB_OK|MB_ICONERROR, IDS_ERRMSGBOX_CAPTION, IDS_INVALID_CML_MSG, opt);
 	return -1; // error
   }
 
@@ -68,11 +64,7 @@ static int   xgetopt(
       return opt;
     }
     // barf about missing args
-	wchar_t msg[MAX_LOAD_STRING + 1];
-    wchar_t cpt[MAX_LOAD_STRING + 1];
-    ::LoadString(_Module.GetResourceInstance(), IDS_ERRMSGBOX_CAPTION, cpt, MAX_LOAD_STRING);
-    ::LoadString(_Module.GetResourceInstance(), IDS_CML_ARGS_MSG, msg, MAX_LOAD_STRING);
-    U::MessageBox(MB_OK|MB_ICONERROR, cpt, msg,opt);
+    U::MessageBox(MB_OK|MB_ICONERROR, IDS_ERRMSGBOX_CAPTION, IDS_CML_ARGS_MSG, opt);
     return -1;
   }
   // just return current option
@@ -207,8 +199,6 @@ IMatchCollection* IRegExp2::Execute (CString sourceString)
 	int rc, offset, char_offset;
 	IMatchCollection* matches;
 	char dst[1024];
-	char *subj;
-	
 
 	matches = new IMatchCollection();
 
@@ -216,7 +206,6 @@ IMatchCollection* IRegExp2::Execute (CString sourceString)
 	options |= PCRE_UTF8;
 
 	// convert pattern to UTF-8
-//	char *pat = ToUtf8(m_pattern, subject_length);
 	CT2A pat(m_pattern, CP_UTF8);
 
 	re = pcre_compile(
@@ -231,7 +220,6 @@ IMatchCollection* IRegExp2::Execute (CString sourceString)
 		is_error = false;
 		CT2A subj(sourceString, CP_UTF8);
 		subject_length = strlen(subj);
-//		subj = ToUtf8(sourceString, subject_length);
 
 		offset = char_offset = 0;
 
@@ -303,11 +291,9 @@ IMatchCollection* IRegExp2::Execute (CString sourceString)
 		pcre_free(re);     /* Release memory used for the compiled pattern */
 	}
 
-//	if (pat) free(pat);
-//	if (subj) free(subj);
-
 	if (is_error)
 	{
+		// Raise COM-compatible exception
 		ICreateErrorInfoPtr cerrinf = 0;
 		if (::CreateErrorInfo(&cerrinf) == S_OK)
 		{

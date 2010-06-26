@@ -298,11 +298,7 @@ public:
 		{
 			if (!VBErr)
 			{
-				wchar_t cpt[MAX_LOAD_STRING + 1];
-				wchar_t msg[MAX_LOAD_STRING + 1];
-				::LoadString(_Module.GetResourceInstance(), IDR_MAINFRAME, cpt, MAX_LOAD_STRING);
-				::LoadString(_Module.GetResourceInstance(), IDS_SEARCH_FAIL_MSG, msg, MAX_LOAD_STRING);
-				U::MessageBox(MB_OK | MB_ICONEXCLAMATION, cpt, msg, m_view->m_fo.pattern);
+				U::MessageBox(MB_OK | MB_ICONEXCLAMATION, IDR_MAINFRAME, IDS_SEARCH_FAIL_MSG, m_view->m_fo.pattern);
 			}
 		}
 		else

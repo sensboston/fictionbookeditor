@@ -2655,11 +2655,7 @@ public:
   virtual void DoFind() {
     if (!m_view->DoSearch())
 	{
-		wchar_t cpt[MAX_LOAD_STRING + 1];
-		wchar_t msg[MAX_LOAD_STRING + 1];
-		::LoadString(_Module.GetResourceInstance(), IDR_MAINFRAME, cpt, MAX_LOAD_STRING);
-		::LoadString(_Module.GetResourceInstance(), IDS_SEARCH_END_MSG, msg, MAX_LOAD_STRING);
-		U::MessageBox(MB_OK|MB_ICONEXCLAMATION, cpt, msg, m_view->m_fo.pattern);	
+		U::MessageBox(MB_OK|MB_ICONEXCLAMATION, IDR_MAINFRAME, IDS_SEARCH_END_MSG, m_view->m_fo.pattern);	
 	}
     else {
       SaveString();
@@ -2681,20 +2677,12 @@ public:
     if (nRepl>0) {
       SaveString();
       SaveHistory();
-	  wchar_t cpt[MAX_LOAD_STRING + 1];
-	  wchar_t msg[MAX_LOAD_STRING + 1];
-	  ::LoadString(_Module.GetResourceInstance(), IDS_REPL_ALL_CAPT, cpt, MAX_LOAD_STRING);
-	  ::LoadString(_Module.GetResourceInstance(), IDS_REPL_DONE_MSG, msg, MAX_LOAD_STRING);
-      U::MessageBox(MB_OK, cpt, msg, nRepl);
+      U::MessageBox(MB_OK, IDS_REPL_ALL_CAPT, IDS_REPL_DONE_MSG, nRepl);
       MakeClose();
       m_selvalid=false;
     } else
 	{
-		wchar_t cpt[MAX_LOAD_STRING + 1];
-		wchar_t msg[MAX_LOAD_STRING + 1];
-		::LoadString(_Module.GetResourceInstance(), IDR_MAINFRAME, cpt, MAX_LOAD_STRING);
-		::LoadString(_Module.GetResourceInstance(), IDS_SEARCH_END_MSG, msg, MAX_LOAD_STRING);
-		U::MessageBox(MB_OK|MB_ICONEXCLAMATION, cpt, msg, m_view->m_fo.pattern);
+		U::MessageBox(MB_OK|MB_ICONEXCLAMATION, IDR_MAINFRAME, IDS_SEARCH_END_MSG, m_view->m_fo.pattern);
 	}
   }
 };
@@ -2728,11 +2716,7 @@ LRESULT CFBEView::OnReplace(WORD, WORD, HWND, BOOL&)
 LRESULT  CFBEView::OnFindNext(WORD, WORD, HWND, BOOL&) {
   if (!DoSearch())
   {
-	  wchar_t cpt[MAX_LOAD_STRING + 1];
-	  wchar_t msg[MAX_LOAD_STRING + 1];
-	  ::LoadString(_Module.GetResourceInstance(), IDR_MAINFRAME, cpt, MAX_LOAD_STRING);
-	  ::LoadString(_Module.GetResourceInstance(), IDS_SEARCH_FAIL_MSG, msg, MAX_LOAD_STRING);
-    U::MessageBox(MB_OK|MB_ICONEXCLAMATION, cpt, msg,m_fo.pattern);
+	U::MessageBox(MB_OK|MB_ICONEXCLAMATION, IDR_MAINFRAME, IDS_SEARCH_FAIL_MSG, m_fo.pattern);
   }
   return 0;
 }
@@ -3021,6 +3005,14 @@ VARIANT_BOOL  CFBEView::OnClick(IDispatch *evt)
 	return VARIANT_TRUE;
 }
 
+VARIANT_BOOL  CFBEView::OnKeyDown(IDispatch *evt)
+{
+	MSHTML::IHTMLEventObjPtr oe(evt);
+	if (oe->keyCode == VK_LEFT || oe->keyCode == VK_UP || oe->keyCode == VK_PRIOR || oe->keyCode == VK_HOME)
+  		m_startMatch = m_endMatch = 0;
+	return VARIANT_TRUE;
+}
+
 VARIANT_BOOL  CFBEView::OnRealPaste(IDispatch* evt)
 {
 	MSHTML::IHTMLEventObjPtr oe(evt);
@@ -3143,11 +3135,7 @@ bool CFBEView::SciFindNext(HWND src,bool fFwdOnly,bool fBarf) {
 			free(tmp);
 			if (fBarf)
 			{
-				wchar_t cpt[MAX_LOAD_STRING + 1];
-				wchar_t msg[MAX_LOAD_STRING + 1];
-				::LoadString(_Module.GetResourceInstance(), IDR_MAINFRAME, cpt, MAX_LOAD_STRING);
-				::LoadString(_Module.GetResourceInstance(), IDS_SEARCH_FAIL_MSG, msg, MAX_LOAD_STRING);
-				U::MessageBox(MB_OK|MB_ICONEXCLAMATION, cpt, msg,m_fo.pattern);
+				U::MessageBox(MB_OK|MB_ICONEXCLAMATION, IDR_MAINFRAME, IDS_SEARCH_FAIL_MSG, m_fo.pattern);
 			}
 			return false;
 		}

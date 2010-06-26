@@ -36,6 +36,8 @@
 #include <atlstr.h>
 #include <atlpath.h>
 #include <atlcoll.h>
+#include <atlfile.h>
+#include <atlcomtime.h>
 #include "atlimage.h"
 
 #include <shellapi.h>
@@ -96,6 +98,8 @@ using namespace _com_util;
 #ifndef SPI_GETDROPSHADOW
 #define	SPI_GETDROPSHADOW 0x1024
 #endif
+
+#define  UIS_WM_UPDATE_PROGRESS_UI (WM_APP + 0x100)
 
 // scripting support
 #include <activscp.h>

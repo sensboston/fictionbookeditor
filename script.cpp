@@ -453,19 +453,13 @@ public:
 
 			err->GetSourcePosition(&ctx,&line,&column);
 
-
-			wchar_t cpt[MAX_LOAD_STRING + 1];
-			wchar_t msg[MAX_LOAD_STRING + 1];
-			::LoadString(_Module.GetResourceInstance(), IDS_SCRIPT_MSG_CPT, cpt, MAX_LOAD_STRING);
 			if (ei.bstrDescription)
 			{
-				::LoadString(_Module.GetResourceInstance(), IDS_SCRIPT_ERRD_MSG, msg, MAX_LOAD_STRING);
-				U::MessageBox(MB_ICONERROR|MB_OK, cpt, msg, ei.bstrDescription, line+1, column+1);			
+				U::MessageBox(MB_ICONERROR|MB_OK, IDS_SCRIPT_MSG_CPT, IDS_SCRIPT_ERRD_MSG, ei.bstrDescription, line+1, column+1);			
 			}
 			else
 			{
-				::LoadString(_Module.GetResourceInstance(), IDS_SCRIPT_ERRX_MSG, msg, MAX_LOAD_STRING);
-				U::MessageBox(MB_ICONERROR|MB_OK, cpt, msg, ei.scode, line+1, column+1);			
+				U::MessageBox(MB_ICONERROR|MB_OK, IDS_SCRIPT_MSG_CPT, IDS_SCRIPT_ERRX_MSG, ei.scode, line+1, column+1);			
 			}				
 			SysFreeString(ei.bstrSource);
 			SysFreeString(ei.bstrDescription);
@@ -474,11 +468,7 @@ public:
 		} 
 		else
 		{
-			wchar_t cpt[MAX_LOAD_STRING + 1];
-			wchar_t msg[MAX_LOAD_STRING + 1];
-			::LoadString(_Module.GetResourceInstance(), IDS_SCRIPT_MSG_CPT, cpt, MAX_LOAD_STRING);
-			::LoadString(_Module.GetResourceInstance(), IDS_SCRIPT_MSG, msg, MAX_LOAD_STRING);
-			U::MessageBox(MB_ICONERROR|MB_OK, cpt, msg);
+			U::MessageBox(MB_ICONERROR|MB_OK, IDS_SCRIPT_MSG_CPT, IDS_SCRIPT_MSG);
 			return S_OK;
 		}
 	}
@@ -639,11 +629,7 @@ HRESULT	ScriptLoad(const wchar_t *filename) {
     DWORD   code = GetLastError();
     wchar_t em[256];
     FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM,0,code,0,em,sizeof(em)/sizeof(em[0]),0);
-	wchar_t cpt[MAX_LOAD_STRING + 1];
-	wchar_t msg[MAX_LOAD_STRING + 1];
-	::LoadString(_Module.GetResourceInstance(), IDS_SCRIPT_MSG_CPT, cpt, MAX_LOAD_STRING);
-	::LoadString(_Module.GetResourceInstance(), IDS_SCRIPT_LOAD_ERR_MSG, msg, MAX_LOAD_STRING);
-	U::MessageBox(MB_ICONERROR|MB_OK, cpt, msg, filename, em);
+	U::MessageBox(MB_ICONERROR|MB_OK, IDS_SCRIPT_MSG_CPT, IDS_SCRIPT_LOAD_ERR_MSG, filename, em);
     return HRESULT_FROM_WIN32(GetLastError());
   }
 

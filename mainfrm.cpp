@@ -4,6 +4,7 @@
 #include "stdafx.h"
 
 #include "MainFrm.h"
+#include "AboutBox.h"
 #include "CFileDialogEx.h"
 #include "SettingsDlg.h"
 #include "xmlMatchedTagsHighlighter.h"
@@ -237,11 +238,7 @@ bool	CMainFrame::DiscardChanges() {
 
   if (DocChanged())
   {
-    wchar_t cpt[MAX_LOAD_STRING + 1];
-    wchar_t msg[MAX_LOAD_STRING + 1];
-	::LoadString(_Module.GetResourceInstance(), IDR_MAINFRAME, cpt, MAX_LOAD_STRING);
-	::LoadString(_Module.GetResourceInstance(), IDS_SAVE_DLG_MSG, msg, MAX_LOAD_STRING);
-    switch (U::MessageBox(MB_YESNOCANCEL|MB_ICONEXCLAMATION, cpt, msg,(const TCHAR *)m_doc->m_filename))
+    switch (U::MessageBox(MB_YESNOCANCEL|MB_ICONEXCLAMATION, IDR_MAINFRAME, IDS_SAVE_DLG_MSG, (const TCHAR *)m_doc->m_filename))
     {
     case IDYES:
 		{
@@ -1610,7 +1607,7 @@ LRESULT CMainFrame::OnCreate(UINT, WPARAM, LPARAM, BOOL&)
 	  }
   }
 
-  // Раскладка русской клавиатуры
+  // Change keyboard layout
   if (_Settings.GetChangeKeybLayout())
   {
 	  CString layout;
@@ -1818,11 +1815,7 @@ public:
   virtual void DoFind() {
     if (!m_view->SciFindNext(m_source,true,false))
 	{
-		wchar_t cpt[MAX_LOAD_STRING + 1];
-		wchar_t msg[MAX_LOAD_STRING + 1];
-		::LoadString(_Module.GetResourceInstance(), IDR_MAINFRAME, cpt, MAX_LOAD_STRING);
-		::LoadString(_Module.GetResourceInstance(), IDS_SEARCH_END_MSG, msg, MAX_LOAD_STRING);
-		U::MessageBox(MB_OK|MB_ICONEXCLAMATION, cpt, msg, m_view->m_fo.pattern);	
+		U::MessageBox(MB_OK|MB_ICONEXCLAMATION, IDR_MAINFRAME, IDS_SEARCH_END_MSG, m_view->m_fo.pattern);	
 	}
     else {
       SaveString();
@@ -1935,20 +1928,12 @@ public:
     if (num_repl>0) {
       SaveString();
       SaveHistory();
-	  wchar_t cpt[MAX_LOAD_STRING + 1];
-	  wchar_t msg[MAX_LOAD_STRING + 1];
-	  ::LoadString(_Module.GetResourceInstance(), IDS_REPL_ALL_CAPT, cpt, MAX_LOAD_STRING);
-	  ::LoadString(_Module.GetResourceInstance(), IDS_REPL_DONE_MSG, msg, MAX_LOAD_STRING);
-      U::MessageBox(MB_OK, cpt, msg, num_repl);      
+      U::MessageBox(MB_OK, IDS_REPL_ALL_CAPT, IDS_REPL_DONE_MSG, num_repl);      
       MakeClose();
       m_selvalid=false;
     } else
 	{
-		wchar_t cpt[MAX_LOAD_STRING + 1];
-		wchar_t msg[MAX_LOAD_STRING + 1];
-		::LoadString(_Module.GetResourceInstance(), IDR_MAINFRAME, cpt, MAX_LOAD_STRING);
-		::LoadString(_Module.GetResourceInstance(), IDS_SEARCH_END_MSG, msg, MAX_LOAD_STRING);
-		U::MessageBox(MB_OK|MB_ICONEXCLAMATION, cpt, msg, m_view->m_fo.pattern);	
+		U::MessageBox(MB_OK|MB_ICONEXCLAMATION, IDR_MAINFRAME, IDS_SEARCH_END_MSG, m_view->m_fo.pattern);	
 	}
   }
 };
@@ -2301,22 +2286,14 @@ LRESULT CMainFrame::OnToolsImport(WORD, WORD wID, HWND, BOOL&) {
 	  } 
 	  else 
 	  {
-		wchar_t cpt[MAX_LOAD_STRING + 1];
-		wchar_t msg[MAX_LOAD_STRING + 1];
-		::LoadString(_Module.GetResourceInstance(), IDS_IMPORT_ERR_CPT, cpt, MAX_LOAD_STRING);
-		::LoadString(_Module.GetResourceInstance(), IDS_IMPORT_ERR_MSG, msg, MAX_LOAD_STRING);		
-		U::MessageBox(MB_OK|MB_ICONERROR, cpt, msg);
+		U::MessageBox(MB_OK|MB_ICONERROR, IDS_IMPORT_ERR_CPT, IDS_IMPORT_ERR_MSG);
 		return 0;
       }
 
       MSXML2::IXMLDOMDocument2Ptr dom(obj);	 
       if (!(bool)dom)
 	  {
-		wchar_t cpt[MAX_LOAD_STRING + 1];
-		wchar_t msg[MAX_LOAD_STRING + 1];
-		::LoadString(_Module.GetResourceInstance(), IDS_ERRMSGBOX_CAPTION, cpt, MAX_LOAD_STRING);
-		::LoadString(_Module.GetResourceInstance(), IDS_IMPORT_XML_ERR_MSG, msg, MAX_LOAD_STRING);	
-		U::MessageBox(MB_OK|MB_ICONERROR, cpt, msg);
+		U::MessageBox(MB_OK|MB_ICONERROR, IDS_ERRMSGBOX_CAPTION, IDS_IMPORT_XML_ERR_MSG);
 	  }
       else if (DiscardChanges()) 
 	  {
@@ -2390,11 +2367,7 @@ LRESULT CMainFrame::OnToolsExport(WORD, WORD wID, HWND, BOOL&)
 				} 
 				else 
 				{
-					wchar_t cpt[MAX_LOAD_STRING + 1];
-					wchar_t msg[MAX_LOAD_STRING + 1];
-					::LoadString(_Module.GetResourceInstance(), IDS_EXPORT_ERR_CPT, cpt, MAX_LOAD_STRING);
-					::LoadString(_Module.GetResourceInstance(), IDS_EXPORT_ERR_MSG, msg, MAX_LOAD_STRING);	
-					U::MessageBox(MB_OK|MB_ICONERROR, cpt, msg);
+					U::MessageBox(MB_OK|MB_ICONERROR, IDS_EXPORT_ERR_CPT, IDS_EXPORT_ERR_MSG);
 				return 0;
 			}
 		}
@@ -2412,77 +2385,6 @@ LRESULT CMainFrame::OnLastPlugin(WORD, WORD wID, HWND, BOOL&)
 		::SendMessage(m_hWnd, WM_COMMAND, m_last_plugin, NULL);
 	return 0;
 }
-
-extern "C"
-{
-	extern const char* build_timestamp;
-	extern const char* build_name;
-};
-
-class CAboutDlg : public CDialogImpl<CAboutDlg>
-{
-	CEdit m_Contributors;
-public:
-	enum { IDD = IDD_ABOUTBOX };
-
-	BEGIN_MSG_MAP(CAboutDlg)
-		MESSAGE_HANDLER(WM_INITDIALOG, OnInitDialog)
-		MESSAGE_HANDLER(WM_CTLCOLORSTATIC, OnCtlColor)
-
-		COMMAND_ID_HANDLER(IDOK, OnCloseCmd)
-		COMMAND_ID_HANDLER(IDCANCEL, OnCloseCmd)
-
-		NOTIFY_HANDLER(IDC_SYSLINK_AB_LINKS, NM_CLICK, OnNMClickSyslinkAbLinks)
-	END_MSG_MAP()
-
-	LRESULT OnInitDialog(UINT, WPARAM, LPARAM, BOOL&)
-	{
-		CString stamp(build_timestamp);
-		::SetWindowText(GetDlgItem(IDC_BUILDSTAMP), stamp);
-
-		CString bname(build_name);
-		::SetWindowText(GetDlgItem(IDC_STATIC_AB_APPNAMEVER), bname);
-
-		m_Contributors = GetDlgItem(IDC_CONTRIBS);
-		HRSRC hres = ::FindResource(NULL, L"ABOUT_FILE", L"ABOUT_FILE");
-		HGLOBAL hbytes = ::LoadResource(NULL, hres);
-		CA2CT contribs((char*)::LockResource(hbytes), 65001);  // UTF-8
-		CString s(contribs);
-		m_Contributors.SetWindowText(s.Left(s.ReverseFind(L'\n')-1));
-
-		::SetFocus(GetDlgItem(IDOK));
-		return 0;
-	}
-
-	LRESULT OnCloseCmd(WORD, WORD wID, HWND, BOOL&)
-	{
-		EndDialog(wID);
-		return 0;
-	}
-
-	LRESULT OnCtlColor(UINT, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
-	{
-		HWND hwndEdit = (HWND) lParam;
-		if (hwndEdit == GetDlgItem(IDC_CONTRIBS) )
-		{
-			HDC hdc = (HDC)wParam;
-			::SetBkColor(hdc, RGB(255,255,255));
-			return (LRESULT) ::GetStockObject(WHITE_BRUSH);
-		}
-		return 0;
-	}
-
-	LRESULT CAboutDlg::OnNMClickSyslinkAbLinks(int /*idCtrl*/, LPNMHDR pNMHDR, BOOL&)
-	{
-		PNMLINK pNMLink = (PNMLINK)pNMHDR;
-		CString args;
-
-		args.Format(L"url.dll, FileProtocolHandler %s", pNMLink->item.szUrl);
-		ShellExecute(NULL, L"open", L"rundll32.exe", args, NULL, SW_SHOW);
-
-		return 0;
-	}
-};
 
 LRESULT CMainFrame::OnToolsWords(WORD, WORD, HWND, BOOL&)
 {
@@ -4610,11 +4512,7 @@ bool CMainFrame::CheckFileTimeStamp()
 	if(m_file_age == FileAge(m_doc->m_filename))
 		return false;
 	
-	wchar_t cpt[MAX_LOAD_STRING + 1];
-	wchar_t msg[MAX_LOAD_STRING + 1];
-	::LoadString(_Module.GetResourceInstance(), IDS_FILE_CHANGED_CPT, cpt, MAX_LOAD_STRING);
-	::LoadString(_Module.GetResourceInstance(), IDS_FILE_CHANGED_MSG, msg, MAX_LOAD_STRING);
-	if(IDYES == U::MessageBox(MB_YESNO, cpt, msg, m_doc->m_filename))
+	if(IDYES == U::MessageBox(MB_YESNO, IDS_FILE_CHANGED_CPT, IDS_FILE_CHANGED_MSG, m_doc->m_filename))
 	{
 		return ReloadFile();			
 	}
