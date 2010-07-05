@@ -294,9 +294,10 @@ void CSpeller::SetDocumentLanguage()
 // 
 MSHTML::IHTMLTxtRangePtr CSpeller::GetSelWordRange()
 {
+	MSHTML::IHTMLTxtRangePtr rng = 0;
 	// fetch selection
 	MSHTML::IHTMLTxtRangePtr selRange(m_doc2->selection->createRange());
-	MSHTML::IHTMLTxtRangePtr rng = selRange->duplicate();
+	if (selRange) rng = selRange->duplicate();
 	if (rng)
 	{
 		CString s = rng->text;
