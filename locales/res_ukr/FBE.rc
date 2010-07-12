@@ -252,20 +252,24 @@ BEGIN
     PUSHBUTTON      "Скасувати",IDCANCEL,205,261,55,15
 END
 
-IDD_ABOUTBOX DIALOGEX 0, 0, 267, 139
-STYLE DS_SETFONT | DS_MODALFRAME | DS_CENTER | WS_POPUP | WS_CAPTION | WS_SYSMENU
+IDD_ABOUTBOX DIALOGEX 0, 0, 266, 151
+STYLE DS_SETFONT | DS_CENTER | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME
 CAPTION "Про програму"
 FONT 9, "Tahoma", 0, 0, 0x0
 BEGIN
-    CONTROL         248,IDC_AB_BANNER,"Static",SS_BITMAP | SS_REALSIZEIMAGE,7,7,56,123,WS_EX_CLIENTEDGE
-    ICON            IDR_MAINFRAME,IDC_STATIC_AB_APPICON,72,8,20,20
-    EDITTEXT        IDC_STATIC_AB_APPNAMEVER,99,8,157,12,ES_READONLY | NOT WS_BORDER
-    LTEXT           "Збірка",IDC_STATIC,101,20,25,8
-    EDITTEXT        IDC_BUILDSTAMP,126,20,127,12,ES_READONLY | NOT WS_BORDER
+    DEFPUSHBUTTON   "Гаразд",IDOK,215,133,44,14
+    CONTROL         248,IDC_AB_STATIC_BANNER,"Static",SS_BITMAP | SS_NOTIFY | NOT WS_VISIBLE,6,6,56,123,WS_EX_CLIENTEDGE
+    CONTROL         "",IDC_AB_BANNER,"Static",SS_OWNERDRAW | SS_NOTIFY | NOT WS_VISIBLE,6,6,57,123,WS_EX_CLIENTEDGE
+    ICON            IDR_MAINFRAME,IDC_STATIC_AB_APPICON,73,8,20,20
+    EDITTEXT        IDC_STATIC_AB_APPNAMEVER,99,8,157,12,ES_READONLY | NOT WS_BORDER | NOT WS_TABSTOP
+    LTEXT           "Збірка",IDC_STATIC_BUILD,101,20,15,8
+    EDITTEXT        IDC_BUILDSTAMP,123,20,132,12,ES_READONLY | NOT WS_BORDER | NOT WS_TABSTOP
     CONTROL         "<a href=""http://code.google.com/p/fictionbookeditor/"">http://code.google.com/p/fictionbookeditor/</a>",IDC_SYSLINK_AB_LINKS,
-                    "SysLink",WS_TABSTOP,101,32,154,8
-    EDITTEXT        IDC_CONTRIBS,69,47,191,65,ES_MULTILINE | ES_AUTOVSCROLL | ES_READONLY | ES_WANTRETURN | NOT WS_BORDER | WS_VSCROLL
-    DEFPUSHBUTTON   "Гаразд",IDOK,140,118,50,14
+                    "SysLink",0x0,101,32,154,8
+    EDITTEXT        IDC_CONTRIBS,70,51,189,77,ES_MULTILINE | ES_AUTOVSCROLL | ES_READONLY | ES_WANTRETURN | NOT WS_BORDER | WS_VSCROLL | NOT WS_TABSTOP,WS_EX_STATICEDGE
+    CONTROL         "Static",IDC_TEXT_STATUS,"Static",SS_LEFTNOWORDWRAP | WS_GROUP,24,137,180,8
+    CONTROL         400,IDC_PIC_UPDATE,"Static",SS_BITMAP,9,136,9,9
+    PUSHBUTTON      "Обновити",IDC_UPDATE,161,133,49,14,NOT WS_VISIBLE
 END
 
 IDD_INPUTBOX DIALOGEX 0, 0, 290, 70
@@ -656,10 +660,46 @@ END
 IDR_MAINFRAME           BITMAP                  "res\\Toolbar.bmp"
 IDR_MAINFRAME_SMALL     BITMAP                  "res\\Toolbar_small.bmp"
 IDR_SCRIPTS             BITMAP                  "res\\Scripts.bmp"
-IDR_DOCUMENT_TREE       BITMAP                  "res\\document.bmp"
-IDB_WORDSTATES          BITMAP                  "res\\wordstat.bmp"
 IDB_STRUCTURE           BITMAP                  "res\\struct.bmp"
+IDB_WORDSTATES          BITMAP                  "res\\wordstat.bmp"
+IDR_DOCUMENT_TREE       BITMAP                  "res\\document.bmp"
 IDB_AB_BANNER           BITMAP                  "res\\Fb2-shema.bmp"
+IDB_UPD_OK              BITMAP                  "res\\ok.bmp"
+IDB_UPD_ERR             BITMAP                  "res\\error.bmp"
+IDB_UPD_UPDATE          BITMAP                  "res\\update.bmp"
+IDB_UPD_CHECK1          BITMAP                  "res\\Icon_02.bmp"
+IDB_UPD_CHECK2          BITMAP                  "res\\Icon_03.bmp"
+IDB_UPD_CHECK3          BITMAP                  "res\\Icon_04.bmp"
+IDB_UPD_CHECK4          BITMAP                  "res\\Icon_05.bmp"
+IDB_UPD_CHECK5          BITMAP                  "res\\Icon_06.bmp"
+IDB_UPD_CHECK6          BITMAP                  "res\\Icon_07.bmp"
+IDB_UPD_CHECK7          BITMAP                  "res\\Icon_08.bmp"
+IDB_UPD_CHECK8          BITMAP                  "res\\Icon_09.bmp"
+IDB_UPD_CHECK9          BITMAP                  "res\\Icon_10.bmp"
+IDB_UPD_CHECK10         BITMAP                  "res\\Icon_11.bmp"
+IDB_UPD_CHECK11         BITMAP                  "res\\Icon_12.bmp"
+IDB_UPD_CHECK12         BITMAP                  "res\\Icon_13.bmp"
+IDB_UPD_CHECK13         BITMAP                  "res\\Icon_14.bmp"
+IDB_UPD_CHECK14         BITMAP                  "res\\Icon_15.bmp"
+IDB_UPD_CHECK15         BITMAP                  "res\\Icon_16.bmp"
+IDB_UPD_CHECK16         BITMAP                  "res\\Icon_17.bmp"
+IDB_UPD_CHECK17         BITMAP                  "res\\Icon_18.bmp"
+IDB_UPD_CHECK18         BITMAP                  "res\\Icon_19.bmp"
+IDB_UPD_CHECK19         BITMAP                  "res\\Icon_20.bmp"
+IDB_UPD_CHECK20         BITMAP                  "res\\Icon_21.bmp"
+IDB_UPD_CHECK21         BITMAP                  "res\\Icon_22.bmp"
+IDB_UPD_CHECK22         BITMAP                  "res\\Icon_23.bmp"
+IDB_UPD_CHECK23         BITMAP                  "res\\Icon_24.bmp"
+IDB_UPD_CHECK24         BITMAP                  "res\\Icon_25.bmp"
+IDB_CENTER              BITMAP                  "res\\center.bmp"
+IDB_ORANGE              BITMAP                  "res\\orange.bmp"
+IDB_GREEN               BITMAP                  "res\\green.bmp"
+IDB_DOC                 BITMAP                  "res\\doc.bmp"
+IDB_XML                 BITMAP                  "res\\xml.bmp"
+IDB_OTHER               BITMAP                  "res\\other.bmp"
+IDB_HTML                BITMAP                  "res\\html.bmp"
+IDB_PRC                 BITMAP                  "res\\prc.bmp"
+IDB_TEXT                BITMAP                  "res\\text.bmp"
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -716,19 +756,42 @@ END
 
 STRINGTABLE 
 BEGIN
+    IDS_CTXMENU_COPY        "Копіювати"
+    IDS_CTXMENU_PASTE       "Вставити"
+    IDS_CTXMENU_SELECT      "Виділити"
+    IDS_CTXMENU_IMG_SAVEAS  "Зберегти малюнок як..."
+    IDS_UPDATE_CONNECTING   "Підключаюься до сервера ..."
+    IDS_HOTKEY_WRONG        "Хибне сполучення!"
+    IDS_HOTKEY_DEFAULT_COLLISION 
+                            "Типове сполучення для цієї команди було зарезервовано для «%s»! Замінити?"
+    IDS_HOTKEY_ASSIGN_NO_COLLISION "Не зарезервовано для інших коменд"
+    IDS_HOTKEY_ASSIGN_COLLISION "Зарезервовано «%s»"
+    IDS_SETTINGS_NEED_RESTART 
+                            "Зміни наберуть чинності після перезапуску програми.\nПерезапустити негайно?"
+    IDS_DOCTREE_MENU_ELEMENTS "Елементи"
+    IDS_DOCTREE_MENU_SCRIPTS "Скрипти"
+    IDS_HOTKEY_EDIT_REMOVE_OUTER_SECTION "Видалити зовнішню секцію"
+    IDS_HOTKEY_GROUP_TOOLS  "Інструменти"
+    IDS_HOTKEY_TOOLS_WORDS  "Слова"
+    IDS_HOTKEY_GROUP_PLUGINS "Модулі"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_UPDATE_DOWNLOADCOMPLETE "Завантаження завершено, записую файл ..."
+    IDS_UPDATE_DOWNLOADERROR "Помилка завантаження"
+    IDS_UPDATE_404ERROR     "Помилка 404: файл не знайден"
+    IDS_UPDATE_403ERROR     "Помилка 403: доступ заборонений"
+    IDS_UPDATE_407ERROR     "Помилка 407: потрібна аутентифікація проксі-сервера"
+    IDS_UPDATE_NOTSUPPORTEDRANGE " (не підтримувана область)"
+    IDS_UPDATE_DOWNLOADERRORSTATUS "Помилка завантаження, код статусу: %d"
+    IDS_UPDATE_INCORRECTMD5 "Помилка, не вірна контрольна сума."
+    IDS_UPDATE_NEWVERSIONAVAILABLE 
+                            "Нова версія FBE доступна для завантаження."
+    IDS_UPDATE_HAVELATESTVERSION "У Вас встановлена остання версія FBE."
+    IDS_ABOUT_LOGOCAPTION   "Анімоване FB2 лого  »  Натисніть клавішу ? для довідки "
+    IDS_UPDATE_CLOSE        "FBE повинен бути закритий для продовження встановлення.\r\n\r\nВи можете пізніше видалити інсталяційний файл, що знаходиться у ""%s"".\r\n\r\nЗакрити FBE і продовжити інсталяцію нової версії?"
     IDS_LANG_UKRAINIAN      "Українська"
-END
-
-STRINGTABLE 
-BEGIN
-    ATL_IDS_MRU_FILE        "Відкрити цей документ"
-    IDS_ENCODINGS           "UTF-8,UTF-16,Windows-1251,Windows-1252,ISO-8859-1,ISO-8859-2,ISO-8859-5,ISO-8859-15,KOI8-R"
-    IDS_DOCUMENT_TREE_CAPTION "Структура документу"
-END
-
-STRINGTABLE 
-BEGIN
-    ATL_IDS_IDLEMESSAGE     "Готово"
 END
 
 STRINGTABLE 
@@ -744,6 +807,7 @@ BEGIN
     IDS_HOTKEY_EDIT_UNDO    "Скасувати дію"
     IDS_HOTKEY_GROUP_EDIT   "Редагування"
     IDS_HOTKEY_GROUP_NAVIGATION "Навіґація"
+    IDS_UPDATE_CHECK        "Перевіряю оновлення ..."
     IDS_HOTKEY_NAVIGATION_NEXT_ITEM "Наступний елемент"
     ID_PANE_INS             "ЗАМ"
     IDS_HOTKEY_NAVIGATION_SCI_COLLAPSE1 "Згорнути дерево на 1 рівень"
@@ -760,12 +824,29 @@ BEGIN
     IDC_SPELL_IGNOREALL     "Пропустити усі"
     IDS_SPELL_CONTINUE      "Продовжити"
     IDS_HOTKEY_EDIT_INSERT_INLINEIMAGE "Додати малюнок до тексту"
+    IDS_UPDATE_CANTCONNECT  "Не можу підключитися до сервера."
     IDS_HOTKEY_FASTMODE     "Прискорений режим"
     IDS_HOTKEY_TREEVIEW     "Дерево увімк./вимк."
     IDS_HOTKEY_TOOLS_SPELLHIGHLIGHT "Переключити виділення помилок"
     IDS_HOTKEY_NAVIGATION_GOTO_FOOTNOTE "Перехід до виноски або до посилання"
     IDS_HOTKEY_NAVIGATION_GOTO_MATCHTAG "Перехід на парний тег"
     IDS_HOTKEY_NAVIGATION_GOTO_WRONGTAG "Перехід до помилкового тегу"
+    IDS_UPDATE_DOWNLOADEDFROM "Завантажено %d Kb з %d Kb ( %d%%)"
+    IDS_UPDATE_DOWNLOADED   "Завантажено %d Kb"
+    IDS_UPDATEEXISTS        "Оновлення %s вже існує.\r\nВи хочете запустити цей файл?"
+    IDS_UPDATE_DOWNLOADREADY "Обновлення готове."
+END
+
+STRINGTABLE 
+BEGIN
+    ATL_IDS_MRU_FILE        "Відкрити цей документ"
+    IDS_ENCODINGS           "UTF-8,UTF-16,Windows-1251,Windows-1252,ISO-8859-1,ISO-8859-2,ISO-8859-5,ISO-8859-15,KOI8-R"
+    IDS_DOCUMENT_TREE_CAPTION "Структура документу"
+END
+
+STRINGTABLE 
+BEGIN
+    ATL_IDS_IDLEMESSAGE     "Готово"
 END
 
 STRINGTABLE 
@@ -1036,27 +1117,6 @@ BEGIN
     IDS_WORDS_FR_BTN_FIND0  "Знайти"
     IDS_WORDS_FR_BTN_FIND1  "Далі"
     IDS_CTXMENU_CUT         "Вирізати"
-END
-
-STRINGTABLE 
-BEGIN
-    IDS_CTXMENU_COPY        "Копіювати"
-    IDS_CTXMENU_PASTE       "Вставити"
-    IDS_CTXMENU_SELECT      "Виділити"
-    IDS_CTXMENU_IMG_SAVEAS  "Зберегти малюнок як..."
-    IDS_HOTKEY_WRONG        "Хибне сполучення!"
-    IDS_HOTKEY_DEFAULT_COLLISION 
-                            "Типове сполучення для цієї команди було зарезервовано для «%s»! Замінити?"
-    IDS_HOTKEY_ASSIGN_NO_COLLISION "Не зарезервовано для інших коменд"
-    IDS_HOTKEY_ASSIGN_COLLISION "Зарезервовано «%s»"
-    IDS_SETTINGS_NEED_RESTART 
-                            "Зміни наберуть чинності після перезапуску програми.\nПерезапустити негайно?"
-    IDS_DOCTREE_MENU_ELEMENTS "Елементи"
-    IDS_DOCTREE_MENU_SCRIPTS "Скрипти"
-    IDS_HOTKEY_EDIT_REMOVE_OUTER_SECTION "Видалити зовнішню секцію"
-    IDS_HOTKEY_GROUP_TOOLS  "Інструменти"
-    IDS_HOTKEY_TOOLS_WORDS  "Слова"
-    IDS_HOTKEY_GROUP_PLUGINS "Модулі"
 END
 
 STRINGTABLE 

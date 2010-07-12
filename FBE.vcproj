@@ -89,7 +89,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="/LTCG"
-				AdditionalDependencies="rpcrt4.lib &#x0A;gdiplus.lib libhunspell.lib pcre.lib $(INTDIR)\buildstamp.obj"
+				AdditionalDependencies="rpcrt4.lib &#x0A;gdiplus.lib libhunspell.lib pcre.lib opengl32.lib glu32.lib $(INTDIR)\buildstamp.obj"
 				LinkIncremental="0"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories="..\..\hunspell\src\win_api\Release\libhunspell;.\pcre"
@@ -201,7 +201,7 @@
 				Name="VCLinkerTool"
 				RegisterOutput="false"
 				AdditionalOptions="/ignore:4706 /LTCG"
-				AdditionalDependencies="rpcrt4.lib &#x0A;gdiplus.lib libhunspell.lib pcre.lib $(INTDIR)\buildstamp.obj"
+				AdditionalDependencies="rpcrt4.lib &#x0A;gdiplus.lib libhunspell.lib pcre.lib opengl32.lib glu32.lib $(INTDIR)\buildstamp.obj"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories="..\..\hunspell\src\win_api\Release\libhunspell;.\pcre"
@@ -417,6 +417,10 @@
 						BasicRuntimeChecks="3"
 					/>
 				</FileConfiguration>
+			</File>
+			<File
+				RelativePath=".\GLLogo.cpp"
+				>
 			</File>
 			<File
 				RelativePath="mainfrm.cpp"
@@ -664,6 +668,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\GLLogo.h"
+				>
+			</File>
+			<File
 				RelativePath="mainfrm.h"
 				>
 			</File>
@@ -822,6 +830,14 @@
 			Filter="ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe"
 			>
 			<File
+				RelativePath=".\res\center.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\res\doc.bmp"
+				>
+			</File>
+			<File
 				RelativePath=".\res\document.bmp"
 				>
 			</File>
@@ -861,6 +877,14 @@
 			</File>
 			<File
 				RelativePath=".\res\FBE2.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\res\green.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\res\html.bmp"
 				>
 			</File>
 			<File
@@ -964,11 +988,27 @@
 				>
 			</File>
 			<File
+				RelativePath=".\res\orange.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\res\other.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\res\prc.bmp"
+				>
+			</File>
+			<File
 				RelativePath=".\res\Scripts.bmp"
 				>
 			</File>
 			<File
 				RelativePath="res\struct.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\res\text.bmp"
 				>
 			</File>
 			<File
@@ -989,6 +1029,10 @@
 			</File>
 			<File
 				RelativePath=".\res\wsoverlays.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\res\xml.bmp"
 				>
 			</File>
 		</Filter>
