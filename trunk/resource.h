@@ -129,6 +129,7 @@
 #define IDS_HOTKEY_GROUP_NAVIGATION     201
 #define IDD_INPUTBOX                    202
 #define IDS_HOTKEY_NAVIGATION_GOTO_REFERENCE 202
+#define IDS_UPDATE_CHECK                202
 #define IDS_HOTKEY_NAVIGATION_NEXT_ITEM 203
 #define ID_PANE_INS                     204
 #define IDS_HOTKEY_NAVIGATION_SCI_COLLAPSE1 205
@@ -224,6 +225,7 @@
 #define IDS_HOTKEY_SYMBOL_EN_DASH       259
 #define IDS_CTXMENU_IMG_SAVEAS          259
 #define IDS_HOTKEY_SYMBOL_EM_DASH       260
+#define IDS_UPDATE_CONNECTING           260
 #define IDS_HOTKEY_WRONG                261
 #define IDS_HOTKEY_DEFAULT_COLLISION    262
 #define IDS_HOTKEY_ASSIGN_NO_COLLISION  263
@@ -245,6 +247,7 @@
 #define IDS_SPELL_CONTINUE              277
 #define IDS_HOTKEY_EDIT_INSERT_INLINEIMAGE 278
 #define IDS_HOTKEY_EDIT_PASTE2          279
+#define IDS_UPDATE_CANTCONNECT          279
 #define IDS_HOTKEY_FASTMODE             280
 #define IDS_HOTKEY_TREEVIEW             281
 #define IDS_HOTKEY_TOOLS_SPELLHIGHLIGHT 282
@@ -252,10 +255,26 @@
 #define IDS_HOTKEY_NAVIGATION_GOTO_MATCHTAG 284
 #define IDS_HOTKEY_NAVIGATION_GOTO_WRONGTAG 285
 #define IDR_SCRIPTS                     286
+#define IDS_UPDATE_DOWNLOADEDFROM       286
 #define IDB_UPD_OK                      287
+#define IDS_UPDATE_DOWNLOADED           287
 #define IDB_UPD_ERR                     288
+#define IDS_UPDATE_DOWNLOADCOMPLETE     288
 #define IDB_UPD_UPDATE                  289
+#define IDS_UPDATE_DOWNLOADERROR        289
+#define IDS_UPDATE_404ERROR             290
+#define IDS_UPDATE_403ERROR             291
+#define IDS_UPDATE_407ERROR             292
+#define IDS_UPDATE_NOTSUPPORTEDRANGE    293
+#define IDS_UPDATE_DOWNLOADERRORSTATUS  294
+#define IDS_UPDATE_INCORRECTMD5         295
+#define IDS_UPDATE_NEWVERSIONAVAILABLE  296
+#define IDS_UPDATE_HAVELATESTVERSION    297
+#define IDS_ABOUT_LOGOCAPTION           298
+#define IDS_UPDATE_CLOSE                299
 #define IDS_LANG_UKRAINIAN              300
+#define IDS_UPDATEEXISTS                301
+#define IDS_UPDATE_DOWNLOADREADY        302
 #define IDB_UPD_CHECK1                  400
 #define IDB_UPD_CHECK2                  401
 #define IDB_UPD_CHECK3                  402
@@ -290,6 +309,15 @@
 #define IDS_MB_YES                      605
 #define IDS_MB_NO                       606
 #define IDS_MB_CLOSE                    607
+#define IDB_CENTER                      700
+#define IDB_ORANGE                      701
+#define IDB_GREEN                       702
+#define IDB_DOC                         703
+#define IDB_XML                         704
+#define IDB_OTHER                       705
+#define IDB_HTML                        706
+#define IDB_PRC                         707
+#define IDB_TEXT                        708
 #define ID_EXPORT_BASE                  860
 #define ID_IMPORT_BASE                  880
 #define ID_SEL_BASE                     900
@@ -438,9 +466,11 @@
 #define IDB_UPD_CHECK                   1107
 #define IDB_UPD_IMAGE                   1107
 #define IDC_SPELL_SUGGEST               1108
+#define IDC_STATIC_BUILD                1108
 #define IDC_SPELL_UNDO                  1109
 #define IDC_FAST_MODE                   1110
 #define IDC_IDT                         1111
+#define IDC_AB_STATIC_BANNER            1112
 #define ID_SCRIPT_BASE                  9000
 #define ID_EDIT_INS_SYMBOL              10000
 #define ID_NEXT_ITEM                    32772
@@ -532,7 +562,7 @@
 #define _APS_NO_MFC                     1
 #define _APS_NEXT_RESOURCE_VALUE        255
 #define _APS_NEXT_COMMAND_VALUE         32912
-#define _APS_NEXT_CONTROL_VALUE         1108
+#define _APS_NEXT_CONTROL_VALUE         1109
 #define _APS_NEXT_SYMED_VALUE           133
 #endif
 #endif

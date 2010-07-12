@@ -238,7 +238,7 @@ bool	CMainFrame::DiscardChanges() {
 
   if (DocChanged())
   {
-    switch (U::MessageBox(MB_YESNOCANCEL|MB_ICONEXCLAMATION, IDR_MAINFRAME, IDS_SAVE_DLG_MSG, (const TCHAR *)m_doc->m_filename))
+    switch (U::MessageBox(MB_YESNOCANCEL|MB_ICONEXCLAMATION, IDR_MAINFRAME, IDS_SAVE_DLG_MSG, m_doc->m_filename))
     {
     case IDYES:
 		{

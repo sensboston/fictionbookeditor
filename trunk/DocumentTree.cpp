@@ -231,7 +231,8 @@ void CTreeWithToolBar::FillViewBar()
 	}
 
 	::AppendMenu(menu, MF_SEPARATOR, 0, 0);
-	::AppendMenu(menu, MF_STRING, IDC_TREE_CLEAR_ALL, U::GetResString(IDS_DOC_TREE_CLEANUP));
+	CString s; s.LoadString(IDS_DOC_TREE_CLEANUP);
+	::AppendMenu(menu, MF_STRING, IDC_TREE_CLEAR_ALL, s);
 
 	m_view_bar.AttachMenu(bar);
 }

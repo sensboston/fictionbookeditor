@@ -99,7 +99,8 @@ using namespace _com_util;
 #define	SPI_GETDROPSHADOW 0x1024
 #endif
 
-#define  UIS_WM_UPDATE_PROGRESS_UI (WM_APP + 0x100)
+#define  UIS_WM_UPDATE_PROGRESS_UI	(WM_APP + 0x100)
+#define  WM_RESIZE_OPENGL_WINDOW	(WM_APP + 0x101)
 
 // scripting support
 #include <activscp.h>

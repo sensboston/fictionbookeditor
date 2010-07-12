@@ -150,7 +150,6 @@ namespace U // place all utilities into their own namespace
   bool    HasFilesWithExt(const CString, const TCHAR*);
   bool    HasScriptsEndpoint(const CString, TCHAR*);
   bool    CheckScriptsVersion(const wchar_t*);
-  CString GetResString(int StringID);
   WORD    StringToKeycode(CString);
   WORD    VKToFVirt(WORD);
   CString KeycodeToString(WORD);
