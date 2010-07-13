@@ -260,13 +260,6 @@ function Run() {
       el.nodeValue=myNodeValue;
       rightQuotesCnt++;
      }
-     if (itIsLeftQuotes==itIsRightQuotes) {
-      //невозможно определить, левая или правая кавычка
-      el.nodeValue=myNodeValue;
-      setCursorIntoTextNode(el,indexOfQuotes);
-      alert(versionStr+"Невозможно определить, какой нужен тип кавычки:\n\n"+(itIsLeftQuotes==true?"кавычка получается и левой и правой.":"кавычка получается ни левой ни правой.")+"\n\n"+getInfoStr());
-      return "error";
-     } 
      indexOfQuotes=myNodeValue.indexOf('"',indexOfQuotes+1);
      //getNeighborSymbolsForward();
     }
