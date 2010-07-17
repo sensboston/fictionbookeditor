@@ -1,11 +1,10 @@
 // Разметка подзаголовков, чистка пустых строк
-// Версия: 3.3
+// Версия: 3.4
 // Автор: Sclex
 
 function Run() {
  try { var nbspChar=window.external.GetNBSP(); var nbspEntity; if (nbspChar.charCodeAt(0)==160) nbspEntity="&nbsp;"; else nbspEntity=nbspChar;}
  catch(e) { var nbspChar=String.fromCharCode(160); var nbspEntity="&nbsp;";}
-
  var DebugMode=0;
  var DestrongTitles=true; //делать ли удаление жирности в заголовках
  var DeitalicTitles=false; //удалять ли курсив в заголовках
@@ -41,18 +40,14 @@ function Run() {
  }
 
  function Recursive(ptr) {
-  if (ptr==null) {return;}
-  if (ptr.parentNode.className=="section") {
-   var section_has_empty_lines_for_validity=true;
-  } else {
-   var section_has_empty_lines_for_validity=false;
-  }
+  var savedPtr=ptr;
+  if (ptr==null) return;
   var a5=ptr.parentNode;
   var after_title=false;
-  var ImageCnt=0;
   var flag_of_begin=true;
-  var first_empty_memorized=false;
+  var firstEmptyMemorized=false;
   var image_flag=false;
+  var savedFirstEmpty=null;
   while (ptr!=null) {
    var SaveNextPtr=ptr.nextSibling;
  //  MsgBox("ptr.outerHTML:"+ptr.outerHTML);
@@ -104,29 +99,24 @@ function Run() {
     }
    }
    if (ptr.nodeName=="DIV" && ptr.className=="image") {
-    ImageCnt++;
-    if (flag_of_begin) {
+    if (flag_of_begin && !image_flag) {
+     flag_of_begin=false;    
      image_flag=true;
-     flag_of_begin=false;
-    }
-   }
-   if (ptr.nodeName=="DIV" && ptr.className=="title") {
-     after_title=true;
+    } else if (image_flag) image_flag=false;
    }
    if (ptr.nodeName=="P" && ptr.parentNode.className=="section") {
     if (!isLineEmpty(ptr)) {
-     section_has_empty_lines_for_validity=false;
      flag_of_begin=false;
-    } else if (first_empty_memorized==false && flag_of_begin) {
-     first_empty_memorized=true;
-     SaveFirstEmpty=ptr;
+     image_flag=false;
+    } else if (firstEmptyMemorized==false && (flag_of_begin || image_flag)) {
+     firstEmptyMemorized=true;
+     savedFirstEmpty=ptr;
+     flag_of_begin=false;
     }
    }
    if (ptr.nodeName=="DIV" &&
-      (ptr.className=="table" || ptr.className=="cite" || ptr.className=="poem")) {
-     section_has_empty_lines_for_validity=false;
+      (ptr.className=="table" || ptr.className=="cite" || ptr.className=="poem"))
      flag_of_begin=false;
-   }
    if ( (ptr.nodeName=="DIV" &&
         (ptr.className=="poem" || ptr.className=="cite"))||
         (ptr.nodeName=="P" && isLineEmpty(ptr)) ) {
@@ -213,42 +203,49 @@ function Run() {
      }
     }
    ptr=SaveNextPtr;
-  }
-  if (ImageCnt>1 || !section_has_empty_lines_for_validity) {
-   //чистка пустых строк в конце секции
-   var go_more=true;
+  }  if (savedPtr.parentNode && savedPtr.parentNode.nodeName=="DIV" && savedPtr.parentNode.className=="section") {
    var a3=a5.lastChild;
-   while (a3!=null && go_more) {
-    var SavePrevA3=a3.previousSibling;
-    //  MsgBox("isLineEmpty(a3):"+isLineEmpty(a3));
-    if (a3.nodeName=="P" && isLineEmpty(a3)) {
-     a3.outerHTML="";
-     EmptyCleared++;
-     EmptyClearedEnd++;
-    } else {
-     go_more=false;
-    }
-    a3=SavePrevA3;
-   }
-   if (first_empty_memorized && (!image_flag || ImageCnt>1 || after_title))  {
-    //чистка пустых строк в начале секции
+   /*alert("firstEmptyMemorized: "+firstEmptyMemorized);
+   alert("a3!=savedFirstEmpty: "+(a3!=savedFirstEmpty));
+   alert("!savedFirstEmpty.previousSibling: "+!savedFirstEmpty.previousSibling);
+   alert("savedFirstEmpty.previousSibling.className!=\"image\": "+savedFirstEmpty.previousSibling.className!="image");
+   alert("savedFirstEmpty.nextSibling: "+savedFirstEmpty.nextSibling);*/
+   if (!firstEmptyMemorized || (a3!=savedFirstEmpty || (!savedFirstEmpty.previousSibling ||
+       savedFirstEmpty.previousSibling.className!="image")) || savedFirstEmpty.nextSibling) {
+    //чистка пустых строк в конце секции
     var go_more=true;
-    var a4=SaveFirstEmpty;
-    while (a4!=null && go_more) {
-     var SaveNextA4=a4.nextSibling;
-     if (a4.nodeName=="P" &&
-         isLineEmpty(a4) && a4.parentNode!=null) {
-      if (a4.parentNode.className=="section") {
-       a4.outerHTML="";
-       EmptyCleared++;
-       EmptyClearedBegin++;
-      }
-     } else {
+    while (a3!=null && go_more) {
+     var SavePrevA3=a3.previousSibling;
+     if (a3.nodeName=="P" && isLineEmpty(a3)) {
+      a3.outerHTML="";
+      EmptyCleared++;
+      EmptyClearedEnd++;
+     } else
       go_more=false;
-     }
-     a4=SaveNextA4;
+     a3=SavePrevA3;
     }
    }
+   var a3=a5.lastChild;
+   if (firstEmptyMemorized && a3!=savedFirstEmpty)
+    if (!savedFirstEmpty.nextSibling || savedFirstEmpty.nextSibling.className!="image")  {
+     //чистка пустых строк в начале секции
+     var go_more=true;
+     var a4=savedFirstEmpty;
+     while (a4!=null && go_more) {
+      var SaveNextA4=a4.nextSibling;
+      if (a4.nodeName=="P" &&
+          isLineEmpty(a4) && a4.parentNode!=null) {
+       if (a4.parentNode.className=="section") {
+        a4.outerHTML="";
+        EmptyCleared++;
+        EmptyClearedBegin++;
+       }
+      } else {
+       go_more=false;
+      }
+     a4=SaveNextA4;
+     }
+    }
   }
  }
 
