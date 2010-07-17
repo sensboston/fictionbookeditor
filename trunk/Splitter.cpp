@@ -11,6 +11,7 @@ CSplitter::CSplitter(const CString isAlphaExceptions)
 	Init();
 	for (int i=0; i<isAlphaExceptions.GetLength(); i++)
 		isAlpha[isAlphaExceptions[i]] = 1;
+	m_isAlphaExceptions = isAlphaExceptions;
 }
 
 void CSplitter::Init()

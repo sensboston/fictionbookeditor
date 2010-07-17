@@ -465,6 +465,7 @@ class CSettings : public ISerializable, public IObjectFactory
 	bool		m_usespell_check;
 	bool		m_highlght_check;
 	CString		m_custom_dict;
+	DWORD		m_custom_dict_codepage;
 	CString		m_nbsp_char;
 	CString		m_old_nbsp;
 	bool		m_change_kbd_layout_check;
@@ -567,6 +568,7 @@ public:
 	bool    GetUseSpellChecker()const;
 	bool	GetHighlightMisspells()const;
 	CString GetCustomDict()const;
+	DWORD	GetCustomDictCodepage()const;
 	CString GetNBSPChar()const;
 	CString GetOldNBSPChar()const;
 	bool	GetChangeKeybLayout()const;
@@ -627,6 +629,7 @@ public:
 	void	SetUseSpellChecker(const bool value, bool apply = false);
 	void	SetHighlightMisspells(const bool value, bool apply = false);
 	void	SetCustomDict(const ATL::CString &value, bool apply = false);
+	void	SetCustomDictCodepage(const DWORD value, bool apply = false);
 	void	SetNBSPChar(const ATL::CString &value, bool apply = false);
 	void	SetChangeKeybLayout(const bool value, bool apply = false);
 	void	SetKeybLayout(const DWORD value, bool apply = false);
