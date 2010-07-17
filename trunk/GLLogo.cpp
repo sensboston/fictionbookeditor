@@ -11,13 +11,13 @@ GLfloat Plane[4]		=	{ 0, 1, 0, 0};
 
 // Info panel text
 const char* Info[] = {
-	"   Use mouse to rotate logo",
-	"   Press 'G' to toggle gravity %s",
-	"   Press 'R' to toggle reflection %s",
-	"   Press 'S' to toggle shadow %s",
-	"   Press 'F' to toggle floor %s",
-	"   Press 'W' to toggle wireframe %s",
-	"   Press SPACE to stop logo rotation"};
+	"     Use mouse to rotate logo",
+	"     Press 'G' to toggle gravity %s",
+	"     Press 'R' to toggle reflection %s",
+	"     Press 'S' to toggle shadow %s",
+	"     Press 'F' to toggle floor %s",
+	"     Press 'W' to toggle wireframe %s",
+	"     Press SPACE to stop rotation"};
 
 #define INFO_SIZE sizeof(Info)/sizeof(char*)
 bool InfoValues[INFO_SIZE];
@@ -153,10 +153,11 @@ bool CGLLogoView::InitGL()
     glEnable(GL_CULL_FACE);
     glEnable(GL_DEPTH_TEST);
 
+	glEnable(GL_LINE_SMOOTH);
+	glShadeModel(GL_SMOOTH);							// Enable smooth shading
+	glHint(GL_LINE_SMOOTH_HINT, GL_DONT_CARE);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-	glShadeModel(GL_SMOOTH);							// Enable smooth shading
 
 	// Enable a single OpenGL light.
 	glLightfv(GL_LIGHT0, GL_DIFFUSE, LightDiffuse);
@@ -202,7 +203,7 @@ void CGLLogoView::CreateLogo()
 		glRotatef(90.0f,1.0f,0.0f,0.0f);
 		glRotatef(-5.0f,0.0f,0.0f,1.0f);
 		glBindTexture(GL_TEXTURE_2D, texture[CENTER]);
-		gluSphere(quadric, 0.8f, 32, 16);
+		gluSphere(quadric, 0.8f, 32, 32);
 		glPopMatrix();
 
 		GLfloat	dz=0.0f;
@@ -213,12 +214,12 @@ void CGLLogoView::CreateLogo()
 				glTranslatef(0.0f, -0.75f, 0.0f);
 				glRotatef(90.0f,1.0f,0.0f,0.0f);
 				glBindTexture(GL_TEXTURE_2D, texture[ORANGE]);
-				gluCylinder(quadric, 0.2f, 0.2f, 1.0f, 16, 1);
+				gluCylinder(quadric, 0.2f, 0.2f, 1.0f, 32, 1);
 
 				glTranslatef(0.0f, 0.0f, 1.45f);
 				glRotatef(-angle[i],axis[i][0],axis[i][1],axis[i][2]);
 				glBindTexture(GL_TEXTURE_2D, texture[i*2+3]);
-				gluSphere(quadric, 0.5f, 32, 16);
+				gluSphere(quadric, 0.5f, 32, 32);
 			glPopMatrix();
 
 			glPushMatrix();
@@ -230,12 +231,12 @@ void CGLLogoView::CreateLogo()
 					dz = 0.8f;
 				}
 				else glBindTexture(GL_TEXTURE_2D, texture[ORANGE]);
-				gluCylinder(quadric, 0.2f, 0.2f, 1.0f+dz, 16, 1);
+				gluCylinder(quadric, 0.2f, 0.2f, 1.0f+dz, 32, 1);
 
 				glTranslatef(0.0f, 0.0f, 1.45f+dz);
 				glRotatef(angle[i],axis[i][0],axis[i][1],axis[i][2]);
 				glBindTexture(GL_TEXTURE_2D, texture[i*2+4]);
-				gluSphere(quadric, 0.5f, 32, 16);
+				gluSphere(quadric, 0.5f, 32, 32);
 			glPopMatrix();
 
 			glRotatef(120.0f,1.0f,1.0f,1.0f);				// rotate for next axe

@@ -6,10 +6,6 @@
 #include "FBE.h"
 #include "Speller.h"
 
-// variables to receive string from resource
-wchar_t txt[MAX_LOAD_STRING + 1];
-wchar_t cpt[MAX_LOAD_STRING + 1];
-
 // spell check dialog initialisation
 LRESULT CSpellDialog::OnInitDialog(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 {
@@ -28,7 +24,8 @@ LRESULT CSpellDialog::OnActivate(UINT, WPARAM wParam, LPARAM, BOOL&)
 {
 	if (wParam == WA_INACTIVE)
 	{
-		::LoadString(_Module.GetResourceInstance(), IDS_SPELL_CONTINUE, txt, MAX_LOAD_STRING);
+		CString txt;
+		txt.LoadString(IDS_SPELL_CONTINUE);
 		m_IgnoreContinue.SetWindowText (txt);
 
 		GetDlgItem(IDC_SPELL_IGNOREALL).EnableWindow(FALSE);
@@ -98,7 +95,8 @@ LRESULT CSpellDialog::OnIgnore(WORD, WORD wID, HWND, BOOL&)
 	ATLASSERT(m_Speller!=NULL);
 	if (m_WasSuspended)
 	{
-		::LoadString(_Module.GetResourceInstance(), IDC_SPELL_IGNORE, txt, MAX_LOAD_STRING);
+		CString txt;
+		txt.LoadString(IDC_SPELL_IGNORE);
 		m_IgnoreContinue.SetWindowText (txt);
 
 		GetDlgItem(IDC_SPELL_IGNOREALL).EnableWindow(TRUE);
@@ -924,9 +922,7 @@ void CSpeller::EndDocumentCheck(bool bCancel)
 	// display message box
 	if (!bCancel)
 	{
-		::LoadString(_Module.GetResourceInstance(), IDS_SPELL_CHECK_COMPLETED, txt, MAX_LOAD_STRING);
-		::LoadString(_Module.GetResourceInstance(), IDR_MAINFRAME, cpt, MAX_LOAD_STRING);
-		::MessageBox(::GetActiveWindow(), txt, cpt, MB_OK | MB_ICONINFORMATION);
+		U::MessageBox(MB_OK | MB_ICONINFORMATION, IDR_MAINFRAME, IDS_SPELL_CHECK_COMPLETED);
 	}
 	// restore previous selection
 	if (m_prevSelRange)

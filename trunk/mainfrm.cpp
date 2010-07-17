@@ -1626,6 +1626,9 @@ LRESULT CMainFrame::OnCreate(UINT, WPARAM, LPARAM, BOOL&)
   }
   else UIEnable(ID_TOOLS_SPELLCHECK, false, true);
 
+  // Restore scripts toolbar layout and position
+  m_ScriptsToolbar.RestoreState(HKEY_CURRENT_USER, L"SOFTWARE\\FBETeam\\FictionBook Editor\\Toolbars", L"ScriptsToolbar");
+
   return 0;
 }
 
@@ -4991,8 +4994,6 @@ void CMainFrame::AddScriptsSubMenu(HMENU parentItem, CString refid, CSimpleArray
 			}
 		}
 	}
-    // Restore scripts toolbar layout and position
-    m_ScriptsToolbar.RestoreState(HKEY_CURRENT_USER, L"SOFTWARE\\FBETeam\\FictionBook Editor\\Toolbars", L"ScriptsToolbar");
 }
 
 void CMainFrame::QuickScriptsSort(CSimpleArray<ScrInfo>& scripts, int min, int max)
