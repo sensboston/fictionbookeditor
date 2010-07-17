@@ -116,7 +116,12 @@ void  CMainFrame::AttachDocument(FB::Doc *doc)
 	if (m_Speller && m_Speller->Enabled())
 	{
 		m_Speller->SetFrame(m_hWnd);
-		m_Speller->SetCustomDictionary(_Settings.GetCustomDict());
+		CString custDictName = _Settings.GetCustomDict();
+		if (custDictName.Compare(ATLPath::FindFileName(custDictName))==0)
+		{
+			custDictName = doc->m_body.m_file_path+custDictName;
+		}
+		m_Speller->SetCustomDictionary(custDictName, _Settings.GetCustomDictCodepage());
 		m_Speller->AttachDocument(doc->m_body.Document());
 	}
     ShowView(DESC);
@@ -4629,7 +4634,12 @@ void CMainFrame::ApplyConfChanges()
 	if (m_Speller && m_Speller->Enabled())
 	{
 		m_Speller->SetHighlightMisspells(_Settings.GetHighlightMisspells());
-		m_Speller->SetCustomDictionary(_Settings.GetCustomDict());
+		CString custDictName = _Settings.GetCustomDict();
+		if (custDictName.Compare(ATLPath::FindFileName(custDictName))==0)
+		{
+			custDictName = m_doc->m_body.m_file_path+custDictName;
+		}
+		m_Speller->SetCustomDictionary(custDictName, _Settings.GetCustomDictCodepage());
 	}
 
 	// added by SeNS: issue 17: process nbsp change

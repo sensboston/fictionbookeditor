@@ -486,6 +486,9 @@ SPELL_RESULT CSpeller::SpellCheck(CString word)
 	{
 		CString checkWord(word);
 
+		if (splitter->AlphaExceptions().Find(word[word.GetLength()-1]) > -1)
+			checkWord.Delete(word.GetLength()-1);
+
 		// replace aphostrophes (dictionaries understand only regular ' aphostrophe
 		m_numAphChanged = checkWord.Replace(L"’", L"'");
 		// remove all soft hyphens
@@ -754,7 +757,7 @@ void CSpeller::LoadCustomDict()
 			do
 			{
 				load.getline(&buf[0], sizeof(buf), '\n');
-				str.SetString(CA2W(buf, 1251));
+				str.SetString(CA2W(buf, m_CustomDictCodepage));
 				if (!str.IsEmpty()) m_CustomDict.Add (str);
 			}
 			while (!str.IsEmpty());
@@ -776,7 +779,7 @@ void CSpeller::SaveCustomDict()
 				CString word(m_CustomDict[i]);
 				// remove all soft hyphens
 				word.Replace(L"\u00AD", L"");
-				CT2A str (word, 1251);
+				CT2A str (word, m_CustomDictCodepage);
 				save << str << '\n';
 			}
 		save.close();
