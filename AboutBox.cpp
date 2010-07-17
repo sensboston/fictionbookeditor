@@ -523,7 +523,6 @@ void CAboutDlg::RunUpdate(CString filename)
 {
 	if (U::MessageBox(MB_YESNO | MB_ICONEXCLAMATION, IDR_MAINFRAME, IDS_UPDATE_CLOSE, filename) == IDYES)
 	{
-		BOOL b;
 		HINSTANCE hInst = ShellExecute(0, L"open", filename, 0, 0, SW_SHOW);
 		::PostMessage(GetParent().m_hWnd, WM_CLOSE, 0, 0);
 	}

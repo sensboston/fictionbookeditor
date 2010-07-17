@@ -262,8 +262,8 @@ BEGIN
     CONTROL         "",IDC_AB_BANNER,"Static",SS_OWNERDRAW | SS_NOTIFY | NOT WS_VISIBLE,6,6,57,123,WS_EX_CLIENTEDGE
     ICON            IDR_MAINFRAME,IDC_STATIC_AB_APPICON,73,8,20,20
     EDITTEXT        IDC_STATIC_AB_APPNAMEVER,99,8,157,12,ES_READONLY | NOT WS_BORDER | NOT WS_TABSTOP
-    LTEXT           "Збірка",IDC_STATIC_BUILD,101,20,15,8
-    EDITTEXT        IDC_BUILDSTAMP,123,20,132,12,ES_READONLY | NOT WS_BORDER | NOT WS_TABSTOP
+    LTEXT           "Збірка",IDC_STATIC_BUILD,101,20,22,8
+    EDITTEXT        IDC_BUILDSTAMP,126,20,128,12,ES_READONLY | NOT WS_BORDER | NOT WS_TABSTOP
     CONTROL         "<a href=""http://code.google.com/p/fictionbookeditor/"">http://code.google.com/p/fictionbookeditor/</a>",IDC_SYSLINK_AB_LINKS,
                     "SysLink",0x0,101,32,154,8
     EDITTEXT        IDC_CONTRIBS,70,51,189,77,ES_MULTILINE | ES_AUTOVSCROLL | ES_READONLY | ES_WANTRETURN | NOT WS_BORDER | WS_VSCROLL | NOT WS_TABSTOP,WS_EX_STATICEDGE
@@ -792,6 +792,8 @@ BEGIN
     IDS_ABOUT_LOGOCAPTION   "Анімоване FB2 лого  »  Натисніть клавішу ? для довідки "
     IDS_UPDATE_CLOSE        "FBE повинен бути закритий для продовження встановлення.\r\n\r\nВи можете пізніше видалити інсталяційний файл, що знаходиться у ""%s"".\r\n\r\nЗакрити FBE і продовжити інсталяцію нової версії?"
     IDS_LANG_UKRAINIAN      "Українська"
+    IDS_UPDATEEXISTS        "Оновлення %s вже існує.\r\nВи хочете запустити цей файл?"
+    IDS_UPDATE_DOWNLOADREADY "Обновлення готове."
 END
 
 STRINGTABLE 
@@ -833,8 +835,6 @@ BEGIN
     IDS_HOTKEY_NAVIGATION_GOTO_WRONGTAG "Перехід до помилкового тегу"
     IDS_UPDATE_DOWNLOADEDFROM "Завантажено %d Kb з %d Kb ( %d%%)"
     IDS_UPDATE_DOWNLOADED   "Завантажено %d Kb"
-    IDS_UPDATEEXISTS        "Оновлення %s вже існує.\r\nВи хочете запустити цей файл?"
-    IDS_UPDATE_DOWNLOADREADY "Обновлення готове."
 END
 
 STRINGTABLE 

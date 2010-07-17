@@ -263,8 +263,8 @@ BEGIN
     CONTROL         "",IDC_AB_BANNER,"Static",SS_OWNERDRAW | SS_NOTIFY | NOT WS_VISIBLE,6,6,57,123,WS_EX_CLIENTEDGE
     ICON            IDR_MAINFRAME,IDC_STATIC_AB_APPICON,73,8,20,20
     EDITTEXT        IDC_STATIC_AB_APPNAMEVER,99,8,157,12,ES_READONLY | NOT WS_BORDER | NOT WS_TABSTOP
-    LTEXT           "Сборка",IDC_STATIC_BUILD,101,20,15,8
-    EDITTEXT        IDC_BUILDSTAMP,123,20,132,12,ES_READONLY | NOT WS_BORDER | NOT WS_TABSTOP
+    LTEXT           "Сборка",IDC_STATIC_BUILD,101,20,28,8
+    EDITTEXT        IDC_BUILDSTAMP,130,20,123,12,ES_READONLY | NOT WS_BORDER | NOT WS_TABSTOP
     CONTROL         "<a href=""http://code.google.com/p/fictionbookeditor/"">http://code.google.com/p/fictionbookeditor/</a>",IDC_SYSLINK_AB_LINKS,
                     "SysLink",0x0,101,32,154,8
     EDITTEXT        IDC_CONTRIBS,70,51,189,77,ES_MULTILINE | ES_AUTOVSCROLL | ES_READONLY | ES_WANTRETURN | NOT WS_BORDER | WS_VSCROLL | NOT WS_TABSTOP,WS_EX_STATICEDGE
@@ -792,6 +792,8 @@ BEGIN
     IDS_ABOUT_LOGOCAPTION   "Анимированное лого FB2 » нажмите клавишу ? для справки"
     IDS_UPDATE_CLOSE        "FBE должен быть закрыт для продолжения установки.\r\n\r\nВы можете позже удалить инсталляционный файл, находящийся в ""%s"".\r\n\r\nЗакрыть FBE и продолжить инсталляцию новой версии?"
     IDS_LANG_UKRAINIAN      "Украинский"
+    IDS_UPDATEEXISTS        "Файл обновления %s обнаружен на диске. Желаете запустить этот файл?"
+    IDS_UPDATE_DOWNLOADREADY "Обновление готово."
 END
 
 STRINGTABLE 
@@ -833,8 +835,6 @@ BEGIN
     IDS_HOTKEY_NAVIGATION_GOTO_WRONGTAG "Переход к ошибочному тегу"
     IDS_UPDATE_DOWNLOADEDFROM "Загружено %d Kb из %d Kb (%d%%)"
     IDS_UPDATE_DOWNLOADED   "Загружено %d Kb"
-    IDS_UPDATEEXISTS        "Файл обновления %s обнаружен на диске. Желаете запустить этот файл?"
-    IDS_UPDATE_DOWNLOADREADY "Обновление готово."
 END
 
 STRINGTABLE 

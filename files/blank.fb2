@@ -42,8 +42,7 @@
 	</description>
 	<body>
 		<section>
-			<p>Чтобы пп изменить докуппмент по умолчапппнию, отредактируйте файл &quot;blank.fb2&quot; врупппппчную.</p>
-			<p>This is a text for regexp tests</p>
+			<p>Чтобы изменить документ по умолчанию, отредактируйте файл &quot;blank.fb2&quot; вручную.</p>
 			<empty-line/>
 		</section>
 	</body>

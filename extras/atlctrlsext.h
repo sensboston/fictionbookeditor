@@ -459,10 +459,14 @@ public:
    BOOL AddToolbarButton(HWND hWndToolBar, TBBUTTON button, CString text)
    {
       CToolBarCtrl tb = hWndToolBar;
-	  m_BtnText.Add(button.idCommand, text);
-	  int idx = m_aButtons.FindKey((int)hWndToolBar);
-	  if (idx < 0) return FALSE;
-	  return m_aButtons.GetValueAt(idx).Add(button);
+	  if (tb)
+	  try {
+		  m_BtnText.Add(button.idCommand, text);
+		  int idx = m_aButtons.FindKey((int)hWndToolBar);
+		  if (idx < 0) return FALSE;
+		  return m_aButtons.GetValueAt(idx).Add(button);
+	  }
+	  catch (...) { return FALSE; }
    }
 
    // Message map and handler
@@ -480,14 +484,21 @@ public:
    LRESULT OnTbBeginAdjust(int /*idCtrl*/, LPNMHDR pnmh, BOOL& bHandled)
    {
       LPTBNOTIFY lpTbNotify = (LPTBNOTIFY) pnmh;
-      int tb = (int)lpTbNotify->hdr.hwndFrom;
-	  int idx = m_aButtons.FindKey(tb);
-	  if (idx > -1)
-	  {
-		  TBBUTTONS aButtons = m_aButtons.GetValueAt(idx);
-		  ATLASSERT(aButtons.GetSize()>0); // Remember to call InitToolBar()!
+	  if (lpTbNotify)
+	  try {
+		  int tb = (int)lpTbNotify->hdr.hwndFrom;
+		  if (tb)
+		  {
+			  int idx = m_aButtons.FindKey(tb);
+			  if (idx > -1)
+			  {
+				  TBBUTTONS aButtons = m_aButtons.GetValueAt(idx);
+				  ATLASSERT(aButtons.GetSize()>0); // Remember to call InitToolBar()!
+			  }
+			  bHandled = FALSE;
+		  }
 	  }
-      bHandled = FALSE;
+	  catch (...) {};
       return 0;
    }
    
@@ -506,15 +517,22 @@ public:
    LRESULT OnTbReset(int /*idCtrl*/, LPNMHDR pnmh, BOOL& /*bHandled*/)
    {
       LPTBNOTIFY lpTbNotify = (LPTBNOTIFY) pnmh;
-      // Restore the old button-set
-      CToolBarCtrl tb = lpTbNotify->hdr.hwndFrom;
-      while( tb.GetButtonCount() > 0 ) tb.DeleteButton(0);
-	  int idx = m_aDefaultButtons.FindKey((int)lpTbNotify->hdr.hwndFrom);
-	  if (idx > -1)
-	  {
-		  TBBUTTONS aButtons = m_aDefaultButtons.GetValueAt(idx);
-		  tb.AddButtons(aButtons.GetSize(), aButtons.GetData());
+	  if (lpTbNotify)
+	  try {
+		  // Restore the old button-set
+		  CToolBarCtrl tb = lpTbNotify->hdr.hwndFrom;
+		  if (tb)
+		  {
+			  while( tb.GetButtonCount() > 0 ) tb.DeleteButton(0);
+			  int idx = m_aDefaultButtons.FindKey((int)lpTbNotify->hdr.hwndFrom);
+			  if (idx > -1)
+			  {
+				  TBBUTTONS aButtons = m_aDefaultButtons.GetValueAt(idx);
+				  tb.AddButtons(aButtons.GetSize(), aButtons.GetData());
+			  }
+		  }
 	  }
+	  catch(...) { return FALSE; }
       return TRUE;
    }
    
@@ -533,41 +551,52 @@ public:
    LRESULT OnTbGetButtonInfo(int /*idCtrl*/, LPNMHDR pnmh, BOOL& /*bHandled*/)
    {
       LPTBNOTIFY lpTbNotify = (LPTBNOTIFY) pnmh;
-      CToolBarCtrl tb = lpTbNotify->hdr.hwndFrom;
-	  int idx = m_aButtons.FindKey((int)lpTbNotify->hdr.hwndFrom);
-	  if (idx > -1)
-	  {
-		  TBBUTTONS aButtons = m_aButtons.GetValueAt(idx);
-		  // The toolbar requests information about buttons that we don't know of...
-		  if( lpTbNotify->iItem >= aButtons.GetSize() ) return FALSE;
-		  // Locate tooltip text and copy second half of it.
-		  // This is the same code as CFrameWindowImplBase uses, despite how 
-		  // dangerous it may look...
-		  TCHAR szBuff[256] = { 0 };
-		  LPCTSTR pstr = szBuff;
-		  TBBUTTON btn = aButtons[lpTbNotify->iItem];
-
-	#if (_ATL_VER < 0x0700)
-		  int nRet = ::LoadString(_Module.GetResourceInstance(), btn.idCommand, szBuff, 255);
-	#else
-		  int nRet = ATL::AtlLoadString(btn.idCommand, szBuff, 255);
-	#endif
-		  if (btn.iString)
+	  if (lpTbNotify)
+	  try {
+		  CToolBarCtrl tb = lpTbNotify->hdr.hwndFrom;
+		  if (tb)
 		  {
-			  pstr = m_BtnText.GetValueAt(m_BtnText.FindKey(btn.idCommand));
-			  btn.iString = tb.AddStrings(pstr);
-		  }
-		  else	
-			  for( int i = 0; i < nRet; i++ ) {
-				 if( szBuff[i] == _T('\n') ) {
-					pstr = szBuff + i + 1;
-					break;
-				 }
+			  int idx = m_aButtons.FindKey((int)lpTbNotify->hdr.hwndFrom);
+			  if (idx > -1)
+			  {
+				  TBBUTTONS aButtons = m_aButtons.GetValueAt(idx);
+				  // The toolbar requests information about buttons that we don't know of...
+				  if( lpTbNotify->iItem >= aButtons.GetSize() ) return FALSE;
+				  // Locate tooltip text and copy second half of it.
+				  // This is the same code as CFrameWindowImplBase uses, despite how 
+				  // dangerous it may look...
+				  TCHAR szBuff[256] = { 0 };
+				  LPCTSTR pstr = szBuff;
+				  TBBUTTON btn = aButtons[lpTbNotify->iItem];
+
+			#if (_ATL_VER < 0x0700)
+				  int nRet = ::LoadString(_Module.GetResourceInstance(), btn.idCommand, szBuff, 255);
+			#else
+				  int nRet = ATL::AtlLoadString(btn.idCommand, szBuff, 255);
+			#endif
+				  if (btn.iString)
+				  {
+					  pstr = m_BtnText.GetValueAt(m_BtnText.FindKey(btn.idCommand));
+					  btn.iString = tb.AddStrings(pstr);
+					  lpTbNotify->tbButton = btn;
+				  }
+				  else	
+				  {
+					  for(int i = 0; i < nRet; i++)
+						 if(szBuff[i] == _T('\n')) 
+						 {
+							pstr = szBuff + i + 1;
+							break;
+						 }
+
+					  lpTbNotify->tbButton = btn;
+					  ::lstrcpyn(lpTbNotify->pszText, pstr, lpTbNotify->cchText);
+					  lpTbNotify->cchText = ::lstrlen(pstr);
+				  }
 			  }
-		  lpTbNotify->tbButton = btn;
-		  ::lstrcpyn(lpTbNotify->pszText, pstr, lpTbNotify->cchText);
-		  lpTbNotify->cchText = ::lstrlen(pstr);
+		  }
 	  }
+	  catch (...) { return FALSE; }
       return TRUE;
    }
 };
