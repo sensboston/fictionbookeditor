@@ -381,27 +381,32 @@ void CSpeller::Replace(CString word)
 
 void CSpeller::IgnoreAll(CString word)
 {
-	if (word.IsEmpty())
-		word = GetSelWord();
-	m_IgnoreWords.Add(word);
-	// recheck page
-	ClearAllMarks();
-	HighlightMisspells();
+	if (word.IsEmpty()) word = GetSelWord();
+	if (SpellCheck(word) != SPELL_OK)
+	{
+		m_IgnoreWords.Add(word);
+		// recheck page
+		ClearAllMarks();
+		HighlightMisspells();
+	}
 }
 
 void CSpeller::AddToDictionary()
 {
 	CString word = GetSelWord();
-	Hunhandle* currDict = GetDictionary(word);
-	// add to Hunspell's runtime dictionary
-	CT2A str (word, m_codePage);
-	Hunspell_add(currDict, str);
-	// add to custom dictionary
-	m_CustomDict.Add(word);
-	SaveCustomDict();
-	// recheck page
-	ClearAllMarks();
-	HighlightMisspells();
+	if (SpellCheck(word) != SPELL_OK)
+	{
+		Hunhandle* currDict = GetDictionary(word);
+		// add to Hunspell's runtime dictionary
+		CT2A str (word, m_codePage);
+		Hunspell_add(currDict, str);
+		// add to custom dictionary
+		m_CustomDict.Add(word);
+		SaveCustomDict();
+		// recheck page
+		ClearAllMarks();
+		HighlightMisspells();
+	}
 }
 
 void CSpeller::AddToDictionary(CString word)
