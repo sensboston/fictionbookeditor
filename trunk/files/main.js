@@ -469,7 +469,6 @@ function ShowDescElements()
 
 function LoadFromDOM(dom, lang)
 {
-	dom.setProperty("SelectionNamespaces", "xmlns:fb='"+fbNS+"' xmlns:xlink='"+xlNS+"'");
 	var xpath=window.external.GetStylePath()+"\\fb2.xsl";
 
 	var ret = TransformXML(LoadXSL(xpath, lang), dom);
@@ -535,13 +534,14 @@ function apiLoadFB2(path, lang)
 		}
 	}
 
+	xml.setProperty("SelectionNamespaces", "xmlns:fb='"+fbNS+"' xmlns:xlink='"+xlNS+"'");
+
         if(window.external.GetNBSP())
         {
 		var nbspChar=window.external.GetNBSP();
 
-		if(nbspChar!="\u00A0"/* && xml.nextSibling && xml.nextSibling.nodeName=="FictionBook"*/)
+		if(nbspChar!="\u00A0")
 		{
-                        xml.setProperty("SelectionNamespaces", "xmlns:fb='"+fbNS+"' xmlns:xlink='"+xlNS+"'");
 			var sel=xml.selectSingleNode("/fb:FictionBook/fb:description/fb:title-info/fb:annotation");
 			if(sel) recursiveChangeNbsp(sel,nbspChar);
 			sel=xml.selectSingleNode("/fb:FictionBook/fb:description/fb:document-info/fb:history");
@@ -552,10 +552,11 @@ function apiLoadFB2(path, lang)
 			  sel=sel.nextSibling;
 			}
 		}            
-        }    
+        }
                         
 	if (!LoadFromDOM(xml, lang))
 	{
+		MsgBox("Error: can't prepare document for Body mode.");
 		return false;
 	}
 
