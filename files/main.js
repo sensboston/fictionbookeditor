@@ -535,28 +535,25 @@ function apiLoadFB2(path, lang)
 		}
 	}
 
-        if (window.external.GetNBSP())
+        if(window.external.GetNBSP())
         {
-    	    var nbspChar=window.external.GetNBSP();
+		var nbspChar=window.external.GetNBSP();
 
-    	    if (nbspChar != "\u00A0")
-    	    {
-                var el=xml.firstChild;
-
-                while (el && el.nodeName!="FictionBook") el=el.nextSibling;
-
-                if (el && el.firstChild)
-                {
-                    el=el.firstChild;
-                    while (el)
-                    {
-                        if (el.nodeName=="body") recursiveChangeNbsp(el, nbspChar);
-                        el=el.nextSibling;
-                    }
-                }
-            }
-        }
-
+		if(nbspChar!="\u00A0"/* && xml.nextSibling && xml.nextSibling.nodeName=="FictionBook"*/)
+		{
+                        xml.setProperty("SelectionNamespaces", "xmlns:fb='"+fbNS+"' xmlns:xlink='"+xlNS+"'");
+			var sel=xml.selectSingleNode("/fb:FictionBook/fb:description/fb:title-info/fb:annotation");
+			if(sel) recursiveChangeNbsp(sel,nbspChar);
+			sel=xml.selectSingleNode("/fb:FictionBook/fb:description/fb:document-info/fb:history");
+			if(sel) recursiveChangeNbsp(sel,nbspChar);
+			sel=xml.selectSingleNode("/fb:FictionBook/fb:body");
+		 	while(sel) {
+			  if(sel.nodeName=="body") recursiveChangeNbsp(sel,nbspChar);
+			  sel=sel.nextSibling;
+			}
+		}            
+        }    
+                        
 	if (!LoadFromDOM(xml, lang))
 	{
 		return false;
