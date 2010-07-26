@@ -285,9 +285,8 @@ CMainFrame::FILE_OP_STATUS CMainFrame::SaveFile(bool askname) {
   ATLASSERT(m_doc!=NULL);
 
   // force consistent html view
-  if (IsSourceActive() && !SourceToHTML())
+  if ((IsSourceActive() && !SourceToHTML()) || m_bad_xml) // added by SeNS: do not save bad xml!
     return FAIL;
-
 
   if (askname || !m_doc->m_namevalid) { // ask user about save file name
     CString encoding;
@@ -346,16 +345,20 @@ CMainFrame::FILE_OP_STATUS  CMainFrame::LoadFile(const wchar_t *initfilename)
   m_status.SetPaneText(ID_DEFAULT_PANE,L"Loading...");
   bool fLoaded = doc->Load(m_view, filename);
   EnableWindow(TRUE);
-  if (!fLoaded) {
-    delete doc;
+  if (!fLoaded) 
+  {
+	  if (LoadToScintilla(filename)) return OK;
+	  else return FAIL;
+/*  delete doc;
 	FB::Doc::m_active_doc = m_doc;
-    return FAIL;
+    return FAIL; */
   }
 
   AttachDocument(doc);
   m_file_age = FileAge(filename);
   delete m_doc;
   m_doc=doc;
+  m_bad_xml = false;
   return OK;
 }
 
@@ -1506,7 +1509,8 @@ LRESULT CMainFrame::OnCreate(UINT, WPARAM, LPARAM, BOOL&)
 	}
     else
 	{
-      return -1; // abort
+		// added by SeNS: load incorrect XML to Scintilla
+		if (!LoadToScintilla(_ARGV[0])) return -1;
 	}
   } else 
   {
@@ -1521,12 +1525,15 @@ LRESULT CMainFrame::OnCreate(UINT, WPARAM, LPARAM, BOOL&)
     m_doc->SetFastMode(false);
 
   AttachDocument(m_doc);
-  UISetCheck(ID_VIEW_BODY,1);
+  if (!m_bad_xml)
+  {
+	  UISetCheck(ID_VIEW_BODY,1);
 
-  m_document_tree.Create(m_splitter);
+	m_document_tree.Create(m_splitter);
   
-  if (AU::_ARGS.start_in_desc_mode)
-    ShowView(DESC);
+	if (AU::_ARGS.start_in_desc_mode) 
+		ShowView(DESC);
+  }
 
   // init plugins&MRU list
   InitPlugins();  
@@ -1545,7 +1552,7 @@ LRESULT CMainFrame::OnCreate(UINT, WPARAM, LPARAM, BOOL&)
 	  UISetCheck(ID_VIEW_STATUS_BAR, FALSE);
   }
 
-  if (_Settings.ViewDocumentTree()) 
+  if (_Settings.ViewDocumentTree() && !m_bad_xml) 
   {
 	  UISetCheck(ID_VIEW_TREE, 1);  
   } 
@@ -1598,10 +1605,13 @@ LRESULT CMainFrame::OnCreate(UINT, WPARAM, LPARAM, BOOL&)
   ::DragAcceptFiles(*this,TRUE);
 
   // Modification by Pilgrim
-  BOOL bVisible = _Settings.ViewDocumentTree();
-  m_document_tree.ShowWindow(bVisible ? SW_SHOWNOACTIVATE : SW_HIDE);
-  UISetCheck(ID_VIEW_TREE, bVisible);
-  m_splitter.SetSinglePaneMode(bVisible ? SPLIT_PANE_NONE : SPLIT_PANE_RIGHT);
+  if (!m_bad_xml)
+  {
+	  BOOL bVisible = _Settings.ViewDocumentTree();
+	  m_document_tree.ShowWindow(bVisible ? SW_SHOWNOACTIVATE : SW_HIDE);
+	  UISetCheck(ID_VIEW_TREE, bVisible);
+	  m_splitter.SetSinglePaneMode(bVisible ? SPLIT_PANE_NONE : SPLIT_PANE_RIGHT);
+  }
 
   if(start_with_params)
   {
@@ -1618,6 +1628,12 @@ LRESULT CMainFrame::OnCreate(UINT, WPARAM, LPARAM, BOOL&)
 	  CString layout;
 	  layout.Format(L"%08x", _Settings.GetKeybLayout());
 	  LoadKeyboardLayout(layout,KLF_ACTIVATE);
+  }
+  // Added by SeNS
+  if (m_bad_xml)
+  {
+	ShowView(SOURCE);
+	SciGotoWrongTag();
   }
 
   // Added by SeNS
@@ -3497,7 +3513,7 @@ bool CMainFrame::ShowSource(bool saveSelection)
 		root = root->firstChild; // <DIV id = fbw_desc>
 		root = root->nextSibling; // <DIV id = fbw_body>
 		root = root->firstChild;// <DIV clss = ...>
-		do
+		if (root) do
 		{
 			if(U::scmp(MSHTML::IHTMLElementPtr(root)->className, L"body") == 0)
 			{
@@ -3643,8 +3659,9 @@ bool CMainFrame::ShowSource(bool saveSelection)
 }
 
 
-void  CMainFrame::ShowView(VIEW_TYPE vt) {
-  VIEW_TYPE prev = m_current_view;//GetCurView();
+void  CMainFrame::ShowView(VIEW_TYPE vt) 
+{
+  VIEW_TYPE prev = m_current_view;
   SaveSelection(m_current_view);
 
   // added by SeNS
@@ -3701,6 +3718,28 @@ void  CMainFrame::ShowView(VIEW_TYPE vt) {
 	}
 
   if (prev!=vt && prev==SOURCE) {
+	  // added by SeNS: special trick for incorrect XML
+	  if (m_bad_xml)
+	  {
+			int col,line;
+			bool fv;
+			fv=m_doc->SetXMLAndValidate(m_source,true,line,col);// Из режима Source
+			if (!fv) 
+			{
+				U::MessageBox(MB_OK|MB_ICONERROR, IDR_MAINFRAME, IDS_BAD_XML_MSG);
+				SourceGoTo(line, col);
+				return;
+			}
+			else 
+			{
+				AttachDocument(m_doc);
+				m_doc->m_filename = m_bad_filename;
+				m_file_age = FileAge(m_doc->m_filename);
+				m_doc->m_namevalid = true;
+				m_bad_xml=false;
+			}
+	  }
+
     /*if (!SourceToHTML())
       return;*/
 	  if(vt == DESC)
@@ -5196,4 +5235,47 @@ void CMainFrame::RemoveLastUndo()
 					undoManager->Add(undoUnit[i]);
 		}
 	}
+}
+
+// added by SeNS: try to load incorrect XML directly to Scintilla
+bool CMainFrame::LoadToScintilla(CString filename)
+{
+	bool result = false;
+    ShowView(SOURCE);
+
+	CString src(L"");
+	std::ifstream load;
+	load.open(filename);
+	if (load.is_open())
+	try
+	{
+		char *buffer=(char*)malloc(65535);
+		do
+		{
+			load.getline(buffer, 65535, '\n');
+			if (!strstr(buffer, "<?xml version="))
+			{
+				src += CA2W(buffer, 1251);
+				src += L"\r\n";
+			}
+		}
+		while (!load.eof());
+		load.close();
+		free(buffer);
+
+		// send document to Scintilla
+		m_source.SendMessage(SCI_CLEARALL);
+		CT2A s (src, 1251);
+		m_source.SendMessage(SCI_APPENDTEXT, strlen(s),(LPARAM)(LPSTR)s);
+		m_source.SendMessage(SCI_EMPTYUNDOBUFFER);
+		m_source.SendMessage(SCI_SETSAVEPOINT);
+		SciGotoWrongTag();
+
+		m_bad_xml = true;
+		m_bad_filename = filename;
+		m_doc->m_encoding = _Settings.GetDefaultEncoding(); 
+		result = true;
+	}
+	catch(...) {};
+	return result;
 }

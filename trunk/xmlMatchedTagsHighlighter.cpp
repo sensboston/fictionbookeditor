@@ -545,18 +545,16 @@ vector< pair<CString, int> > XmlMatchedTagsHighlighter::lookupTags()
 	// regexp pattern to match any XML tag
 	CString pattern(L"(<[^(><)]+>)");
 	int pattLen = pattern.GetLength();
-	char *patt=(char *)malloc(pattLen+1);
+	CT2A patt (pattern, CP_UTF8);
 	char *tmp=(char *)malloc(1024);
 	if (patt && tmp) 
 	{
-		::WideCharToMultiByte(CP_UTF8, 0, pattern, pattLen, patt, pattLen, NULL, NULL);
-
 		int pos = 0;
 		while (pos >=0 && pos < docLen)
 		{
 			_pEditView->execute(SCI_SETTARGETSTART,pos);
 			_pEditView->execute(SCI_SETTARGETEND,docLen);
-			pos = _pEditView->execute(SCI_SEARCHINTARGET,pattLen, (LPARAM) patt);
+			pos = _pEditView->execute(SCI_SEARCHINTARGET,pattLen, (LPARAM)(LPSTR) patt);
 
 			if (pos >=0 && pos < docLen)
 			{
@@ -590,8 +588,6 @@ vector< pair<CString, int> > XmlMatchedTagsHighlighter::lookupTags()
 				}
 			}
 		}
-
-		free(patt);
 		free(tmp);
 	}
 

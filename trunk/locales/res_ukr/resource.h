@@ -275,6 +275,7 @@
 #define IDS_LANG_UKRAINIAN              300
 #define IDS_UPDATEEXISTS                301
 #define IDS_UPDATE_DOWNLOADREADY        302
+#define IDS_BAD_XML_MSG                 303
 #define IDB_UPD_CHECK1                  400
 #define IDB_UPD_CHECK2                  401
 #define IDB_UPD_CHECK3                  402
