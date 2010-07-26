@@ -73,7 +73,10 @@ LRESULT CSpellDialog::OnSelDblClick(WORD wNotifyCode, WORD wID, HWND hWndCtl, BO
 {
 	CString strText;
 	if (m_Suggestions.GetText(m_Suggestions.GetCurSel(),strText))
+	{
 		m_Replacement.SetWindowText(strText);
+		OnChange(0, 0, 0, bHandled);
+	}
 	return 0;
 }
 
@@ -484,6 +487,7 @@ CStrings* CSpeller::GetSuggestions(CString word)
 SPELL_RESULT CSpeller::SpellCheck(CString word)
 {
 	SPELL_RESULT spellResult(SPELL_OK);
+	if (word.IsEmpty()) return SPELL_OK;
 	Hunhandle* currDict = GetDictionary(word);
 
 	// do spell check
@@ -865,7 +869,7 @@ void CSpeller::ContinueDocumentCheck()
 
 		// if word != words delimiter
 		if (word.FindOneOf(Tokens)==-1)
-			result = SpellCheck(word); 
+			result = SpellCheck(word);
 
 		// select exact word
 		if ((result == SPELL_CHANGE) || (result == SPELL_CHANGEALL) || (result == SPELL_MISSPELL))
