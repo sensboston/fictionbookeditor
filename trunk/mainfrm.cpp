@@ -1509,8 +1509,13 @@ LRESULT CMainFrame::OnCreate(UINT, WPARAM, LPARAM, BOOL&)
 	}
     else
 	{
-		// added by SeNS: load incorrect XML to Scintilla
-		if (!LoadToScintilla(_ARGV[0])) return -1;
+		// added by SeNS: create blank document, and load incorrect XML to Scintilla
+		delete m_doc;
+		m_doc=new FB::Doc(*this);
+		FB::Doc::m_active_doc = m_doc;
+		m_doc->CreateBlank(m_view);
+		m_file_age = ~0;
+		m_bad_xml = true;
 	}
   } else 
   {
@@ -1525,15 +1530,12 @@ LRESULT CMainFrame::OnCreate(UINT, WPARAM, LPARAM, BOOL&)
     m_doc->SetFastMode(false);
 
   AttachDocument(m_doc);
-  if (!m_bad_xml)
-  {
-	  UISetCheck(ID_VIEW_BODY,1);
+  UISetCheck(ID_VIEW_BODY,1);
 
-	m_document_tree.Create(m_splitter);
+  m_document_tree.Create(m_splitter);
   
-	if (AU::_ARGS.start_in_desc_mode) 
-		ShowView(DESC);
-  }
+  if (AU::_ARGS.start_in_desc_mode) 
+	ShowView(DESC);
 
   // init plugins&MRU list
   InitPlugins();  
@@ -1552,7 +1554,7 @@ LRESULT CMainFrame::OnCreate(UINT, WPARAM, LPARAM, BOOL&)
 	  UISetCheck(ID_VIEW_STATUS_BAR, FALSE);
   }
 
-  if (_Settings.ViewDocumentTree() && !m_bad_xml) 
+  if (_Settings.ViewDocumentTree()) 
   {
 	  UISetCheck(ID_VIEW_TREE, 1);  
   } 
@@ -1605,13 +1607,10 @@ LRESULT CMainFrame::OnCreate(UINT, WPARAM, LPARAM, BOOL&)
   ::DragAcceptFiles(*this,TRUE);
 
   // Modification by Pilgrim
-  if (!m_bad_xml)
-  {
-	  BOOL bVisible = _Settings.ViewDocumentTree();
-	  m_document_tree.ShowWindow(bVisible ? SW_SHOWNOACTIVATE : SW_HIDE);
-	  UISetCheck(ID_VIEW_TREE, bVisible);
-	  m_splitter.SetSinglePaneMode(bVisible ? SPLIT_PANE_NONE : SPLIT_PANE_RIGHT);
-  }
+  BOOL bVisible = _Settings.ViewDocumentTree();
+  m_document_tree.ShowWindow(bVisible ? SW_SHOWNOACTIVATE : SW_HIDE);
+  UISetCheck(ID_VIEW_TREE, bVisible);
+  m_splitter.SetSinglePaneMode(bVisible ? SPLIT_PANE_NONE : SPLIT_PANE_RIGHT);
 
   if(start_with_params)
   {
@@ -1629,12 +1628,10 @@ LRESULT CMainFrame::OnCreate(UINT, WPARAM, LPARAM, BOOL&)
 	  layout.Format(L"%08x", _Settings.GetKeybLayout());
 	  LoadKeyboardLayout(layout,KLF_ACTIVATE);
   }
-  // Added by SeNS
+  
+  // added by SeNS: create blank document, and load incorrect XML to Scintilla
   if (m_bad_xml)
-  {
-	ShowView(SOURCE);
-	SciGotoWrongTag();
-  }
+	if (!LoadToScintilla(_ARGV[0])) return -1;
 
   // Added by SeNS
   if (m_Speller && m_Speller->Enabled())
@@ -5241,7 +5238,7 @@ void CMainFrame::RemoveLastUndo()
 bool CMainFrame::LoadToScintilla(CString filename)
 {
 	bool result = false;
-    ShowView(SOURCE);
+	ShowView(SOURCE);
 
 	CString src(L"");
 	std::ifstream load;
@@ -5269,6 +5266,7 @@ bool CMainFrame::LoadToScintilla(CString filename)
 		m_source.SendMessage(SCI_APPENDTEXT, strlen(s),(LPARAM)(LPSTR)s);
 		m_source.SendMessage(SCI_EMPTYUNDOBUFFER);
 		m_source.SendMessage(SCI_SETSAVEPOINT);
+
 		SciGotoWrongTag();
 
 		m_bad_xml = true;
