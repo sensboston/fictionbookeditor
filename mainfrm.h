@@ -294,7 +294,7 @@ public:
     m_doc_changed(false), m_sel_changed(false), m_want_focus(0),
     m_ignore_cb_changes(false), m_incsearch(0), m_cb_last_images(false),
     m_last_ie_ovr(true), m_last_sci_ovr(true), m_saved_xml(0), m_sci_find_dlg(0), m_sci_replace_dlg(0),
-	m_last_script(0), m_last_plugin(0), m_restore_pos_cmdline(false)
+	m_last_script(0), m_last_plugin(0), m_restore_pos_cmdline(false), m_bad_xml(false)
 	// added by SeNS
 	{ 
 		TCHAR prgPath[MAX_PATH];
@@ -1039,6 +1039,11 @@ public:
 		bHandled = FALSE;
 		return 0;
 	}
+
+	// added by SeNS: incorrect XML file flag
+	bool m_bad_xml;
+	CString m_bad_filename;
+	bool LoadToScintilla(CString filename);
 };
 
 int	StartScript(CMainFrame* mainframe);

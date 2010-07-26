@@ -6,6 +6,8 @@ LRESULT CAboutDlg::OnInitDialog(UINT, WPARAM, LPARAM, BOOL&)
 {
 	m_bAllowResize = false;
 
+	SetIcon(LoadIcon(_Module.GetResourceInstance(),MAKEINTRESOURCE(IDR_MAINFRAME)));
+
 	CString stamp(build_timestamp);
 	::SetWindowText(GetDlgItem(IDC_BUILDSTAMP), stamp);
 

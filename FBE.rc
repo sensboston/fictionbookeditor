@@ -1011,7 +1011,7 @@ STRINGTABLE
 BEGIN
     ATL_IDS_MRU_FILE        "Open this document"
     IDS_ENCODINGS           "utf-8,utf-16,windows-1251,windows-1252,iso-8859-1,iso-8859-2,iso-8859-5,iso-8859-15,koi8-r"
-    IDS_DOCUMENT_TREE_CAPTION "FB2 animated logo » press ? for help"
+    IDS_DOCUMENT_TREE_CAPTION "Document structure"
 END
 
 STRINGTABLE 
@@ -1085,6 +1085,7 @@ BEGIN
     IDS_LANG_UKRAINIAN      "Ukrainian"
     IDS_UPDATEEXISTS        "Update file %s is already exists.\r\nWould you like to execute this file?"
     IDS_UPDATE_DOWNLOADREADY "Update is ready."
+    IDS_BAD_XML_MSG         "You have opened an invalid XML document.\n\nYou should correct all XML errors (use ""Validate"" and ""Go to wrong tag"" commands) before switching from the SOURCE mode."
 END
 
 STRINGTABLE 

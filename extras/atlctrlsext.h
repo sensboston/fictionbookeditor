@@ -459,7 +459,7 @@ public:
    BOOL AddToolbarButton(HWND hWndToolBar, TBBUTTON button, CString text)
    {
       CToolBarCtrl tb = hWndToolBar;
-	  if (tb)
+	  if (!tb) return FALSE;
 	  try {
 		  m_BtnText.Add(button.idCommand, text);
 		  int idx = m_aButtons.FindKey((int)hWndToolBar);
