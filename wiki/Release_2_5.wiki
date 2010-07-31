@@ -1,5 +1,5 @@
 #summary Примечания к релизу FBE 2.5
-#labels Deprecated
+#labels Featured
 
 Рекомендуется для установки вместо релиза 2.4
 
