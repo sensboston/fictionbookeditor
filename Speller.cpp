@@ -201,7 +201,7 @@ CSpeller::CSpeller(CString dictPath):
 	m_Dictionaries[LANG_RU].handle = LoadDictionary(dictPath, dicts[LANG_RU].name);
 
 	// don't split on apostrophes
-	splitter = new CSplitter(L"'’");
+	splitter = new CSplitter(L"'’\u0301");
 }
 
 //
@@ -502,6 +502,8 @@ SPELL_RESULT CSpeller::SpellCheck(CString word)
 		m_numAphChanged = checkWord.Replace(L"’", L"'");
 		// remove all soft hyphens
 		checkWord.Replace(L"\u00AD", L"");
+		// remove accent
+		checkWord.Replace(L"\u0301", L"");
 		// special case for Russian letter "¸"
 		if (currDict == m_Dictionaries[LANG_RU].handle) checkWord.Replace(L"¸", L"å");
 

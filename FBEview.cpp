@@ -2157,43 +2157,45 @@ static CString GetReplStr(const CString& rstr, AU::ReMatch rm, RRList& rl)
 
 	for(int i = 0; i < rstr.GetLength(); ++i)
 	{
-		if(rstr[i] == _T('$') && i < rstr.GetLength() - 1)
+		if ((rstr[i] == L'$' && i < rstr.GetLength() - 1) ||
+			(rstr[i] == L'\\' && i < rstr.GetLength() - 1))
 		{
 			switch(rstr[++i])
 			{
-				case _T('&'): // whole match
+				//case L'&': // whole match
+				case L'0': // whole match
 					rv=(const wchar_t *)rm->Value;
 					break;
-				case _T('+'): // last submatch
+				case L'+': // last submatch
 					rv = GetSM(rs, rs->Count - 1);
 					break;
-				case _T('1'):
-				case _T('2'):
-				case _T('3'):
-				case _T('4'):
-				case _T('5'):
-				case _T('6'):
-				case _T('7'):
-				case _T('8'):
-				case _T('9'):
-					rv = GetSM(rs, rstr[i] - _T('0') - 1);
+				case L'1':
+				case L'2':
+				case L'3':
+				case L'4':
+				case L'5':
+				case L'6':
+				case L'7':
+				case L'8':
+				case L'9':
+					rv = GetSM(rs, rstr[i] - L'0' - 1);
 					break;
-				case _T('T'): // title case
+				case L'T': // title case
 					flags |= RR::TITLE;
 					continue;
-				case _T('U'): // uppercase
+				case L'U': // uppercase
 					flags |= RR::UPPER;
 					continue;
-				case _T('L'): // lowercase
+				case L'L': // lowercase
 					flags |= RR::LOWER;
 					continue;
-				case _T('S'): // strong
+				case L'S': // strong
 					flags |= RR::STRONG;
 					continue;
-				case _T('E'): // emphasis
+				case L'E': // emphasis
 					flags |= RR::EMPHASIS;
 					continue;
-				case _T('Q'): // turn off flags
+				case L'Q': // turn off flags
 					flags = 0;
 					continue;
 				default: // ignore
