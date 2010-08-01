@@ -5238,6 +5238,7 @@ void CMainFrame::RemoveLastUndo()
 bool CMainFrame::LoadToScintilla(CString filename)
 {
 	bool result = false;
+	bool isUTF8 = true;
 	ShowView(SOURCE);
 
 	CString src(L"");
@@ -5255,6 +5256,19 @@ bool CMainFrame::LoadToScintilla(CString filename)
 				src += CA2W(buffer, 1251);
 				src += L"\r\n";
 			}
+			// try to detect encoding
+			else
+			{
+				CString enc(buffer);
+				enc.MakeLower();
+				int pos = enc.Find(L"encoding");
+				if (pos >=0)
+				{
+					enc = enc.Mid(pos+10, enc.GetLength()-pos-13);
+					if (enc == L"windows-1251") isUTF8 = false;
+				}
+
+			}
 		}
 		while (!load.eof());
 		load.close();
@@ -5262,8 +5276,16 @@ bool CMainFrame::LoadToScintilla(CString filename)
 
 		// send document to Scintilla
 		m_source.SendMessage(SCI_CLEARALL);
-		CT2A s (src, 1251);
-		m_source.SendMessage(SCI_APPENDTEXT, strlen(s),(LPARAM)(LPSTR)s);
+		if (isUTF8)
+		{
+			CT2A s (src, 1251); 
+			m_source.SendMessage(SCI_APPENDTEXT, strlen(s),(LPARAM)(LPSTR)s);
+		}
+		else
+		{
+			CT2A s (src, CP_UTF8);
+			m_source.SendMessage(SCI_APPENDTEXT, strlen(s),(LPARAM)(LPSTR)s);
+		}
 		m_source.SendMessage(SCI_EMPTYUNDOBUFFER);
 		m_source.SendMessage(SCI_SETSAVEPOINT);
 
@@ -5271,7 +5293,8 @@ bool CMainFrame::LoadToScintilla(CString filename)
 
 		m_bad_xml = true;
 		m_bad_filename = filename;
-		m_doc->m_encoding = _Settings.GetDefaultEncoding(); 
+		if (isUTF8) m_doc->m_encoding = L"utf-8"; else m_doc->m_encoding = L"windows-1251";
+
 		result = true;
 	}
 	catch(...) {};
