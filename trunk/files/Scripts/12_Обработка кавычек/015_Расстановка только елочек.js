@@ -5,14 +5,14 @@
 
 function Run() {
 
- var versionStr="Скрипт «Расстановка только елочек v2.8»\nАвтор Sclex.\n\n";
+ var versionStr="Скрипт «Расстановка только елочек v2.9»\nАвтор Sclex.\n\n";
  var otstupSverhu=60;
  var debug=false;
  try { var nbspChar=window.external.GetNBSP(); }
  catch(e) { var nbspChar=String.fromCharCode(160); }
  var searchSymbolNum,currentQuotesLevel,el,indexOfQuotes,myNodeValue,myNodeValue2,range,range1,range2;
  var mode,el,el2,selectionbeginEl,selectionEndEl,myIndex,collectedSymbolsCnt,firstTimeInNodeType3,k;
- var neighborChars,abcd,itIsLeftQuotes,itIsRightQuotes,anLeft,anRight,range3;
+ var neighborChars,abcd,itIsLeftQuotes,itIsRightQuotes,anLeft,anRight,range3,notReplacedQuotes;
  var leftQuotes=new Array("«","„","„","‘");
  var rightQuotes=new Array("»","“","“","’");
  var leftQuotesCnt=0;
@@ -201,10 +201,10 @@ function Run() {
 
  function getInfoStr() {
   return "Расставлено елочек:\n\n"+
-  "левых – « – "+leftQuotesCnt+"\n"+
-  "правых – » – "+rightQuotesCnt+"\n"+
-  "———————————\n"+
-  "Всего: "+(leftQuotesCnt+rightQuotesCnt);
+  "   левых – « – "+leftQuotesCnt+"\n"+
+  "   правых – » – "+rightQuotesCnt+"\n"+
+  "  ———————————\n"+
+  "   Всего: "+(leftQuotesCnt+rightQuotesCnt);
  }
 
  function getElementCodename(el) {
@@ -260,6 +260,8 @@ function Run() {
       el.nodeValue=myNodeValue;
       rightQuotesCnt++;
      }
+     if (itIsLeftQuotes == itIsRightQuotes)
+      notReplacedQuotes++;
      indexOfQuotes=myNodeValue.indexOf('"',indexOfQuotes+1);
      //getNeighborSymbolsForward();
     }
@@ -322,8 +324,19 @@ function Run() {
  range2.collapse(false);
  range2.pasteHTML("<B id="+selectionEndId+"></B>");
  range2.select();
+ notReplacedQuotes=0;
  //alert(fbw_body.innerHTML);
- if (mainReplaces()!="error") alert(versionStr+"Ура! Расстановка елочек прошла без ошибок.\n\n"+getInfoStr());
+ if (mainReplaces()!="error") 
+  if (notReplacedQuotes==0) MsgBox(versionStr+"Ура! Расстановка елочек прошла без ошибок.\n\n"+getInfoStr());
+  else alert(versionStr+"Елочки расставлены, но...\n"+
+             "\n"+
+             "...в некоторых случаях было непонятно,\n"+
+             "левые или правые елочки нужно делать,\n"+
+             "поэтому скрипт в таких случаях\n"+
+             "оставил прямые кавычки.\n"+
+             "\n"+
+             "   Осталось прямых кавычек: "+notReplacedQuotes+"\n\n"+
+             getInfoStr());
  try {
   document.getElementById(selectionBeginId).removeNode(true);
  }
