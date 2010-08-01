@@ -469,6 +469,8 @@ function ShowDescElements()
 
 function LoadFromDOM(dom, lang)
 {
+	dom.setProperty("SelectionNamespaces", "xmlns:fb='"+fbNS+"' xmlns:xlink='"+xlNS+"'");
+
 	var xpath=window.external.GetStylePath()+"\\fb2.xsl";
 
 	var ret = TransformXML(LoadXSL(xpath, lang), dom);
