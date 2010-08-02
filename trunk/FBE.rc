@@ -1219,6 +1219,12 @@ BEGIN
     IDC_SPELL_REPLACE       "Replace word"
 END
 
+STRINGTABLE 
+BEGIN
+    IDS_HOTKEY_EDIT_SUB     "Subscript"
+    IDS_HOTKEY_EDIT_SUP     "Superscript"
+END
+
 #endif    // English (U.S.) resources
 /////////////////////////////////////////////////////////////////////////////
 
