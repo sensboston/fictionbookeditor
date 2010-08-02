@@ -314,7 +314,6 @@ function Run() {
  } else {
   range=document.body.createTextRange();
   range.moveToElementText(fbw_body);
-  range.select();
   processingMode="all text";
  }
  range1=range.duplicate();
@@ -323,7 +322,6 @@ function Run() {
  range2=range.duplicate();
  range2.collapse(false);
  range2.pasteHTML("<B id="+selectionEndId+"></B>");
- range2.select();
  notReplacedQuotes=0;
  //alert(fbw_body.innerHTML);
  if (mainReplaces()!="error") 
@@ -332,10 +330,9 @@ function Run() {
              "\n"+
              "...в некоторых случаях было непонятно,\n"+
              "левые или правые елочки нужно делать,\n"+
-             "поэтому скрипт в таких случаях\n"+
-             "оставил прямые кавычки.\n"+
+             "поэтому скрипт оставлял прямые кавычки.\n"+
              "\n"+
-             "   Осталось прямых кавычек: "+notReplacedQuotes+"\n\n"+
+             "   Осталось прямых кавычек – \" – "+notReplacedQuotes+"\n\n"+
              getInfoStr());
  try {
   document.getElementById(selectionBeginId).removeNode(true);
