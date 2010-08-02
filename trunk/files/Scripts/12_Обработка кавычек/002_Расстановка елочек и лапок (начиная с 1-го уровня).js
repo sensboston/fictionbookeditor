@@ -5,13 +5,13 @@
 
 function Run() {
 
- var versionStr="Скрипт «Расстановка елочек и лапок v2.8»\nАвтор Sclex.\n\n";
+ var versionStr="Скрипт «Расстановка елочек и лапок v2.9»\nАвтор Sclex.\n\n";
  var otstupSverhu=60;
  var debug=false;
  try { var nbspChar=window.external.GetNBSP(); }
  catch(e) { var nbspChar=String.fromCharCode(160); }
  var searchSymbolNum,currentQuotesLevel,el,indexOfQuotes,myNodeValue,myNodeValue2,range,range1,range2;
- var mode,el,el2,selectionbeginEl,selectionEndEl,myIndex,collectedSymbolsCnt,firstTimeInNodeType3,k;
+ var mode,el,el2,selectionBeginEl,selectionEndEl,myIndex,collectedSymbolsCnt,firstTimeInNodeType3,k;
  var neighborChars,abcd,itIsLeftQuotes,itIsRightQuotes,anLeft,anRight,range3;
  var leftQuotes=new Array("«","„","„","‘");
  var rightQuotes=new Array("»","“","“","’");
@@ -321,7 +321,7 @@ function Run() {
      alert(versionStr+"Ошибка:\n\nВ конце секции получился ненулевой уровень вложенности кавычек.\nКурсор установлен в конец этой секции.\n\n"+getInfoStr());
      return "error";
     }
-    if (blockCodename[currentBlockIndex]!=undefined && el.nodeName=="DIV" && currentQuotesLevel!=blockInitQuotesLevel[currentBlockIndex]) {
+    if (blockCodename[currentBlockIndex]!=undefined && el.nodeName=="DIV" && el.className!="stanza" && currentQuotesLevel!=blockInitQuotesLevel[currentBlockIndex]) {
      range3=document.body.createTextRange();
      range3.moveToElementText(el);
      range3.collapse(false);
@@ -348,7 +348,7 @@ function Run() {
       alert(versionStr+"Ошибка:\n\nВ конце секции получился ненулевой уровень вложенности кавычек.\nКурсор установлен в конец этой секции.\n\n"+getInfoStr());
       return "error";
      }
-     if (blockCodename[currentBlockIndex]!=undefined && el.nodeName=="DIV" && currentQuotesLevel!=blockInitQuotesLevel[currentBlockIndex]) {
+     if (blockCodename[currentBlockIndex]!=undefined && el.nodeName=="DIV" && el.className!="stanza" && currentQuotesLevel!=blockInitQuotesLevel[currentBlockIndex]) {
       range3=document.body.createTextRange();
       range3.moveToElementText(el);
       range3.collapse(false);
