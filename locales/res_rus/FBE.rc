@@ -1130,6 +1130,12 @@ BEGIN
     IDC_SPELL_REPLACE       "Заменить слово"
 END
 
+STRINGTABLE 
+BEGIN
+    IDS_HOTKEY_EDIT_SUB     "Субскрипт"
+    IDS_HOTKEY_EDIT_SUP     "Суперскрипт"
+END
+
 #endif    // Russian resources
 /////////////////////////////////////////////////////////////////////////////
 
