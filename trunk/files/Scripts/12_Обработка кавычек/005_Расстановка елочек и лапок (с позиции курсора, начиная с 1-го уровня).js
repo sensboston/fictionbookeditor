@@ -390,7 +390,6 @@ function Run() {
   fbwBodyTr.moveToElementText(fbw_body);
   range.moveToElementText(document.getElementById(selectionBeginId));
   range.setEndPoint("EndToEnd",fbwBodyTr);
-  range.select();
   processingMode="all text";
   document.getElementById(selectionBeginId).removeNode(true);
  }
@@ -400,7 +399,6 @@ function Run() {
  range2=range.duplicate();
  range2.collapse(false);
  range2.pasteHTML("<B id="+selectionEndId+"></B>");
- range2.select();
  //alert(fbw_body.innerHTML);
  if (mainReplaces()!="error") alert(versionStr+"Ура! Расстановка кавычек прошла без ошибок.\n\n"+getInfoStr());
  try {

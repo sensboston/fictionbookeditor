@@ -386,7 +386,6 @@ function Run() {
  } else {
   range=document.body.createTextRange();
   range.moveToElementText(fbw_body);
-  range.select();
   processingMode="all text";
  }
  range1=range.duplicate();
@@ -395,7 +394,6 @@ function Run() {
  range2=range.duplicate();
  range2.collapse(false);
  range2.pasteHTML("<B id="+selectionEndId+"></B>");
- range2.select();
  //alert(fbw_body.innerHTML);
  if (mainReplaces()!="error") alert(versionStr+"Ура! Расстановка кавычек прошла без ошибок.\n\n"+getInfoStr());
  try {

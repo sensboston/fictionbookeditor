@@ -321,7 +321,6 @@ function Run() {
      alert(versionStr+"Ошибка:\n\nВ конце секции получился ненулевой уровень вложенности кавычек.\nКурсор установлен в конец этой секции.\n\n"+getInfoStr());
      return "error";
     }
-    alert(blockCodename[currentBlockIndex]);
     if (blockCodename[currentBlockIndex]!=undefined && el.nodeName=="DIV" && currentQuotesLevel!=blockInitQuotesLevel[currentBlockIndex]) {
      range3=document.body.createTextRange();
      range3.moveToElementText(el);
@@ -349,7 +348,6 @@ function Run() {
       alert(versionStr+"Ошибка:\n\nВ конце секции получился ненулевой уровень вложенности кавычек.\nКурсор установлен в конец этой секции.\n\n"+getInfoStr());
       return "error";
      }
-     alert(blockCodename[currentBlockIndex]);
      if (blockCodename[currentBlockIndex]!=undefined && el.nodeName=="DIV" && currentQuotesLevel!=blockInitQuotesLevel[currentBlockIndex]) {
       range3=document.body.createTextRange();
       range3.moveToElementText(el);
@@ -392,7 +390,6 @@ function Run() {
  } else {
   range=document.body.createTextRange();
   range.moveToElementText(fbw_body);
-  range.select();
   processingMode="all text";
  }
  range1=range.duplicate();
@@ -401,7 +398,6 @@ function Run() {
  range2=range.duplicate();
  range2.collapse(false);
  range2.pasteHTML("<B id="+selectionEndId+"></B>");
- range2.select();
  //alert(fbw_body.innerHTML);
  if (mainReplaces()!="error") alert(versionStr+"Ура! Расстановка кавычек прошла без ошибок.\n\n"+getInfoStr());
  try {
