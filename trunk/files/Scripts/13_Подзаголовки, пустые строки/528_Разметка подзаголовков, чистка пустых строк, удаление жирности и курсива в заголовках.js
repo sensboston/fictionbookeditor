@@ -1,10 +1,10 @@
 // Разметка подзаголовков, чистка пустых строк
-// Версия: 3.4
 // Автор: Sclex
 
 function Run() {
  try { var nbspChar=window.external.GetNBSP(); var nbspEntity; if (nbspChar.charCodeAt(0)==160) nbspEntity="&nbsp;"; else nbspEntity=nbspChar;}
  catch(e) { var nbspChar=String.fromCharCode(160); var nbspEntity="&nbsp;";}
+ var verStr="v3.5";
  var DebugMode=0;
  var DestrongTitles=true; //делать ли удаление жирности в заголовках
  var DeitalicTitles=true; //удалять ли курсив в заголовках
@@ -301,7 +301,7 @@ function Run() {
  var Tsek = Math.ceil(10*((Tf-Ts)/1000-Tmin*60))/10;
  if (Tmin>0) {var TimeStr=Tmin+" мин. "+Tsek+" с"}
  else {var TimeStr=Tsek+" с"}
- MsgBox('Работа скрипта "Разметка подзаголовков, чистка пустых строк" завершена.'+
+ MsgBox('Работа скрипта "Разметка подзаголовков, чистка пустых строк '+verStr+'" завершена.'+
         '\n\nУдалено пустых строк:'+
         '\n– из-за соседства с <empty-line/>: '+EmptyClearedEmpty+
         '\n– из-за соседства с <cite>: '+EmptyClearedCite+
