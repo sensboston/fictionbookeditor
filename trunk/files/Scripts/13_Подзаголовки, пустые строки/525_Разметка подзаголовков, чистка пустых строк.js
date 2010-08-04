@@ -210,21 +210,22 @@ function Run() {
    alert("!savedFirstEmpty.previousSibling: "+!savedFirstEmpty.previousSibling);
    alert("savedFirstEmpty.previousSibling.className!=\"image\": "+savedFirstEmpty.previousSibling.className!="image");
    alert("savedFirstEmpty.nextSibling: "+savedFirstEmpty.nextSibling);*/
-   if (!firstEmptyMemorized || (a3!=savedFirstEmpty || (!savedFirstEmpty.previousSibling ||
-       savedFirstEmpty.previousSibling.className!="image")) || savedFirstEmpty.nextSibling) {
-    //чистка пустых строк в конце секции
-    var go_more=true;
-    while (a3!=null && go_more) {
-     var SavePrevA3=a3.previousSibling;
-     if (a3.nodeName=="P" && isLineEmpty(a3)) {
-      a3.outerHTML="";
-      EmptyCleared++;
-      EmptyClearedEnd++;
-     } else
-      go_more=false;
-     a3=SavePrevA3;
+   if (!firstEmptyMemorized || a3!=savedFirstEmpty)
+    if ((!savedFirstEmpty.previousSibling || savedFirstEmpty.previousSibling.className!="image")
+        || savedFirstEmpty.nextSibling) {
+     //чистка пустых строк в конце секции
+     var go_more=true;
+     while (a3!=null && go_more) {
+      var SavePrevA3=a3.previousSibling;
+      if (a3.nodeName=="P" && isLineEmpty(a3)) {
+       a3.outerHTML="";
+       EmptyCleared++;
+       EmptyClearedEnd++;
+      } else
+       go_more=false;
+      a3=SavePrevA3;
+     }
     }
-   }
    var a3=a5.lastChild;
    if (firstEmptyMemorized && a3!=savedFirstEmpty)
     if (!savedFirstEmpty.nextSibling || savedFirstEmpty.nextSibling.className!="image")  {
