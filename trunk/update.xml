@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FBE>
-	<Name>FictionBook Editor 2.5 RC</Name>
-	<Date>07-31-2010</Date>
+	<Name>FictionBook Editor Release 2.5</Name>
+	<Date>08-05-2010</Date>
 	<Version>2.5</Version>
-	<Beta>true</Beta>
-	<DownloadUrl>http://fictionbookeditor.googlecode.com/files/FictionBook%20Editor%20RC%20v2.5%20%28build%2031%20Jul%29.exe</DownloadUrl>
-	<MD5>54F0B0B125E1BF21D64CD6135D45E460</MD5>
+	<Beta>false</Beta>
+	<DownloadUrl>http://fictionbookeditor.googlecode.com/files/FictionBook%20Editor%20Release%20v2.5%20%28build%2005%20Aug%29.exe</DownloadUrl>
+	<MD5>90D6CD59F7F9232AE5AAA97D9DF7044B</MD5>
 </FBE>

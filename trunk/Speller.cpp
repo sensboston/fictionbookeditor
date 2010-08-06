@@ -754,13 +754,13 @@ void CSpeller::LoadCustomDict()
 {
 	USES_CONVERSION;
 
+	m_CustomDict.RemoveAll();
+
 	CString str;
 	char buf[256];
 	if (ATLPath::FileExists(m_CustomDictPath))
 	try 
 	{
-		m_CustomDict.RemoveAll();
-
 		std::ifstream load;
 		load.open(m_CustomDictPath);
 		if (load.is_open())
