@@ -1,2 +1,2 @@
 const char *build_timestamp=__DATE__ " " __TIME__;
-const char *build_name="FictionBook Editor RC 2.5";
+const char *build_name="FictionBook Editor Release 2.5";
