@@ -4,29 +4,53 @@
 function Run() {
  try { var nbspChar=window.external.GetNBSP(); var nbspEntity; if (nbspChar.charCodeAt(0)==160) nbspEntity="&nbsp;"; else nbspEntity=nbspChar;}
  catch(e) { var nbspChar=String.fromCharCode(160); var nbspEntity="&nbsp;";}
- var verStr="v3.5";
+ var verStr="v3.6";
  var DebugMode=0;
  var DestrongTitles=true; //делать ли удаление жирности в заголовках
  var DeitalicTitles=false; //удалять ли курсив в заголовках
  var PromptDestrongTitles=false; //выдавать запрос, выполнять ли разжирнение заголовков
- var destrongRegExp = new RegExp("</?(STRONG|B)( [^>]*)?>","gi");
- var destrongRegExp_ = "";
- var deitalicRegExp = new RegExp("</?(EM|I)( [^>]*)?>","gi");
-  var deitalicRegExp_ = "";
  var EmptyCleared=0;
  var EmptyClearedEmpty=0;
  var EmptyClearedCite=0;
  var EmptyClearedPoem=0;
  var EmptyClearedSubtitle=0;
- var EmptyClearedBegin=0;
- var EmptyClearedEnd=0;
+ var EmptyClearedSectionBegin=0;
+ var EmptyClearedSectionEnd=0;
  var EmptyClearedInPoem=0;
  var EmptyClearedTitleBegin=0;
  var EmptyClearedTitleEnd=0;
  var EmptyClearedTitleInside=0;
+ var EmptyClearedEpigraphBegin=0;
+ var EmptyClearedEpigraphEnd=0;
+ var EmptyClearedCiteBegin=0;
+ var EmptyClearedCiteEnd=0;
  var while_flag;
  var txt;
  var re0=new RegExp("^( | |&nbsp;|"+nbspChar+")*?$","i");
+
+ function destrongAndDeitalic(el,destrong,deitalic) {
+  var savedEl=el;
+  var savedEl2;
+  el=el.firstChild;
+  while (el) {
+   if (el.firstChild)
+    el=el.firstChild;
+   else {
+    while (el && el!=savedEl && el.nextSibling==null) el=el.parentNode;
+    if (el && el!=savedEl) el=el.nextSibling;
+    if (el==savedEl) return;
+   } 
+   if (
+       (destrong && (el.nodeName=="STRONG" || el.nodeName=="B")) 
+       ||
+       (deitalic && (el.nodeName=="EM" || el.nodeName=="I")) 
+      ) {
+    savedEl2=el.firstChild ? el.firstChild : el.nextSibling;
+    el.removeNode(false);
+    el=savedEl2;
+   }
+  }
+ }
 
  function isLineEmpty(ptr) {
   return re0.test(ptr.innerHTML.replace(/<(?!img)[^>]*?>/gi,""));
@@ -40,6 +64,59 @@ function Run() {
  }
 
  function Recursive(ptr) {
+ 
+ function removeEmptiesAtEnd(elemName) {
+  var a3=a5.lastChild;
+  var go_more=true;
+  var SavePrevA3;
+  while (a3!=null && go_more) {
+   SavePrevA3=a3.previousSibling;
+   if (a3.nodeName=="P" && isLineEmpty(a3)) {
+    a3.outerHTML="";
+    EmptyCleared++;
+    switch(elemName) {
+     case "section":
+      EmptyClearedSectionEnd++;
+      break;
+     case "epigraph":
+      EmptyClearedEpigraphEnd++;
+      break;
+     case "cite":
+      EmptyClearedCiteEnd++;
+    }
+   } else
+    go_more=false;
+   a3=SavePrevA3;
+  }
+ }  
+ 
+ function removeEmptiesAtBegin(elemName) {
+  var go_more=true;
+  var a4=savedFirstEmpty;
+  var SaveNextA4;
+  while (a4!=null && go_more) {
+   SaveNextA4=a4.nextSibling;
+   if (a4.nodeName=="P" &&
+       isLineEmpty(a4) && a4.parentNode!=null) {
+    a4.outerHTML="";
+    EmptyCleared++;
+    switch(elemName) {
+     case "section":
+      EmptyClearedSectionBegin++;
+      break;
+     case "epigraph":
+      EmptyClearedEpigraphBegin++;
+      break;
+     case "cite":
+      EmptyClearedCiteBegin++;
+    }
+   } else {
+    go_more=false;
+   }
+  a4=SaveNextA4;
+  }
+ }
+ 
   var savedPtr=ptr;
   if (ptr==null) return;
   var a5=ptr.parentNode;
@@ -53,7 +130,7 @@ function Run() {
  //  MsgBox("ptr.outerHTML:"+ptr.outerHTML);
    if (ptr.nodeName=="DIV"&&
        (ptr.className=="section"||ptr.className=="body"||ptr.className=="poem"||
-        ptr.className=="stanza"||ptr.className=="cite")) {
+        ptr.className=="stanza"||ptr.className=="cite"||ptr.className=="epigraph")) {
     Recursive(ptr.firstChild);
    }
    if (ptr.nodeName=="DIV" && ptr.className=="title") {
@@ -89,14 +166,8 @@ function Run() {
      }
      ptrInTitle=savePrev;
     }
-    //удаление жирности в заголовке
-    if (DestrongTitles) {
-      ptr.innerHTML=ptr.innerHTML.replace(destrongRegExp,destrongRegExp_);
-    }
-    //удаление курсива в заголовке
-    if (DeitalicTitles) {
-     ptr.innerHTML=ptr.innerHTML.replace(deitalicRegExp,deitalicRegExp_);
-    }
+    //удаление жирности и курсива в заголовке
+    destrongAndDeitalic(ptr,DestrongTitles,DeitalicTitles);
    }
    if (ptr.nodeName=="DIV" && ptr.className=="image") {
     if (flag_of_begin && !image_flag) {
@@ -113,6 +184,12 @@ function Run() {
      savedFirstEmpty=ptr;
      flag_of_begin=false;
     }
+   }
+   if (!firstEmptyMemorized && ptr.nodeName=="P" &&
+       (ptr.parentNode.className=="epigraph" || ptr.parentNode.className=="poem" ||
+       ptr.parentNode.className=="cite") && isLineEmpty(ptr)) {
+    firstEmptyMemorized=true;
+    savedFirstEmpty=ptr;       
    }
    if (ptr.nodeName=="DIV" &&
       (ptr.className=="table" || ptr.className=="cite" || ptr.className=="poem"))
@@ -163,6 +240,7 @@ function Run() {
        }
        if (ptr.parentNode.nodeName=="DIV"&&ptr.parentNode.className=="stanza") {
         ptr.outerHTML="";
+        EmptyCleared++;
         EmptyClearedInPoem++;
        }
    }
@@ -172,6 +250,7 @@ function Run() {
       if (IsLineSubtitle(ptr)) {
        ptr.className="subtitle";
        ptr.innerHTML="* * *";
+       destrongAndDeitalic(ptr,DestrongTitles,DeitalicTitles);
       }
       if (ptr.className=="subtitle") {
        //чистка пустых строк перед сабтитлом
@@ -204,49 +283,28 @@ function Run() {
     }
    ptr=SaveNextPtr;
   }  if (savedPtr.parentNode && savedPtr.parentNode.nodeName=="DIV" && savedPtr.parentNode.className=="section") {
-   var a3=a5.lastChild;
    /*alert("firstEmptyMemorized: "+firstEmptyMemorized);
    alert("a3!=savedFirstEmpty: "+(a3!=savedFirstEmpty));
    alert("!savedFirstEmpty.previousSibling: "+!savedFirstEmpty.previousSibling);
    alert("savedFirstEmpty.previousSibling.className!=\"image\": "+savedFirstEmpty.previousSibling.className!="image");
    alert("savedFirstEmpty.nextSibling: "+savedFirstEmpty.nextSibling);*/
    if (!firstEmptyMemorized || (a3!=savedFirstEmpty && (!savedFirstEmpty.previousSibling ||
-       savedFirstEmpty.previousSibling.className!="image")) || savedFirstEmpty.nextSibling) {
+       savedFirstEmpty.previousSibling.className!="image")) || savedFirstEmpty.nextSibling)
     //чистка пустых строк в конце секции
-    var go_more=true;
-    while (a3!=null && go_more) {
-     var SavePrevA3=a3.previousSibling;
-     if (a3.nodeName=="P" && isLineEmpty(a3)) {
-      a3.outerHTML="";
-      EmptyCleared++;
-      EmptyClearedEnd++;
-     } else
-      go_more=false;
-     a3=SavePrevA3;
-    }
-   }
+    removeEmptiesAtEnd("section");
    var a3=a5.lastChild;
    if (firstEmptyMemorized && a3!=savedFirstEmpty)
-    if (!savedFirstEmpty.nextSibling || savedFirstEmpty.nextSibling.className!="image")  {
+    if (!savedFirstEmpty.nextSibling || savedFirstEmpty.nextSibling.className!="image")
      //чистка пустых строк в начале секции
-     var go_more=true;
-     var a4=savedFirstEmpty;
-     while (a4!=null && go_more) {
-      var SaveNextA4=a4.nextSibling;
-      if (a4.nodeName=="P" &&
-          isLineEmpty(a4) && a4.parentNode!=null) {
-       if (a4.parentNode.className=="section") {
-        a4.outerHTML="";
-        EmptyCleared++;
-        EmptyClearedBegin++;
-       }
-      } else {
-       go_more=false;
-      }
-     a4=SaveNextA4;
-     }
-    }
+     removeEmptiesAtBegin("section");
   }
+  else if (savedPtr.parentNode && savedPtr.parentNode.nodeName=="DIV" &&
+  (savedPtr.parentNode.className=="epigraph" ||
+   savedPtr.parentNode.className=="cite")) {
+   removeEmptiesAtEnd(savedPtr.parentNode.className);
+   if (firstEmptyMemorized)
+    removeEmptiesAtBegin(savedPtr.parentNode.className);
+  }  
  }
 
  function Recursive2(ptr) {
@@ -267,6 +325,7 @@ function Run() {
        if (chld2.nodeName=="P" && IsLineSubtitle(chld2)) {
         chld.outerHTML="<P class=subtitle>* * *</P>";
         flag=true;
+        destrongAndDeitalic(chld,DestrongTitles,DeitalicTitles);
        }
       }
       if ((chld.nodeName=="P" && chld.className=="subtitle") ||
@@ -303,13 +362,17 @@ function Run() {
  else {var TimeStr=Tsek+" с"}
  MsgBox('Работа скрипта "Разметка подзаголовков, чистка пустых строк '+verStr+'" завершена.'+
         '\n\nУдалено пустых строк:'+
-        '\n– из-за соседства с <empty-line/>: '+EmptyClearedEmpty+
-        '\n– из-за соседства с <cite>: '+EmptyClearedCite+
-        '\n– из-за соседства с <poem>: '+EmptyClearedPoem+
-        '\n– из-за соседства с <subtitle>: '+EmptyClearedSubtitle+
-        '\n– внутри <poem>: '+EmptyClearedInPoem+
-        '\n– в начале секции: '+EmptyClearedBegin+
-        '\n– в конце секции: '+EmptyClearedEnd+
+        '\n– из-за соседства с пустой строкой: '+EmptyClearedEmpty+
+        '\n– из-за соседства с цитатой: '+EmptyClearedCite+
+        '\n– из-за соседства со стихом: '+EmptyClearedPoem+
+        '\n– из-за соседства с подзаголовком: '+EmptyClearedSubtitle+
+        '\n– внутри стихов: '+EmptyClearedInPoem+
+        '\n– в начале секции: '+EmptyClearedSectionBegin+
+        '\n– в конце секции: '+EmptyClearedSectionEnd+
+        '\n– в начале эпиграфа: '+EmptyClearedEpigraphBegin+
+        '\n– в конце эпиграфа: '+EmptyClearedEpigraphEnd+
+        '\n– в начале цитаты: '+EmptyClearedEpigraphBegin+
+        '\n– в конце цитаты: '+EmptyClearedEpigraphEnd+
         '\n– в начале заголовка: '+EmptyClearedTitleBegin+
         '\n– в конце заголовка: '+EmptyClearedTitleEnd+
         '\n– посреди заголовка: '+EmptyClearedTitleInside+
