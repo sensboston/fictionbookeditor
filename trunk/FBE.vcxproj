@@ -55,7 +55,6 @@
     <EmbedManifest Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</EmbedManifest>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.\Debug\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.\Debug\</IntDir>
-    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</LinkIncremental>
     <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
     <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
     <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
@@ -75,7 +74,6 @@ xcopy "$(ProjectDir)files\*.*" "$(TargetDir)" /E /Q /Y
     </PreBuildEvent>
     <Midl>
       <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <MkTypLibCompatible>true</MkTypLibCompatible>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <TargetEnvironment>Win32</TargetEnvironment>
       <TypeLibraryName>.\Release/FBE.tlb</TypeLibraryName>
@@ -87,8 +85,8 @@ xcopy "$(ProjectDir)files\*.*" "$(TargetDir)" /E /Q /Y
       <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <WholeProgramOptimization>false</WholeProgramOptimization>
-      <AdditionalIncludeDirectories>extras;utils;wtl;../../hunspell/src/hunspell;pcre;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>NDEBUG;WIN32;_WINDOWS;UNICODE;STRICT;USE_PCRE;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>extras;utils;wtl;../hunspell/src/hunspell;pcre;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>NDEBUG;WIN32;_WINDOWS;UNICODE;STRICT;USE_PCRE;_CRT_SECURE_NO_WARNINGS;_WTL_CMDBAR_VISTA_MENUS=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <TreatWChar_tAsBuiltInType>false</TreatWChar_tAsBuiltInType>
       <PrecompiledHeader>Use</PrecompiledHeader>
@@ -114,7 +112,7 @@ xcopy "$(ProjectDir)files\*.*" "$(TargetDir)" /E /Q /Y
       <AdditionalDependencies>rpcrt4.lib;
 gdiplus.lib;libhunspell.lib;pcre.lib;opengl32.lib;glu32.lib;$(IntDir)buildstamp.obj;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>..\..\hunspell\src\win_api\Release\libhunspell;.\pcre;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\hunspell\src\win_api\Release\libhunspell;.\pcre;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <DelayLoadDLLs>%(DelayLoadDLLs)</DelayLoadDLLs>
@@ -151,8 +149,8 @@ xcopy "$(ProjectDir)files\*.*" "$(TargetDir)" /E /Q /Y
     </Midl>
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>extras;utils;wtl;../../hunspell/src/hunspell;pcre;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_DEBUG;WIN32;_WINDOWS;UNICODE;STRICT;USE_PCRE;_ATL_TRACE_LEVEL=4;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>extras;utils;wtl;../hunspell/src/hunspell;pcre;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_DEBUG;WIN32;_WINDOWS;UNICODE;STRICT;USE_PCRE;_ATL_TRACE_LEVEL=4;_CRT_SECURE_NO_WARNINGS;_ITERATOR_DEBUG_LEVEL=0;_WTL_CMDBAR_VISTA_MENUS=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <BufferSecurityCheck>true</BufferSecurityCheck>
@@ -178,11 +176,10 @@ xcopy "$(ProjectDir)files\*.*" "$(TargetDir)" /E /Q /Y
     </PreLinkEvent>
     <Link>
       <RegisterOutput>false</RegisterOutput>
-      <AdditionalOptions>/ignore:4706 /LTCG %(AdditionalOptions)</AdditionalOptions>
       <AdditionalDependencies>rpcrt4.lib;
 gdiplus.lib;libhunspell.lib;pcre.lib;opengl32.lib;glu32.lib;$(IntDir)buildstamp.obj;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>..\..\hunspell\src\win_api\Release\libhunspell;.\pcre;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\hunspell\src\win_api\Release\libhunspell;.\pcre;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <IgnoreSpecificDefaultLibraries>libcmt.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <DelayLoadDLLs>%(DelayLoadDLLs)</DelayLoadDLLs>
@@ -199,6 +196,10 @@ gdiplus.lib;libhunspell.lib;pcre.lib;opengl32.lib;glu32.lib;$(IntDir)buildstamp.
       <Command>
       </Command>
     </PostBuildEvent>
+    <Manifest>
+      <TypeLibraryFile>
+      </TypeLibraryFile>
+    </Manifest>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="AboutBox.cpp" />
@@ -347,6 +348,7 @@ gdiplus.lib;libhunspell.lib;pcre.lib;opengl32.lib;glu32.lib;$(IntDir)buildstamp.
     <ClInclude Include="AboutBox.h" />
     <ClInclude Include="apputils.h" />
     <ClInclude Include="atlimage.h" />
+    <ClInclude Include="extras\atlcrypt.h" />
     <ClInclude Include="utils\CFileDialogEx.h" />
     <ClInclude Include="ContainerWnd.h" />
     <ClInclude Include="DocumentTree.h" />
@@ -403,6 +405,7 @@ gdiplus.lib;libhunspell.lib;pcre.lib;opengl32.lib;glu32.lib;$(IntDir)buildstamp.
     <ClInclude Include="extras\Scintilla.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="extras\atlcrypt.inl" />
     <None Include="res\center.bmp" />
     <None Include="res\doc.bmp" />
     <None Include="res\document.bmp" />

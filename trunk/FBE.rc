@@ -14,13 +14,11 @@
 #undef APSTUDIO_READONLY_SYMBOLS
 
 /////////////////////////////////////////////////////////////////////////////
-// Russian resources
+// Russian (Russia) resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_RUS)
-#ifdef _WIN32
 LANGUAGE LANG_RUSSIAN, SUBLANG_DEFAULT
 #pragma code_page(1251)
-#endif //_WIN32
 
 #ifdef APSTUDIO_INVOKED
 /////////////////////////////////////////////////////////////////////////////
@@ -36,18 +34,16 @@ END
 
 #endif    // APSTUDIO_INVOKED
 
-#endif    // Russian resources
+#endif    // Russian (Russia) resources
 /////////////////////////////////////////////////////////////////////////////
 
 
 /////////////////////////////////////////////////////////////////////////////
-// English (U.S.) resources
+// English (United States) resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
-#ifdef _WIN32
 LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 #pragma code_page(1252)
-#endif //_WIN32
 
 #ifdef APSTUDIO_INVOKED
 /////////////////////////////////////////////////////////////////////////////
@@ -76,7 +72,7 @@ END
 //
 
 #ifdef APSTUDIO_INVOKED
-GUIDELINES DESIGNINFO 
+GUIDELINES DESIGNINFO
 BEGIN
     IDD_SETTING_OTHER, DIALOG
     BEGIN
@@ -469,7 +465,7 @@ IDR_MAINFRAME           ICON                    "res\\FBE2.ico"
 // Toolbar
 //
 
-IDR_MAINFRAME TOOLBAR  24, 24
+IDR_MAINFRAME TOOLBAR 24, 24
 BEGIN
     BUTTON      ID_FILE_NEW
     BUTTON      ID_FILE_OPEN
@@ -514,7 +510,7 @@ BEGIN
     BUTTON      ID_TOOLS_SPELLCHECK
 END
 
-IDR_MAINFRAME_SMALL TOOLBAR  16, 16
+IDR_MAINFRAME_SMALL TOOLBAR 16, 16
 BEGIN
     BUTTON      ID_FILE_NEW
     BUTTON      ID_FILE_OPEN
@@ -553,7 +549,7 @@ BEGIN
     BUTTON      ID_TOOLS_SPELLCHECK
 END
 
-IDR_DOCUMENT_TREE TOOLBAR  24, 24
+IDR_DOCUMENT_TREE TOOLBAR 24, 24
 BEGIN
     BUTTON      ID_DT_RIGHT_ONE
     BUTTON      ID_DT_RIGHT_SMART
@@ -562,7 +558,7 @@ BEGIN
     BUTTON      ID_DT_DELETE
 END
 
-IDR_SCRIPTS TOOLBAR  16, 16
+IDR_SCRIPTS TOOLBAR 16, 16
 BEGIN
     BUTTON      ID_LAST_SCRIPT
 END
@@ -623,15 +619,15 @@ IDB_TEXT                BITMAP                  "res\\text.bmp"
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 2,4,0,0
- PRODUCTVERSION 2,4,0,0
+ FILEVERSION 2,6,0,0
+ PRODUCTVERSION 2,6,0,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x21L
 #else
  FILEFLAGS 0x20L
 #endif
- FILEOS 0x4L
+ FILEOS 0x40004L
  FILETYPE 0x1L
  FILESUBTYPE 0x0L
 BEGIN
@@ -642,13 +638,12 @@ BEGIN
             VALUE "Comments", "Release"
             VALUE "CompanyName", "FBE Team"
             VALUE "FileDescription", "FictionBook Editor"
-            VALUE "FileVersion", "2, 4, 0, 0"
+            VALUE "FileVersion", "2.6.0.0"
             VALUE "InternalName", "FBE"
             VALUE "LegalCopyright", "Copyright 2010 © FBE Team, 2008 © LitRes, 2003 © Mike Matsnev"
             VALUE "OriginalFilename", "FBE.exe"
             VALUE "ProductName", "FictionBook Editor"
-            VALUE "ProductVersion", "2, 4, 0, 0"
-            VALUE "SpecialBuild", "rev. 225"
+            VALUE "ProductVersion", "2.6.0.0"
         END
     END
     BLOCK "VarFileInfo"
@@ -670,7 +665,7 @@ END
 // Menu
 //
 
-IDR_MAINFRAME MENU 
+IDR_MAINFRAME MENU
 BEGIN
     POPUP "&File"
     BEGIN
@@ -777,7 +772,7 @@ BEGIN
     END
 END
 
-IDR_DOCUMENT_TREE MENU 
+IDR_DOCUMENT_TREE MENU
 BEGIN
     POPUP "DT"
     BEGIN
@@ -792,7 +787,7 @@ BEGIN
     END
 END
 
-IDR_TOOLBAR_MENU MENU 
+IDR_TOOLBAR_MENU MENU
 BEGIN
     POPUP "CUSTOMIZE"
     BEGIN
@@ -813,7 +808,7 @@ ABOUT_FILE              ABOUT_FILE              "files\\contributors.txt"
 // String Table
 //
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     IDS_HOTKEY_EDIT_ADD_EPIGRAPH "Add epigraph"
     IDS_HOTKEY_EDIT_ADD_IMAGE "Add section image"
@@ -833,7 +828,7 @@ BEGIN
     ID_VIEW_SOURCE          "Show document source code\nSource"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     IDS_HOTKEY_PLUGINS_LAST_PLUGIN "Last plugin"
     IDS_HOTKEY_TOOLS_SPELL  "Spell check"
@@ -853,13 +848,13 @@ BEGIN
     IDS_UPDATE_DOWNLOADED   "%d Kb downloaded"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     ID_INSERT_TABLE         "Insert an table at cursor\nInsert table"
     ID_GOTO_FOOTNOTE        "Go to footnote or reference\nGo to footnote or reference"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     ID_LAST_SCRIPT          "Execute last called script\nLast script"
     ID_TOOLS_SPELLCHECK     "Check document spelling...\nCheck document spelling"
@@ -867,7 +862,7 @@ BEGIN
     ID_GOTO_WRONGTAG        "Go to wrong tag\nGo to wrong tag"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     ID_DT_LEFT              "\nMove to the left"
     ID_DT_DELETE            "\nDelete selected node"
@@ -877,7 +872,7 @@ BEGIN
     ID_VIEW_FASTMODE        "Toggle fast mode\nToggle fast mode"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     ID_EDIT_ADD_TA          "Add a text author paragraph to the selected container\nAdd text author"
     ID_EDIT_MERGE           "Merge selected container with next\nMerge containers"
@@ -888,7 +883,7 @@ BEGIN
     ID_EDIT_CODE            "Marks the selection """"code"""" (toggle)\nCode"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     ID_EDIT_ADD_TITLE       "Add a title to the selected object\nAdd title"
     ID_EDIT_ADD_BODY        "Add a new body to the document\nAdd body"
@@ -903,7 +898,7 @@ BEGIN
     ID_EDIT_INS_POEM        "Replace selection with a poem container\nInsert poem"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     ID_VIEW_TREE            "Show or hide the document tree\nToggle document tree"
     IDS_PANE_INS            "INS"
@@ -918,12 +913,12 @@ BEGIN
     IDS_HOTKEY_EDIT_ADD_BODY "Add body"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     ID_VIEW_STATUS_BAR      "Show or hide the status bar\nToggle StatusBar"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     60161                   "Show or hide the command toolbar\nToggle Command ToolBar"
     60162                   "Show or hide the scripts toolbar\nToggle Scripts ToolBar"
@@ -931,7 +926,7 @@ BEGIN
     60164                   "Show or hide the table bar\nToggle TableBar"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     ID_STYLE_NORMAL         "Normal paragraph style\nNormal"
     ID_STYLE_TEXTAUTHOR     "Text author paragraph style\nText author"
@@ -939,13 +934,13 @@ BEGIN
     ID_VIEW_OPTIONS         "Display options\nDisplay options"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     ID_EDIT_BOLD            "Marks the selection ""strong"" (toggle)\nStrong"
     ID_EDIT_ITALIC          "Marks the selection ""emphasis"" (toggle)\nEmphasis"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     ID_STYLE_LINK           "Add a hyperlink\nHyperlink"
     ID_STYLE_NOTE           "Add a footnote\nFootnote"
@@ -956,7 +951,7 @@ BEGIN
     ID_EDIT_ADDBINARY       "Add a new binary object to the document\nAdd binary object"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     ID_EDIT_COPY            "Copy the selection and put it on the Clipboard\nCopy"
     ID_EDIT_CUT             "Cut the selection and put it on the Clipboard\nCut"
@@ -967,13 +962,13 @@ BEGIN
     ID_EDIT_REDO            "Redo the previously undone action\nRedo"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     ID_APP_ABOUT            "Display program information, version number and copyright\nAbout"
     ID_APP_EXIT             "Quit the application; prompts to save documents\nExit"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     ID_FILE_NEW             "Create a new document\nNew"
     ID_FILE_OPEN            "Open an existing document\nOpen"
@@ -981,7 +976,7 @@ BEGIN
     ID_FILE_SAVE_AS         "Save the active document with a new name\nSave As"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     IDS_CHOOSE_SCRIPTS_FLD  "Specify scripts folder"
     IDS_SCRIPT_HOTKEY_CONFLICT 
@@ -1002,19 +997,19 @@ BEGIN
     IDS_HOTKEY_NAVIGATION_SCI_COLLAPSE3 "Collapse 3 tree levels"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     ATL_IDS_IDLEMESSAGE     "Ready"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     ATL_IDS_MRU_FILE        "Open this document"
     IDS_ENCODINGS           "utf-8,utf-16,windows-1251,windows-1252,iso-8859-1,iso-8859-2,iso-8859-5,iso-8859-15,koi8-r"
     IDS_DOCUMENT_TREE_CAPTION "Document structure"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     IDR_MAINFRAME           "FBE"
     IDS_SB_NO_ERR           "No errors found."
@@ -1034,7 +1029,7 @@ BEGIN
     IDS_TB_CAPT_HREF        "Href:"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     IDS_MB_OK               "OK"
     IDS_MB_CANCEL           "Cancel"
@@ -1046,7 +1041,7 @@ BEGIN
     IDS_MB_CLOSE            "Close"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     IDS_CTXMENU_COPY        "Copy"
     IDS_CTXMENU_PASTE       "Paste"
@@ -1068,7 +1063,7 @@ BEGIN
     IDS_HOTKEY_GROUP_PLUGINS "Plugins"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     IDS_UPDATE_DOWNLOADCOMPLETE "Download completed, writing setup file..."
     IDS_UPDATE_DOWNLOADERROR "Download error"
@@ -1088,7 +1083,7 @@ BEGIN
     IDS_BAD_XML_MSG         "You have opened an invalid XML document.\n\nYou should correct all XML errors (use ""Validate"" and ""Go to wrong tag"" commands) before switching from the SOURCE mode."
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     IDS_TB_CAPT_SECTION_ID  "Section ID:"
     IDS_TB_CAPT_IMAGE_TITLE "Image title:"
@@ -1108,7 +1103,7 @@ BEGIN
     IDS_REPL_ALL_CAPT       "Replace All"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     IDS_REPL_DONE_MSG       "%d replacement(s) done."
     IDS_SEARCH_FAIL_MSG     "Cannot find the string '%s'."
@@ -1128,7 +1123,7 @@ BEGIN
     IDS_FILE_CHANGED_MSG    "%s has been changed by anouther application.\nDo you want to reload it?"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     IDS_SCRIPT_ERRX_MSG     "Script error: %08X at line %d, column %d"
     IDS_SCRIPT_ERRD_MSG     "Script error: %s at line %d, column %d"
@@ -1148,7 +1143,7 @@ BEGIN
     IDS_ADD_BINARIES_FILEDLG "Choose binaries to add:"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     IDS_HOTKEY_NAVIGATION_SCI_COLLAPSE4 "Collapse 4 tree levels"
     IDS_HOTKEY_NAVIGATION_SCI_COLLAPSE5 "Collapse 5 tree levels"
@@ -1168,7 +1163,7 @@ BEGIN
     IDS_HOTKEY_NAVIGATION_SELECT_HREF "Href"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     IDS_HOTKEY_NAVIGATION_SELECT_ID "ID "
     IDS_HOTKEY_NAVIGATION_SELECT_ID_TABLE "Table ID"
@@ -1188,7 +1183,7 @@ BEGIN
     IDS_HOTKEY_EDIT_INSERT_TABLE "Insert table"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     IDS_HOTKEY_GROUP_SCRIPTS "Scripts"
     IDS_HOTKEY_SCRIPTS_LAST_SCRIPT "Last script"
@@ -1209,23 +1204,23 @@ BEGIN
     IDS_CTXMENU_CUT         "Cut"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     IDC_SPELL_IGNORE        "Ignore"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     IDC_SPELL_REPLACE       "Replace word"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     IDS_HOTKEY_EDIT_SUB     "Subscript"
     IDS_HOTKEY_EDIT_SUP     "Superscript"
 END
 
-#endif    // English (U.S.) resources
+#endif    // English (United States) resources
 /////////////////////////////////////////////////////////////////////////////
 
 

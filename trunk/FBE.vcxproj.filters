@@ -303,6 +303,9 @@
     <ClInclude Include="extras\Scintilla.h">
       <Filter>extras</Filter>
     </ClInclude>
+    <ClInclude Include="extras\atlcrypt.h">
+      <Filter>extras</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="res\center.bmp">
@@ -471,6 +474,9 @@
       <Filter>Dependance Files\Script Files</Filter>
     </None>
     <None Include="files\contributors.txt" />
+    <None Include="extras\atlcrypt.inl">
+      <Filter>extras</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Manifest Include="res\FBE.exe.manifest">
