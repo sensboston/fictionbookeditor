@@ -2599,70 +2599,70 @@ LRESULT CMainFrame::OnSelectCtl(WORD wNotifyCode, WORD wID, HWND hWndCtl, BOOL& 
 			m_document_tree.m_tree.m_tree.SetFocus();
 			break;
 		case ID_SELECT_ID:
-			if(!IsBandVisible(ATL_IDW_BAND_FIRST + 2))
-				OnViewToolBar(0, ATL_IDW_BAND_FIRST + 2, NULL, bHandled);
+			if(!IsBandVisible(ATL_IDW_BAND_FIRST + 3))
+				OnViewToolBar(0, ATL_IDW_BAND_FIRST + 3, NULL, bHandled);
 			m_id.SetFocus();
 			break;
 			case ID_SELECT_HREF:
 			{
-				if(!IsBandVisible(ATL_IDW_BAND_FIRST + 2))
-					OnViewToolBar(0,ATL_IDW_BAND_FIRST + 2, NULL, bHandled);
+				if(!IsBandVisible(ATL_IDW_BAND_FIRST + 3))
+					OnViewToolBar(0,ATL_IDW_BAND_FIRST + 3, NULL, bHandled);
 				m_href.SetFocus();
 				CString href(U::GetWindowText(m_href));
 				m_href.SetSel(0, href.GetLength(), FALSE);
 				break;
 			}
 		case ID_SELECT_IMAGE:
-			if(!IsBandVisible(ATL_IDW_BAND_FIRST + 2))
-				OnViewToolBar(0, ATL_IDW_BAND_FIRST + 2, NULL, bHandled);
+			if(!IsBandVisible(ATL_IDW_BAND_FIRST + 3))
+				OnViewToolBar(0, ATL_IDW_BAND_FIRST + 3, NULL, bHandled);
 			m_image_title.SetFocus();
 			break;
 		case ID_SELECT_TEXT:
 			m_view.SetFocus();
 			break;
 		case ID_SELECT_SECTION:
-			if (!IsBandVisible(ATL_IDW_BAND_FIRST + 2))
-				OnViewToolBar(0, ATL_IDW_BAND_FIRST + 2, NULL, bHandled);
+			if (!IsBandVisible(ATL_IDW_BAND_FIRST + 3))
+				OnViewToolBar(0, ATL_IDW_BAND_FIRST + 3, NULL, bHandled);
 			m_section.SetFocus();
 			break;
 		case ID_SELECT_IDT:
-			if(!IsBandVisible(ATL_IDW_BAND_FIRST + 2))
-				OnViewToolBar(0, ATL_IDW_BAND_FIRST + 2, NULL, bHandled);
+			if(!IsBandVisible(ATL_IDW_BAND_FIRST + 3))
+				OnViewToolBar(0, ATL_IDW_BAND_FIRST + 3, NULL, bHandled);
 			m_id_table_id.SetFocus();
 			break;
 		case ID_SELECT_STYLET:
-			if(!IsBandVisible(ATL_IDW_BAND_FIRST + 2))
-				OnViewToolBar(0, ATL_IDW_BAND_FIRST + 2, NULL, bHandled);
+			if(!IsBandVisible(ATL_IDW_BAND_FIRST + 3))
+				OnViewToolBar(0, ATL_IDW_BAND_FIRST + 3, NULL, bHandled);
 			m_styleT_table.SetFocus();
 			break;
 		case ID_SELECT_STYLE:
-			if(!IsBandVisible(ATL_IDW_BAND_FIRST+  2))
-				OnViewToolBar(0, ATL_IDW_BAND_FIRST + 2, NULL, bHandled);
+			if(!IsBandVisible(ATL_IDW_BAND_FIRST+  3))
+				OnViewToolBar(0, ATL_IDW_BAND_FIRST + 3, NULL, bHandled);
 			m_style_table.SetFocus();
 			break;
 		case ID_SELECT_COLSPAN:
-			if(!IsBandVisible(ATL_IDW_BAND_FIRST + 3))
-				OnViewToolBar(0, ATL_IDW_BAND_FIRST + 3, NULL, bHandled);
+			if(!IsBandVisible(ATL_IDW_BAND_FIRST + 4))
+				OnViewToolBar(0, ATL_IDW_BAND_FIRST + 4, NULL, bHandled);
 			m_colspan_table.SetFocus();
 			break;
 		case ID_SELECT_ROWSPAN:
-			if(!IsBandVisible(ATL_IDW_BAND_FIRST + 3))
-				OnViewToolBar(0, ATL_IDW_BAND_FIRST + 3, NULL, bHandled);
+			if(!IsBandVisible(ATL_IDW_BAND_FIRST + 4))
+				OnViewToolBar(0, ATL_IDW_BAND_FIRST + 4, NULL, bHandled);
 			m_rowspan_table.SetFocus();
 			break;
 		case ID_SELECT_ALIGNTR:
-			if(!IsBandVisible(ATL_IDW_BAND_FIRST + 3))
-			OnViewToolBar(0, ATL_IDW_BAND_FIRST + 3, NULL, bHandled);
+			if(!IsBandVisible(ATL_IDW_BAND_FIRST + 4))
+			OnViewToolBar(0, ATL_IDW_BAND_FIRST + 4, NULL, bHandled);
 			m_alignTR_table.SetFocus();
 			break;
 		case ID_SELECT_ALIGN:
-			if(!IsBandVisible(ATL_IDW_BAND_FIRST + 3))
-				OnViewToolBar(0, ATL_IDW_BAND_FIRST + 3, NULL, bHandled);
+			if(!IsBandVisible(ATL_IDW_BAND_FIRST + 4))
+				OnViewToolBar(0, ATL_IDW_BAND_FIRST + 4, NULL, bHandled);
 			m_align_table.SetFocus();
 			break;
 		case ID_SELECT_VALIGN:
-			if(!IsBandVisible(ATL_IDW_BAND_FIRST + 3))
-				OnViewToolBar(0, ATL_IDW_BAND_FIRST + 3, NULL, bHandled);
+			if(!IsBandVisible(ATL_IDW_BAND_FIRST + 4))
+				OnViewToolBar(0, ATL_IDW_BAND_FIRST + 4, NULL, bHandled);
 			m_valign_table.SetFocus();
 			break;
 	}
