@@ -809,6 +809,7 @@ public:
   LRESULT OnEdSelChange(WORD, WORD, HWND hWndCtl, BOOL&) {
     m_sel_changed=true;
     StopIncSearch(true);
+	DisplayCharCode();
     return 0;
   }
   LRESULT OnFastModeChange(WORD, WORD mode, HWND hWndCtl, BOOL&) 
@@ -1044,6 +1045,9 @@ public:
 	bool m_bad_xml;
 	CString m_bad_filename;
 	bool LoadToScintilla(CString filename);
+
+	// added by SeNS: issue #127
+	void DisplayCharCode();
 };
 
 int	StartScript(CMainFrame* mainframe);

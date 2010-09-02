@@ -1,9 +1,9 @@
-// Windows Template Library - WTL version 8.0
+// Windows Template Library - WTL version 8.1
 // Copyright (C) Microsoft Corporation. All rights reserved.
 //
 // This file is a part of the Windows Template Library.
 // The use and distribution terms for this software are covered by the
-// Common Public License 1.0 (http://opensource.org/osi3.0/licenses/cpl1.0.php)
+// Common Public License 1.0 (http://opensource.org/licenses/cpl1.0.php)
 // which can be found in the file CPL.TXT at the root of this distribution.
 // By using this software in any fashion, you are agreeing to be bound by
 // the terms of this license. You must not remove this notice, or
@@ -13,10 +13,6 @@
 #define __ATLDDX_H__
 
 #pragma once
-
-#ifndef __cplusplus
-	#error ATL requires C++ compilation (use a .cpp suffix)
-#endif
 
 #ifndef __ATLAPP_H__
 	#error atlddx.h requires atlapp.h to be included first
@@ -141,6 +137,20 @@ namespace WTL
 #define END_DDX_MAP() \
 		return TRUE; \
 	}
+
+// DDX support for Tab, Combo, ListBox and ListView selection index
+// Note: ListView selection DDX support requires atlctrls.h included first
+#define DDX_INDEX(CtrlClass, nID, var) \
+	if(nCtlID == (UINT)-1 || nCtlID == nID) \
+	{ \
+		if(!DDX_Index<CtrlClass>(nID, var, bSaveAndValidate)) \
+		return FALSE; \
+	}
+
+#define DDX_TAB_INDEX(nID, var)      DDX_INDEX(WTL::CTabCtrl, nID, var)
+#define DDX_COMBO_INDEX(nID, var)    DDX_INDEX(WTL::CComboBox, nID, var)
+#define DDX_LISTBOX_INDEX(nID, var)  DDX_INDEX(WTL::CListBox, nID, var)
+#define DDX_LISTVIEW_INDEX(nID, var) DDX_INDEX(WTL::CListViewCtrl, nID, var)
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -599,6 +609,72 @@ public:
 			hWndCtrl = ::GetWindow(hWndCtrl, GW_HWNDNEXT);
 		}
 		while (hWndCtrl != NULL && !(GetWindowLong(hWndCtrl, GWL_STYLE) & WS_GROUP));
+	}
+
+// DDX support for Tab, Combo, ListBox and ListView selection index
+	template <class TCtrl>
+	INT _getSel(TCtrl& tCtrl)
+	{
+		return tCtrl.GetCurSel();
+	}
+
+	template <class TCtrl>
+	BOOL _setSel(TCtrl& tCtrl, INT iSel)
+	{
+		return tCtrl.SetCurSel(iSel) == iSel;
+	}
+
+#ifdef __ATLCTRLS_H__
+	// ListViewCtrl specialization
+	template <>
+	INT _getSel(CListViewCtrl& tCtrl)
+	{
+		return tCtrl.GetSelectedIndex();
+	}
+
+	template <>
+	BOOL _setSel(CListViewCtrl& tCtrl, INT iSel)
+	{
+		return tCtrl.SelectItem(iSel);
+	}
+#endif // __ATLCTRLS_H__
+
+	template <class TCtrl>
+	BOOL DDX_Index(UINT nID, INT& nVal, BOOL bSave, BOOL bValidate = FALSE, INT nMin = 0, INT nMax = 0)
+	{
+		T* pT = static_cast<T*>(this);
+		BOOL bSuccess = TRUE;
+
+		TCtrl ctrl(pT->GetDlgItem(nID));
+
+		if(bSave)
+		{
+			bSuccess = (_getSel(ctrl) != -1) ? TRUE : FALSE;
+		}
+		else
+		{
+			ATLASSERT((bValidate == FALSE) || ((nVal >= nMin) && (nVal <= nMax)));
+			bSuccess = _setSel(ctrl, nVal);
+		}
+			
+		if(!bSuccess)
+		{
+			pT->OnDataExchangeError(nID, bSave);
+		}
+		else if(bSave && bValidate)	// validation
+		{
+			ATLASSERT(nMin != nMax);
+			if((nVal < nMin) || (nVal > nMax))
+			{
+				_XData data = { ddxDataInt };
+				_XIntData id = { nVal, nMin, nMax };
+				data.intData = id;
+
+				pT->OnDataValidateError(nID, bSave, data);
+				bSuccess = FALSE;
+			}
+		}
+		return bSuccess;
 	}
 
 // Overrideables
