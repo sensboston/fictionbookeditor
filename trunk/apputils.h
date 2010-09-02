@@ -13,6 +13,8 @@ extern CSimpleArray<CString> _ARGV;
 #include "pcre.h"
 #endif
 
+#define UTF8_CHAR_LEN( byte ) (( 0xE5000000 >> (( byte >> 3 ) & 0x1e )) & 3 ) + 1
+
 namespace AU
 {
 	// APP messages

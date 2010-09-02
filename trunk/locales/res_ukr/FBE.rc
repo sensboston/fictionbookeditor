@@ -13,20 +13,18 @@
 #undef APSTUDIO_READONLY_SYMBOLS
 
 /////////////////////////////////////////////////////////////////////////////
-// Ukrainian resources
+// Ukrainian (Ukraine) resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_UKR)
-#ifdef _WIN32
 LANGUAGE LANG_UKRAINIAN, SUBLANG_DEFAULT
 #pragma code_page(1251)
-#endif //_WIN32
 
 /////////////////////////////////////////////////////////////////////////////
 //
 // Menu
 //
 
-IDR_MAINFRAME MENU 
+IDR_MAINFRAME MENU
 BEGIN
     POPUP "&Файл"
     BEGIN
@@ -133,7 +131,7 @@ BEGIN
     END
 END
 
-IDR_DOCUMENT_TREE MENU 
+IDR_DOCUMENT_TREE MENU
 BEGIN
     POPUP "DT"
     BEGIN
@@ -148,7 +146,7 @@ BEGIN
     END
 END
 
-IDR_TOOLBAR_MENU MENU 
+IDR_TOOLBAR_MENU MENU
 BEGIN
     POPUP "CUSTOMIZE"
     BEGIN
@@ -323,19 +321,19 @@ CAPTION "Пошук і заміна"
 FONT 9, "Tahoma", 0, 0, 0x0
 BEGIN
     LTEXT           "Знайти:",IDC_STATIC,7,9,45,8,NOT WS_GROUP
-    COMBOBOX        IDC_TEXT,53,7,179,62,CBS_DROPDOWN | CBS_AUTOHSCROLL | WS_VSCROLL | WS_TABSTOP
-    DEFPUSHBUTTON   "З&найти далі",ID_FIND_NEXT,238,7,50,14,WS_GROUP
     LTEXT           "Замінити на:",IDC_STATIC,7,25,45,8,NOT WS_GROUP
+    COMBOBOX        IDC_TEXT,53,7,179,62,CBS_DROPDOWN | CBS_AUTOHSCROLL | WS_VSCROLL | WS_TABSTOP
     COMBOBOX        IDC_REPLACE,53,23,179,62,CBS_DROPDOWN | CBS_AUTOHSCROLL | WS_VSCROLL | WS_TABSTOP
     CONTROL         "&Слова повністю",IDC_WHOLE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,41,98,13
     CONTROL         "&Враховувати регістр",IDC_MATCHCASE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,54,98,13
     CONTROL         "&Регулярний вираз",IDC_REGEXP,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,67,98,13
-    PUSHBUTTON      "&Замінити",IDC_REPLACE_ONE,238,25,50,14
-    PUSHBUTTON      "Замінити &усі",IDC_REPLACE_ALL,238,43,50,14
-    PUSHBUTTON      "Скасувати",IDCANCEL,238,61,50,14
     GROUPBOX        "Напрямок",IDC_STATIC,171,40,60,38,WS_GROUP
     CONTROL         "В&гору",IDC_UP,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,178,51,44,11
     CONTROL         "Вниз",IDC_DOWN,"Button",BS_AUTORADIOBUTTON,178,62,44,11
+    DEFPUSHBUTTON   "З&найти далі",ID_FIND_NEXT,238,7,50,14,WS_GROUP
+    PUSHBUTTON      "&Замінити",IDC_REPLACE_ONE,238,25,50,14
+    PUSHBUTTON      "Замінити &усі",IDC_REPLACE_ALL,238,43,50,14
+    PUSHBUTTON      "Скасувати",IDCANCEL,238,61,50,14
 END
 
 IDD_FIND DIALOGEX 0, 0, 295, 76
@@ -466,7 +464,7 @@ END
 //
 
 #ifdef APSTUDIO_INVOKED
-GUIDELINES DESIGNINFO 
+GUIDELINES DESIGNINFO
 BEGIN
     IDD_SETTING_OTHER, DIALOG
     BEGIN
@@ -513,6 +511,10 @@ BEGIN
         BOTTOMMARGIN, 214
     END
 
+    IDD_REPLACE, DIALOG
+    BEGIN
+    END
+
     IDD_FIND, DIALOG
     BEGIN
         LEFTMARGIN, 7
@@ -553,7 +555,7 @@ END
 // Toolbar
 //
 
-IDR_MAINFRAME TOOLBAR  24, 24
+IDR_MAINFRAME TOOLBAR 24, 24
 BEGIN
     BUTTON      ID_FILE_NEW
     BUTTON      ID_FILE_OPEN
@@ -598,7 +600,7 @@ BEGIN
     BUTTON      ID_TOOLS_SPELLCHECK
 END
 
-IDR_MAINFRAME_SMALL TOOLBAR  16, 16
+IDR_MAINFRAME_SMALL TOOLBAR 16, 16
 BEGIN
     BUTTON      ID_FILE_NEW
     BUTTON      ID_FILE_OPEN
@@ -637,7 +639,7 @@ BEGIN
     BUTTON      ID_TOOLS_SPELLCHECK
 END
 
-IDR_DOCUMENT_TREE TOOLBAR  24, 24
+IDR_DOCUMENT_TREE TOOLBAR 24, 24
 BEGIN
     BUTTON      ID_DT_RIGHT_ONE
     BUTTON      ID_DT_RIGHT_SMART
@@ -646,7 +648,7 @@ BEGIN
     BUTTON      ID_DT_DELETE
 END
 
-IDR_SCRIPTS TOOLBAR  16, 16
+IDR_SCRIPTS TOOLBAR 16, 16
 BEGIN
     BUTTON      ID_LAST_SCRIPT
 END
@@ -722,7 +724,7 @@ IDR_MAINFRAME           ICON                    "res\\FBE2.ico"
 // String Table
 //
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     IDR_MAINFRAME           "FB Editor"
     IDS_SB_NO_ERR           "Помилок не виявлено."
@@ -742,7 +744,7 @@ BEGIN
     IDS_TB_CAPT_HREF        "Посилання:"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     IDS_MB_OK               "Гаразд"
     IDS_MB_CANCEL           "Скасувати"
@@ -754,7 +756,7 @@ BEGIN
     IDS_MB_CLOSE            "&Закрити"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     IDS_CTXMENU_COPY        "Копіювати"
     IDS_CTXMENU_PASTE       "Вставити"
@@ -776,7 +778,7 @@ BEGIN
     IDS_HOTKEY_GROUP_PLUGINS "Модулі"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     IDS_UPDATE_DOWNLOADCOMPLETE "Завантаження завершено, записую файл ..."
     IDS_UPDATE_DOWNLOADERROR "Помилка завантаження"
@@ -797,7 +799,7 @@ BEGIN
     IDS_BAD_XML_MSG         "Був відкритий некоректний XML документ.\n\nВи повинні виправити усі помилки XML (використовуйте команди ""Перевірити"" і ""Перейти до помилкового тегу"") перед тим, як перейти у інший режим редактора"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     IDS_CHOOSE_SCRIPTS_FLD  "Оберіть теку зі скриптами"
     IDS_SCRIPT_HOTKEY_CONFLICT 
@@ -818,7 +820,7 @@ BEGIN
     IDS_HOTKEY_NAVIGATION_SCI_COLLAPSE3 "Згорнути дерево на 3 рівні"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     IDS_HOTKEY_PLUGINS_LAST_PLUGIN "Останній модуль"
     IDS_HOTKEY_TOOLS_SPELL  "Орфографія"
@@ -838,19 +840,19 @@ BEGIN
     IDS_UPDATE_DOWNLOADED   "Завантажено %d Kb"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     ATL_IDS_MRU_FILE        "Відкрити цей документ"
     IDS_ENCODINGS           "UTF-8,UTF-16,Windows-1251,Windows-1252,ISO-8859-1,ISO-8859-2,ISO-8859-5,ISO-8859-15,KOI8-R"
     IDS_DOCUMENT_TREE_CAPTION "Структура документу"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     ATL_IDS_IDLEMESSAGE     "Готово"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     ID_FILE_NEW             "Створити новий документ\nСтворити"
     ID_FILE_OPEN            "Відкрити документ\nВідкрити"
@@ -858,13 +860,13 @@ BEGIN
     ID_FILE_SAVE_AS         "Зберегти активний документ з іншим ім'ям\nЗберегти як"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     ID_APP_ABOUT            "Показати інформацію про програму, номер версії та авторські права\nПро програму"
     ID_APP_EXIT             "Закрити програму. Перед закриттям буде запропоновано зберегти документ\nВийти"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     ID_EDIT_COPY            "Копіювати виділений фрагмент до буфера обміну\nКопіювати"
     ID_EDIT_CUT             "Вирізати виділений фрагмент і помістити його до буфера обміну\nВирізати"
@@ -875,7 +877,7 @@ BEGIN
     ID_EDIT_REDO            "Повторити останню скасовану дію\nПовторити дію"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     ID_STYLE_LINK           "Додати гіперпосилання\nГіперпосилання"
     ID_STYLE_NOTE           "Додати примітку\nПримітка"
@@ -886,13 +888,13 @@ BEGIN
     ID_EDIT_ADDBINARY       "Долучити до документу двійковий файл\nДолучити двійковий файл"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     ID_EDIT_BOLD            "Жирний\nЖирний"
     ID_EDIT_ITALIC          "Курсив\nКурсив"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     ID_STYLE_NORMAL         "Звичайний текст\nЗвичайний текст"
     ID_STYLE_TEXTAUTHOR     "Автор тексту параграфа\nАвтор тексту"
@@ -900,7 +902,7 @@ BEGIN
     ID_VIEW_OPTIONS         "Налаштування редактора\nНалаштування"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     60161                   "Показати чи сховати панель інструментів\nПанель інструментів"
     60162                   "Показати чи сховати панель скриптів\nПанель скриптів"
@@ -908,12 +910,12 @@ BEGIN
     60164                   "Показати чи сховати панель редагування параметрів таблиць\nПанель таблиць"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     ID_VIEW_STATUS_BAR      "Показати чи сховати панель стану\nПанель стану"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     ID_VIEW_TREE            "Показати чи сховати структуру документа\nСтруктура документа"
     IDS_PANE_INS            "ВСТ"
@@ -928,7 +930,7 @@ BEGIN
     IDS_HOTKEY_EDIT_ADD_BODY "Додати елемент body"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     ID_EDIT_ADD_TITLE       "Додати заголовок до виділеного елементу\nДодати заголовок"
     ID_EDIT_ADD_BODY        "Додати нове тіло документа\nДодати тіло"
@@ -943,7 +945,7 @@ BEGIN
     ID_EDIT_INS_POEM        "Додати вірш\nДодати вірш"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     ID_EDIT_ADD_TA          "Додати автора тексту до контейнера\nДодати автора тексту"
     ID_EDIT_MERGE           "Об'єднати виділений контейнер з наступним\nОб'єднати контейнери"
@@ -954,13 +956,13 @@ BEGIN
     ID_EDIT_CODE            "Код\nКод"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     ID_INSERT_TABLE         "Вставити таблицю на місце курсору\nВставити таблицю"
     ID_GOTO_FOOTNOTE        "Перейти до тексту примітки або до посилання\nПерейти до тексту примітки або до посилання"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     ID_LAST_SCRIPT          "Виконати останній запущений скрипт \\ nОстанній скрипт"
     ID_TOOLS_SPELLCHECK     "Перевірка орфографії документа...\nПеревірка орфографії"
@@ -968,7 +970,7 @@ BEGIN
     ID_GOTO_WRONGTAG        "Перейти до помилкового тегу\nПерейти до помилкового тегу"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     ID_DT_LEFT              "\nПеренести ліворуч"
     ID_DT_DELETE            "\nВидалити позначений вузол"
@@ -978,7 +980,7 @@ BEGIN
     ID_VIEW_FASTMODE        "Перемкнути в прискорений режим\nПеремкнути в прискорений режим"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     IDS_HOTKEY_EDIT_ADD_EPIGRAPH "Додати епіграф"
     IDS_HOTKEY_EDIT_ADD_IMAGE "Вставити малюнок секції"
@@ -998,7 +1000,7 @@ BEGIN
     ID_VIEW_SOURCE          "Показати код\nПоказати код-сирець"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     IDS_TB_CAPT_SECTION_ID  "ID секції:"
     IDS_TB_CAPT_IMAGE_TITLE "Підпис до малюнка:"
@@ -1018,7 +1020,7 @@ BEGIN
     IDS_REPL_ALL_CAPT       "Замінити усі"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     IDS_REPL_DONE_MSG       "Пошук завершено. Виконано замін: %d"
     IDS_SEARCH_FAIL_MSG     "Рядок «%s» не знайдено."
@@ -1039,7 +1041,7 @@ BEGIN
     IDS_FILE_CHANGED_MSG    "Файл %s було змінено іншою програмою.\nЗавантажити змінений файл?"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     IDS_SCRIPT_ERRX_MSG     "Помилка виконання скрипту: %08X в рядку %d, символ %d"
     IDS_SCRIPT_ERRD_MSG     "Помилка виконання скрипту: %s в рядку %d, символ %d"
@@ -1059,7 +1061,7 @@ BEGIN
     IDS_ADD_BINARIES_FILEDLG "Оберіть один або декілька двійкових файлів:"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     IDS_HOTKEY_NAVIGATION_SCI_COLLAPSE4 "Згорнути дерево на 4 рівні"
     IDS_HOTKEY_NAVIGATION_SCI_COLLAPSE5 "Згорнути дерево на 5 рівнів"
@@ -1079,7 +1081,7 @@ BEGIN
     IDS_HOTKEY_NAVIGATION_SELECT_HREF "Посилання"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     IDS_HOTKEY_NAVIGATION_SELECT_ID "ID "
     IDS_HOTKEY_NAVIGATION_SELECT_ID_TABLE "ID таблиці"
@@ -1099,7 +1101,7 @@ BEGIN
     IDS_HOTKEY_EDIT_INSERT_TABLE "Вставити таблицю"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     IDS_HOTKEY_GROUP_SCRIPTS "Скрипти"
     IDS_HOTKEY_SCRIPTS_LAST_SCRIPT "Останній запущений"
@@ -1120,34 +1122,32 @@ BEGIN
     IDS_CTXMENU_CUT         "Вирізати"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     IDC_SPELL_IGNORE        "Пропустити"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     IDC_SPELL_REPLACE       "Замінити слово"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     IDS_HOTKEY_EDIT_SUB     "Субскріпт"
     IDS_HOTKEY_EDIT_SUP     "Суперскріпт"
 END
 
-#endif    // Ukrainian resources
+#endif    // Ukrainian (Ukraine) resources
 /////////////////////////////////////////////////////////////////////////////
 
 
 /////////////////////////////////////////////////////////////////////////////
-// English (U.S.) resources
+// English (United States) resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
-#ifdef _WIN32
 LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 #pragma code_page(1252)
-#endif //_WIN32
 
 #ifdef APSTUDIO_INVOKED
 /////////////////////////////////////////////////////////////////////////////
@@ -1171,7 +1171,7 @@ END
 
 #endif    // APSTUDIO_INVOKED
 
-#endif    // English (U.S.) resources
+#endif    // English (United States) resources
 /////////////////////////////////////////////////////////////////////////////
 
 

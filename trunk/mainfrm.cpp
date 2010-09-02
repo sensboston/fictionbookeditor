@@ -548,6 +548,9 @@ BOOL CMainFrame::OnIdle()
 
 		m_last_sci_ovr = m_source.SendMessage(SCI_GETOVERTYPE);
 		m_status.SetPaneText(ID_PANE_INS, m_last_sci_ovr ? strOVR : strINS);
+
+		// Added by SeNS: issue (wish) #127
+		DisplayCharCode();
 	}
 	// BODY view
 	else
@@ -1464,9 +1467,15 @@ LRESULT CMainFrame::OnCreate(UINT, WPARAM, LPARAM, BOOL&)
   int panes[] =
   {
 	  ID_DEFAULT_PANE,
+	  ID_PANE_CHAR,
+	  399,
 	  ID_PANE_INS
   };
   m_status.SetPanes(panes, sizeof(panes)/sizeof(panes[0]));
+  m_status.SetPaneWidth (ID_PANE_CHAR, 60);
+  m_status.SetPaneText(ID_PANE_CHAR, L"");
+  m_status.SetPaneWidth (399, 20);
+  m_status.SetPaneWidth (ID_PANE_INS, 30);
 
 	// load insert/overwrite abbreviations  
 	::LoadString(_Module.GetResourceInstance(), IDS_PANE_INS, strINS, MAX_LOAD_STRING);
@@ -3864,6 +3873,7 @@ void  CMainFrame::ShowView(VIEW_TYPE vt)
 			CheckError(body.InvokeN(L"SaveBodyScroll",0,0));
 		}
 	}
+	m_status.SetPaneText(ID_PANE_CHAR, L"");
 	m_status.SetPaneText(ID_PANE_INS, m_last_sci_ovr ? strOVR : strINS);
     break;
   }
@@ -5300,4 +5310,37 @@ bool CMainFrame::LoadToScintilla(CString filename)
 	}
 	catch(...) {};
 	return result;
+}
+
+// Added by SeNS: issue (wish) #127
+void CMainFrame::DisplayCharCode()
+{
+	if (m_current_view == SOURCE)
+	{
+		// The long complicated way to get unicode character from Scintilla!
+		char buf[5] = {0,0,0,0,0};
+		int pos = m_source.SendMessage(SCI_GETCURRENTPOS);
+		buf[0] = m_source.SendMessage(SCI_GETCHARAT, pos);
+		int len = UTF8_CHAR_LEN(buf[0]);
+		for (int i=1; i<len && i<5; i++)
+			buf[i] = m_source.SendMessage(SCI_GETCHARAT, pos+i);
+		CA2W str (buf, CP_UTF8);
+		CString s;
+		s.Format(L"  U+%.4X", str[0]);
+		m_status.SetPaneText(ID_PANE_CHAR, s);
+	}
+	else if (m_current_view == BODY)
+	{
+		// added by SeNS: issue (wish) #127 zzz
+		CString s(L"");
+		MSHTML::IHTMLTxtRangePtr sel(m_doc->m_body.Document()->selection->createRange());
+		if (sel)
+		{
+			sel->expand(L"character");
+			s.SetString(sel->text);
+			s.Format(L"  U+%.4X", (LPCTSTR)s[0]);
+		}
+		m_status.SetPaneText(ID_PANE_CHAR, s);
+	}
+	else m_status.SetPaneText(ID_PANE_CHAR, L"");
 }
