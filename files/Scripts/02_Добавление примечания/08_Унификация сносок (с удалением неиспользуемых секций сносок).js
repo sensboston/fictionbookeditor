@@ -168,7 +168,7 @@ function Run () {
  
  window.external.BeginUndoUnit(document,strConst7);
  var body=document.getElementById("fbw_body");
- var whileFlag,hhh,nashliBodyNotes,bodyNotes,el,insertN,uic,i3,newSnoskaNum,tmpVar;
+ var whileFlag,hhh,nashliBodyNotes,bodyNotes,el,insertN,uic,i3,newSnoskaNum,tmpVar,elForRm;
  if (!body) {MsgBox("ошибка. body не найден!"); return;}
  var insertCnt=1;
 //следующие строки нужно раскомментировать, чтобы восстановить
@@ -328,7 +328,10 @@ function Run () {
   } 
  }
  for (i in sectNumById_)
-   if (sectNumById_[i]=="1") document.getElementById(i).removeNode(true);
+   if (sectNumById_[i]=="1") {
+   elForRm=document.getElementById(i);
+   if (elForRm) elForRm.removeNode(true);
+  }  
  sectNumById_=undefined; 
  //введем, если надо, текст примечания
  if (InputSnoskaText) {
