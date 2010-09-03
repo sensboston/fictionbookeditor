@@ -328,7 +328,10 @@ function Run () {
   } 
  }
  for (i in sectNumById_)
-   if (sectNumById_[i]=="1") document.getElementById(i).removeNode(true);
+  if (sectNumById_[i]=="1") {
+  elForRm=document.getElementById(i);
+  if (elForRm) elForRm.removeNode(true);
+ }  
  sectNumById_=undefined; 
  //введем, если надо, текст примечания
  if (InputSnoskaText) {
