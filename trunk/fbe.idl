@@ -74,5 +74,6 @@ library FBELib
 	[id(22), helpstring("method GetProgramVersion")] HRESULT GetProgramVersion([out, retval] BSTR* ver);
 	[id(23), helpstring("method InputBox")] HRESULT InputBox([in] BSTR prompt, [in] BSTR title, [in] BSTR value, [out, retval] BSTR* input);
 	[id(24), helpstring("method GetModalResult")] HRESULT GetModalResult ([out, retval] int* modalResult);
+	[id(25), helpstring("method SetStatusBarText")] HRESULT SetStatusBarText ([in] BSTR text);
   };
 };
