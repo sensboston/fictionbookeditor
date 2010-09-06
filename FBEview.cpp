@@ -2216,13 +2216,13 @@ static CString GetReplStr(const CString& rstr, AU::ReMatch rm, RRList& rl)
 			cr.start = rep.GetLength();
 		}
 
+		// SeNS: fix for issue #142
 		if(!rv.IsEmpty())
 		{
 			rep += rv;
 			rv.Empty();
 		}
-		else
-			rep += rstr[i];
+		//else rep += rstr[i];
 	}
 
 		if(cr.flags && cr.start < rep.GetLength())

@@ -285,6 +285,7 @@ IMatchCollection* IRegExp2::Execute (CString sourceString)
 						char_offset++;
 					}
 				}
+				else break;
 			}
 		} while (rc > 0);
 
