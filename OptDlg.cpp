@@ -107,6 +107,7 @@ LRESULT COptDlg::OnInitDialog(UINT, WPARAM, LPARAM, BOOL&)
   m_src_hl=GetDlgItem(IDC_SYNTAXHL);
   m_src_taghl=GetDlgItem(IDC_TAGHL);
   m_src_eol=GetDlgItem(IDC_SHOWEOL);
+  m_src_whitespace=GetDlgItem(IDC_SHOWWHITESPACE);
   m_src_line_numbers=GetDlgItem(IDC_SHOWLINENUMBERS);
 
   // init controls
@@ -114,6 +115,7 @@ LRESULT COptDlg::OnInitDialog(UINT, WPARAM, LPARAM, BOOL&)
   m_src_hl.SetCheck(_Settings.XmlSrcSyntaxHL());  
   m_src_taghl.SetCheck(_Settings.XmlSrcTagHL());  
   m_src_eol.SetCheck(_Settings.XmlSrcShowEOL());  
+  m_src_whitespace.SetCheck(_Settings.XmlSrcShowSpace());
   m_src_line_numbers.SetCheck(_Settings.XMLSrcShowLineNumbers());
   
   if(_Settings.FastMode())
@@ -173,6 +175,7 @@ LRESULT COptDlg::OnOK(WORD, WORD wID, HWND, BOOL&)
   _Settings.SetXmlSrcSyntaxHL(m_src_hl.GetCheck() != 0);
   _Settings.SetXmlSrcTagHL(m_src_taghl.GetCheck() != 0);
   _Settings.SetXmlSrcShowEOL(m_src_eol.GetCheck() != 0);
+  _Settings.SetXmlSrcShowSpace(m_src_whitespace.GetCheck() != 0);
   _Settings.SetXMLSrcShowLineNumbers(m_src_line_numbers.GetCheck() != 0);
 
   _Settings.SetFastMode(m_fast_mode.GetCheck() != 0);  

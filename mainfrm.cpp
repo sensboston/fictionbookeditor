@@ -4031,6 +4031,7 @@ void  CMainFrame::SetupSci()
   m_source.SendMessage(SCI_SETCODEPAGE,SC_CP_UTF8);
   m_source.SendMessage(SCI_SETEOLMODE,SC_EOL_CRLF);
   m_source.SendMessage(SCI_SETVIEWEOL, _Settings.XmlSrcShowEOL());
+  m_source.SendMessage(SCI_SETVIEWWS, _Settings.XmlSrcShowSpace());
   m_source.SendMessage(SCI_SETWRAPMODE, _Settings.XmlSrcWrap() ? SC_WRAP_WORD : SC_WRAP_NONE);
   // added by SeNS: try to speed-up wrap mode
   m_source.SendMessage(SCI_SETLAYOUTCACHE,SC_CACHE_DOCUMENT);
