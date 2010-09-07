@@ -4,7 +4,7 @@
 function Run() {
  try { var nbspChar=window.external.GetNBSP(); var nbspEntity; if (nbspChar.charCodeAt(0)==160) nbspEntity="&nbsp;"; else nbspEntity=nbspChar;}
  catch(e) { var nbspChar=String.fromCharCode(160); var nbspEntity="&nbsp;";}
- var verStr="v3.6";
+ var verStr="v3.7";
  var DebugMode=0;
  var DestrongTitles=true; //делать ли удаление жирности в заголовках
  var DeitalicTitles=true; //удалять ли курсив в заголовках
@@ -288,6 +288,7 @@ function Run() {
    alert("!savedFirstEmpty.previousSibling: "+!savedFirstEmpty.previousSibling);
    alert("savedFirstEmpty.previousSibling.className!=\"image\": "+savedFirstEmpty.previousSibling.className!="image");
    alert("savedFirstEmpty.nextSibling: "+savedFirstEmpty.nextSibling);*/
+   var a3=a5.lastChild;
    if (!firstEmptyMemorized || (a3!=savedFirstEmpty && (!savedFirstEmpty.previousSibling ||
        savedFirstEmpty.previousSibling.className!="image")) || savedFirstEmpty.nextSibling)
     //чистка пустых строк в конце секции
@@ -323,7 +324,8 @@ function Run() {
           chld.firstChild!=null) {
        chld2=chld.firstChild;
        if (chld2.nodeName=="P" && IsLineSubtitle(chld2)) {
-        chld.outerHTML="<P class=subtitle>* * *</P>";
+        chld.innerHTML="* * *";
+        chld.className=="subtitle";
         flag=true;
         destrongAndDeitalic(chld,DestrongTitles,DeitalicTitles);
        }
