@@ -355,6 +355,8 @@
 #define IDC_STYLE                       1031
 #define IDC_TAGHL                       1031
 #define IDC_COLSPAN                     1032
+#define IDC_SHOWLINENUMBERS2            1032
+#define IDC_SHOWWHITESPACE              1032
 #define IDC_ROWSPAN                     1033
 #define IDC_ALIGN                       1034
 #define IDC_VALIGN                      1035

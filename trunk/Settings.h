@@ -456,6 +456,7 @@ class CSettings : public ISerializable, public IObjectFactory
 	bool		m_xml_src_syntaxHL;
 	bool		m_xml_src_tagHL;
 	bool		m_xml_src_showEOL;
+	bool		m_xml_src_showSpace;
 
 	bool		m_fast_mode;
 	bool		m_view_status_bar;
@@ -546,6 +547,7 @@ public:
 	bool XmlSrcSyntaxHL()const;
 	bool XmlSrcTagHL()const;
 	bool XmlSrcShowEOL()const;
+	bool XmlSrcShowSpace()const;
 	bool FastMode()const;
 	bool ViewStatusBar()const;
 	bool ViewDocumentTree()const;
@@ -603,6 +605,7 @@ public:
 	void	SetXmlSrcSyntaxHL(bool hl, bool apply = false);
 	void	SetXmlSrcTagHL(bool hl, bool apply = false);
 	void	SetXmlSrcShowEOL(bool eol, bool apply = false);
+	void	SetXmlSrcShowSpace(bool eol, bool apply = false);
 	void	SetFastMode(bool mode,  bool apply = false);
 	void	SetFont(const CString& font, bool apply = false);
 	void	SetSrcFont(const CString& font, bool apply = false);
