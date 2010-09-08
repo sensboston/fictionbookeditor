@@ -198,7 +198,8 @@ IMatchCollection* IRegExp2::Execute (CString sourceString)
 	int subject_length;
 	int rc, offset, char_offset;
 	IMatchCollection* matches;
-	char dst[1024];
+	// fix for issue #145
+	char dst[0xFFFF];
 
 	matches = new IMatchCollection();
 
@@ -248,14 +249,7 @@ IMatchCollection* IRegExp2::Execute (CString sourceString)
 					// calculate character position
 					while (offset < ovector[0])
 					{
-						switch (subj[offset] & 0xF0)
-						{
-							case 0xE0: offset += 3; break;
-							case 0xF0: offset += 4; break;
-							case 0xD0:
-							case 0xC0: offset += 2; break;
-							default: offset++;
-						}
+						offset += UTF8_CHAR_LEN(subj[offset]);
 						char_offset++;
 					}
 
@@ -285,7 +279,6 @@ IMatchCollection* IRegExp2::Execute (CString sourceString)
 						char_offset++;
 					}
 				}
-				else break;
 			}
 		} while (rc > 0);
 

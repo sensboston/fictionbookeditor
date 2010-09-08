@@ -149,6 +149,8 @@ public:
 			::SendMessage(hCB, CB_DELETESTRING, Idx, 0);
 
 		::SendMessage(hCB, CB_INSERTSTRING, 0,(LPARAM)(const TCHAR*)cur);
+		// fix for issue #136
+		::SendMessage(hCB, CB_SETCURSEL, 0, 0);
 	}
 
 	void SaveString()
