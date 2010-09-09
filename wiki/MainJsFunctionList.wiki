@@ -70,7 +70,7 @@ function apiShowDesc(state)
 
 
 
-function apiRunCmd(path)
+function apiRunCmd(path) – загружает в тег <script id=userCmd> скрипт, путь к которому передан в аргументе path, после чего вызывает функцию Run() (которая, по идее, описана в файле скрипта).
 
 
 
