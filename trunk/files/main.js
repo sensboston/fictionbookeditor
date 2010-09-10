@@ -2010,8 +2010,7 @@ function InsInlineImage(check, id)
 
  var pe=rng.parentElement(); while(pe && pe.tagName!="DIV") pe=pe.parentElement;
 
- if(!pe || (pe.className!="section" && pe.className!="annotation" && pe.className!="history"
-    && pe.className!="title" && pe.className!="epigraph" && pe.className!="stanza")) return;
+ if(!pe || (pe.className.search(/section|annotation|history|title|epigraph|cite|stanza/)<0)) return;
 
  if(check) return true;
 
