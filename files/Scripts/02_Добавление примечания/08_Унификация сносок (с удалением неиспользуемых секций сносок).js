@@ -1,6 +1,6 @@
 // добавление сноски между уже имеющимися
 // написал Sclex
-// версия 2.7
+// версия 2.8
 // Sclex, помни: данный скрипт имеет собственный код, не такой,
 //   как остальные скрипты в этом наборе
 
@@ -168,7 +168,7 @@ function Run () {
  
  window.external.BeginUndoUnit(document,strConst7);
  var body=document.getElementById("fbw_body");
- var whileFlag,hhh,nashliBodyNotes,bodyNotes,el,insertN,uic,i3,newSnoskaNum,tmpVar,elForRm;
+ var whileFlag,hhh,nashliBodyNotes,bodyNotes,el,insertN,uic,i3,newSnoskaNum,tmpVar,i;
  if (!body) {MsgBox("ошибка. body не найден!"); return;}
  var insertCnt=1;
 //следующие строки нужно раскомментировать, чтобы восстановить
@@ -230,7 +230,46 @@ function Run () {
   }
   bbb=undefined;
  }
-//прочитаем в массив SectID ID-ы секций примечаний
+ //проверим, нет ли в боди нотесов секций второго уровня вложения
+ var sectNumById_=new Object();
+ for (i in sectNumById_) delete sectNumById_[i];
+ var mySectCnt=0;
+ if (!forsazh) {
+  var ptr1=bodyNotes.firstChild
+  var ptr2;
+  while (ptr1) {
+   if (ptr1.nodeName=="DIV" && ptr1.className=="section") {
+     mySectCnt++;
+     if (ptr1.id && ptr1.id!="")
+      sectNumById_[ptr1.id]="1";
+     ptr2=ptr1.firstChild;
+     while (ptr2) {
+      if (ptr2.nodeName=="DIV") {
+        if (ptr2.className=="section") {
+         MsgBox("В body примечаний есть секции второго уровня вложения. Такие файлы не обрабатываются данным скриптом. Работа скрипта завершена.");
+         document.links[newSnoskaNum].removeNode(true);
+         return;
+        }
+      }
+      ptr2 = ptr2.nextSibling;
+     }
+   }
+   ptr1 = ptr1.nextSibling;
+  }
+ }
+ var myId;
+ for (i=0;i<document.links.length;i++) {
+  if (document.links[i].href && document.links[i].href!="") {
+   myId=getLocalHref(document.links[i].href);
+   if (myId) delete sectNumById_[myId];
+  } 
+ }
+ for (i in sectNumById_) {
+  sectNum--;
+  document.getElementById(i).removeNode(true);
+ }
+ sectNumById_=undefined;
+ //прочитаем в массив SectID ID-ы секций примечаний
  var sectsColl=new Object();
  var sectIds=new Object();
  var sectNumById=new Object();
@@ -294,45 +333,6 @@ function Run () {
    document.links[newSnoskaNum].href="#"+PoShablonu(strConst1,newSnoskaId);
   }
  } else {insertN=1000000; insertCnt=0}
- //проверим, нет ли в боди нотесов секций второго уровня вложения
- var sectNumById_=new Object();
- var mySectCnt=0;
- if (!forsazh) {
-  var ptr1=bodyNotes.firstChild
-  var ptr2;
-  while (ptr1) {
-   if (ptr1.nodeName=="DIV" && ptr1.className=="section") {
-     mySectCnt++;
-     if (ptr1.id && ptr1.id!="")
-      sectNumById_[ptr1.id]="1";
-     ptr2=ptr1.firstChild;
-     while (ptr2) {
-      if (ptr2.nodeName=="DIV") {
-        if (ptr2.className=="section") {
-         MsgBox("В body примечаний есть секции второго уровня вложения. Такие файлы не обрабатываются данным скриптом. Работа скрипта завершена.");
-         document.links[newSnoskaNum].removeNode(true);
-         return;
-        }
-      }
-      ptr2 = ptr2.nextSibling;
-     }
-   }
-   ptr1 = ptr1.nextSibling;
-  }
- }
- var myId;
- for (var i=0;i<document.links.length;i++) {
-  if (document.links[i].href && document.links[i].href!="") {
-   myId=getLocalHref(document.links[i].href);
-   if (myId) delete sectNumById_[myId];
-  } 
- }
- for (i in sectNumById_)
-   if (sectNumById_[i]=="1") {
-   elForRm=document.getElementById(i);
-   if (elForRm) elForRm.removeNode(true);
-  }  
- sectNumById_=undefined; 
  //введем, если надо, текст примечания
  if (InputSnoskaText) {
   var promptText="Текст примечания. Используйте <b>...</b> <i>...</i> <br> <strong>...</strong> <emphasis>...</emphasis> <em>...</em>";
