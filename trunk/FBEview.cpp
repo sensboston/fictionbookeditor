@@ -1,4 +1,4 @@
-// FBEView.cpp : implementation of the CFBEView class
+п»ї// FBEView.cpp : implementation of the CFBEView class
 //
 /////////////////////////////////////////////////////////////////////////////
 
@@ -246,10 +246,10 @@ static bool IsEmptyNode(MSHTML::IHTMLDOMNode *node) {
 	if (U::scmp(name,L"P")==0) // the editor uses empty Ps to represent empty lines
 		return false;
 
-	/* if (U::scmp(name,L"EM")==0) // конвертеры иногда обрамляют пробелы тегами <emphasis> и <strong>
+	/* if (U::scmp(name,L"EM")==0) // РєРѕРЅРІРµСЂС‚РµСЂС‹ РёРЅРѕРіРґР° РѕР±СЂР°РјР»СЏСЋС‚ РїСЂРѕР±РµР»С‹ С‚РµРіР°РјРё <emphasis> Рё <strong>
 	return false;
 
-	if (U::scmp(name,L"STRONG")==0) // конвертеры иногда обрамляют пробелы тегами <emphasis> и <strong>
+	if (U::scmp(name,L"STRONG")==0) // РєРѕРЅРІРµСЂС‚РµСЂС‹ РёРЅРѕРіРґР° РѕР±СЂР°РјР»СЏСЋС‚ РїСЂРѕР±РµР»С‹ С‚РµРіР°РјРё <emphasis> Рё <strong>
 	return false;*/
 
 	// images are always empty
@@ -346,6 +346,9 @@ bool CFBEView::SplitContainer(bool fCheck)
 		MSHTML::IHTMLElementPtr ne(Document()->createElement(L"DIV"));
 		ne->className = pe->className;
 		_bstr_t className = pe->className;
+		// SeNS: issue #153
+		_bstr_t id = pe->id;
+		pe->id = L"";
 
 		MSHTML::IHTMLElementPtr peTitle(Document()->createElement(L"DIV"));
 		MSHTML::IHTMLElementCollectionPtr peColl = pe->children;
@@ -416,6 +419,8 @@ bool CFBEView::SplitContainer(bool fCheck)
 			if(post.html == L"<P>&nbsp;</P>")
 				post.html += L"<P>&nbsp;</P>";
 			ne->innerHTML = post.html.AllocSysString();
+			// SeNS: issue #153
+			ne->id = id;
 		}
 		else
 		{
@@ -515,15 +520,15 @@ static void KillStyles(MSHTML::IHTMLElement2Ptr elem) {
 //////////////////////////////////////////////////////////////////////////////
 /// @fn static bool	MergeEqualHTMLElements(MSHTML::IHTMLDOMNode *node)
 ///
-/// функция объединяет стоящие рядом одинаковые HTML элементы
+/// С„СѓРЅРєС†РёСЏ РѕР±СЉРµРґРёРЅСЏРµС‚ СЃС‚РѕСЏС‰РёРµ СЂСЏРґРѕРј РѕРґРёРЅР°РєРѕРІС‹Рµ HTML СЌР»РµРјРµРЅС‚С‹
 ///
-/// @params MSHTML::IHTMLDOMNode *node [in, out] - нода, внутри которой будет производиться преобразование
+/// @params MSHTML::IHTMLDOMNode *node [in, out] - РЅРѕРґР°, РІРЅСѓС‚СЂРё РєРѕС‚РѕСЂРѕР№ Р±СѓРґРµС‚ РїСЂРѕРёР·РІРѕРґРёС‚СЊСЃСЏ РїСЂРµРѕР±СЂР°Р·РѕРІР°РЅРёРµ
 ///
-/// @note сливаются следующие элементы: EM, STRONG
-/// при этом пробельные символы, располагающиеся между закрывающем и открывающим тегами остаются, т.е. 
-/// '<EM>хороший</EM> <EM>пример</EM>' преобразуется в '<EM>хороший пример</EM>'
+/// @note СЃР»РёРІР°СЋС‚СЃСЏ СЃР»РµРґСѓСЋС‰РёРµ СЌР»РµРјРµРЅС‚С‹: EM, STRONG
+/// РїСЂРё СЌС‚РѕРј РїСЂРѕР±РµР»СЊРЅС‹Рµ СЃРёРјРІРѕР»С‹, СЂР°СЃРїРѕР»Р°РіР°СЋС‰РёРµСЃСЏ РјРµР¶РґСѓ Р·Р°РєСЂС‹РІР°СЋС‰РµРј Рё РѕС‚РєСЂС‹РІР°СЋС‰РёРј С‚РµРіР°РјРё РѕСЃС‚Р°СЋС‚СЃСЏ, С‚.Рµ. 
+/// '<EM>С…РѕСЂРѕС€РёР№</EM> <EM>РїСЂРёРјРµСЂ</EM>' РїСЂРµРѕР±СЂР°Р·СѓРµС‚СЃСЏ РІ '<EM>С…РѕСЂРѕС€РёР№ РїСЂРёРјРµСЂ</EM>'
 ///
-/// @author Ильин Иван @date 31.03.08
+/// @author РР»СЊРёРЅ РРІР°РЅ @date 31.03.08
 //////////////////////////////////////////////////////////////////////////////
 static bool	MergeEqualHTMLElements(MSHTML::IHTMLDOMNode *node, MSHTML::IHTMLDocument2 *doc)
 {
@@ -545,7 +550,7 @@ static bool	MergeEqualHTMLElements(MSHTML::IHTMLDOMNode *node, MSHTML::IHTMLDocu
 			continue;
 		}
 
-		// если нет следующего элемента, то сливать будет несчем
+		// РµСЃР»Рё РЅРµС‚ СЃР»РµРґСѓСЋС‰РµРіРѕ СЌР»РµРјРµРЅС‚Р°, С‚Рѕ СЃР»РёРІР°С‚СЊ Р±СѓРґРµС‚ РЅРµСЃС‡РµРј
 		if(!(bool)next)
 			return false;
 
@@ -555,11 +560,11 @@ static bool	MergeEqualHTMLElements(MSHTML::IHTMLDOMNode *node, MSHTML::IHTMLDocu
 
 		if (U::scmp(name,L"EM")==0 || U::scmp(name,L"STRONG")==0) 
 		{
-			// отлавливаем ситуацию с пробелом, обрамленным тегами EM т.д.
+			// РѕС‚Р»Р°РІР»РёРІР°РµРј СЃРёС‚СѓР°С†РёСЋ СЃ РїСЂРѕР±РµР»РѕРј, РѕР±СЂР°РјР»РµРЅРЅС‹Рј С‚РµРіР°РјРё EM С‚.Рґ.
 			bstr_t curText = curelem->innerText;
 			if(curText.length() == 0 || U::is_whitespace(curelem->innerText))
 			{
-				// удаляем обрамляющие теги				
+				// СѓРґР°Р»СЏРµРј РѕР±СЂР°РјР»СЏСЋС‰РёРµ С‚РµРіРё				
 				MSHTML::IHTMLDOMNodePtr prev = cur->previousSibling;
 				if((bool)prev)
 				{
@@ -607,20 +612,20 @@ static bool	MergeEqualHTMLElements(MSHTML::IHTMLDOMNode *node, MSHTML::IHTMLDocu
 				MSHTML::IHTMLElementPtr	afterNextElem(afterNext);
 
 				bstr_t afterNextName = afterNext->nodeName;
-				if(U::scmp(name, afterNextName))// если следующий элемент другого типа
+				if(U::scmp(name, afterNextName))// РµСЃР»Рё СЃР»РµРґСѓСЋС‰РёР№ СЌР»РµРјРµРЅС‚ РґСЂСѓРіРѕРіРѕ С‚РёРїР°
 				{
 					cur = next;
 					continue;
 				}
 
-				// проверяем между одинаковыми элементами стоят одни пробелы
+				// РїСЂРѕРІРµСЂСЏРµРј РјРµР¶РґСѓ РѕРґРёРЅР°РєРѕРІС‹РјРё СЌР»РµРјРµРЅС‚Р°РјРё СЃС‚РѕСЏС‚ РѕРґРЅРё РїСЂРѕР±РµР»С‹
 				if(!U::is_whitespace(next->nodeValue.bstrVal))
 				{
 					cur = next;
-					continue; // <EM>123</EM>45<EM>678</EM> абсолютно нормальная ситуация
+					continue; // <EM>123</EM>45<EM>678</EM> Р°Р±СЃРѕР»СЋС‚РЅРѕ РЅРѕСЂРјР°Р»СЊРЅР°СЏ СЃРёС‚СѓР°С†РёСЏ
 				}
 
-				// объединяем элементы
+				// РѕР±СЉРµРґРёРЅСЏРµРј СЌР»РµРјРµРЅС‚С‹
 				MSHTML::IHTMLElementPtr	newelem(doc->createElement(name));
 				MSHTML::IHTMLDOMNodePtr	newnode(newelem);
 				newelem->innerHTML = curelem->innerHTML + next->nodeValue.bstrVal + afterNextElem->innerHTML;
@@ -633,13 +638,13 @@ static bool	MergeEqualHTMLElements(MSHTML::IHTMLDOMNode *node, MSHTML::IHTMLDocu
 			else
 			{
 				bstr_t nextName(next->nodeName);
-				if(U::scmp(name, nextName))// если следующий элемент другого типа
+				if(U::scmp(name, nextName))// РµСЃР»Рё СЃР»РµРґСѓСЋС‰РёР№ СЌР»РµРјРµРЅС‚ РґСЂСѓРіРѕРіРѕ С‚РёРїР°
 				{
 					cur = next;
 					continue;
 				}
 
-				// объединяем элементы
+				// РѕР±СЉРµРґРёРЅСЏРµРј СЌР»РµРјРµРЅС‚С‹
 				MSHTML::IHTMLElementPtr	newelem(doc->createElement(name));
 				MSHTML::IHTMLDOMNodePtr	newnode(newelem);
 				newelem->innerHTML = curelem->innerHTML + nextElem->innerHTML;
@@ -1706,7 +1711,7 @@ void  CFBEView::Normalize(MSHTML::IHTMLDOMNodePtr dom) {
 	MSHTML::IHTMLDOMNodePtr el = dom->firstChild;
 	bool found = false;
 
-	// нормализовать нужно только body документа
+	// РЅРѕСЂРјР°Р»РёР·РѕРІР°С‚СЊ РЅСѓР¶РЅРѕ С‚РѕР»СЊРєРѕ body РґРѕРєСѓРјРµРЅС‚Р°
 	while(el)
 	{
 		MSHTML::IHTMLElementPtr hel(el);
@@ -1865,10 +1870,69 @@ bool CFBEView::DoSearch(bool fMore)
 	return m_fo.fRegexp ? DoSearchRegexp(fMore) : DoSearchStd(fMore);
 }
 
+// Removes HTML tags
+void RemoveTags(CString &src)
+{
+	int openTag = 0, closeTag=0;
+	while (openTag != -1)
+	{
+		openTag = src.Find(L"<", 0);
+		closeTag = src.Find(L">", openTag+1);
+		if (openTag != -1 && closeTag > openTag)
+			src.Delete(openTag, closeTag-openTag+1);
+	}
+}
+
+// Returns text offset including inline images (treated as a 3 chars each)
+int CFBEView::TextOffset(MSHTML::IHTMLTxtRange *rng, AU::ReMatch rm, CString txt, CString htmlTxt)
+{
+	CString text(txt);
+	CString match = rm->Value;
+	// special fix for "Words" dialog
+	match = match.TrimRight(10);
+	match = match.TrimRight(13);
+	int num = 0, pos = 1;
+	if (text.IsEmpty()) text.SetString(rng->text);
+	while (num < text.GetLength())
+	{
+		num = text.Find (match, num);
+		if ((num == rm->FirstIndex) || (num == -1)) break;
+		num += 1;
+		pos++;
+	}
+	CString html(htmlTxt);
+	if (html.IsEmpty()) html.SetString(rng->htmlText);
+
+	// change <IMG to "afro-american" в»<IMG LOL
+	html.Replace (L"<IMG", L"в»<IMG");
+	RemoveTags(html);
+
+	num = 0;
+	for (int i=0; i<pos; i++)
+	{
+		num = html.Find (match, num);
+		num += 1;
+	}
+	// find number of inline images occurences
+	html = html.Left(num);
+	pos = num = 0;
+	while (num < html.GetLength())
+	{
+		num = html.Find(L"в»", num);
+		if (num == -1) break;
+		num += 1;
+		pos++;
+	}
+	return pos*3;
+}
+
 void CFBEView::SelMatch(MSHTML::IHTMLTxtRange *tr,AU::ReMatch rm) 
 {
+	// SeNS: fix for issue #147
+	int numImages = TextOffset (tr, rm);
+
 	tr->collapse(VARIANT_TRUE);
-	tr->move(L"character",rm->FirstIndex);
+	tr->move(L"character",rm->FirstIndex+numImages);
 	if (tr->moveStart(L"character",1)==1)
 		tr->move(L"character",-1);
 	tr->moveEnd(L"character",rm->Length);
@@ -2154,6 +2218,7 @@ static CString GetReplStr(const CString& rstr, AU::ReMatch rm, RRList& rl)
 	int flags=0;
 
 	CString rv;
+	bool emptyParam = false;
 
 	for(int i = 0; i < rstr.GetLength(); ++i)
 	{
@@ -2179,6 +2244,8 @@ static CString GetReplStr(const CString& rstr, AU::ReMatch rm, RRList& rl)
 				case L'8':
 				case L'9':
 					rv = GetSM(rs, rstr[i] - L'0' - 1);
+					if(rv.IsEmpty()) 
+						emptyParam = true;
 					break;
 				case L'T': // title case
 					flags |= RR::TITLE;
@@ -2217,12 +2284,16 @@ static CString GetReplStr(const CString& rstr, AU::ReMatch rm, RRList& rl)
 		}
 
 		// SeNS: fix for issue #142
-		if(!rv.IsEmpty())
+		if (!emptyParam)
 		{
-			rep += rv;
-			rv.Empty();
+			if(!rv.IsEmpty())
+			{
+				rep += rv;
+				rv.Empty();
+			}
+			else rep += rstr[i];
 		}
-		//else rep += rstr[i];
+		else emptyParam = false;
 	}
 
 		if(cr.flags && cr.start < rep.GetLength())
@@ -2356,6 +2427,11 @@ int CFBEView::GlobalReplace(MSHTML::IHTMLElementPtr elem, CString cntTag)
 				if(rm->Count <= 0)
 					continue;
 
+				// SeNS: fix for issue #147
+				MSHTML::IHTMLTxtRangePtr rng = sel->duplicate();
+				CString text = rng->text;
+				CString html = rng->htmlText;
+
 				// Replace
 				sel->collapse(VARIANT_TRUE);
 				long last = 0;
@@ -2363,6 +2439,10 @@ int CFBEView::GlobalReplace(MSHTML::IHTMLElementPtr elem, CString cntTag)
 				{
 					AU::ReMatch cur(rm->Item[i]);
 					long delta = cur->FirstIndex - last;
+
+					// SeNS
+					delta += TextOffset (rng, cur, text, html);
+
 					if(delta)
 					{
 						sel->move(charstr, delta);
@@ -2569,7 +2649,9 @@ int CFBEView::ToolWordsGlobalReplace(	MSHTML::IHTMLElementPtr fbw_body,
 
 					MSHTML::IHTMLTxtRangePtr found(Document()->selection->createRange());
 					found->moveToElementText(pAdjElems[first].elem);
-					found->moveStart(L"character", matchIdx);
+
+					// SeNS: fix for issue #148
+					found->moveStart(L"character", matchIdx+TextOffset (found, cur));
 					found->collapse(TRUE);
 					int diff = last - first;
 					found->moveEnd(L"character", matchLen);
@@ -2581,7 +2663,9 @@ int CFBEView::ToolWordsGlobalReplace(	MSHTML::IHTMLElementPtr fbw_body,
 				{
 					MSHTML::IHTMLTxtRangePtr found(Document()->selection->createRange());
 					found->moveToElementText(pAdjElems[first].elem);
-					found->moveStart(L"character", matchIdx);
+
+					// SeNS: fix for issue #148
+					found->moveStart(L"character", matchIdx+TextOffset (found, cur));
 					found->collapse(TRUE);
 					int diff = last - first;
 					found->moveEnd(L"character", matchLen);
@@ -3479,12 +3563,12 @@ bool  CFBEView::InsertTable(bool fCheck, bool bTitle, int nrows) {
 			// * create th and td
 			MSHTML::IHTMLElementPtr	  the(Document()->createElement(L"P"));
 			if(row==0){				
-				if(bTitle){//Нужен заголовок таблицы
-					the->className=L"th";// * create th - заголовок
+				if(bTitle){//РќСѓР¶РµРЅ Р·Р°РіРѕР»РѕРІРѕРє С‚Р°Р±Р»РёС†С‹
+					the->className=L"th";// * create th - Р·Р°РіРѕР»РѕРІРѕРє
 					MSHTML::IHTMLElement2Ptr(tre)->insertAdjacentElement(L"afterBegin",the);
 				}
 			} else {				
-				the->className=L"td";// * create td - строки
+				the->className=L"td";// * create td - СЃС‚СЂРѕРєРё
 				MSHTML::IHTMLElement2Ptr(tre)->insertAdjacentElement(L"afterBegin",the);
 			}
 			
@@ -3684,7 +3768,7 @@ int CFBEView::GetRangePos(const MSHTML::IHTMLTxtRangePtr range, MSHTML::IHTMLEle
 		}
 		else
 		{
-			// проверяем не проскочили ли мы искомую позицию
+			// РїСЂРѕРІРµСЂСЏРµРј РЅРµ РїСЂРѕСЃРєРѕС‡РёР»Рё Р»Рё РјС‹ РёСЃРєРѕРјСѓСЋ РїРѕР·РёС†РёСЋ
 			int skip = count + textNode->length;			
 			btr->move(L"character", skip);
 
@@ -3699,8 +3783,8 @@ int CFBEView::GetRangePos(const MSHTML::IHTMLTxtRangePtr range, MSHTML::IHTMLEle
 		node = node->nextSibling;
 	}
 
-	// тупая проверка. 
-	// если курсор стоит сразу после тега, то tr оказывается справа от brt и при этом никогда не бывает равен ему
+	// С‚СѓРїР°СЏ РїСЂРѕРІРµСЂРєР°. 
+	// РµСЃР»Рё РєСѓСЂСЃРѕСЂ СЃС‚РѕРёС‚ СЃСЂР°Р·Сѓ РїРѕСЃР»Рµ С‚РµРіР°, С‚Рѕ tr РѕРєР°Р·С‹РІР°РµС‚СЃСЏ СЃРїСЂР°РІР° РѕС‚ brt Рё РїСЂРё СЌС‚РѕРј РЅРёРєРѕРіРґР° РЅРµ Р±С‹РІР°РµС‚ СЂР°РІРµРЅ РµРјСѓ
 	int k = btr->compareEndPoints(L"StartToStart", tr);
 	if(k == -1)
 	{
@@ -3745,7 +3829,7 @@ bool CFBEView::GetSelectionInfo(MSHTML::IHTMLElementPtr *begin, MSHTML::IHTMLEle
 		rng = disp;
 		if (!(bool)rng)
 		{
-			// если не получилось сделать textrange, пробуем сделать control range
+			// РµСЃР»Рё РЅРµ РїРѕР»СѓС‡РёР»РѕСЃСЊ СЃРґРµР»Р°С‚СЊ textrange, РїСЂРѕР±СѓРµРј СЃРґРµР»Р°С‚СЊ control range
 			MSHTML::IHTMLControlRangePtr  coll(disp);
 			if (!(bool)coll)
 			{
@@ -3769,7 +3853,7 @@ bool CFBEView::GetSelectionInfo(MSHTML::IHTMLElementPtr *begin, MSHTML::IHTMLEle
 	if (!(bool)(*begin))
 		return false;
 
-	// ищем позицию относительно начала;
+	// РёС‰РµРј РїРѕР·РёС†РёСЋ РѕС‚РЅРѕСЃРёС‚РµР»СЊРЅРѕ РЅР°С‡Р°Р»Р°;
 	this->GetRangePos(tr, *begin, b);
 
 	tr = rng->duplicate();
@@ -3819,7 +3903,7 @@ MSHTML::IHTMLTxtRangePtr CFBEView::SetSelection(MSHTML::IHTMLElementPtr begin, M
 		return 0;
 	}
 
-	// устанавливаем начало выделенной строки
+	// СѓСЃС‚Р°РЅР°РІР»РёРІР°РµРј РЅР°С‡Р°Р»Рѕ РІС‹РґРµР»РµРЅРЅРѕР№ СЃС‚СЂРѕРєРё
 	MSHTML::IHTMLTxtRangePtr rng_begin(rng->duplicate());
 	rng_begin->moveToElementText(begin);
 	rng_begin->collapse(VARIANT_TRUE);
@@ -3837,7 +3921,7 @@ MSHTML::IHTMLTxtRangePtr CFBEView::SetSelection(MSHTML::IHTMLElementPtr begin, M
 	rng_end->moveToElementText(end);
 	rng_end->moveStart(L"character", end_pos);
 
-	// раздвигаем регион
+	// СЂР°Р·РґРІРёРіР°РµРј СЂРµРіРёРѕРЅ
 	rng_begin->setEndPoint(L"EndToStart", rng_end);
 
 	rng_begin->select();

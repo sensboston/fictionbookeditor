@@ -5332,7 +5332,7 @@ void CMainFrame::DisplayCharCode()
 	}
 	else if (m_current_view == BODY)
 	{
-		// added by SeNS: issue (wish) #127 zzz
+		// added by SeNS: issue (wish) #127
 		CString s(L"");
 		MSHTML::IHTMLTxtRangePtr sel(m_doc->m_body.Document()->selection->createRange());
 		if (sel)

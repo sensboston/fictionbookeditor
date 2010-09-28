@@ -263,6 +263,8 @@ protected:
 	friend class CSciReplaceDlg;
 	friend class FRBase;
 
+	int TextOffset(MSHTML::IHTMLTxtRange *rng, AU::ReMatch rm, CString txt = L"", CString htmlTxt = L"");
+
 	void SelMatch(MSHTML::IHTMLTxtRange* tr, AU::ReMatch rm);
 	MSHTML::IHTMLElementPtr SelectionContainerImp();
 
