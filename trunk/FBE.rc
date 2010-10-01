@@ -640,15 +640,15 @@ BEGIN
     BEGIN
         BLOCK "040904b0"
         BEGIN
-            VALUE "Comments", "Release"
+            VALUE "Comments", "Release candidate"
             VALUE "CompanyName", "FBE Team"
             VALUE "FileDescription", "FictionBook Editor"
-            VALUE "FileVersion", "2.6.0.0"
+            VALUE "FileVersion", "2.6"
             VALUE "InternalName", "FBE"
             VALUE "LegalCopyright", "Copyright 2010 © FBE Team, 2008 © LitRes, 2003 © Mike Matsnev"
             VALUE "OriginalFilename", "FBE.exe"
             VALUE "ProductName", "FictionBook Editor"
-            VALUE "ProductVersion", "2.6.0.0"
+            VALUE "ProductVersion", "2"
         END
     END
     BLOCK "VarFileInfo"

@@ -140,12 +140,12 @@ xcopy "$(ProjectDir)files\*.*" "$(TargetDir)" /E /Q /Y
     </PreBuildEvent>
     <Midl>
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <MkTypLibCompatible>true</MkTypLibCompatible>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <TargetEnvironment>Win32</TargetEnvironment>
       <TypeLibraryName>.\Debug/FBE.tlb</TypeLibraryName>
       <HeaderFileName>
       </HeaderFileName>
+      <MkTypLibCompatible>true</MkTypLibCompatible>
     </Midl>
     <ClCompile>
       <Optimization>Disabled</Optimization>
