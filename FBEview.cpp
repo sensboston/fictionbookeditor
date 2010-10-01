@@ -689,6 +689,10 @@ restart:
 			goto restart;
 		}
 
+		CString text;
+		if (curelem != NULL)
+			text.SetString(curelem->outerHTML);
+
 		if (U::scmp(name,L"P") && U::scmp(name,L"STRONG") && 
 			U::scmp(name,L"STRIKE") && U::scmp(name,L"SUP") && U::scmp(name,L"SUB") && 
 			U::scmp(name,L"EM") && U::scmp(name,L"A") &&
@@ -772,7 +776,15 @@ void BubbleUp(MSHTML::IHTMLDOMNode *node,const wchar_t *name) {
 	}
 }
 
+#if (1)
 // split paragraphs containing BR elements
+static void   SplitBRs(MSHTML::IHTMLElement2Ptr elem) 
+{
+	CString text = MSHTML::IHTMLElementPtr(elem)->outerHTML;
+	if (text.Replace(L"<BR>", L"</P><P>") > 0)
+		MSHTML::IHTMLElementPtr(elem)->outerHTML = text.AllocSysString();
+}
+#else
 static void   SplitBRs(MSHTML::IHTMLElement2Ptr elem) {
 	MSHTML::IHTMLElementCollectionPtr BRs(elem->getElementsByTagName(L"BR"));
 	while (BRs->length>0) {
@@ -795,6 +807,7 @@ blowit:
 		ce->removeNode(VARIANT_TRUE);
 	}
 }
+#endif
 
 // this sub should locate any nested paragraphs and bubble them up
 static void RelocateParagraphs(MSHTML::IHTMLDOMNode *node) {
@@ -861,9 +874,11 @@ static void FixupLinks(MSHTML::IHTMLDOMNode *dom) {
 	if (!(bool)elem)
 		return;
 
-	MSHTML::IHTMLElementCollectionPtr coll(elem->getElementsByTagName(L"A"));
+	MSHTML::IHTMLElementCollectionPtr coll(elem->getElementsByTagName(L"a"));
 	if (!(bool)coll)
 		return;
+
+	if (coll->length == 0) coll = elem->getElementsByTagName(L"A");
 
 	for (long l=0;l<coll->length;++l) {
 		MSHTML::IHTMLElementPtr a(coll->item(l));

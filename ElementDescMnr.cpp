@@ -38,6 +38,13 @@ bool IsStylesheet(MSHTML::IHTMLElementPtr elem)
 	return (U::scmp(elem->className, L"stylesheet") == 0);
 }
 
+bool IsStyle(MSHTML::IHTMLElementPtr elem)
+{
+	CString outerHTML = elem->outerHTML;
+	outerHTML.MakeLower();
+	return (outerHTML.Find(L"<span class=") == 0);
+}
+
 CString GetStylesheetTitle(const MSHTML::IHTMLElementPtr elem)
 {
 	return L"";
@@ -213,6 +220,8 @@ bool CElementDescMnr::InitStandartEDs()
 		// SeNS
 		CElementDescriptor* stylesheet = new CElementDescriptor;
 		stylesheet->Init(IsStylesheet, GetStylesheetTitle, 0, false, L"Stylesheet");
+		CElementDescriptor* style = new CElementDescriptor;
+		style->Init(IsStyle, GetStylesheetTitle, 0, false, L"Style");
 
 		CElementDescriptor* section = new CElementDescriptor;
 		section->Init(IsSection, GetSectionTitle, 0, true, L"Section");
@@ -249,6 +258,8 @@ bool CElementDescMnr::InitStandartEDs()
 		tr->Init(IsTR, GetTableTitle, 27, true, L"tr");
 
 		m_stEDs.Add(stylesheet);	// SeNS
+		m_stEDs.Add(style);
+
 		m_stEDs.Add(section);
 		m_stEDs.Add(body);
 		m_stEDs.Add(image);
