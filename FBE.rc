@@ -464,6 +464,7 @@ END
 // Icon with lowest ID value placed first to ensure application icon
 // remains consistent on all systems.
 IDR_MAINFRAME           ICON                    "res\\FBE2.ico"
+IDI_OLDICON             ICON                    "res\\FBE.ico"
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -640,7 +641,7 @@ BEGIN
     BEGIN
         BLOCK "040904b0"
         BEGIN
-            VALUE "Comments", "Release candidate"
+            VALUE "Comments", "Release"
             VALUE "CompanyName", "FBE Team"
             VALUE "FileDescription", "FictionBook Editor"
             VALUE "FileVersion", "2.6"

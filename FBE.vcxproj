@@ -411,6 +411,7 @@ gdiplus.lib;libhunspell.lib;pcre.lib;opengl32.lib;glu32.lib;$(IntDir)buildstamp.
     <None Include="res\document.bmp" />
     <None Include="res\error.bmp" />
     <None Include="res\Fb2-shema.bmp" />
+    <None Include="res\FBE.ico" />
     <None Include="res\FBE2.ico" />
     <None Include="res\green.bmp" />
     <None Include="res\html.bmp" />

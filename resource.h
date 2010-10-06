@@ -216,6 +216,8 @@
 #define IDR_TOOLBAR_MENU                254
 #define IDS_HOTKEY_SYMBOL_RIGHT_DOUBLE_QUOTATION_MARK 255
 #define IDS_CTXMENU_CUT                 255
+#define IDI_ICON1                       255
+#define IDI_OLDICON                     255
 #define IDS_HOTKEY_SYMBOL_LEFT_POINTING_DOUBLE_QUOTATION_MARK 256
 #define IDS_CTXMENU_COPY                256
 #define IDS_HOTKEY_SYMBOL_RIGHT_POINTING_DOUBLE_QUOTATION_MARK 257
@@ -355,7 +357,6 @@
 #define IDC_STYLE                       1031
 #define IDC_TAGHL                       1031
 #define IDC_COLSPAN                     1032
-#define IDC_SHOWLINENUMBERS2            1032
 #define IDC_SHOWWHITESPACE              1032
 #define IDC_ROWSPAN                     1033
 #define IDC_ALIGN                       1034
@@ -566,7 +567,7 @@
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NO_MFC                     1
-#define _APS_NEXT_RESOURCE_VALUE        255
+#define _APS_NEXT_RESOURCE_VALUE        256
 #define _APS_NEXT_COMMAND_VALUE         32912
 #define _APS_NEXT_CONTROL_VALUE         1109
 #define _APS_NEXT_SYMED_VALUE           133

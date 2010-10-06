@@ -477,6 +477,9 @@
     <None Include="extras\atlcrypt.inl">
       <Filter>extras</Filter>
     </None>
+    <None Include="res\FBE.ico">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Manifest Include="res\FBE.exe.manifest">
