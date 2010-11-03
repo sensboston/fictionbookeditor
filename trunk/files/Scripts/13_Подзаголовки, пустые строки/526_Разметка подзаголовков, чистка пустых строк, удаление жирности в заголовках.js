@@ -4,7 +4,7 @@
 function Run() {
  try { var nbspChar=window.external.GetNBSP(); var nbspEntity; if (nbspChar.charCodeAt(0)==160) nbspEntity="&nbsp;"; else nbspEntity=nbspChar;}
  catch(e) { var nbspChar=String.fromCharCode(160); var nbspEntity="&nbsp;";}
- var verStr="v3.7";
+ var verStr="v3.8";
  var DebugMode=0;
  var DestrongTitles=true; //делать ли удаление жирности в заголовках
  var DeitalicTitles=false; //удалять ли курсив в заголовках
@@ -325,7 +325,7 @@ function Run() {
        chld2=chld.firstChild;
        if (chld2.nodeName=="P" && IsLineSubtitle(chld2)) {
         chld.innerHTML="* * *";
-        chld.className=="subtitle";
+        chld.className="subtitle";
         flag=true;
         destrongAndDeitalic(chld,DestrongTitles,DeitalicTitles);
        }
