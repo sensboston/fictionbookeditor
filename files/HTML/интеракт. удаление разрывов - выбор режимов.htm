@@ -21,15 +21,15 @@
   rslt[5]=true;
   rslt[6]=true;
   rslt[7]=true;
-  rslt['1_']=1;
+  rslt['1_']=0;
   rslt['2_']=0;
   rslt['3_']=0;
   rslt['4_']=0;
   rslt['5_']=0;
-  rslt['6_']=1;
-  rslt['7_']=1;
-  rslt["handle1Cite"]=false;
-  rslt["handle2Cite"]=false;
+  rslt['6_']=0;
+  rslt['7_']=0;
+  rslt["handle1Cite"]=true;
+  rslt["handle2Cite"]=true;
   rslt["handle1Subtitle"]=false;
   rslt["handle2Subtitle"]=false;
  </script>
@@ -104,8 +104,8 @@
     <td>Маленькая буква</td>
     <td>Маленькая буква</td>
     <td>
-     <input type=checkbox name=s1 id=s1 onclick="rslt[1]=!rslt[1];" checked>Ручной выбор</input><br>     <input type=radio name=s1_ id=s1_1_ onclick="rslt['1_']=0;"><span onclick="document.getElementById('s1_1_').checked=true; rslt['1_']=0;">Не трогать</span></input><br>
-     <input type=radio name=s1_ id=s1_2_ onclick="rslt['1_']=1;" checked><span onclick="document.getElementById('s1_2_').checked=true; rslt['1_']=1;">Соединить через пробел</span></input><br>
+     <input type=checkbox name=s1 id=s1 onclick="rslt[1]=!rslt[1];" checked>Ручной выбор</input><br>     <input type=radio name=s1_ id=s1_1_ onclick="rslt['1_']=0;" checked><span onclick="document.getElementById('s1_1_').checked=true; rslt['1_']=0;">Не трогать</span></input><br>
+     <input type=radio name=s1_ id=s1_2_ onclick="rslt['1_']=1;"><span onclick="document.getElementById('s1_2_').checked=true; rslt['1_']=1;">Соединить через пробел</span></input><br>
      <input type=radio name=s1_ id=s1_3_ onclick="rslt['1_']=8;"><span onclick="document.getElementById('s1_3_').checked=true; rslt['1_']=8;">Соединить без пробела</span></input>
      </div>
     </td>
@@ -114,8 +114,8 @@
     <td>Тире, перед которым пробел</td>
     <td>Маленькая буква</td>
     <td>
-     <input type=checkbox name=s6 id=s6  onclick="rslt[6]=!rslt[6];" checked>Ручной выбор</input><br>     <input type=radio name=s6_ id=s6_1_ onclick="rslt['6_']=0;"><span onclick="document.getElementById('s6_1_').checked=true; rslt['6_']=0;">Не трогать</span></input><br>
-     <input type=radio name=s6_ id=s6_2_ onclick="rslt['6_']=1;" checked><span onclick="document.getElementById('s6_2_').checked=true; rslt['6_']=1;">Соединить через пробел</span></input><br>
+     <input type=checkbox name=s6 id=s6  onclick="rslt[6]=!rslt[6];" checked>Ручной выбор</input><br>     <input type=radio name=s6_ id=s6_1_ onclick="rslt['6_']=0;"><span onclick="document.getElementById('s6_1_').checked=true; rslt['6_']=0;" checked>Не трогать</span></input><br>
+     <input type=radio name=s6_ id=s6_2_ onclick="rslt['6_']=1;"><span onclick="document.getElementById('s6_2_').checked=true; rslt['6_']=1;">Соединить через пробел</span></input><br>
      <input type=radio name=s6_ id=s6_3_ onclick="rslt['6_']=8;"><span onclick="document.getElementById('s6_3_').checked=true; rslt['6_']=8;">Соединить без пробела</span></input>
      </div>
     </td>
@@ -124,8 +124,8 @@
     <td>Не запятая и не закрывающая кавычка, либо закрывающая кавычка, перед которой один из знаков: ?!.…</td>
     <td>Маленькая буква. Или символ из перечисленных: «"(–[=— а потом маленькая буква</td>
     <td>
-     <input type=checkbox name=s7 id=s7  onclick="rslt[7]=!rslt[7];" checked>Ручной выбор</input><br>     <input type=radio name=s7_ id=s7_1_ onclick="rslt['7_']=0;"><span onclick="document.getElementById('s7_1_').checked=true; rslt['7_']=0;">Не трогать</span></input><br>
-     <input type=radio name=s7_ id=s7_2_ onclick="rslt['7_']=1;" checked><span onclick="document.getElementById('s7_2_').checked=true; rslt['7_']=1;">Соединить через пробел</span></input><br>
+     <input type=checkbox name=s7 id=s7  onclick="rslt[7]=!rslt[7];" checked>Ручной выбор</input><br>     <input type=radio name=s7_ id=s7_1_ onclick="rslt['7_']=0;"><span onclick="document.getElementById('s7_1_').checked=true; rslt['7_']=0;" checked>Не трогать</span></input><br>
+     <input type=radio name=s7_ id=s7_2_ onclick="rslt['7_']=1;"><span onclick="document.getElementById('s7_2_').checked=true; rslt['7_']=1;">Соединить через пробел</span></input><br>
      <input type=radio name=s7_ id=s7_3_ onclick="rslt['7_']=8;"><span onclick="document.getElementById('s7_3_').checked=true; rslt['7_']=8;">Соединить без пробела</span></input>
      </div>
     </td>

@@ -18,31 +18,58 @@
   var elementToGo=null;
   var elementToView=null;
 
+  function getRdDiv(el) {
+   var el2=el;
+   while (el2 &&
+          !(el2.nodeName=="BODY" ||
+            (el2.nodeName=="DIV" && el2.id && el2.id.indexOf("rd")==0)
+           )
+         )
+    el2=el2.parentNode;
+   return el2; 
+  }
+
+  function goTo_123(elem) {
+   if (!elem) return;
+   var b=elem.getBoundingClientRect();
+   mainWin.scrollBy(0,b.bottom-mainWin.external.getViewHeight()/2);
+  }
+
   function myOnClick() {
-   if (event.srcElement.nodeName=="INPUT" && event.srcElement.getAttribute("type")=="radio") {
-    if (event.srcElement.parentNode.nodeName=="DIV" && event.srcElement.parentNode.getAttribute("id").indexOf("rd")==0) {
-     n=eval(event.srcElement.parentNode.getAttribute("id").substr(2));
-     resultColl[n]=event.srcElement.value;
+   var el=event.srcElement;
+   if (el.nodeName=="INPUT" && event.srcElement.getAttribute("type")=="radio") {
+    var el2=getRdDiv(el);
+    if (el2 && el2.nodeName!="BODY") {
+      n=eval(el2.getAttribute("id").substr(2));
+      resultColl[n]=el.value;
+      replaceHglClass(el2,el.value==0?"hgl_green":"hgl_red");
+      return;
     }
    }
-   if (event.srcElement.nodeName=="A" && event.srcElement.getAttribute("name")=="go") {
-    if (event.srcElement.parentNode.nodeName=="DIV" && event.srcElement.parentNode.getAttribute("id").indexOf("rd")==0) {
-     n=eval(event.srcElement.parentNode.getAttribute("id").substr(2));
+   if (el.nodeName=="A" && (el.getAttribute("name")=="go" || el.getAttribute("name")=="show")) {
+    var el2=getRdDiv(el);
+    if (el2 && el2.nodeName!="BODY") {
+     n=eval(el2.getAttribute("id").substr(2));
      elementToGo=params[n+"_2"];
      elementToView=params[n+"_3"];
-     applyChanges();     
+     if (el.getAttribute("name")=="go") applyChanges();     
      var myRange=myDoc.body.createTextRange();
      myRange.moveToElementText(elementToGo);
      myRange.collapse(false);
      myRange.move("character",-1);
      myRange.moveStart("character",-1);
      myRange.select();
-     elementToView.scrollIntoView();
-     params["window"].scrollBy(0,-otstupSverhu);     
-     window.close();
+     goTo_123(elementToGo);
+     if (el.getAttribute("name")=="go") window.close();
     }   
    }
   }
+
+ var re0=new RegExp("^( | |&nbsp;|"+nbspChar+")*?$","i"); 
+
+ function isLineEmpty(ptr) {
+  return re0.test(ptr.innerHTML.replace(/<(?!img)[^>]*?>/gi,""));
+ }
 
  var tagStr2;
 
@@ -50,7 +77,8 @@
    tagStr2="<"+tmpPtr.nodeName;
    if (tmpPtr.className!=undefined && tmpPtr.className!="") 
     tagStr2+=" class="+tmpPtr.className;
-   tagStr2+=">"; 
+   tagStr2+=">";
+   if (tmpPtr.nodeName=="P" && isLineEmpty(tmpPtr)) tagStr2+="&nbsp;";
    return tagStr2;
  } 
 
@@ -236,6 +264,20 @@
   }
  }
 
+ function replaceHglClass(elem,newClassValue) {
+  var el=elem.firstChild;
+  while (el && el!=elem) {
+   if (el.nodeType==1 && (el.className=="hgl" || el.className.indexOf("hgl_")==0))
+    el.className=newClassValue;
+   if (el.firstChild)
+    el=el.firstChild;
+   else {
+    while (el && el!=elem && el.nextSibling==null) el=el.parentNode;
+    if (el && el!=elem) el=el.nextSibling;
+   }
+  }
+ }
+
  function MoveTree(a1,a2) {
   while (a2.childNodes[0]!=null) {
    var tmp_node=a2.childNodes[0].cloneNode(true);
@@ -281,101 +323,101 @@
    for (i=1;i<=collCnt;i++) {
     k=resultColl[i];
     if (k==1) {
-     //соединяем абзацы через пробел
-     prevP=params[i+"_2"];
-     if (prevP==lastPtr) prevP=lastPrevP;
-     lastPtr=params[i+"_3"];
-     trimRight(prevP);
-     trimLeft(lastPtr);
-     if (elementToGo==lastPtr) elementToGo=prevP;
-     if (elementToView==lastPtr) elementToView=prevP;     
-     JustAddP(prevP,lastPtr,params[i+"_4"]);
-     lastPrevP=prevP;
-    } else if (k==2) {  
-     //добавляем точку
-     prevP=params[i+"_2"];    
-     if (prevP==lastPtr) prevP=lastPrevP;         
-     trimRight(prevP);
-     addPointToP(prevP);
+      //соединяем абзацы через пробел
+      prevP=params[i+"_2"];
+      if (prevP==lastPtr) prevP=lastPrevP;
+      lastPtr=params[i+"_3"];
+      trimRight(prevP);
+      trimLeft(lastPtr);
+      if (elementToGo==lastPtr) elementToGo=prevP;
+      if (elementToView==lastPtr) elementToView=prevP;     
+      JustAddP(prevP,lastPtr,params[i+"_4"]);
+      lastPrevP=prevP;
+    } else if (k==2) { 
+      //добавляем точку
+      prevP=params[i+"_2"];    
+      if (prevP==lastPtr) prevP=lastPrevP;         
+      trimRight(prevP);
+      addPointToP(prevP);
     } else if (k==3) { 
-     //точка вместо запятой
-     prevP=params[i+"_2"];    
-     if (prevP==lastPtr) prevP=lastPrevP;
-     trimRight(prevP);
-     changeCommaOntoPoint(prevP);
-    } else if (k==4) {
-     //короткое тире вместо дефиса и соединить
-     prevP=params[i+"_2"];    
-     if (prevP==lastPtr) prevP=lastPrevP;     
-     lastPtr=params[i+"_3"];
-     trimRight(prevP);
-     changeHyphenOntoShortDash(prevP);
-     trimLeft(lastPtr);
-     if (elementToGo==lastPtr) elementToGo=prevP;
-     if (elementToView==lastPtr) elementToView=prevP;          
-     JustAddP(prevP,lastPtr,params[i+"_4"]);
-     lastPrevP=prevP;
-    } else if (k==5) { 
-     //длинное тире вместо дефиса и соединить
-     prevP=params[i+"_2"];    
-     if (prevP==lastPtr) prevP=lastPrevP;     
-     lastPtr=params[i+"_3"];
-     trimRight(prevP);
-     changeHyphenOntoLongDash(prevP);
-     trimLeft(lastPtr);
-     if (elementToGo==lastPtr) elementToGo=prevP;
-     if (elementToView==lastPtr) elementToView=prevP;          
-     JustAddP(prevP,lastPtr,params[i+"_4"]);
-     lastPrevP=prevP;
+      //точка вместо запятой
+      prevP=params[i+"_2"];    
+      if (prevP==lastPtr) prevP=lastPrevP;
+      trimRight(prevP);
+      changeCommaOntoPoint(prevP);
+    } else if (k==4) { 
+      //короткое тире вместо дефиса и соединить
+      prevP=params[i+"_2"];    
+      if (prevP==lastPtr) prevP=lastPrevP;     
+      lastPtr=params[i+"_3"];
+      trimRight(prevP);
+      changeHyphenOntoShortDash(prevP);
+      trimLeft(lastPtr);
+      if (elementToGo==lastPtr) elementToGo=prevP;
+      if (elementToView==lastPtr) elementToView=prevP;          
+      JustAddP(prevP,lastPtr,params[i+"_4"]);
+      lastPrevP=prevP;
     } else if (k==6) { 
-     //соединить, удалив тире или дефис
-     prevP=params[i+"_2"];    
-     if (prevP==lastPtr) prevP=lastPrevP;     
-     lastPtr=params[i+"_3"];
-     trimRight(prevP);
-     killHyphen(prevP);
-     trimRight(prevP);
-     trimLeft(lastPtr);
-     if (elementToGo==lastPtr) elementToGo=prevP;
-     if (elementToView==lastPtr) elementToView=prevP;          
-     JustAddP(prevP,lastPtr,params[i+"_4"],false);
-     lastPrevP=prevP;
-    } else if (k==7) {
-     //соединить через дефис, или заменив тире на дефис
-     prevP=params[i+"_2"];    
-     if (prevP==lastPtr) prevP=lastPrevP;     
-     lastPtr=params[i+"_3"];
-     trimRight(prevP);
-     changeDashOntoHyphenLongDash(prevP);
-     trimLeft(lastPtr);
-     if (elementToGo==lastPtr) elementToGo=prevP;
-     if (elementToView==lastPtr) elementToView=prevP;          
-     JustAddP(prevP,lastPtr,params[i+"_4"],false);
-     lastPrevP=prevP;
-    } else if (k==8) {
-     prevP=params[i+"_2"];    
-     if (prevP==lastPtr) prevP=lastPrevP;     
-     lastPtr=params[i+"_3"];    
-     trimRight(prevP);
-     trimLeft(lastPtr);
-     if (elementToGo==lastPtr) elementToGo=prevP;
-     if (elementToView==lastPtr) elementToView=prevP;          
-     JustAddP(prevP,lastPtr,params[i+"_4"],false);
-     lastPrevP=prevP;     
-    } else if (k==9) {
-     prevP=params[i+"_2"];    
-     if (prevP==lastPtr) prevP=lastPrevP;     
-     lastPtr=params[i+"_3"];    
-     trimRight(prevP);
-     killHyphen(prevP);
-     trimRight(prevP);
-     trimLeft(lastPtr);
-     if (elementToGo==lastPtr) elementToGo=prevP;
-     if (elementToView==lastPtr) elementToView=prevP;          
-     JustAddP(prevP,lastPtr,params[i+"_4"],false);
-     lastPrevP=prevP;     
+      //длинное тире вместо дефиса и соединить
+      prevP=params[i+"_2"];    
+      if (prevP==lastPtr) prevP=lastPrevP;     
+      lastPtr=params[i+"_3"];
+      trimRight(prevP);
+      changeHyphenOntoLongDash(prevP);
+      trimLeft(lastPtr);
+      if (elementToGo==lastPtr) elementToGo=prevP;
+      if (elementToView==lastPtr) elementToView=prevP;          
+      JustAddP(prevP,lastPtr,params[i+"_4"]);
+      lastPrevP=prevP;
+    } else if (k==7) { 
+      //соединить, удалив тире или дефис
+      prevP=params[i+"_2"];    
+      if (prevP==lastPtr) prevP=lastPrevP;     
+      lastPtr=params[i+"_3"];
+      trimRight(prevP);
+      killHyphen(prevP);
+      trimRight(prevP);
+      trimLeft(lastPtr);
+      if (elementToGo==lastPtr) elementToGo=prevP;
+      if (elementToView==lastPtr) elementToView=prevP;          
+      JustAddP(prevP,lastPtr,params[i+"_4"],false);
+      lastPrevP=prevP;
+    } else if (k==8) { 
+      //соединить через дефис, или заменив тире на дефис
+      prevP=params[i+"_2"];    
+      if (prevP==lastPtr) prevP=lastPrevP;     
+      lastPtr=params[i+"_3"];
+      trimRight(prevP);
+      changeDashOntoHyphenLongDash(prevP);
+      trimLeft(lastPtr);
+      if (elementToGo==lastPtr) elementToGo=prevP;
+      if (elementToView==lastPtr) elementToView=prevP;          
+      JustAddP(prevP,lastPtr,params[i+"_4"],false);
+      lastPrevP=prevP;
+    } else if (k==8) { 
+      prevP=params[i+"_2"];    
+      if (prevP==lastPtr) prevP=lastPrevP;     
+      lastPtr=params[i+"_3"];    
+      trimRight(prevP);
+      trimLeft(lastPtr);
+      if (elementToGo==lastPtr) elementToGo=prevP;
+      if (elementToView==lastPtr) elementToView=prevP;          
+      JustAddP(prevP,lastPtr,params[i+"_4"],false);
+      lastPrevP=prevP;     
+    } else if (k==9) { 
+      prevP=params[i+"_2"];    
+      if (prevP==lastPtr) prevP=lastPrevP;     
+      lastPtr=params[i+"_3"];    
+      trimRight(prevP);
+      killHyphen(prevP);
+      trimRight(prevP);
+      trimLeft(lastPtr);
+      if (elementToGo==lastPtr) elementToGo=prevP;
+      if (elementToView==lastPtr) elementToView=prevP;          
+      JustAddP(prevP,lastPtr,params[i+"_4"],false);
+      lastPrevP=prevP;     
+      break;
     }
-
     if (k!=0) changesCnt++;
    }
    window.returnValue=changesCnt;
@@ -393,14 +435,23 @@
  var tmpPtr,inOneTag;
  var numberOfSymbolsToShow=80;
  var re1=new RegExp("([а-яёa-z0-9])(((<a( +[a-z0-9]+=([\"\'][^\"\']*[\"\']|[^ >]*))* +class=[\"\']?note[\"\']?( +[a-z0-9]+=([\"\'][^\"\']*[\"\']|[^ >]*))* *>.*?</a>)*(</?[a-z0-9]+( [^>]*)?>| |"+nbspChar+")?)*)(([^а-яёa-z0-9>< "+nbspChar+"])(((<a( +[a-z0-9]+=([\"\'][^\"\']*[\"\']|[^ >]*))* +class=[\"\']?note[\"\']?( +[a-z0-9]+=([\"\'][^\"\']*[\"\']|[^ >]*))* *>.*?</a>)*(</?[a-z0-9]+( [^>]*)?>| |"+nbspChar+")?)*))?$","i");
- var re1_="<SPAN class=ac>$1</SPAN>$2<SPAN class=ac>$12</SPAN>$13";
+ var re1_="<SPAN class=hgl>$1</SPAN>$2<SPAN class=hgl>$12</SPAN>$13";
+ var re1_red="<SPAN class=hgl_red>$1</SPAN>$2<SPAN class=hgl_red>$12</SPAN>$13";
+ var re1_green="<SPAN class=hgl_green>$1</SPAN>$2<SPAN class=hgl_green>$12</SPAN>$13";
  var re2=new RegExp("^((((<a( +[a-z0-9]+=([\"\'][^\"\']*[\"\']|[^ >]*))* +class=[\"\']?note[\"\']?( +[a-z0-9]+=([\"\'][^\"\']*[\"\']|[^ >]*))* *>.*?</a>)*(</?[a-z0-9]+( [^>]*)?>| |"+nbspChar+")?)*)([^а-яёa-z0-9< "+nbspChar+"]))?(((<a( +[a-z0-9]+=([\"\'][^\"\']*[\"\']|[^ >]*))* +class=[\"\']?note[\"\']?( +[a-z0-9]+=([\"\'][^\"\']*[\"\']|[^ >]*))* *>.*?</a>)*(</?[a-z0-9]+( [^>]*)?>| |"+nbspChar+")?)*)([а-яёa-z0-9])","i");
- var re2_="$2<SPAN class=ac>$11</SPAN>$12<SPAN class=ac>$21</SPAN>";
+ var re2_="$2<SPAN class=hgl>$11</SPAN>$12<SPAN class=hgl>$21</SPAN>";
+ var re2_red="$2<SPAN class=hgl_red>$11</SPAN>$12<SPAN class=hgl_red>$21</SPAN>";
+ var re2_green="$2<SPAN class=hgl_green>$11</SPAN>$12<SPAN class=hgl_green>$21</SPAN>";
  var re3=new RegExp("(,)(((<a( +[a-z0-9]+=([\"\'][^\"\']*[\"\']|[^ >]*))* +class=[\"\']?note[\"\']?( +[a-z0-9]+=([\"\'][^\"\']*[\"\']|[^ >]*))* *>.*?</a>)*(</?[a-z0-9]+( [^>]*)?>| |"+nbspChar+")?)*)$","i");
- var re3_="<SPAN class=ac>,</SPAN>$2";
- var re4=new RegExp("<SPAN class=ac></SPAN>","");
+ var re3_="<SPAN class=hgl>,</SPAN>$2";
+ var re3_red="<SPAN class=hgl_red>,</SPAN>$2";
+ var re3_green="<SPAN class=hgl_green>,</SPAN>$2";
+ var re4=new RegExp("<SPAN class=hgl(_(red|green))?></SPAN>","");
  var re4_="";
  var params=window.dialogArguments;
+ var modes=params["modes"];
+ var mainWin=params["window"];
+ var mainDoc=params["document"];
  var htmlStr="";
  var tmpStr,tagStr,letterCnt,myNodeValue,len;
  var collCnt=params["collCnt"];
@@ -409,19 +460,68 @@
  var my_fbw_body=myDoc.getElementById("fbw_body");
  var range1, range2, prevP, ptr, cnt;
  for (i=1;i<=collCnt;i++) {
-  htmlStr+="<DIV sclexType=1 id=rd"+i+" style='border:none; border-left:0px;'>";
+  htmlStr+="<DIV sclexType=1 id=rd"+i+" style='border:none; border-left:0;'>";
+  htmlStr+="<DIV style='float:right; width:200px; margin:0 0 0 8px; padding:0 3px 0 3px; border-left:1px dotted gray; border-right:0; border-top:0; border-bottom:0;'>";
+  switch(params[i+"_1"]) {
+   case "1":
+    htmlStr+="<INPUT"+(modes["1_"]==0?" checked":"")+" type=radio name=r"+i+" value=0>Не трогать</INPUT><BR><INPUT"+(modes["1_"]==1?" checked":"")+" type=radio name=r"+i+" value=1>Соединить через пробел</INPUT><BR><INPUT"+(modes["1_"]==8?" checked":"")+" type=radio name=r"+i+" value=8>Соединить без пробела</INPUT>";
+    resultColl[i]=modes["1_"];
+    break;
+   case "2":
+    htmlStr+="<INPUT"+(modes["2_"]==0?" checked":"")+" type=radio name=r"+i+" value=0>Не трогать</INPUT><BR><INPUT"+(modes["2_"]==1?" checked":"")+" type=radio name=r"+i+" value=1>Соединить через пробел</INPUT><BR><INPUT"+(modes["2_"]==2?" checked":"")+" type=radio name=r"+i+" value=2>Добавить точку</INPUT>";   
+    resultColl[i]=modes["2_"];
+    break;
+   case "3":
+    htmlStr+="<INPUT"+(modes["3_"]==0?" checked":"")+" type=radio name=r"+i+" value=0>Не трогать</INPUT><BR><INPUT"+(modes["3_"]==1?" checked":"")+" type=radio name=r"+i+" value=1>Соединить через пробел</INPUT><BR><INPUT"+(modes["3_"]==3?" checked":"")+" type=radio name=r"+i+" value=3>Точку вместо запятой</INPUT>";   
+    resultColl[i]=modes["3_"];
+    break;
+   case "4":
+    htmlStr+="<INPUT"+(modes["4_"]==0?" checked":"")+" type=radio name=r"+i+" value=0>Не трогать</INPUT><BR><INPUT"+(modes["4_"]==4?" checked":"")+" type=radio name=r"+i+" value=4>Соединить через короткое тире и пробел</INPUT><BR><INPUT"+(modes["4_"]==5?" checked":"")+" type=radio name=r"+i+" value=5>Соединить через длинное тире и пробел</INPUT><BR><INPUT"+(modes["4_"]==8?" checked":"")+" type=radio name=r"+i+" value=9>Считать дефис переносом</INPUT>";   
+    resultColl[i]=modes["4_"];
+    break;
+   case "5":
+    htmlStr+="<INPUT"+(modes["5_"]==0?" checked":"")+" type=radio name=r"+i+" value=0>Не трогать</INPUT><BR><INPUT"+(modes["5_"]==6?" checked":"")+" type=radio name=r"+i+" value=6>Соединить, удалив дефис</INPUT><BR><INPUT"+(modes["5_"]==7?" checked":"")+" type=radio name=r"+i+" value=7>Соединить через дефис без пробела</INPUT><BR><INPUT"+(modes["5_"]==8?" checked":"")+" type=radio name=r"+i+" value=8>Соединить без пробела, сохранив тире/дефис</INPUT>";
+    resultColl[i]=modes["5_"];
+    break;
+   case "6":
+    htmlStr+="<INPUT"+(modes["6_"]==0?" checked":"")+" type=radio name=r"+i+" value=0>Не трогать</INPUT><BR><INPUT"+(modes["6_"]==1?" checked":"")+" type=radio name=r"+i+" value=1>Соединить через пробел</INPUT><BR><INPUT"+(modes["6_"]==8?" checked":"")+" type=radio name=r"+i+" value=8>Соединить без пробела</INPUT>";
+    resultColl[i]=modes["6_"];
+    break;
+  }
+  htmlStr+="<BR><A name=go>ОК и перейти</A> <A name=show>Показать</a>";  
+  htmlStr+="</DIV>";
+  htmlStr+="<DIV style='float:left; border:0; padding:0; margin:0;'>";
   prevP=params[i+"_2"];
   ptr=params[i+"_3"];
 
   inOneTag=prevP.parentNode==ptr.parentNode ? true : false;
-  //соберем часть первого абзаца
   tmpPtr=prevP;
-  tmpStr="";
-  while (tmpPtr!=my_fbw_body && !(inOneTag && tmpPtr==prevP.parentNode)) {
+  tmpStr2="";
+  /*while (tmpPtr!=my_fbw_body && !(inOneTag && tmpPtr==prevP.parentNode)) {
    if (tmpPtr.nodeType==1) tmpStr+="</"+tmpPtr.nodeName+">"; 
    tmpPtr=tmpPtr.parentNode;
+  }*/
+  //соберем то, что между первым абзацем и вторым
+  while (tmpPtr && tmpPtr!=ptr) {
+   if (tmpPtr.firstChild) {
+    tmpPtr=tmpPtr.firstChild;
+    if (tmpPtr.nodeType==1) tmpStr2+=getStrOfOpeningTag(tmpPtr);
+   } 
+   else {
+    while (tmpPtr!=ptr && tmpPtr.nextSibling==null) {
+     if (tmpPtr.nodeType==1 && tmpPtr.nodeName!="IMG") tmpStr2+="</"+tmpPtr.nodeName+">";    
+     tmpPtr=tmpPtr.parentNode;
+    } 
+    if (tmpPtr!=ptr) {
+     if (tmpPtr.nodeType==1 && tmpPtr.nodeName!="IMG") tmpStr2+="</"+tmpPtr.nodeName+">";    
+     tmpPtr=tmpPtr.nextSibling;
+     if (tmpPtr.nodeType==1) tmpStr2+=getStrOfOpeningTag(tmpPtr);
+    } 
+   }
   }
+  //соберем часть первого абзаца  
   var tmpPtr=prevP;
+  tmpStr="";
   var letterCnt=0;
   while (letterCnt<numberOfSymbolsToShow && tmpPtr!=my_fbw_body) {
    if (tmpPtr.nodeType==3) {
@@ -458,16 +558,15 @@
    tmpPtr=tmpPtr.parentNode;
   }
   //alert("tmpStr для первого абзаца:\n"+tmpStr);
-  if (params[i+"_1"]=="3") htmlStr+=tmpStr.replace(re3,re3_).replace(re4,re4_);
-  else htmlStr+=tmpStr.replace(re1,re1_).replace(re4,re4_);
-
+  if (params[i+"_1"]=="3") htmlStr+=tmpStr.replace(re3,modes[params[i+"_1"]+"_"]==0?re3_green:re3_red).replace(re4,re4_)+tmpStr2;
+  else htmlStr+=tmpStr.replace(re1,modes[params[i+"_1"]+"_"]==0?re1_green:re1_red).replace(re4,re4_)+tmpStr2;
   //соберем часть второго абзаца
   tmpPtr=ptr;
   tmpStr="";
-  while (tmpPtr!=my_fbw_body && !(inOneTag && tmpPtr==ptr.parentNode)) {
+  /*while (tmpPtr!=my_fbw_body && !(inOneTag && tmpPtr==ptr.parentNode)) {
    if (tmpPtr.nodeType==1) tmpStr=getStrOfOpeningTag(tmpPtr)+tmpStr; 
    tmpPtr=tmpPtr.parentNode;
-  }
+  }*/
   var tmpPtr=ptr;
   var letterCnt=0;
   while (letterCnt<numberOfSymbolsToShow && tmpPtr!=my_fbw_body) {
@@ -505,46 +604,12 @@
    if (tmpPtr.nodeType==1) tmpStr+="</"+tmpPtr.nodeName+">";
    tmpPtr=tmpPtr.parentNode;
   }  
-  var modes=params["modes"];
   //alert("tmpStr для второго абзаца:\n"+tmpStr);
-  htmlStr+=tmpStr.replace(re2,re2_).replace(re4,re4_);
-  switch(params[i+"_1"]) {
-   case "1": {
-    htmlStr+="<INPUT"+(modes["1_"]==0?" checked":"")+" type=radio name=r"+i+" value=0>Не трогать</INPUT><INPUT"+(modes["1_"]==1?" checked":"")+" type=radio name=r"+i+" value=1>Соединить через пробел</INPUT><INPUT"+(modes["1_"]==8?" checked":"")+" type=radio name=r"+i+" value=8>Соединить без пробела</INPUT>";
-    resultColl[i]=modes["1_"];
-    break;
-   } 
-   case "2": {
-    htmlStr+="<INPUT"+(modes["2_"]==0?" checked":"")+" type=radio name=r"+i+" value=0>Не трогать</INPUT><INPUT"+(modes["2_"]==1?" checked":"")+" type=radio name=r"+i+" value=1>Соединить через пробел</INPUT><INPUT"+(modes["2_"]==2?" checked":"")+" type=radio name=r"+i+" value=2>Добавить точку</INPUT>";   
-    resultColl[i]=modes["2_"];
-    break;
-   } 
-   case "3": {
-    htmlStr+="<INPUT"+(modes["3_"]==0?" checked":"")+" type=radio name=r"+i+" value=0>Не трогать</INPUT><INPUT"+(modes["3_"]==1?" checked":"")+" type=radio name=r"+i+" value=1>Соединить через пробел</INPUT><INPUT"+(modes["3_"]==3?" checked":"")+" type=radio name=r"+i+" value=3>Точку вместо запятой</INPUT>";   
-    resultColl[i]=modes["3_"];
-    break;
-   } 
-   case "4": {
-    htmlStr+="<INPUT"+(modes["4_"]==0?" checked":"")+" type=radio name=r"+i+" value=0>Не трогать</INPUT><INPUT"+(modes["4_"]==4?" checked":"")+" type=radio name=r"+i+" value=4>Соединить через короткое тире и пробел</INPUT><INPUT"+(modes["4_"]==5?" checked":"")+" type=radio name=r"+i+" value=5>Соединить через длинное тире и пробел</INPUT><INPUT"+(modes["4_"]==8?" checked":"")+" type=radio name=r"+i+" value=9>Считать дефис переносом</INPUT>";   
-    resultColl[i]=modes["4_"];
-    break;
-   } 
-   case "5": {
-    htmlStr+="<INPUT"+(modes["5_"]==0?" checked":"")+" type=radio name=r"+i+" value=0>Не трогать</INPUT><INPUT"+(modes["5_"]==6?" checked":"")+" type=radio name=r"+i+" value=6>Соединить, удалив дефис</INPUT><INPUT"+(modes["5_"]==7?" checked":"")+" type=radio name=r"+i+" value=7>Соединить через дефис без пробела</INPUT><INPUT"+(modes["5_"]==8?" checked":"")+" type=radio name=r"+i+" value=8>Соединить без пробела, сохранив тире/дефис</INPUT>";
-    resultColl[i]=modes["5_"];
-    break;
-   } 
-   case "6": {
-    htmlStr+="<INPUT"+(modes["6_"]==0?" checked":"")+" type=radio name=r"+i+" value=0>Не трогать</INPUT><INPUT"+(modes["6_"]==1?" checked":"")+" type=radio name=r"+i+" value=1>Соединить через пробел</INPUT><INPUT"+(modes["6_"]==8?" checked":"")+" type=radio name=r"+i+" value=8>Соединить без пробела</INPUT>";
-    resultColl[i]=modes["6_"];
-    break;
-   } 
-  }
-  htmlStr+=" <A name=go>ОК и перейти</A>";
-  htmlStr+="<HR>";
+  htmlStr+=tmpStr.replace(re2,modes[params[i+"_1"]+"_"]==0?re2_green:re2_red).replace(re4,re4_);
   htmlStr+="</DIV>";
+  htmlStr+="</DIV><HR style='clear:both;'>";
  }
- htmlStr="Всего найдено случаев: "+collCnt+"<HR>"+htmlStr;
+ htmlStr="Всего найдено сомнительных мест: "+collCnt+"<HR>"+htmlStr;
  //alert("htmlStr после всего:\n"+htmlStr);
  //window.clipboardData.setData("text",htmlStr);
  fbw_body.innerHTML=htmlStr;
