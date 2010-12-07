@@ -225,9 +225,9 @@
     var s=ptr.nodeValue;
     var i2=s.length-1;
     while (i2>=0 && (s.substr(i2,1)==" " || s.substr(i2,1)==nbspChar)) i2--;
-    if (i2>=0) ptr.nodeValue=s.substr(0,i2+1)
+    if (i2>=0) ptr.nodeValue=s.substr(0,i2+1);
     else ptr.nodeValue="";
-    if (i2>0) return;
+    if (i2>=0) return;
    }
    if (ptr.lastChild!=null) {
     ptr=ptr.lastChild;
@@ -357,7 +357,7 @@
       if (elementToView==lastPtr) elementToView=prevP;          
       JustAddP(prevP,lastPtr,params[i+"_4"]);
       lastPrevP=prevP;
-    } else if (k==6) { 
+    } else if (k==5) { 
       //длинное тире вместо дефиса и соединить
       prevP=params[i+"_2"];    
       if (prevP==lastPtr) prevP=lastPrevP;     
@@ -369,7 +369,7 @@
       if (elementToView==lastPtr) elementToView=prevP;          
       JustAddP(prevP,lastPtr,params[i+"_4"]);
       lastPrevP=prevP;
-    } else if (k==7) { 
+    } else if (k==6) { 
       //соединить, удалив тире или дефис
       prevP=params[i+"_2"];    
       if (prevP==lastPtr) prevP=lastPrevP;     
@@ -382,7 +382,7 @@
       if (elementToView==lastPtr) elementToView=prevP;          
       JustAddP(prevP,lastPtr,params[i+"_4"],false);
       lastPrevP=prevP;
-    } else if (k==8) { 
+    } else if (k==7) { 
       //соединить через дефис, или заменив тире на дефис
       prevP=params[i+"_2"];    
       if (prevP==lastPtr) prevP=lastPrevP;     
@@ -416,7 +416,6 @@
       if (elementToView==lastPtr) elementToView=prevP;          
       JustAddP(prevP,lastPtr,params[i+"_4"],false);
       lastPrevP=prevP;     
-      break;
     }
     if (k!=0) changesCnt++;
    }

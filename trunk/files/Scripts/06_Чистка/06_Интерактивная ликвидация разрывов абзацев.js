@@ -2,14 +2,14 @@
 // Автор скрипта: Sclex
 // Сайт скриптов FBE Sclex’а: http://scripts.fictionbook.org
 
-var versionStr="3.2";
+var versionStr="3.4";
 var CutLength=100;
 
 function Run() {
 
  var Ts=new Date().getTime();
- var dialogWidth="640px";
- var dialogHeight="480px";
+ var dialogWidth="800px";
+ var dialogHeight="600px";
 
  try { var nbspChar=window.external.GetNBSP(); var nbspEntity; if (nbspChar.charCodeAt(0)==160) nbspEntity="&nbsp;"; else nbspEntity=nbspChar;}
  catch(e) { var nbspChar=String.fromCharCode(160); var nbspEntity="&nbsp;";}
