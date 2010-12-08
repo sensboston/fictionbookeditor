@@ -404,18 +404,6 @@
       if (elementToView==lastPtr) elementToView=prevP;          
       JustAddP(prevP,lastPtr,params[i+"_4"],false);
       lastPrevP=prevP;     
-    } else if (k==9) { 
-      prevP=params[i+"_2"];    
-      if (prevP==lastPtr) prevP=lastPrevP;     
-      lastPtr=params[i+"_3"];    
-      trimRight(prevP);
-      killHyphen(prevP);
-      trimRight(prevP);
-      trimLeft(lastPtr);
-      if (elementToGo==lastPtr) elementToGo=prevP;
-      if (elementToView==lastPtr) elementToView=prevP;          
-      JustAddP(prevP,lastPtr,params[i+"_4"],false);
-      lastPrevP=prevP;     
     }
     if (k!=0) changesCnt++;
    }
@@ -475,7 +463,7 @@
     resultColl[i]=modes["3_"];
     break;
    case "4":
-    htmlStr+="<INPUT"+(modes["4_"]==0?" checked":"")+" type=radio name=r"+i+" value=0>Не трогать</INPUT><BR><INPUT"+(modes["4_"]==4?" checked":"")+" type=radio name=r"+i+" value=4>Соединить через короткое тире и пробел</INPUT><BR><INPUT"+(modes["4_"]==5?" checked":"")+" type=radio name=r"+i+" value=5>Соединить через длинное тире и пробел</INPUT><BR><INPUT"+(modes["4_"]==8?" checked":"")+" type=radio name=r"+i+" value=9>Считать дефис переносом</INPUT>";   
+    htmlStr+="<INPUT"+(modes["4_"]==0?" checked":"")+" type=radio name=r"+i+" value=0>Не трогать</INPUT><BR><INPUT"+(modes["4_"]==4?" checked":"")+" type=radio name=r"+i+" value=4>Соединить через короткое тире и пробел</INPUT><BR><INPUT"+(modes["4_"]==5?" checked":"")+" type=radio name=r"+i+" value=5>Соединить через длинное тире и пробел</INPUT><BR><INPUT"+(modes["4_"]==8?" checked":"")+" type=radio name=r"+i+" value=6>Соединить, удалив дефис</INPUT>";   
     resultColl[i]=modes["4_"];
     break;
    case "5":

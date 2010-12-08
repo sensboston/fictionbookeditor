@@ -2,7 +2,7 @@
 // Автор скрипта: Sclex
 // Сайт скриптов FBE Sclex’а: http://scripts.fictionbook.org
 
-var versionStr="3.4";
+var versionStr="3.5";
 var CutLength=100;
 
 function Run() {
