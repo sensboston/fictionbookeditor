@@ -2216,7 +2216,7 @@ function MergeContainers(cp,check)
 {
  cp=GetCP(cp); if(!cp) return;
 
- if(cp.className!="section" && cp.className!="stanza") return;
+ if(cp.className!="section" && cp.className!="stanza" && cp.className!="cite") return;
 
  var nx=cp.nextSibling;
 
@@ -2225,6 +2225,11 @@ function MergeContainers(cp,check)
  if(check) return true;
 
  window.external.BeginUndoUnit(document,"merge "+cp.className+"s");
+
+ if(cp.className=="cite") {
+  for (kj=cp.firstChild; kj; kj=kj.nextSibling)
+   if (kj.nodeName=="P" && kj.className=="text-author") kj.removeAttribute("className");
+ }
 
  if(!IsCtSection(cp))
  {
