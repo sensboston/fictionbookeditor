@@ -1,6 +1,6 @@
 //скрипт «Слияние подряд идущих стихов»
 //автор Sclex
-//v1.2
+//v1.3
 
 function Run() {
  //имя тэга, который будет использован для маркеров начала и конца выделения
@@ -101,7 +101,8 @@ function Run() {
    // если нашли текст и находимся внутри P и внутри выделения...
    if (rememberedPoem && ptr.nodeName=="DIV" && ptr.className=="stanza" && InsideSelection &&
        ptr.parentNode && ptr.parentNode.nodeName=="DIV" && ptr.parentNode.className=="poem" &&
-       ptr.parentNode.firstChild==ptr && check(ptr.parentNode.previousSibling,rememberedPoem)) {
+       ptr.parentNode.firstChild==ptr && check(ptr.parentNode.previousSibling,rememberedPoem) &&
+       rememberedPoem.lastChild && rememberedPoem.lastChild.nodeName!="P" && rememberedPoem.lastChild.className!="text-author") {
     el=ptr.parentNode.removeNode(true);
     el=prv.insertAdjacentElement("beforeEnd",el);
     el.removeNode(false);
