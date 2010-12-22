@@ -16,7 +16,7 @@ function Run() {
  try { var nbspChar=window.external.GetNBSP(); var nbspEntity; if (nbspChar.charCodeAt(0)==160) nbspEntity="&nbsp;"; else nbspEntity=nbspChar;}
  catch(e) { var nbspChar=String.fromCharCode(160); var nbspEntity="&nbsp;";}
  var nxt,s;
- var spaceRegExp=new RegExp("[ "+nbspChar+"]","g");
+ var spaceRegExp=new RegExp("[- "+nbspChar+"]","g");
  var body=document.getElementById("fbw_body");
  var coll=body.document.selection.createRange().getClientRects();
  var ttr1 = body.document.selection.createRange();
