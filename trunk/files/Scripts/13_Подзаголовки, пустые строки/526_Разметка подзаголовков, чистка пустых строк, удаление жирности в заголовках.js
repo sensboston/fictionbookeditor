@@ -4,7 +4,7 @@
 function Run() {
  try { var nbspChar=window.external.GetNBSP(); var nbspEntity; if (nbspChar.charCodeAt(0)==160) nbspEntity="&nbsp;"; else nbspEntity=nbspChar;}
  catch(e) { var nbspChar=String.fromCharCode(160); var nbspEntity="&nbsp;";}
- var verStr="v3.9";
+ var verStr="v4.1";
  var DebugMode=0;
  var DestrongTitles=true; //делать ли удаление жирности в заголовках
  var DeitalicTitles=false; //удалять ли курсив в заголовках
@@ -39,11 +39,11 @@ function Run() {
     while (el && el!=savedEl && el.nextSibling==null) el=el.parentNode;
     if (el && el!=savedEl) el=el.nextSibling;
     if (el==savedEl) return;
-   } 
+   }
    if (
-       (destrong && (el.nodeName=="STRONG" || el.nodeName=="B")) 
+       (destrong && (el.nodeName=="STRONG" || el.nodeName=="B"))
        ||
-       (deitalic && (el.nodeName=="EM" || el.nodeName=="I")) 
+       (deitalic && (el.nodeName=="EM" || el.nodeName=="I"))
       ) {
     savedEl2=el.firstChild ? el.firstChild : el.nextSibling;
     el.removeNode(false);
@@ -64,7 +64,7 @@ function Run() {
  }
 
  function Recursive(ptr) {
- 
+
  function removeEmptiesAtEnd(elemName) {
   var a3=a5.lastChild;
   var go_more=true;
@@ -88,8 +88,8 @@ function Run() {
     go_more=false;
    a3=SavePrevA3;
   }
- }  
- 
+ }
+
  function removeEmptiesAtBegin(elemName) {
   var go_more=true;
   var a4=savedFirstEmpty;
@@ -116,7 +116,7 @@ function Run() {
   a4=SaveNextA4;
   }
  }
- 
+
   var savedPtr=ptr;
   if (ptr==null) return;
   var a5=ptr.parentNode;
@@ -171,7 +171,7 @@ function Run() {
    }
    if (ptr.nodeName=="DIV" && ptr.className=="image") {
     if (flag_of_begin && !image_flag) {
-     flag_of_begin=false;    
+     flag_of_begin=false;
      image_flag=true;
     } else if (image_flag) image_flag=false;
    }
@@ -187,9 +187,12 @@ function Run() {
    }
    if (!firstEmptyMemorized && ptr.nodeName=="P" &&
        (ptr.parentNode.className=="epigraph" || ptr.parentNode.className=="poem" ||
-       ptr.parentNode.className=="cite") && isLineEmpty(ptr)) {
-    firstEmptyMemorized=true;
-    savedFirstEmpty=ptr;       
+       ptr.parentNode.className=="cite")) {
+    if (isLineEmpty(ptr)) {
+     firstEmptyMemorized=true;
+     savedFirstEmpty=ptr;
+    }
+    else flag_of_begin=false;
    }
    if (ptr.nodeName=="DIV" &&
       (ptr.className=="table" || ptr.className=="cite" || ptr.className=="poem"))
@@ -303,9 +306,11 @@ function Run() {
   (savedPtr.parentNode.className=="epigraph" ||
    savedPtr.parentNode.className=="cite")) {
    removeEmptiesAtEnd(savedPtr.parentNode.className);
-   if (firstEmptyMemorized)
+   if (savedPtr.parentNode.firstChild && savedPtr.parentNode.firstChild.nodeName=="P" && isLineEmpty(savedPtr.parentNode.firstChild)) {
+    savedFirstEmpty=savedPtr.parentNode.firstChild;
     removeEmptiesAtBegin(savedPtr.parentNode.className);
-  }  
+   }
+  }
  }
 
  function Recursive2(ptr) {
@@ -374,8 +379,8 @@ function Run() {
         '\n– в конце секции: '+EmptyClearedSectionEnd+
         '\n– в начале эпиграфа: '+EmptyClearedEpigraphBegin+
         '\n– в конце эпиграфа: '+EmptyClearedEpigraphEnd+
-        '\n– в начале цитаты: '+EmptyClearedEpigraphBegin+
-        '\n– в конце цитаты: '+EmptyClearedEpigraphEnd+
+        '\n– в начале цитаты: '+EmptyClearedCiteBegin+
+        '\n– в конце цитаты: '+EmptyClearedCiteBegin+
         '\n– в начале заголовка: '+EmptyClearedTitleBegin+
         '\n– в конце заголовка: '+EmptyClearedTitleEnd+
         '\n– посреди заголовка: '+EmptyClearedTitleInside+
