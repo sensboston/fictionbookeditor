@@ -4,7 +4,7 @@
 function Run() {
  try { var nbspChar=window.external.GetNBSP(); var nbspEntity; if (nbspChar.charCodeAt(0)==160) nbspEntity="&nbsp;"; else nbspEntity=nbspChar;}
  catch(e) { var nbspChar=String.fromCharCode(160); var nbspEntity="&nbsp;";}
- var verStr="v4.1";
+ var verStr="v4.2";
  var DebugMode=0;
  var DestrongTitles=true; //делать ли удаление жирности в заголовках
  var DeitalicTitles=true; //удалять ли курсив в заголовках
@@ -39,11 +39,11 @@ function Run() {
     while (el && el!=savedEl && el.nextSibling==null) el=el.parentNode;
     if (el && el!=savedEl) el=el.nextSibling;
     if (el==savedEl) return;
-   } 
+   }
    if (
-       (destrong && (el.nodeName=="STRONG" || el.nodeName=="B")) 
+       (destrong && (el.nodeName=="STRONG" || el.nodeName=="B"))
        ||
-       (deitalic && (el.nodeName=="EM" || el.nodeName=="I")) 
+       (deitalic && (el.nodeName=="EM" || el.nodeName=="I"))
       ) {
     savedEl2=el.firstChild ? el.firstChild : el.nextSibling;
     el.removeNode(false);
@@ -64,7 +64,7 @@ function Run() {
  }
 
  function Recursive(ptr) {
- 
+
  function removeEmptiesAtEnd(elemName) {
   var a3=a5.lastChild;
   var go_more=true;
@@ -88,8 +88,8 @@ function Run() {
     go_more=false;
    a3=SavePrevA3;
   }
- }  
- 
+ }
+
  function removeEmptiesAtBegin(elemName) {
   var go_more=true;
   var a4=savedFirstEmpty;
@@ -116,7 +116,7 @@ function Run() {
   a4=SaveNextA4;
   }
  }
- 
+
   var savedPtr=ptr;
   if (ptr==null) return;
   var a5=ptr.parentNode;
@@ -124,6 +124,7 @@ function Run() {
   var flag_of_begin=true;
   var firstEmptyMemorized=false;
   var image_flag=false;
+  var image_flag_2=false;
   var savedFirstEmpty=null;
   while (ptr!=null) {
    var SaveNextPtr=ptr.nextSibling;
@@ -171,8 +172,9 @@ function Run() {
    }
    if (ptr.nodeName=="DIV" && ptr.className=="image") {
     if (flag_of_begin && !image_flag) {
-     flag_of_begin=false;    
+     flag_of_begin=false;
      image_flag=true;
+     image_flag_2=true;
     } else if (image_flag) image_flag=false;
    }
    if (ptr.nodeName=="P" && ptr.parentNode.className=="section") {
@@ -185,7 +187,7 @@ function Run() {
      flag_of_begin=false;
     }
    }
-   if (!firstEmptyMemorized && ptr.nodeName=="P" &&
+   if (!firstEmptyMemorized && flag_of_begin && ptr.nodeName=="P" &&
        (ptr.parentNode.className=="epigraph" || ptr.parentNode.className=="poem" ||
        ptr.parentNode.className=="cite")) {
     if (isLineEmpty(ptr)) {
@@ -296,9 +298,14 @@ function Run() {
        savedFirstEmpty.previousSibling.className!="image")) || savedFirstEmpty.nextSibling)
     //чистка пустых строк в конце секции
     removeEmptiesAtEnd("section");
-   var a3=a5.lastChild;
-   if (firstEmptyMemorized && a3!=savedFirstEmpty)
-    if (!savedFirstEmpty.nextSibling || savedFirstEmpty.nextSibling.className!="image")
+   a3=a5.lastChild;
+   if (firstEmptyMemorized && savedFirstEmpty.nextSibling)
+    if (image_flag_2 ?
+        savedFirstEmpty.nextSibling.className!="image" :
+        !(savedFirstEmpty.nextSibling.className=="image" && savedFirstEmpty.nextSibling.nextSibling &&
+          savedFirstEmpty.nextSibling.nextSibling.className=="image"
+         ) && !(savedFirstEmpty.nextSibling.className=="image" && !savedFirstEmpty.nextSibling.nextSibling)
+       )
      //чистка пустых строк в начале секции
      removeEmptiesAtBegin("section");
   }
@@ -306,10 +313,7 @@ function Run() {
   (savedPtr.parentNode.className=="epigraph" ||
    savedPtr.parentNode.className=="cite")) {
    removeEmptiesAtEnd(savedPtr.parentNode.className);
-   if (savedPtr.parentNode.firstChild && savedPtr.parentNode.firstChild.nodeName=="P" && isLineEmpty(savedPtr.parentNode.firstChild)) {
-    savedFirstEmpty=savedPtr.parentNode.firstChild;
-    removeEmptiesAtBegin(savedPtr.parentNode.className);
-   } 
+   removeEmptiesAtBegin(savedPtr.parentNode.className);
   }
  }
 
