@@ -1,5 +1,5 @@
 //Скрипт «Поиск по набору регэкспов»
-//Версия 2.4
+//Версия 2.5
 //Автор Sclex
 
 function Run() {
@@ -76,12 +76,18 @@ function Run() {
  var errorList="";
  var checkTagStrRE=new RegExp("^(([-+](section|body|epigraph|cite|poem|stanza|title|subtitle|text-author))([ \t]+?[-+](section|body|epigraph|cite|poem|stanza|title|subtitle|text-author))*?|^$)$","i");
  var findTagRE=new RegExp("(^| )([-+])(section|body|epigraph|cite|poem|stanza|title|subtitle|text-author)(?= |$)","ig");
+ var find_xA0=new RegExp("((\\\\)+?)xA0","ig");
 
  function replaceMacroses(full_match, brackets1, offset_of_match, string_we_search_in) {
   if (macroses[full_match.toLowerCase()])
    return macroses[full_match.toLowerCase()];
   else
    return full_match;
+ }
+
+ function replaceA0(full_match, brackets1, offset_of_match, string_we_search_in) {
+  if (brackets1.length%2==1) return nbspChar;
+  else return full_match;
  }
 
  function addRegExp(re_,keys,desc,inWhatTags) {
@@ -102,11 +108,11 @@ function Run() {
      if (ch=="\\") i+=2;
      else i++;
     }
-    lookBeh[lookBehCnt]=new RegExp(re_.substring(begin+4,i-1).replace(/ /g,nbspChar),"g"+(keys?keys:""));
+    lookBeh[lookBehCnt]=new RegExp(re_.substring(begin+4,i-1).replace(/ /g,nbspChar).replace(find_xA0,replaceA0),"g"+(keys?keys:""));
     posit[lookBehCnt]=re_.substr(begin,4)=="(?<=";
     lookBehCnt++;
    }
-   re=new RegExp(re_.substr(i).replace(/ /g,nbspChar),"g"+(keys?keys:""));
+   re=new RegExp(re_.substr(i).replace(/ /g,nbspChar).replace(find_xA0,replaceA0),"g"+(keys?keys:""));
    if (inWhatTags && inWhatTags.search(checkTagStrRE)<0) throw(true);
   }
   catch(e) {
@@ -143,11 +149,11 @@ function Run() {
      if (ch=="\\") i+=2;
      else i++;
     }
-    lookBeh[lookBehCnt]=new RegExp(re_.substring(begin+4,i-1).replace(/ /g,nbspChar).replace(macrosNameRE_2,replaceMacroses),"g"+(keys?keys:""));
+    lookBeh[lookBehCnt]=new RegExp(re_.substring(begin+4,i-1).replace(/ /g,nbspChar).replace(find_xA0,replaceA0).replace(macrosNameRE_2,replaceMacroses),"g"+(keys?keys:""));
     posit[lookBehCnt]=re_.substr(begin,4)=="(?<=";
     lookBehCnt++;
    }
-   re=new RegExp(re_.substr(i).replace(/ /g,nbspChar).replace(macrosNameRE_2,replaceMacroses),"g"+(keys?keys:""));  
+   re=new RegExp(re_.substr(i).replace(/ /g,nbspChar).replace(find_xA0,replaceA0).replace(macrosNameRE_2,replaceMacroses),"g"+(keys?keys:""));  
    if (inWhatTags && inWhatTags.search(checkTagStrRE)<0) throw(true);
   }
   catch(e) {
@@ -257,13 +263,13 @@ function Run() {
    errorList+=(errorList==""?"":"\n")+"addMacros(\""+macrosName+"\",\""+macrosRE+"\"); //неверное имя макроса"
   macrosRE_=macrosRE.replace(macrosNameRE_2,replaceMacroses);
   try {
-   re=new RegExp("("+macrosRE_.replace(/ /g,nbspChar)+")","g");
+   re=new RegExp("("+macrosRE_.replace(/ /g,nbspChar).replace(find_xA0,replaceA0)+")","g");
   }
   catch(e) {
    errorList+=(errorList==""?"":"\n")+"addMacros(\""+macrosName+"\",\""+macrosRE+"\"); // ошибка при компиляции регэкспа";
    return;
   }
-  macroses[macrosName.toLowerCase()]="("+macrosRE_.replace(/ /g,nbspChar)+")";
+  macroses[macrosName.toLowerCase()]="("+macrosRE_.replace(/ /g,nbspChar).replace(find_xA0,replaceA0)+")";
  }
 
  for (i in macroses) delete macroses[i];
