@@ -328,7 +328,7 @@ function Run() {
   tr2.setEndPoint("EndToEnd",tr);
   s1_len=tr2.text.length;
   s=el.innerHTML.replace(removeTagsRE,removeTagsRE_).replace(imgTagRE,imgTagRE_).replace(ltRE,ltRE_).replace(gtRE,gtRE_).replace(ampRE,ampRE_).replace(nbspRE,nbspRE_);
-  s1_html_len=tr2.htmlText.length;
+  s1_html_len=tr2.htmlText.replace(/\s{2,}/g," ").length;
   s_html=el.innerHTML;
  }
  while (el && el!=fbwBody) {
