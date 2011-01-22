@@ -182,12 +182,12 @@ function scrollOneLineUp() {
 }
 
 function readMode_onKeyDown() {
- //alert("readMode_onKeyDown");
  var c=event.keyCode;
  var fbw_body=document.getElementById("fbw_body");
  //40 = ArrowDown
  if (c==40) {
   scrollOneLineDown();
+  event.cancelBubble=true;
   return false;
  }
  //39 = ArrowRight
@@ -195,11 +195,13 @@ function readMode_onKeyDown() {
   scrollOneLineDown();
   scrollOneLineDown();
   scrollOneLineDown();
+  event.cancelBubble=true;
   return false;
  }
  //38 = ArrowUp
  if (c==38) {
   scrollOneLineUp();
+  event.cancelBubble=true;
   return false;
  }
  //37 = ArrowLeft
@@ -207,6 +209,7 @@ function readMode_onKeyDown() {
   scrollOneLineUp();
   scrollOneLineUp();
   scrollOneLineUp();
+  event.cancelBubble=true;
   return false;
  }
 }
