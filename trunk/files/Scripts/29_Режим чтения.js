@@ -4,7 +4,7 @@ function readMode_onClick(e) {
  var el=event.srcElement;
  myX=event.clientX;
  myY=event.clientY;
- var tr=document.body.createTextRange(); 
+ var tr=document.body.createTextRange();
  tr.moveToPoint(myX,myY);
  fbw_body.setAttribute("contentEditable","true");
  tr.select();
@@ -25,25 +25,25 @@ function scrollOneLineDown() {
   r=el.getBoundingClientRect();
   n=0;
   while (lft<rgt) {
-   n=Math.round((lft+rgt-1)/2);
+   n=Math.floor((lft+rgt-1)/2);
    tmpEl=el.children[n];
    r=tmpEl.getBoundingClientRect();
    if (!r) {
     alert("r==null N1");
     return false;
-   } 
+   }
    //alert("lft:"+lft+"\n"+
          //"rgt:"+rgt+"\n"+
          //"n:"+n+"\n"+
          //"r.top:"+r.top+"\n"+
          //"r.bottom:"+r.bottom+"\n"+
          //"tmpEl: "+tmpEl.outerHTML+"\n");
-   if (r.top<0 && r.bottom<0) lft=n+1;
+   if (r.top<0 && r.bottom<=0) lft=n+1;
    else if (r.top>0 && r.bottom>0) rgt=n;
-   else if (r.top==0 || (r.top<0 && r.bottom>=0)) {lft=n; rgt=n;}
+   else if (r.top==0 || (r.top<0 && r.bottom>0)) {lft=n; rgt=n;}
    firstTime=false;
   }
-  el=el.children[lft]; 
+  el=el.children[lft];
  }
  //alert("el.outerHTML final: "+el.outerHTML+"\n"+
        //"r.top:"+r.top+"\n"+
@@ -58,7 +58,7 @@ function scrollOneLineDown() {
    if (!r) {
     alert("r==null N2");
     return false;
-   } 
+   }
    //alert("tmpEl: "+tmpEl.outerHTML+"\n"+
          //"lft:"+lft+"\n"+
          //"rgt:"+rgt+"\n"+
@@ -95,7 +95,7 @@ function scrollOneLineDown() {
  rects=el.getClientRects();
  r=rects[0];
  window.scrollBy(0,r.top);
- return; 
+ return;
 }
 
 function scrollOneLineUp() {
@@ -117,7 +117,7 @@ function scrollOneLineUp() {
    if (!r) {
     alert("r==null N3");
     return false;
-   } 
+   }
    //alert("lft:"+lft+"\n"+
          //"rgt:"+rgt+"\n"+
          //"n:"+n+"\n"+
@@ -129,7 +129,7 @@ function scrollOneLineUp() {
    else if (r.top==0 || (r.top<0 && r.bottom>=0)) {lft=n; rgt=n;}
    firstTime=false;
   }
-  el=el.children[lft]; 
+  el=el.children[lft];
  }
  //alert("el.outerHTML final: "+el.outerHTML+"\n"+
        //"r.top:"+r.top+"\n"+
@@ -145,7 +145,7 @@ function scrollOneLineUp() {
    if (!r) {
     alert("r==null N4");
     return false;
-   } 
+   }
    //alert("tmpEl: "+tmpEl.outerHTML+"\n"+
          //"lft:"+lft+"\n"+
          //"rgt:"+rgt+"\n"+
@@ -177,8 +177,8 @@ function scrollOneLineUp() {
  }
  rects=el.getClientRects();
  r=rects[rects.length-1];
- window.scrollBy(0,r.top+1);    
- return; 
+ window.scrollBy(0,r.top);
+ return;
 }
 
 function readMode_onKeyDown() {
