@@ -28,7 +28,7 @@ function readMode_onClick(e) {
  myY=event.clientY;
  var tr=document.body.createTextRange();
  tr.moveToPoint(myX,myY);
- fbw_body.setAttribute("contentEditable","true");
+ //fbw_body.setAttribute("contentEditable","true");
  tr.select();
  fbw_body.onclick=null;
  fbw_body.onkeydown=null;
@@ -257,7 +257,7 @@ function readMode_onMouseWheel() {
 
 function Run() {
  var fbw_body=document.getElementById("fbw_body");
- fbw_body.setAttribute("contentEditable","false");
+ //fbw_body.setAttribute("contentEditable","false");
  fbw_body.onclick=readMode_onClick;
  fbw_body.onkeydown=readMode_onKeyDown;
  fbw_body.onmousewheel=readMode_onMouseWheel;
