@@ -1,3 +1,6 @@
+//скрипт «Режим чтения», автор Sclex
+//версия 1.1
+
 var readMode_history=[];
 
 function readMode_onClick(e) {
