@@ -1,0 +1,184 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+ "http://www.w3.org/TR/html4/loose.dtd">
+<HTML style="height:100%;">
+<HEAD>
+<TITLE>Разметка подписей к картинкам</TITLE>
+<META http-equiv="X-UA-Compatible" content="IE=6">
+<META http-equiv="Content-Type" content="text/html; charset=utf-8">
+<META http-equiv="MSThemeCompatible" content="yes">
+<STYLE type="text/css">
+ BODY {font-family:Tahoma; font-size:12px; color:ButtonText; background-color:ThreeDFace;}
+ INPUT {font-family:Tahoma; font-size:12px;}
+ P {padding:0; margin:0;}
+</STYLE>
+<SCRIPT type="text/javascript">
+var p;
+var fbwBody=window.dialogArguments["fbwBody"];
+var mainDoc=window.dialogArguments["mainDocument"];
+var mainWin=window.dialogArguments["window"];
+var nbspChar=window.dialogArguments["nbspChar"];
+document.title=document.title+" v"+window.dialogArguments["versionNum"];
+var ptr="nothing";
+var buttonsChanged=false;
+var oldLength=100;
+
+function byId(ID) {
+ return document.getElementById(ID);
+}
+
+function closePopup() {
+ p.hide();
+}
+
+function startFromBegin() {
+ mainWin.prkk_ptr=fbwBody.firstChild;
+ mainWin.prkk_doSearch(document,window,getMarkupType());
+}
+
+function keys() {
+ if (event.keyCode==27) window.close();
+ if (String.fromCharCode(event.keyCode)=="K") startFromCursor(); 
+ if (String.fromCharCode(event.keyCode)=="L" && !buttonsChanged) startFromBegin();
+ if (String.fromCharCode(event.keyCode)=="L" && buttonsChanged)
+  mainWin.prkk_markupImageTitleAndGoFurther(document,window,getMarkupType());
+ if (String.fromCharCode(event.keyCode)=="A")
+  mainWin.processAll(document,window,getMarkupType());;
+}
+
+function showHelp(a,width,height) {
+ p=createPopup();
+ if (a==1)
+  p.document.body.innerHTML="<P style='padding:0; margin:0;'>Абзацы, длина которых меньше или равна заданного пользователем значения и которые не оканчиваются точкой, многоточием, восклицательным или вопросительным знаком, будут размечены как подписи автоматически, без запроса подтверждения. (Но не сразу, а по мере того, как позиция обработки будет миновать эти абзацы.)</P>";
+ else if (a==2) 
+  p.document.body.innerHTML="<P style='padding:0; margin:0;'>Можно использовать горячие клавиши:<BR>&nbsp;&nbsp;&nbsp;Старт от курсора – K<BR>&nbsp;&nbsp;&nbsp;Старт от начала – L<BR>&nbsp;&nbsp;&nbsp;Закрыть – Esc</P>";
+ else if (a==3) 
+  p.document.body.innerHTML="<P style='padding:0; margin:0;'>Можно использовать горячие клавиши:<BR>&nbsp;&nbsp;&nbsp;Искать дальше – K<BR>&nbsp;&nbsp;&nbsp;Это подпись – L<BR>&nbsp;&nbsp;&nbsp;Заменить все – A<BR>&nbsp;&nbsp;&nbsp;Закрыть – Esc</P>";  
+ p.document.body.style.margin="0";
+ p.document.body.style.padding="6px 10px 6px 10px";
+ p.document.body.style.fontFamily="Tahoma";
+ p.document.body.style.fontSize="13px";
+ p.document.body.style.backgroundColor="InfoBackground";
+ p.document.body.style.color="InfoText";
+ p.document.body.style.border="1px solid black";
+ p.document.body.onclick=closePopup;
+ p.show(event.screenX,event.screenY+10,width,height);
+}
+
+function setCookie(name, value, expires, path, domain, secure) {
+ var curCookie = name + "=" + escape(value) +
+  ((expires) ? "; expires=" + expires.toGMTString() : "") +
+  ((path) ? "; path=" + path : "") +
+  ((domain) ? "; domain=" + domain : "") +
+  ((secure) ? "; secure" : "")
+  if ((name + "=" + escape(value)).length <= 4000)
+   document.cookie = curCookie;
+  else
+   alert("Cookie превышает 4KB и будет вырезан !");
+}
+
+function getCookie(name) {
+        var prefix = name + "="
+        var cookieStartIndex = document.cookie.indexOf(prefix)
+        if (cookieStartIndex == -1)
+                return null
+        var cookieEndIndex = document.cookie.indexOf(";", cookieStartIndex + prefix.length)
+        if (cookieEndIndex == -1)
+                cookieEndIndex = document.cookie.length
+        return unescape(document.cookie.substring(cookieStartIndex + prefix.length, cookieEndIndex))
+}
+
+var cookieDate=new Date(2100,1,1);
+
+function getMarkupType() {
+ var s;
+ s= byId("inp_1").checked?"1":"0";
+ s+=byId("inp_2").checked?"1":"0";
+ s+=byId("inp_3").checked?"1":"0";
+ s+=byId("inp_4").checked?"1":"0";
+ s+=byId("inp_5").checked?"1":"0";
+ return s;
+}
+
+function cbClick() {
+ setCookie("prkk3",getMarkupType(),cookieDate);
+}
+
+function checkLength() {
+ var newLength=byId("LenInp").value;
+ if (oldLength!=newLength && newLength.search(/^[0-9]+?$/)>=0) {
+  setCookie('prkk2',newLength,cookieDate);
+  oldLength=newLength;
+  mainWin.prkk_lenLimit=eval(newLength);
+ }
+}
+
+function startFromCursor() {
+ if (mainDoc.selection.type=="None" || mainDoc.selection.type=="Text") {
+  var tr=mainDoc.selection.createRange();
+  if (!tr) {
+   alert("Нет курсора.");
+   return;
+  }
+  tr.collapse(false);
+  /*var tr2=tr.duplicate();
+  tr2.moveToElementText(tr.parentElement());
+  tr2.setEndPoint("EndToEnd",tr);*/
+  mainWin.prkk_ptr=tr.parentElement();
+  /*if (tr2.text.replace(/[ \\n\\r]+/," ").replace(/<\/?P\b[^>]*?>/i,"")==tr.parentElement().innerText.replace(/[ \\n\\r]+/," ")) {
+   while (ptr!=fbwBody && ptr.nextSibling==null) ptr=ptr.parentNode;
+   if (ptr!=fbwBody) ptr=ptr.nextSibling;
+  }*/
+ } else if (mainDoc.selection.type=="Control") {
+  ptr=mainDoc.selection.createRange()(0);
+  while (ptr!=fbwBody && ptr.nextSibling==null) ptr=ptr.parentNode;
+  if (ptr!=fbwBody) ptr=ptr.nextSibling;
+  mainWin.prkk_ptr=ptr;
+ } else return;
+ mainWin.prkk_doSearch(document,window,getMarkupType());
+}
+</SCRIPT>
+</HEAD>
+<BODY onkeydown="keys();" style="height:100%;">
+<TABLE border=0 style="width:100%; height:100%;" cellpadding=0 cellspacing=0>
+<TR>
+<TD valign=middle>
+<P style="text-align:center;">
+ <INPUT type=checkbox id=inp_1 onclick="cbClick();"><b>b</b>
+ <INPUT type=checkbox id=inp_2 onclick="cbClick();"><i>i</i>
+ <INPUT type=checkbox id=inp_3 onclick="cbClick();">x<sup>2</sup>
+ <INPUT type=checkbox id=inp_4 onclick="cbClick();">x<sub>2</sub>
+ <INPUT type=checkbox id=inp_5 onclick="cbClick();" checked>subtitle
+ &nbsp;Ограничение длины: <INPUT type=text maxlength=6 style="width:50px;" value=200 id=LenInp><SPAN onclick="showHelp(1,300,145);" style="color: blue;">[?]</SPAN>
+</P>
+<SCRIPT type="text/javascript">
+ byId("inp_1").hideFocus=true;
+ byId("inp_2").hideFocus=true;
+ byId("inp_3").hideFocus=true;
+ byId("inp_4").hideFocus=true;
+ byId("inp_5").hideFocus=true;
+ var aa=getCookie("prkk2");
+ if (aa) {
+  oldLength=aa;
+  byId("LenInp").value=aa;
+  mainWin.prkk_lenLimit=eval(aa);
+ }
+ var aa=getCookie("prkk3");
+ if (aa && aa.length==5 && /[01][01][01][01][01]/.test(aa)) {
+  byId("inp_1").checked = aa.charAt(0)=="1";
+  byId("inp_2").checked = aa.charAt(1)=="1";
+  byId("inp_3").checked = aa.charAt(2)=="1";
+  byId("inp_4").checked = aa.charAt(3)=="1";
+  byId("inp_5").checked = aa.charAt(4)=="1";
+ }
+ setInterval("checkLength();",100);
+</SCRIPT>
+</TD>
+</TR>
+<TR>
+<TD valign=middle>
+<P style="text-align:center;" id=ButtonsP><INPUT type=button value="Старт от курсора" onclick="startFromCursor();" style="height:30px; width:120px;"> <INPUT type=button value="Старт от начала" onclick="startFromBegin();" style="height:30px; width:120px;"> <INPUT type=button value="Закрыть" style="height:30px; width:70px;" onclick="window.close();"><SPAN onclick="showHelp(2,270,80);" style="color: blue;">[?]</SPAN></P>
+</TD>
+</TR>
+</TABLE>
+</BODY>
+</HTML>
