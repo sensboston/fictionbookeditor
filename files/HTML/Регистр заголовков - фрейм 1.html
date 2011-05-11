@@ -9,7 +9,7 @@ body {font-family:monospace; font-size:16px; padding:0; margin:0; height:100%;}
 .s, .s1 {background-color:bisque;} /*с единичкой - наружный SPAN*/
 .t, .t1 {background-color:palegreen; height:100%;}
 .delim {height:2px; width:100%; background-color:#B0B0B0; overflow:hidden; margin:0; padding:0;}
-.d1 {maring:0; padding:0;}
+.d1 {margin:0; padding:0;}
 .sup {vertical-align:75%;}
 .s_, .t_ {background-color:yellow;} /*выделенный элемент*/
 </style>
@@ -26,33 +26,233 @@ var mainDoc=params["document"];
 var mainWin=params["window"];
 var bodySectTitles,poemCiteTitles,noteCommentBodies,sectSubtitles,poemCiteSubtitles;
 var textRE=new RegExp("[^<>]+(?=$|<)","g");
+var buttonPressed=false;
+var clickTr=null, clickSpan=null, clickTrNode=null;
+var selBeginTr=null, selBeginSpan=null, selBeginTrNode=null;
+var selEndTr=null, selEndSpan=null, selEndTrNode=null;
+var menu=null;
+var menuFlag=false;
 
 function showMsg(s) {
  document.getElementById("elems").innerHTML="<table style='width:100%; height:100%;'><tr><td style='vertical-align: middle; text-align:center;'>"+s+"</td></tr></table>";
 }
 
-function onMouseOver2() {
- if (event.srcElement.className.search(/\b[ts]\b/i)>=0) {
-  if (old) old.className.replace(/\b([ts])_(?![\da-z_])/i,"$1");
-  old=event.srcElement;
-  old.className=old.className.replace(/\b([ts])\b/i,"$1_");
+function capturedMouse() {
+ if (event.type=="mouseup") {
+  document.getElementById("mouseCaptureSpan").releaseCapture();
+  myMouseUp();
+  return true;
+ } 
+}
+
+function changeCaseOfSel(nn) {
+ if (nn=="allBig" || nn=="allSmall") { 
+  var func;
+  if (nn=="allBig") func=makeUpperCase;
+  if (nn=="allSmall") func=makeLowerCase;
+  if (selBeginTr<selEndTr || (selBeginTr==selEndTr && selBeginSpan<selEndSpan)) 
+   setSpanState(selBeginTrNode,selBeginSpan,selEndTrNode,selEndSpan,func);
+  else 
+   setSpanState(selEndTrNode,selEndSpan,selBeginTrNode,selBeginSpan,func);
+ }
+}
+
+function popupUnload() {
+ if (selBeginTr<selEndTr || (selBeginTr==selEndTr && selBeginSpan<selEndSpan))
+  setSpanState(selBeginTrNode,selBeginSpan,selEndTrNode,selEndSpan,makeUnactive);
+ else 
+  setSpanState(selEndTrNode,selEndSpan,selBeginTrNode,selBeginSpan,makeUnactive);
+ buttonPressed=false;
+ selBeginTr=null;
+ selBeginTrNode=null;
+ selBeginSpan=null;
+ selEndTr=null;
+ selEndTrNode=null;
+ selEndSpan=null;
+ menuFlag=false;
+}
+
+function contextMenu() {
+ menu=window.createPopup();
+ menu.document.body.style.height="100%";
+ menu.document.body.style.margin="0";
+ menu.document.body.style.padding="0";
+ menu.document.body.onunload=popupUnload;
+ menu.document.body.innerHTML=
+  "<div style='height:100%; border:1px inset black; background-color:white; font-family:tahoma; font-size:13px; margin:0;'>"+
+   "<div onmouseover='this.style.backgroundColor=\"yellow\";' onmouseout='this.style.backgroundColor=\"white\";' onclick='parent.changeCaseOfSel(\"allBig\"); if (parent.menu.hide) parent.menu.hide();' style='width:100%; padding:2px; margin:0;'>"+
+    "<p style='padding:0; margin:0;'>Большие буквы</p>"+
+   "</div>"+
+   "<div onmouseover='this.style.backgroundColor=\"yellow\";' onmouseout='this.style.backgroundColor=\"white\";' onclick='parent.changeCaseOfSel(\"allSmall\"); if (parent.menu.hide) parent.menu.hide();' style='width:100%; padding:2px; margin:0;'>"+
+    "<p style='padding:0; margin:0;'>Маленькие буквы</p>"+
+   "</div>"+
+  "</div>";
+ menuFlag=true;
+ menu.show(event.screenX, event.screenY, 150, 48);
+}
+
+function getClickPos() {
+ clickTr=null;
+ clickSpan=null;
+ var el=event.srcElement;
+ if (el.nodeName=="SPAN" && el.className.search(/^[ts](?!1)_?$/i)>=0) {
+  var ee=el;
+  var k=1;
+  while (ee.nodeName!="P") {
+   if (ee.lastChild) {
+    ee=ee.lastChild;
+    if (ee.nodeName=="SPAN" && el.className.search(/^[ts](?!1)_?$/i)>=0) k++;
+   }
+   else {
+    while (ee.previousSibling==null && ee.nodeName!="P") ee=ee.parentNode;
+    if (ee.nodeName!="P") ee=ee.previousSibling;
+    if (ee.nodeName=="SPAN" && el.className.search(/^[ts](?!1)_?$/i)>=0) k++;
+   } 
+  }
+  clickSpan=k;
+  ee=el;   
+  while (ee.nodeName!="BODY" && ee.nodeName!="TR") ee=ee.parentNode;  
+  if (ee.nodeName=="TR") {
+   var n=ee.getAttribute("n");
+   if (n) {
+    clickTr=eval(n);
+    clickTrNode=ee;
+   }
+  }  
+ }
+} 
+
+function makeActive(el) {
+ el.className=el.className.charAt(0)+"_";
+}
+
+function makeUnactive(el) {
+ el.className=el.className.charAt(0);
+}
+
+function makeUpperCase(el) {
+ var h=el.innerHTML;
+ if (h!="&nbsp;" && h!="&lt;" && h!="&gt;" && h!=" ")
+  el.innerHTML=h.toUpperCase();
+}
+
+function makeLowerCase(el) {
+ var h=el.innerHTML;
+ if (h!="&nbsp;" && h!="&lt;" && h!="&gt;" && h!=" ")
+  el.innerHTML=h.toLowerCase();
+}
+
+function setSpanState(beginNode, beginSpan, endNode, endSpan, action) {
+ var aa=beginNode;
+ var inside=false;
+ var spanCnt, dd;
+ while (aa) {
+  if (aa.getAttribute("n")) {
+   dd=aa.firstChild;  
+   spanCnt=0;   
+   while (dd.nodeName!="TR") {
+    if (dd.firstChild)
+     dd=dd.firstChild;
+    else {
+     while (dd.nextSibling==null && dd.nodeName!="TR") dd=dd.parentNode;
+     if (dd.nextSibling && dd.nodeName!="TR") {
+      dd=dd.nextSibling;
+     } 
+    } 
+    if (dd.nodeName=="SPAN" && dd.className.search(/^[ts](?!1)_?$/i)>=0) {
+     spanCnt++;
+     if (aa==beginNode && spanCnt==beginSpan) inside=true;
+     if (inside==true) action(dd);
+     if (aa==endNode && spanCnt==endSpan) inside="end";
+    }
+   }
+   if (inside=="end") break;
+  }
+  aa=aa.nextSibling;
+ }
+}
+
+function myMouseOver() {
+ if (!buttonPressed || menuFlag) return;
+ var e=event.srcElement;
+ if (!e) return;
+ if (e.nodeName!="SPAN" || e.className.search(/^\b[ts](?!1)_?$/i)<0) return;
+ getClickPos();
+ if (clickTr && clickSpan) {
+  if (selBeginTr<selEndTr || (selBeginTr==selEndTr && selBeginSpan<selEndSpan)) {
+   if (clickTr<selBeginTr || (clickTr==selBeginTr && clickSpan<selBeginSpan)) {
+    setSpanState(selBeginTrNode,selBeginSpan,selEndTrNode,selEndSpan,makeUnactive);
+    setSpanState(clickTrNode,clickSpan,selBeginTrNode,selBeginSpan,makeActive);
+   }
+   else if (clickTr>selEndTr || (clickTr==selEndTr && clickSpan>selEndSpan)) {
+    setSpanState(selEndTrNode,selEndSpan,clickTrNode,clickSpan,makeActive);
+   }
+   else {
+    setSpanState(clickTrNode,clickSpan,selEndTrNode,selEndSpan,makeUnactive);
+    setSpanState(clickTrNode,clickSpan,clickTrNode,clickSpan,makeActive);
+   }
+  }
+  else {
+   // конец выделения "левее" начала выделения
+   if (clickTr<selEndTr || (clickTr==selEndTr && clickSpan<selEndSpan)) {
+    setSpanState(clickTrNode,clickSpan,selEndTrNode,selEndSpan,makeActive);
+   }
+   else if (clickTr>selBeginTr || (clickTr==selBeginTr && clickSpan>selBeginSpan)) {
+    setSpanState(selEndTrNode,selEndSpan,selBeginTrNode,selBeginSpan,makeUnactive);
+    setSpanState(selBeginTrNode,selBeginSpan,clickTrNode,clickSpan,makeActive);
+   }
+   else {
+    setSpanState(selEndTrNode,selEndSpan,clickTrNode,clickSpan,makeUnactive);
+    setSpanState(clickTrNode,clickSpan,clickTrNode,clickSpan,makeActive);
+   }  
+  }
+  selEndTr=clickTr;
+  selEndSpan=clickSpan;
+  selEndTrNode=clickTrNode;
  }
 }
 
 function a(b) {
+ if (buttonPressed || menuFlag) return;
  if (old) old.className.replace(/\b([ts])_(?![\da-z_])/i,"$1");
  b.className=b.className.replace(/\b([ts])\b/i,"$1_");
  old=b;
 }
 
 function c(d) {
+ if (buttonPressed || menuFlag) return;
  d.className=d.className.replace(/\b([ts])_(?![\da-z_])/i,"$1");
  old=null;
 }
 
-function onClick() {
+function myMouseDown() {
+ if (menuFlag) return;
+ if (event.button==1) {
+  var e=event.srcElement;
+  if (e.nodeName!="SPAN" || e.className.search(/^\b[ts](?!1)_?$/i)<0) return; 
+  buttonPressed=true;
+  getClickPos();
+  if (clickTr && clickSpan) {
+   selBeginTr=clickTr;
+   selBeginSpan=clickSpan;
+   selBeginTrNode=clickTrNode;
+   selEndTr=clickTr;
+   selEndSpan=clickSpan;
+   selEndTrNode=clickTrNode;
+  }
+  document.getElementById("mouseCaptureSpan").setCapture(true);
+ }
+}
+
+function myMouseUp() {
+ if (selBeginTr && selEndTr && selBeginSpan && selEndSpan) {
+  if (selBeginTr!=selEndTr || (selBeginTr==selEndTr && selBeginSpan!=selEndSpan)) {
+   contextMenu();
+   return;
+  }
+ }
  e=event.srcElement;
- if (e.className.search(/\b[ts](?!1)_?/i)>=0) {
+ if (event.button==1 && e.className.search(/\b[ts](?!1)_?/i)>=0) {
   var h=e.innerHTML;
   if (h!="&nbsp;" && h!="&lt;" && h!="&gt;" && h!=" ") {
    if (h.toLowerCase()==h)
@@ -60,6 +260,7 @@ function onClick() {
    else
     e.innerHTML=h.toLowerCase();
   }
+  buttonPressed=false;
  }
 }
 
@@ -85,6 +286,7 @@ function getElementText(k) {
  saveU=k;
  k=k.firstChild;
  elText="";
+ if (k.nodeType==1) elText+=getOpening(k);
  while (k && k!=saveU) {
   if (k.nodeType==3) elText+=k.nodeValue;
   if (k.firstChild) {
@@ -202,13 +404,12 @@ function findElements(t1,t2,t3,t4,t5) {
 
 function findElements2() {
  elementsInAll=0;
- htmlStr="<table>";
+ htmlStr="";
  nCnt=0;
  findElementsRec(fbwBody);
- htmlStr+="</table>";
  //alert(htmlStr);
- if (htmlStr!="<table></table>")
-  document.getElementById("elems").innerHTML=htmlStr;
+ if (htmlStr!="")
+  document.getElementById("elems").innerHTML="<table style='margin:0 auto;'>"+htmlStr+"</table>";
  else
   showMsg("Ничего не найдено.");
  document.getElementById("elems").scrollTop=0;
@@ -289,8 +490,9 @@ function OK_2() {
 }
 </script>
 </head>
-<body onclick="onClick();" onload="showMsg('Пусто.');">
+<body onmousedown="myMouseDown();" onmouseup="myMouseUp();" onload="showMsg('Пусто.');" onmouseover="myMouseOver();">
 <div id=elems style="overflow:scroll; position:relative; width:100%; height:100%;">
 </div>
+<span id=mouseCaptureSpan style="display:none;" onmouseup="capturedMouse();"></SPAN>
 </body>
 </html>

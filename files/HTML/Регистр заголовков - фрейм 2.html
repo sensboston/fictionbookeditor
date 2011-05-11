@@ -25,12 +25,8 @@ function inverse(ID) {
 <table>
 <tr>
 <td><p style="float:left;"><nobr><input type=checkbox id=t1 checked><span onclick="inverse('t1');" ondblclick="inverse('titles');">body and section titles</span></nobr> <nobr><input type=checkbox id=t2><span onclick="inverse('t2');" ondblclick="inverse('t2');">poem &amp; cite titles</span></nobr><br><nobr><input type=checkbox id=t4 checked><span onclick="inverse('t4');" ondblclick="inverse('t4');">section subtitles</span></nobr> <nobr><input type=checkbox id=t5><span onclick="inverse('t5');" ondblclick="inverse('t5');">poem &amp; cite subtitles</span></nobr> <nobr><input type=checkbox id=t3><span onclick="inverse('t3');" ondblclick="inverse('t3');">in note&amp;comment bodies too</span></nobr></p></td>
-<td style="vertical-align:top;"><input type=button value="Отобразить" onclick="parent.frame1.findElements(byId('t1').checked,byId('t2').checked,byId('t3').checked,byId('t4').checked,byId('t5').checked);"></td>
+<td style="vertical-align:top;"><input type=button value="Отобразить" onclick="buttonPressed=false; parent.frame1.findElements(byId('t1').checked,byId('t2').checked,byId('t3').checked,byId('t4').checked,byId('t5').checked);"></td>
 </tr>
 </table>
 </fieldset>
-<script>
-document.getElementById("titles").hideFocus=true;
-document.getElementById("subtitles").hideFocus=true;
-</script>
 </html>
