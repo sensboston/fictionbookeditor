@@ -40,7 +40,9 @@ function showMsg(s) {
 function capturedMouse() {
  if (event.type=="mouseup") {
   document.getElementById("mouseCaptureSpan").releaseCapture();
-  myMouseUp();
+  var src=event.srcElement;
+  if (src.nodeName!="SPAN" || src.className.search(/\b[ts](?!1)_?/i)<0)
+   myMouseUp();
   return true;
  } 
 }
@@ -254,7 +256,7 @@ function myMouseUp() {
  e=event.srcElement;
  if (event.button==1 && e.className.search(/\b[ts](?!1)_?/i)>=0) {
   var h=e.innerHTML;
-  if (h!="&nbsp;" && h!="&lt;" && h!="&gt;" && h!=" ") {
+  if (h.charAt(0)!="&" && h!=" ") {
    if (h.toLowerCase()==h)
     e.innerHTML=h.toUpperCase();
    else
