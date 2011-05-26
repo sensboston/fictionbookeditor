@@ -41,14 +41,19 @@
     '   if (ptrInSection.nodeName=="P" && ptrInSection.innerText.replace(new RegExp("&nbsp;","ig")," ").search(abruptionRegExp)>=0) {'+
     '    titleBegin=ptrInSection;'+
     '    titleEnd=ptrInSection;'+
+    '    titleEnd.removeAttribute("className");'+
+    '    titleEnd.removeAttribute("class");'+
     '    if (captureBeforeCnt>0) {'+
     '     i=1;'+
     '     whileFlag=true;'+
     '     while (whileFlag) {'+
     '      titleBeginPrev=titleBegin.previousSibling;'+
     '      if (titleBeginPrev && titleBeginPrev.nodeName=="P" &&'+
-    '          titleBeginPrev.innerHTML.search(new RegExp("^Sclex_SplittingIntoSections_"+randomNum+"_"+"\\\\d+"+"_(begin|end)$"),"")<0)'+
+    '          titleBeginPrev.innerHTML.search(new RegExp("^Sclex_SplittingIntoSections_"+randomNum+"_"+"\\\\d+"+"_(begin|end)$"),"")<0) {'+
     '       titleBegin=titleBeginPrev;'+
+    '       titleBegin.removeAttribute("class");'+
+    '       titleBegin.removeAttribute("className");'+
+    '      }'+
     '      else whileFlag=false;'+
     '      i++;'+
     '      if (i>captureBeforeCnt) whileFlag=false;        '+
@@ -63,7 +68,11 @@
     '     whileFlag=true;'+
     '     while (whileFlag) {'+
     '      titleEndNext=titleEnd.nextSibling;'+
-    '      if (titleEndNext && titleEndNext.nodeName=="P") titleEnd=titleEndNext;'+
+    '      if (titleEndNext && titleEndNext.nodeName=="P") {'+
+    '       titleEnd=titleEndNext;'+
+    '       titleEnd.removeAttribute("className");'+
+    '       titleEnd.removeAttribute("class");'+
+    '      }'+
     '      else whileFlag=false;'+
     '      i++;'+
     '      if (i>captureAfterCnt) whileFlag=false;        '+
