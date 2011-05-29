@@ -18,7 +18,7 @@ body {font-family:monospace; font-size:16px; padding:0; margin:0; height:100%;}
 var old=null;
 var bg_t="bisque";
 var bg_s="palegreen";
-var ptr2,ptr3,saveU,elementsInAll,elText,tagStr2,htmlStr,nCnt,s1,s2,i1,par,h1,h2;
+var ptr2,ptr3,saveU,elementsInAll,elText,tagStr2,htmlStr,nCnt,s1,s2,s3,i1,par,h1,h2;
 var myLinks=[];
 var params=window.dialogArguments;
 var fbwBody=params["fbwBody"];
@@ -290,7 +290,7 @@ function getElementText(k) {
  elText="";
  if (k.nodeType==1) elText+=getOpening(k);
  while (k && k!=saveU) {
-  if (k.nodeType==3) elText+=k.nodeValue;
+  if (k.nodeType==3) elText+=k.nodeValue.replace(/&/g,"&amp;").replace(/ /g,"&nbsp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
   if (k.firstChild) {
    k=k.firstChild;
    if (k.nodeType==1) elText+=getOpening(k);
@@ -313,8 +313,21 @@ function getElementText(k) {
 function replaceFunctionT(full_match, brackets1, offset_of_match,
                           string_we_search_in) {
  s2="";
- for (i1=0; i1<full_match.length; i1++)
+ var i1=0;
+ while (i1<full_match.length) {
+  while (i1<full_match.length && full_match.charAt(i1)=="&") {
+   s3="";
+   while (i1<full_match.length && full_match.charAt(i1)!=";") {
+    s3+=full_match.charAt(i1);
+    i1++; 
+   }
+   if (i1<full_match.length && full_match.charAt(i1)==";") i1++;
+   s2+="<SPAN class=t onmouseover='a(this);' onmouseout='c(this);'>"+s3+";</SPAN>";
+  }
+  if (i1>=full_match.length) break;
   s2+="<SPAN class=t onmouseover='a(this);' onmouseout='c(this);'>"+full_match.charAt(i1)+"</SPAN>";
+  i1++;
+ }
  return s2;
 }
 
@@ -452,7 +465,7 @@ function saveOneP(n,p) {
  var k=p.firstChild;
  while (k && k!=p) {
   if (k.nodeType==1) h2+=getOpening2(k);
-  if (k.nodeType==3) h2+=k.nodeValue.replace(/ /g,"&nbsp;").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+  if (k.nodeType==3) h2+=k.nodeValue.replace(/&/g,"&amp;").replace(/ /g,"&nbsp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
   if (k.firstChild) {
    k=k.firstChild;
   }
