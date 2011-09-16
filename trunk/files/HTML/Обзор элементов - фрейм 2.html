@@ -41,7 +41,7 @@ var newSection,elemInMainDoc,el8,titleElement,nextSectionOrPoemOrStanza,titleInN
 var newP,thereWasSubtitlesInCite,nPtr3,saveEl2,flag3,flag4,tt,nextTt,sForText;
 var foundInlineElementsInP,caseFlag;
 var htmlTagByFb2Tag={"emphasis":"EM","strong":"STRONG","sup":"SUP","sub":"SUB","strikethrough":"STRIKE"};
-var htmlTagRegExpbyFb2Tag={"emphasis":/^(EM|I)$/i,"strong":/^(STRONG|B)$/i,"sup":/^SUP$/i,"sub":/^SUB$/i,"strikethrough":/^STRIKE$/i};
+var htmlTagRegExpByFb2Tag={"emphasis":/^(EM|I)$/i, "strong":/^(STRONG|B)$/i, "sup":/^SUP$/i, "sub":/^SUB$/i, "strikethrough":/^STRIKE$/i};
 var randomId="elementBrowsing_"+Math.floor((Math.random()*9)).toString()+Math.floor((Math.random()*9)).toString()+Math.floor((Math.random()*9)).toString()+Math.floor((Math.random()*9)).toString()+Math.floor((Math.random()*9)).toString()+Math.floor((Math.random()*9)).toString();
 //var re0=new RegExp("((<[^>]*?>)+)?[^<>]){0,36}","i");
 var re0=new RegExp("(.{50}).+?$");
@@ -882,10 +882,12 @@ function reformatInlineToInlineOrText(reformatToWhat) {
  for (nPtr=0;nPtr<sortedElementArray.length;nPtr++) {
   //запишем в myElem5 ссылку на абзац-подзаголовок, который нужно сконвертировать
   myElem6=myLinks[sortedElementArray[nPtr]];
-  myElem8=mainDoc.createElement(htmlTagByFb2Tag[reformatToWhat]);
-  if (reformatToWhat!="text")
+  if (reformatToWhat!="text") {
+   myElem8=mainDoc.createElement(htmlTagByFb2Tag[reformatToWhat]);
    myElem6.applyElement(myElem8,"outside");
+  }
   myElem6.removeNode(false);
+  if (reformatToWhat=="text") continue;  
   el=myElem8.firstChild;
   while (el && el!=myElem8) {
    nextEl=el;
@@ -895,13 +897,14 @@ function reformatInlineToInlineOrText(reformatToWhat) {
     while (nextEl!=myElem8 && nextEl.nextSibling==null) nextEl=nextEl.parentNode;
     if (nextEl!=myElem8) nextEl=nextEl.nextSibling;
    }
-   if (el.nodeName.search(htmlTagRegExpbyFb2Tag[reformatToWhat])>=0) el.removeNode(false);
+   if (el.nodeName.search(htmlTagRegExpByFb2Tag[reformatToWhat])>=0) el.removeNode(false);
    el=nextEl;
   }
   el=myElem8;
   while (el.nodeName!="BODY") {
    el=el.parentNode;
-   if (el.nodeName.search(htmlTagRegExpbyFb2Tag[reformatToWhat])>=0) {
+   alert(reformatToWhat+"\n\n"+htmlTagRegExpByFb2Tag[reformatToWhat]);
+   if (el.nodeName.search(htmlTagRegExpByFb2Tag[reformatToWhat])>=0) {
     myElem8.removeNode(false);
     break;
    }
