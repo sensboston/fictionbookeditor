@@ -287,6 +287,7 @@ function getClosing(k) {
 function getElementText(k) {
  saveU=k;
  k=k.firstChild;
+ if (!k) return "";
  elText="";
  if (k.nodeType==1) elText+=getOpening(k);
  while (k && k!=saveU) {
