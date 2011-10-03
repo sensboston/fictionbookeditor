@@ -2,7 +2,7 @@
 // Автор скрипта: Sclex
 // Сайт скриптов FBE Sclex’а: http://scripts.fictionbook.org
 
-var versionStr="3.5";
+var versionStr="3.6";
 var CutLength=100;
 
 function Run() {
@@ -21,6 +21,7 @@ function Run() {
  var re4=new RegExp("[«(\\\[\\\"\\\=–—]","");
  var re5=new RegExp("[!…?.*]","");
  var bigLetterRegExp=new RegExp("[А-ЯA-ZЁ]","");
+ var bigLetterOrDigitRegExp=new RegExp("[А-ЯA-ZЁ\\d]","");
  var re7=new RegExp("[!?….]");
  var re8=new RegExp("[-«–—]","");
  var re9=new RegExp("[-–—]","");
@@ -569,7 +570,7 @@ function Run() {
                  (lastSymbolOfPrevP.search(kavychkiRegExp)<0 ||
                   (lastSymbolOfPrevP.search(kavychkiRegExp)>=0 && preLastSymbolOfPrevP.search(re7)<0)
                  ) &&
-                 ((firstSymbol.search(re4)>=0  && secondSymbol.search(bigLetterRegExp)>=0) || firstSymbol.search(bigLetterRegExp)>=0) &&
+                 ((firstSymbol.search(re4)>=0  && secondSymbol.search(bigLetterOrDigitRegExp)>=0) || firstSymbol.search(bigLetterOrDigitRegExp)>=0) &&
                  !((lastSymbolOfPrevP==":" || lastSymbolOfPrevP==";")&& firstSymbol.search(re8)>=0)
                 ) {
        //это обработка случая, когда второй абзац начинается с большой буквы,
