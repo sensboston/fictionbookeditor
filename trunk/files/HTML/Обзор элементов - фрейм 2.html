@@ -903,7 +903,6 @@ function reformatInlineToInlineOrText(reformatToWhat) {
   el=myElem8;
   while (el.nodeName!="BODY") {
    el=el.parentNode;
-   alert(reformatToWhat+"\n\n"+htmlTagRegExpByFb2Tag[reformatToWhat]);
    if (el.nodeName.search(htmlTagRegExpByFb2Tag[reformatToWhat])>=0) {
     myElem8.removeNode(false);
     break;
