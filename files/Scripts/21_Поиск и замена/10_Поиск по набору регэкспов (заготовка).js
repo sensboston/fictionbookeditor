@@ -1,5 +1,5 @@
 //Скрипт «Поиск по набору регэкспов»
-//Версия 2.5
+//Версия 2.7
 //Автор Sclex
 
 function Run() {
@@ -12,7 +12,7 @@ function Run() {
 
   // ТУТ НАДО НАСТРОИТЬ СПИСОК РЕГЭКСПОВ
   // Каждый регэксп настраивается строкой такого формата:
-  //   addRegExp("регэксп","ключи","описание","в каких тегах искать");
+  //   addRegExp("регэксп","ключи","описание","в каких тегах искать","лимит для просмотра назад");
   // Слеши \ в регэкспе надо удвоить
   // Если регэксп содержит прямые кавычки, перед ними надо поставить слеш: \"
   // (этот слеш перед кавычкой не надо удваивать)
@@ -27,17 +27,22 @@ function Run() {
   //    то скрипт будет искать по регэкспу только в абзацах P,
   //    вложенных в <poem> и в <title>, но при этом не вложенных в <stanza>.
   //    Указывать имена инлайн-тегов не разрешено.
+  // "Лимит для просмотра назад" – устанавливает максимальную длину подстроки,
+  //    которая может быть найдена конструкцией (?<= ...) или (?= ...) данного
+  //    регэкспа. Чем меньше значение данного параметра, тем быстрее будет 
+  //    выполняться поиск. Чтобы искать без ограничения длины (самый медленный поиск),
+  //    можно прописать значение 0 или undefined, или вообще не задавать параметр.
   // Пример:
   //   addRegExp("\\d-\\d","","Найдено: две цифры с дефисом между ними.");
   //   addRegExp("\"","","Найдено: прямая кавычка.");
-  //   tagRegExp("(?<![а-яё])пего(?![а-яё])","i","Найдено: слово \"пего\" (\"него\" с опечаткой).");
+  //   tagRegExp("(?<![а-яё])пего(?![а-яё])","i","Найдено: слово \"пего\" (\"него\" с опечаткой).","",1);
   // Если надо, чтобы найденный текст не выделялся, а просто курсор стал
   // в позицию перед этим найденным текстом, используйте конструкцию (?= ... )
   //   addRegExp("(?=\")","","Найдено: прямая кавычка.");
   // Конструкции look behind, т.е. (?<! ...) и (?<= ...) разрешены только
   //   только в начале регэкспа и проверяются независимо от остальной части
   //   регэкспа. То есть (?<=а)б|в найдет не "б, перед которым а" либо "в",
-  //   а "б или в, перед которым а".
+  //   а "{б или в}, перед которым а".
   addRegExp("","i","Задайте список регэкспов, отредактировав скрипт в текстовом редакторе (кодировка UTF-8). Инструкция – в скрипте.");
   // Когда будете задавать свои регэкспы, сотрите или закомментируйте предыдущую строку.
   // tagRegExp("(?<=[а-яё])<strong>[а-яё]+?</strong>","i","Найдено: курсив в слове.");
@@ -64,6 +69,16 @@ function Run() {
   return;
  }
 
+ try { var nbspChar=window.external.GetNBSP(); var nbspEntity; if (nbspChar.charCodeAt(0)==160) nbspEntity="&nbsp;"; else nbspEntity=nbspChar;}
+ catch(e) { var nbspChar=String.fromCharCode(160); var nbspEntity="&nbsp;";}
+
+ var sel=document.selection;
+
+ if (sel.type!="None" && sel.type!="Text") {
+  MsgBox("Не обрабатываемый тип выделения: sel.type");
+  return;
+ }
+
  var regExps=[];
  var itsTagRegExp=[];
  var lookBehinds=[];
@@ -71,8 +86,10 @@ function Run() {
  var positive=[];
  var tagCond=[];
  var macroses={};
+ var lookBehLimit=[];
  var regExpCnt=0;
- var re,inTags,ss,tagFlag;
+ var re,inTags,ss,tagFlag,s_len,rslt,ff,offset;
+ var level,ch,begin,lookBeh,lookBehCnt,ii,limit,rslt_;
  var errorList="";
  var checkTagStrRE=new RegExp("^(([-+](section|body|epigraph|cite|poem|stanza|title|subtitle|text-author))([ \t]+?[-+](section|body|epigraph|cite|poem|stanza|title|subtitle|text-author))*?|^$)$","i");
  var findTagRE=new RegExp("(^| )([-+])(section|body|epigraph|cite|poem|stanza|title|subtitle|text-author)(?= |$)","ig");
@@ -90,29 +107,28 @@ function Run() {
   else return full_match;
  }
 
- function addRegExp(re_,keys,desc,inWhatTags) {
+ function addRegExp(re_,keys,desc,inWhatTags,beforeLimit) {
   try {
-   var i=0;
-   var level,ch,begin,lookBeh,lookBehCnt;
+   ii=0;
    lookBeh=[];
    lookBehCnt=0;
    posit=[];
-   while (re_.substr(i,4)=="(?<=" || re_.substr(i,4)=="(?<!") {
+   while (re_.substr(ii,4)=="(?<=" || re_.substr(ii,4)=="(?<!") {
     level=1;
-    begin=i;
-    i+=4;
-    while (i<re_.length && level!=0) {
-     ch=re_.charAt(i);
+    begin=ii;
+    ii+=4;
+    while (ii<re_.length && level!=0) {
+     ch=re_.charAt(ii);
      if (ch=="(") level++;
      if (ch==")") level--;
-     if (ch=="\\") i+=2;
-     else i++;
+     if (ch=="\\") ii+=2;
+     else ii++;
     }
-    lookBeh[lookBehCnt]=new RegExp(re_.substring(begin+4,i-1).replace(/ /g,nbspChar).replace(find_xA0,replaceA0),"g"+(keys?keys:""));
+    lookBeh[lookBehCnt]=new RegExp(re_.substring(begin+4,ii-1).replace(/ /g,nbspChar).replace(find_xA0,replaceA0),"g"+(keys?keys:""));
     posit[lookBehCnt]=re_.substr(begin,4)=="(?<=";
     lookBehCnt++;
    }
-   re=new RegExp(re_.substr(i).replace(/ /g,nbspChar).replace(find_xA0,replaceA0),"g"+(keys?keys:""));
+   re=new RegExp(re_.substr(ii).replace(/ /g,nbspChar).replace(find_xA0,replaceA0),"g"+(keys?keys:""));
    if (inWhatTags && inWhatTags.search(checkTagStrRE)<0) throw(true);
   }
   catch(e) {
@@ -126,34 +142,34 @@ function Run() {
   if (lookBehCnt!=0) {
    lookBehinds[regExpCnt]=lookBeh;
    positive[regExpCnt]=posit;
-  } 
+  }
   else lookBehinds[regExpCnt]=null;
   if (inWhatTags) tagCond[regExpCnt]=inWhatTags;
+  if (beforeLimit && typeof(beforeLimit)=="number" && beforeLimit!=0) lookBehLimit[regExpCnt]=beforeLimit;
  }
 
- function tagRegExp(re_,keys,desc,inWhatTags) {
+ function tagRegExp(re_,keys,desc,inWhatTags,beforeLimit) {
   try {
-   var i=0;
-   var level,ch,begin,lookBeh,lookBehCnt;
+   var ii=0;
    lookBeh=[];
    lookBehCnt=0;
    posit=[];
-   while (re_.substr(i,4)=="(?<=" || re_.substr(i,4)=="(?<!") {
+   while (re_.substr(ii,4)=="(?<=" || re_.substr(ii,4)=="(?<!") {
     level=1;
-    begin=i;
-    i+=4;
-    while (i<re_.length && level!=0) {
-     ch=re_.charAt(i);
+    begin=ii;
+    ii+=4;
+    while (ii<re_.length && level!=0) {
+     ch=re_.charAt(ii);
      if (ch=="(") level++;
      if (ch==")") level--;
-     if (ch=="\\") i+=2;
-     else i++;
+     if (ch=="\\") ii+=2;
+     else ii++;
     }
-    lookBeh[lookBehCnt]=new RegExp(re_.substring(begin+4,i-1).replace(/ /g,nbspChar).replace(find_xA0,replaceA0).replace(macrosNameRE_2,replaceMacroses),"g"+(keys?keys:""));
+    lookBeh[lookBehCnt]=new RegExp(re_.substring(begin+4,ii-1).replace(/ /g,nbspChar).replace(find_xA0,replaceA0).replace(macrosNameRE_2,replaceMacroses),"g"+(keys?keys:""));
     posit[lookBehCnt]=re_.substr(begin,4)=="(?<=";
     lookBehCnt++;
    }
-   re=new RegExp(re_.substr(i).replace(/ /g,nbspChar).replace(find_xA0,replaceA0).replace(macrosNameRE_2,replaceMacroses),"g"+(keys?keys:""));  
+   re=new RegExp(re_.substr(ii).replace(/ /g,nbspChar).replace(find_xA0,replaceA0).replace(macrosNameRE_2,replaceMacroses),"g"+(keys?keys:""));
    if (inWhatTags && inWhatTags.search(checkTagStrRE)<0) throw(true);
   }
   catch(e) {
@@ -167,9 +183,10 @@ function Run() {
   if (lookBehCnt!=0) {
    lookBehinds[regExpCnt]=lookBeh;
    positive[regExpCnt]=posit;
-  } 
-  else lookBehinds[regExpCnt]=null;  
+  }
+  else lookBehinds[regExpCnt]=null;
   if (inWhatTags) tagCond[regExpCnt]=inWhatTags;
+  if (beforeLimit && typeof(beforeLimit)=="number") lookBehLimit[regExpCnt]=beforeLimit;
  }
 
  function cmpFounds(a,b) {
@@ -220,10 +237,10 @@ function Run() {
      case "title": {
       inTags["title"]=true;
       break;
-     }       
+     }
     }
    el3=el3.parentNode;
-  } 
+  }
  }
 
  function checkOneTag(full_match, brackets1, brackets2, brackets3, offset_of_match, string_we_search_in) {
@@ -239,20 +256,27 @@ function Run() {
  }
 
  function checkLookBehs(reNum,s,pos) {
-  s=s.substr(0,pos);
-  var rslt;
   if (!lookBehinds[reNum]) return true;
-  for (var i=0; i<lookBehinds[reNum].length; i++) {
-   lookBehinds[reNum][i].lastIndex=0;
-   rslt=lookBehinds[reNum][i].exec(s);
-   while (rslt && rslt.index+rslt[0].length!=s.length) {
-    rslt=lookBehinds[reNum][i].exec(s);
-   } 
-   if (positive[reNum][i]) {
-    if (!rslt || rslt.index+rslt[0].length!=s.length) return false;
+  limit=lookBehLimit[reNum];
+  if (!limit) {
+   s=s.substr(0,pos);
+  }
+  else {
+   offset=pos-limit;
+   s=s.substring(offset>=0?offset:0, pos);
+  }
+  s_len=s.length;
+  for (ff=0; ff<lookBehinds[reNum].length; ff++) {
+   lookBehinds[reNum][ff].lastIndex=0;
+   rslt_=lookBehinds[reNum][ff].exec(s);
+   while (rslt_ && rslt_.index+rslt_[0].length!=s_len) {
+    rslt_=lookBehinds[reNum][ff].exec(s);
+   }
+   if (positive[reNum][ff]) {
+    if (!rslt_ || rslt_.index+rslt_[0].length!=s_len) return false;
    }
    else {
-    if (rslt && rslt.index+rslt[0].length==s.length) return false;
+    if (rslt_ && rslt_.index+rslt_[0].length==s_len) return false;
    }
   }
   return true;
@@ -340,7 +364,7 @@ function Run() {
     getTags(el);
     if (checkAreWeInRightTags(i)) {
      if (itsTagRegExp[i]==false) {
-      rslt=regExps[i].exec(s);
+      //rslt=regExps[i].exec(s);
       regExps[i].lastIndex=s1_len+(ignoreNullPosition?1:0);
       rslt=regExps[i].exec(s);
       while (rslt && !checkLookBehs(i, s, rslt.index, false)) rslt=regExps[i].exec(s);
@@ -377,7 +401,7 @@ function Run() {
           founds[foundsCnt]={"pos":newPos, "len":rslt_replaced.length, "re":i};
           foundsCnt++;
          }
-        } 
+        }
        } // if
       } // while (flag1)
      } // else
