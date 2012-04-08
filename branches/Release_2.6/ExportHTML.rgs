@@ -1,0 +1,35 @@
+HKCR
+{
+	NoRemove CLSID
+	{
+		ForceRemove {E242A6D3-84BF-4285-9FAA-160F95370668} = s 'ExportHTMLPlugin Class'
+		{
+			InprocServer32 = s '%MODULE%'
+			{
+				val ThreadingModel = s 'Apartment'
+			}
+		}
+	}
+}
+
+HKCU
+{
+	NoRemove Software
+	{
+		NoRemove FBETeam
+		{
+			NoRemove 'FictionBook Editor'
+			{
+				NoRemove Plugins
+				{
+					ForceRemove {E242A6D3-84BF-4285-9FAA-160F95370668} = s 'Export FB2 to HTML'
+					{
+						val Type = s 'Export'
+						val Menu = s 'To HTML'
+						val Icon = s '%MODULE%'
+					}
+				}
+			}
+		}
+	}
+}
