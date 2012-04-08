@@ -1,0 +1,71 @@
+HKCR
+{
+  NoRemove CLSID
+  {
+    ForceRemove {FDABCF3B-57BE-4110-94B5-4EF8EE3C6A62} = s 'FictionBook Context Menu'
+    {
+      ForceRemove 'Programmable'
+      InprocServer32 = s '%MODULE%'
+      {
+        val ThreadingModel = s 'Apartment'
+      }
+    }
+  }
+}
+
+HKCR
+{
+  NoRemove FictionBook.2
+  {
+    NoRemove shellex
+    {
+      NoRemove ContextMenuHandlers
+      {
+        ForceRemove FictionBook = s '{FDABCF3B-57BE-4110-94B5-4EF8EE3C6A62}'
+      }
+    }
+  }
+  NoRemove Directory
+  {
+    NoRemove Background
+    {
+      NoRemove shellex
+      {
+	NoRemove ContextMenuHandlers
+	{
+	  ForceRemove FictionBook = s '{FDABCF3B-57BE-4110-94B5-4EF8EE3C6A62}'
+	}
+      }
+    }
+    NoRemove shellex
+    {
+      NoRemove ContextMenuHandlers
+      {
+	ForceRemove FictionBook = s '{FDABCF3B-57BE-4110-94B5-4EF8EE3C6A62}'
+      }
+    }
+  }
+}
+
+HKLM
+{
+  NoRemove Software
+  {
+    NoRemove Microsoft
+    {
+      NoRemove Windows
+      {
+	NoRemove CurrentVersion
+	{
+	  NoRemove 'Shell Extensions'
+	  {
+	    NoRemove Approved
+	    {
+	      val {FDABCF3B-57BE-4110-94B5-4EF8EE3C6A62} = s 'FictionBook Context Menu'
+	    }
+	  }
+	}
+      }
+    }
+  }
+}
