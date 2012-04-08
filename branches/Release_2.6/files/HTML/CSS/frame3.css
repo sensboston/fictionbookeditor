@@ -1,0 +1,4 @@
+body{ font-size:9pt; font-family: "tahoma"; padding:0; margin:0; }
+a.menu_href {font-size:10px; text-decoration:underline; padding:0; margin:0;}
+/* подпись к чекбоксу */
+span.menu_text {font-size:10px;}

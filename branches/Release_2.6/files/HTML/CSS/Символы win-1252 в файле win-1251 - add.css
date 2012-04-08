@@ -1,0 +1,13 @@
+body {
+  font-family:tahoma;
+  font-size:15px;
+  padding:0px;
+  margin:0;
+  color:black;
+  background-color:white;
+}
+.highlight {
+ color:white;
+ background-color:red;
+ padding-right:1px;
+}
