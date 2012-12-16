@@ -2,13 +2,13 @@
 // Автор скрипта: Sclex
 // Сайт скриптов FBE Sclex’а: http://scripts.fictionbook.org
 
-var versionStr="3.6";
+var versionStr="3.8";
 var CutLength=100;
 
 function Run() {
 
  var Ts=new Date().getTime();
- var dialogWidth="800px";
+ var dialogWidth="900px";
  var dialogHeight="600px";
 
  try { var nbspChar=window.external.GetNBSP(); var nbspEntity; if (nbspChar.charCodeAt(0)==160) nbspEntity="&nbsp;"; else nbspEntity=nbspChar;}
@@ -571,7 +571,7 @@ function Run() {
                   (lastSymbolOfPrevP.search(kavychkiRegExp)>=0 && preLastSymbolOfPrevP.search(re7)<0)
                  ) &&
                  ((firstSymbol.search(re4)>=0  && secondSymbol.search(bigLetterOrDigitRegExp)>=0) || firstSymbol.search(bigLetterOrDigitRegExp)>=0) &&
-                 !((lastSymbolOfPrevP==":" || lastSymbolOfPrevP==";")&& firstSymbol.search(re8)>=0)
+                 !(lastSymbolOfPrevP==":" || lastSymbolOfPrevP==";")
                 ) {
        //это обработка случая, когда второй абзац начинается с большой буквы,
        //а первый не кончается на символ (символы), который характерен для конца строки

@@ -1,5 +1,5 @@
 //Скрипт «Поиск по набору регэкспов»
-//Версия 2.7
+//Версия 2.9
 //Автор Sclex
 
 function Run() {
@@ -44,6 +44,8 @@ function Run() {
   //   регэкспа. То есть (?<=а)б|в найдет не "б, перед которым а" либо "в",
   //   а "{б или в}, перед которым а".
   addRegExp("","i","Задайте список регэкспов, отредактировав скрипт в текстовом редакторе (кодировка UTF-8). Инструкция – в скрипте.");
+  //addMacros("<откр-закр-em-str>","<emphasis>|</emphasis>|<strong>|</strong>");
+  //tagRegExp("([а-яёa-z]<откр-закр-em-str>*)*?[а-яёa-z]<откр-закр-em-str>*?(<emphasis><strong>|<strong><emphasis>|</strong></emphasis>|</emphasis></strong>)<откр-закр-em-str>*([а-яёa-z]<откр-закр-em-str>*)+","i","Найдено: курсивность части слова.");
   // Когда будете задавать свои регэкспы, сотрите или закомментируйте предыдущую строку.
   // tagRegExp("(?<=[а-яё])<strong>[а-яё]+?</strong>","i","Найдено: курсив в слове.");
   // tagRegExp("<strong>[а-яё]+?</strong>(?=[а-яё])","i","Найдено: курсив в слове.");
@@ -352,7 +354,18 @@ function Run() {
   tr2.setEndPoint("EndToEnd",tr);
   s1_len=tr2.text.length;
   s=el.innerHTML.replace(removeTagsRE,removeTagsRE_).replace(imgTagRE,imgTagRE_).replace(ltRE,ltRE_).replace(gtRE,gtRE_).replace(ampRE,ampRE_).replace(nbspRE,nbspRE_);
-  s1_html_len=tr2.htmlText.replace(/\s{2,}/g," ").length;
+  var s1=tr2.htmlText.replace(/\s{2,}/g," ");
+  var s1_len2=s1.length;
+  var s2=el.innerHTML;
+  var k1=0;
+  var k1=s1.search(/(<\/[^<>]+>)+$/);
+  if (k1==-1) {
+    s1_html_len=s1_len2;
+  } 
+  else {
+   while (k1<s1_len2 && s1.charAt(k1)==s2.charAt(k1)) k1++;
+   s1_html_len=k1;
+  }
   s_html=el.innerHTML;
  }
  while (el && el!=fbwBody) {

@@ -1,5 +1,5 @@
 ﻿//Скрипт «Поиск по набору регэкспов»
-//Версия 2.7
+//Версия 2.9
 //Автор Sclex
 
 function Run() {
@@ -268,7 +268,6 @@ function Run() {
   tagRegExp("[а-яёa-z]<sub>[а-яёa-z]+?</sub>|<sub>[а-яёa-z]+?</sub>[а-яёa-z]","i","Найдено: нижний индекс в слове.");
   tagRegExp("<emphasis><strong>[а-яёa-z]+?</strong></emphasis>[а-яёa-z]|[а-яёa-z]<emphasis><strong>[а-яёa-z]+?</strong></emphasis>","","Найдено: жирность и курсивность в слове.");
   tagRegExp("<strong><emphasis>[а-яёa-z]+?</emphasis></strong>[а-яёa-z]|[а-яёa-z]<strong><emphasis>[а-яёa-z]+?</emphasis></strong>","","Найдено: курсивность и жирность в слове.");
-
   
 // -------------конец блока TaKir - регэкспы:---------------
 
@@ -567,7 +566,18 @@ function Run() {
   tr2.setEndPoint("EndToEnd",tr);
   s1_len=tr2.text.length;
   s=el.innerHTML.replace(removeTagsRE,removeTagsRE_).replace(imgTagRE,imgTagRE_).replace(ltRE,ltRE_).replace(gtRE,gtRE_).replace(ampRE,ampRE_).replace(nbspRE,nbspRE_);
-  s1_html_len=tr2.htmlText.replace(/\s{2,}/g," ").length;
+  var s1=tr2.htmlText.replace(/\s{2,}/g," ");
+  var s1_len2=s1.length;
+  var s2=el.innerHTML;
+  var k1=0;
+  var k1=s1.search(/(<\/[^<>]+>)+$/);
+  if (k1==-1) {
+    s1_html_len=s1_len2;
+  } 
+  else {
+   while (k1<s1_len2 && s1.charAt(k1)==s2.charAt(k1)) k1++;
+   s1_html_len=k1;
+  }
   s_html=el.innerHTML;
  }
  while (el && el!=fbwBody) {
