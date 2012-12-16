@@ -109,6 +109,8 @@
      <input type=checkbox name=s1 id=s1 onclick="rslt[1]=!rslt[1];" checked>Ручной выбор</input><br>     <input type=radio name=s1_ id=s1_1_ onclick="rslt['1_']=0;" checked><span onclick="byId('s1_1_').checked=true; rslt['1_']=0;">Не трогать</span></input><br>
      <input type=radio name=s1_ id=s1_2_ onclick="rslt['1_']=1;"><span onclick="byId('s1_2_').checked=true; rslt['1_']=1;">Соединить через пробел</span></input><br>
      <input type=radio name=s1_ id=s1_3_ onclick="rslt['1_']=8;"><span onclick="byId('s1_3_').checked=true; rslt['1_']=8;">Соединить без пробела</span></input>
+     <input type=radio name=s1_ id=s1_4_ onclick="rslt['1_']=9;"><span onclick="byId('s2_4_').checked=true; rslt['2_']=9;">Соединить через ":" и пробел</span></input><br>
+     <input type=radio name=s1_ id=s1_5_ onclick="rslt['1_']=10;"><span onclick="byId('s2_5_').checked=true; rslt['2_']=10;">Добавить ":"</span></input>
      </div>
     </td>
    </tr>
@@ -134,11 +136,13 @@
    </tr>
    <tr>
     <td>Символ, не характерный для законченной строки (не запятая, не кавычки, не двоеточие, не точка с запятой)</td>
-    <td>Большая буква. Либо один из символов: «"(–[=— и потом большая буква</td>
+    <td>Большая буква или цифра. Либо один из символов: «"(–[=— и потом большая буква или цифра</td>
     <td>
      <input type=checkbox name=s2 id=s2  onclick="rslt[2]=!rslt[2];" checked>Ручной выбор</input><br>     <input type=radio name=s2_ id=s2_1_ onclick="rslt['2_']=0;" checked><span onclick="byId('s2_1_').checked=true; rslt['2_']=0;">Не трогать</span></input><br>
      <input type=radio name=s2_ id=s2_2_ onclick="rslt['2_']=1;"><span onclick="byId('s2_2_').checked=true; rslt['2_']=1;" checked>Соединить через пробел</span></input><br>
      <input type=radio name=s2_ id=s2_3_ onclick="rslt['2_']=2;"><span onclick="byId('s2_3_').checked=true; rslt['2_']=2;">Добавить точку</span></input>
+     <input type=radio name=s2_ id=s2_4_ onclick="rslt['2_']=9;"><span onclick="byId('s2_4_').checked=true; rslt['2_']=9;">Соединить через ":" и пробел</span></input><br>
+     <input type=radio name=s2_ id=s2_5_ onclick="rslt['2_']=10;"><span onclick="byId('s2_5_').checked=true; rslt['2_']=10;">Добавить ":"</span></input>
      </div>
     </td>
    </tr>
