@@ -1275,10 +1275,10 @@ function initStructure() {
     node5.innerHTML=node6.outerHTML;
    }
    if (ptr.nodeName=="P" ||
-       (ptr.nodeName=="DIV" && (ptr.className=="poem" || ptr.className=="cite" || ptr.className=="image"))) {
+       (ptr.nodeName=="DIV" && (ptr.className=="poem" || ptr.className=="cite" || ptr.className=="image" || ptr.className=="table" || ptr.className=="td" || ptr.className=="tr"))) {
     textBeginPtr=ptr;
     while (ptr && (ptr.nodeName=="P" ||
-       (ptr.nodeName=="DIV" && (ptr.className=="poem" || ptr.className=="cite" || ptr.className=="image")))) {
+       (ptr.nodeName=="DIV" && (ptr.className=="poem" || ptr.className=="cite" || ptr.className=="image" || ptr.className=="table" || ptr.className=="td" || ptr.className=="tr")))) {
      textEndPtr=ptr;
      ptr=ptr.nextSibling;
     }
@@ -1442,7 +1442,7 @@ function initStructure() {
      while (flag) {
       if (poi) {
         if (poi.nodeName=="P" || (poi.nodeName=="DIV" && (poi.className=="poem" ||
-           poi.className=="cite" || poi.className=="image" || poi.className=="section"))) {
+           poi.className=="cite" || poi.className=="image" || poi.className=="section" || poi.className=="table" || poi.className=="td" || poi.className=="tr"))) {
           flag=false;
          } else {
           if (!(poi.nodeName=="DIV" && poi.className=="title")) htmlStr+=poi.outerHTML;
@@ -1463,7 +1463,7 @@ function initStructure() {
      while (flag) {
       if (poi) {
         if (poi.nodeName=="P" || (poi.nodeName=="DIV" && (poi.className=="poem" ||
-            poi.className=="cite" || poi.className=="image" || poi.className=="section"))) {
+            poi.className=="cite" || poi.className=="image" || poi.className=="section" || poi.className=="table" || poi.className=="td" || poi.className=="tr"))) {
           flag=false;
          } else {
           if (!(poi.nodeName=="DIV" && poi.className=="title")) htmlStr+=poi.outerHTML;
