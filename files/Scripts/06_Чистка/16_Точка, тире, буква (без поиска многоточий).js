@@ -11,7 +11,7 @@ function Run() {
  params["myWin"]=window;
  params["nbspChar"]=nbspChar;
  params["nbspEntity"]=nbspEntity;
- rslt=window.showModalDialog("HTML/Точка, тире, буква - набор фреймов.html",params,
+ rslt=window.showModalDialog("HTML/Точка, тире, буква (без поиска многоточий) - набор фреймов.html",params,
        "dialogHeight: "+dialogHeight+"; dialogWidth: "+dialogWidth+"; "+
        "center: Yes; help: No; resizable: Yes; status: No;");
 }
