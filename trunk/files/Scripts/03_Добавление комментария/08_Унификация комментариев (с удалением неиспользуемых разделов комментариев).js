@@ -264,9 +264,13 @@ function Run () {
    if (myId) delete sectNumById_[myId];
   } 
  }
+ var ff;
  for (i in sectNumById_) {
-  sectNum--;
-  document.getElementById(i).removeNode(true);
+  ff=document.getElementById(i);
+  if (ff) {
+   ff.removeNode(true);
+   sectNum--;
+  } 
  }
  sectNumById_=undefined;
  //прочитаем в массив SectID ID-ы секций примечаний
