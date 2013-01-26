@@ -25,18 +25,21 @@
 //======================================
 // v.2.1 — доработка движкапод прерывание и выход — sclex, май 2010
 //======================================
-var VersionNumber="2.1";
+// v.2.12 — доработка подсветки для найденных рез-тов поиска — Alex2L, июнь 2012
+//======================================
+var VersionNumber="2.12";
 
 //обрабатывать ли history
 var ObrabotkaHistory=false;
 //обрабатывать ли annotation
 var ObrabotkaAnnotation=true;
 
-
 function Run() {
 
           Col = new Object();                        // коллекции проверенных словосочетаний
            var k = 0;
+
+         xCol = new Object();                        // коллекции оригинальных словосочетаний
 
   var count=0;
   var Ts=new Date().getTime();
@@ -105,13 +108,63 @@ var re40 = new RegExp("^(.*?[^\\\d\\\-N№/]){0,1}(\\\d{1,3})([\\\s\\\.]{0,2})(\
  var re93 = "$5";
  var re94 = "$2–$4";
 
-
                                                      // шаблоны для финального восстановления временных замен «col1_» – до десяти, свыше – «col2_»
   var re_fin1 = new RegExp("col1¦\\\d¦","g");
   var re_fin2 = new RegExp("col2¦\\\d{2}¦","g");
 
-
  var s="";
+
+ var re1cl = new RegExp("<[^<>]+>","g");
+ var re11cl = "";
+
+ var re3cl = new RegExp("&#\\\d+;","g");
+ var re31cl = "q";
+
+
+//                  Подсветка                                  //
+ function JustBacklighting(s1, sl1) {
+
+ var b0 = s1.length;
+ var CodeMode = false;
+
+ var ss = sl1;                      // очистка части абзаца от тегов, умляутов
+ if (sl1.search(re1cl)!=-1) {ss = ss.replace(re1cl, re11cl);}
+ if (sl1.search(re3cl)!=-1) {ss = ss.replace(re3cl, re31cl);}
+
+ if (s1.search(re1cl)!=-1) { CodeMode = true;}
+ if (s1.search(re3cl)!=-1) { CodeMode = true;}
+
+ if ( ss.search(re_fin1)!=-1 || ss.search(re_fin2)!=-1) {                                                 // Восстановление временных замен
+   for (z=0;z<k;z++) {
+     if (z < 10)  { var re100x = new RegExp("col1¦("+z+")¦","g");
+                    var re101x = xCol[z];
+                    ss = ss.replace(re100x,re101x); }
+     if (z >= 10) { var re200x = new RegExp("col2¦("+z+")¦","g");
+                    var re201x = xCol[z];
+                    ss = ss.replace(re200x,re201x); }            
+   }
+  } 
+
+ var a1 = 0;
+
+ if (CodeMode) {
+   ss=ptr.innerHTML;
+   if (ss.search(re1cl)!=-1) {ss = ss.replace(re1cl, re11cl);}
+   if (ss.search(re3cl)!=-1) {ss = ss.replace(re3cl, re31cl);}
+
+   b0 = ss.length;
+  }
+ else { a1 = ss.length; }
+
+ var range1=document.body.createTextRange();
+ range1.moveToElementText(ptr);
+ range1.collapse();
+ range1.move("character",a1);
+ range1.moveEnd("character",b0);
+ range1.select();
+ }
+//                   Конец подсветки                           //
+
 
  // функция, обрабатывающая абзац P
  function HandleP(ptr) {
@@ -126,6 +179,9 @@ var re40 = new RegExp("^(.*?[^\\\d\\\-N№/]){0,1}(\\\d{1,3})([\\\s\\\.]{0,2})(\
     var v2  = s.replace(re50, re54);
     var sl1   = s.replace(re50, re52);
     var sp1   = s.replace(re50, re53);
+
+    JustBacklighting(v1, sl1);
+
  var r=Object();
  if (k<10) {
  if (InputBox(" :: Большие числа ::\n > Замена:   " +v1+ " —> " +v2,v2, r) == IDCANCEL) return "exit";
@@ -135,7 +191,7 @@ var re40 = new RegExp("^(.*?[^\\\d\\\-N№/]){0,1}(\\\d{1,3})([\\\s\\\.]{0,2})(\
  if (InputBox(" :: Большие числа ::\n > Замена:   " +v1+ " —> " +v2,v2, r) == IDCANCEL) return "exit";
  if(r!=null && r.$!="")  { Col[k] = r.$;    s=sl1+("col2¦" +k+ "¦")+sp1;  count++; }
  else                       { Col[k] = v1;  s=sl1+("col2¦" +k+ "¦")+sp1} }
-k++; }
+xCol[k] = v1; k++; }
 
 //              40 000 000 000 000
        while (s.search(re40)!=-1) {
@@ -143,17 +199,32 @@ k++; }
     var v2  = s.replace(re40, re44);
     var sl1   = s.replace(re40, re42);
     var sp1   = s.replace(re40, re43);
-	 var r=Object();
+
+    JustBacklighting(v1, sl1);
+
+//	 var r=Object();
+// if (k<10) {
+// if (InputBox(" :: Большие числа ::\n > Предлагается:        " +v1+ " —> " +v2,v2, r) == IDCANCEL) return "exit";
+// var r=prompt(" :: Большие числа ::\n > Предлагается:        " +v1+ " —> " +v2,v2)
+// if(r!=null && r.$!="")  { Col[k] = r.$;    s=sl1+("col1¦" +k+ "¦")+sp1;  count++; }
+// else                       { Col[k] = v1;  s=sl1+("col1¦" +k+ "¦")+sp1} }
+// if (k>=10) {
+// if (InputBox(" :: Большие числа ::\n > Предлагается:        " +v1+ " —> " +v2,v2, r) == IDCANCEL) return "exit";
+// if(r!=null && r.$!="")  { Col[k] = r.$;    s=sl1+("col2¦" +k+ "¦")+sp1;  count++; }
+// else                       { Col[k] = v1;  s=sl1+("col2¦" +k+ "¦")+sp1} }
+// k++; }
+
+ var r=Object();
  if (k<10) {
- if (InputBox(" :: Большие числа ::\n > Предлагается:        " +v1+ " —> " +v2,v2, r) == IDCANCEL) return "exit";
- var r=prompt(" :: Большие числа ::\n > Предлагается:        " +v1+ " —> " +v2,v2)
+ if (InputBox(" :: Большие числа ::\n > Замена:   " +v1+ " —> " +v2,v2, r) == IDCANCEL) return "exit";
  if(r!=null && r.$!="")  { Col[k] = r.$;    s=sl1+("col1¦" +k+ "¦")+sp1;  count++; }
  else                       { Col[k] = v1;  s=sl1+("col1¦" +k+ "¦")+sp1} }
  if (k>=10) {
- if (InputBox(" :: Большие числа ::\n > Предлагается:        " +v1+ " —> " +v2,v2, r) == IDCANCEL) return "exit";
+ if (InputBox(" :: Большие числа ::\n > Замена:   " +v1+ " —> " +v2,v2, r) == IDCANCEL) return "exit";
  if(r!=null && r.$!="")  { Col[k] = r.$;    s=sl1+("col2¦" +k+ "¦")+sp1;  count++; }
  else                       { Col[k] = v1;  s=sl1+("col2¦" +k+ "¦")+sp1} }
-k++; }
+xCol[k] = v1; k++; }
+
 
 //              30 000 000 000
        while (s.search(re30)!=-1) {
@@ -161,6 +232,9 @@ k++; }
     var v2  = s.replace(re30, re34);
     var sl1   = s.replace(re30, re32);
     var sp1   = s.replace(re30, re33);
+
+    JustBacklighting(v1, sl1);
+
 	 var r=Object();
  if (k<10) {
  if (InputBox(" :: Большие числа ::\n > Предлагается замена:      " +v1+ " —> " +v2,v2, r) == IDCANCEL) return "exit";
@@ -170,7 +244,7 @@ k++; }
  if (InputBox(" :: Большие числа ::\n > Предлагается замена:      " +v1+ " —> " +v2,v2, r) == IDCANCEL) return "exit";
  if(r!=null && r.$!="")  { Col[k] = r.$;    s=sl1+("col2¦" +k+ "¦")+sp1;  count++; }
  else                       { Col[k] = v1;  s=sl1+("col2¦" +k+ "¦")+sp1} }
-k++; }
+xCol[k] = v1; k++; }
 
 //              20 000 000
        while (s.search(re20)!=-1) {
@@ -178,6 +252,9 @@ k++; }
     var v2  = s.replace(re20, re24);
     var sl1   = s.replace(re20, re22);
     var sp1   = s.replace(re20, re23);
+
+    JustBacklighting(v1, sl1);
+
 		 var r=Object();
  if (k<10) {
  if (InputBox(" :: Большие числа ::\n > Предлагается замена:           " +v1+ " —> " +v2,v2, r) == IDCANCEL) return "exit";
@@ -187,7 +264,7 @@ k++; }
  if (InputBox(" :: Большие числа ::\n > Предлагается замена:           " +v1+ " —> " +v2,v2, r) == IDCANCEL) return "exit";
  if(r!=null && r.$!="")  { Col[k] = r.$;    s=sl1+("col2¦" +k+ "¦")+sp1;  count++; }
  else                       { Col[k] = v1;  s=sl1+("col2¦" +k+ "¦")+sp1} }
-k++; }
+xCol[k] = v1; k++; }
 
 //              10 000
        while (s.search(re10)!=-1) {
@@ -195,6 +272,9 @@ k++; }
     var v2  = s.replace(re10, re14);
     var sl1   = s.replace(re10, re12);
     var sp1   = s.replace(re10, re13);
+
+    JustBacklighting(v1, sl1);
+
 	var r=Object();
  if (k<10) {
  if (InputBox(" :: Большие числа ::\n > Предлагается замена:                " +v1+ " —> " +v2,v2, r) == IDCANCEL) return "exit";
@@ -204,7 +284,7 @@ k++; }
  if (InputBox(" :: Большие числа ::\n > Предлагается замена:                " +v1+ " —> " +v2,v2, r) == IDCANCEL) return "exit";
  if(r!=null && r.$!="")  { Col[k] = r.$;    s=sl1+("col2¦" +k+ "¦")+sp1;  count++; }
  else                       { Col[k] = v1;  s=sl1+("col2¦" +k+ "¦")+sp1} }
-k++; }
+xCol[k] = v1; k++; }
 
 //              1 000
        while (s.search(re00)!=-1) {
@@ -212,6 +292,9 @@ k++; }
     var v2  = s.replace(re00, re04);
     var sl1   = s.replace(re00, re02);
     var sp1   = s.replace(re00, re03);
+
+    JustBacklighting(v1, sl1);
+
 	var r=Object();
  if (k<10) {
  if (InputBox(" :: Большие числа ::\n > Предлагается замена:                     " +v1+ " —> " +v2,v2, r) == IDCANCEL) return "exit";
@@ -221,7 +304,7 @@ k++; }
  if (InputBox(" :: Большие числа ::\n > Предлагается замена:                     " +v1+ " —> " +v2,v2, r) == IDCANCEL) return "exit";
  if(r!=null && r.$!="")  { Col[k] = r.$;    s=sl1+("col2¦" +k+ "¦")+sp1;  count++; }
  else                       { Col[k] = v1;  s=sl1+("col2¦" +k+ "¦")+sp1} }
-k++; }
+xCol[k] = v1; k++; }
 
 //              1000
        while (s.search(re60)!=-1) {
@@ -229,6 +312,9 @@ k++; }
     var v2  = s.replace(re60, re64);
     var sl1   = s.replace(re60, re62);
     var sp1   = s.replace(re60, re63);
+
+    JustBacklighting(v1, sl1);
+
 	var r=Object();
  if (k<10) {
  if (InputBox(" :: Большие числа ::\n > Предлагается замена:                     " +v1+ " —> " +v2,v2, r) == IDCANCEL) return "exit";
@@ -238,7 +324,7 @@ k++; }
  if (InputBox(" :: Большие числа ::\n > Предлагается замена:                     " +v1+ " —> " +v2,v2, r) == IDCANCEL) return "exit";
  if(r!=null && r.$!="")  { Col[k] = r.$;    s=sl1+("col2¦" +k+ "¦")+sp1;  count++; }
  else                       { Col[k] = v1;  s=sl1+("col2¦" +k+ "¦")+sp1} }
-k++; }
+xCol[k] = v1; k++; }
 
 //              Дефис между цифрами
        while (s.search(re70)!=-1) {
@@ -246,6 +332,9 @@ k++; }
     var v2  = s.replace(re70, re74);
     var sl1   = s.replace(re70, re72);
     var sp1   = s.replace(re70, re73);
+
+    JustBacklighting(v1, sl1);
+
 	var r=Object();
  if (k<10) {
  if (InputBox(" :: Дефис ::\n > Предлагается замена:                     " +v1+ " —> " +v2,v2, r) == IDCANCEL) return "exit";
@@ -255,7 +344,7 @@ k++; }
  if (InputBox(" :: Дефис ::\n > Предлагается замена:                     " +v1+ " —> " +v2,v2, r) == IDCANCEL) return "exit";
  if(r!=null && r.$!="")  { Col[k] = r.$;    s=sl1+("col2¦" +k+ "¦")+sp1;  count++; }
  else                       { Col[k] = v1;  s=sl1+("col2¦" +k+ "¦")+sp1} }
-k++; }
+xCol[k] = v1; k++; }
 
 //              Тире между цифрами
        while (s.search(re80)!=-1) {
@@ -263,6 +352,9 @@ k++; }
     var v2  = s.replace(re80, re84);
     var sl1   = s.replace(re80, re82);
     var sp1   = s.replace(re80, re83);
+
+    JustBacklighting(v1, sl1);
+
 	var r=Object();
  if (k<10) {
  if (InputBox(" :: Тире ::\n > Предлагается замена:                     " +v1+ " —> " +v2,v2, r) == IDCANCEL) return "exit";
@@ -272,7 +364,7 @@ k++; }
  if (InputBox(" :: Тире ::\n > Предлагается замена:                     " +v1+ " —> " +v2,v2, r) == IDCANCEL) return "exit";
  if(r!=null && r.$!="")  { Col[k] = r.$;    s=sl1+("col2¦" +k+ "¦")+sp1;  count++; }
  else                       { Col[k] = v1;  s=sl1+("col2¦" +k+ "¦")+sp1} }
-k++; }
+xCol[k] = v1; k++; }
 
 //              Лишний пробел между цифрами
        while (s.search(re90)!=-1) {
@@ -280,6 +372,9 @@ k++; }
     var v2  = s.replace(re90, re94);
     var sl1   = s.replace(re90, re92);
     var sp1   = s.replace(re90, re93);
+
+    JustBacklighting(v1, sl1);
+
 	var r=Object();
  if (k<10) {
  if (InputBox(" :: Пробел ::\n > Предлагается замена:                     " +v1+ " —> " +v2,v2, r) == IDCANCEL) return "exit";
@@ -289,11 +384,9 @@ k++; }
  if (InputBox(" :: Пробел ::\n > Предлагается замена:                     " +v1+ " —> " +v2,v2, r) == IDCANCEL) return "exit";
  if(r!=null && r.$!="")  { Col[k] = r.$;    s=sl1+("col2¦" +k+ "¦")+sp1;  count++; }
  else                       { Col[k] = v1;  s=sl1+("col2¦" +k+ "¦")+sp1} }
-k++; }
+xCol[k] = v1; k++; }
 
 				}
-
-
 
 if ( s.search(re_fin1)!=-1 || s.search(re_fin2)!=-1) {                                                 // Восстановление временных замен
 for (z=0;z<k;z++)  {
@@ -314,11 +407,12 @@ for (z=0;z<k;z++)  {
  var ptr=body;
  var ProcessingEnding=false;
 
+// сканирование начинается с "курсорного" абзаца
  var tr=document.selection.createRange();
- if (!tr) return;
+ if (!tr) { alert("Отсутствие присутствия текста для проверки!"); return;}
  tr.collapse();
  var ptr=tr.parentElement();
- if (!body.contains(ptr)) return;
+ if (!body.contains(ptr)) { alert("Спозиционируйте курсор что ли!"); return;}
  var ptr2=ptr;
  while (ptr2 && ptr2.nodeName!="BODY" && ptr2.nodeName!="P")
   ptr2=ptr2.parentNode;
