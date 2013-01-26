@@ -12,7 +12,11 @@
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // v.1.5 — кастомизированные nbsp — Sclex (20.03.2010)
 //===============================================
-var VersionNumber="1.6";
+// v.1.6 — ???
+//======================================
+// v.1.62 — сканирование начинается с "курсорного" абзаца, доработка подсветки для найденных рез-тов поиска — Alex2L, июнь 2012
+//======================================
+var VersionNumber="1.62";
 
 //обрабатывать ли history
 var ObrabotkaHistory=false;
@@ -14718,6 +14722,8 @@ tirCol["ясные — решения"] = true;
           provCol = new Object();                        // коллекция проверенных словосочетаний
           eduCol = new Object();                        // коллекция самообучения — запоминаются словосочетания при «Отмене»
 
+          xCol = new Object();                        // коллекции оригинальных словосочетаний
+
  var re10 = new RegExp("^(.*?){0,1}([А-яЁё]+)(\\\s|"+nbspEntity+"){0,1}([\\\-–—])(\\\s|"+nbspEntity+"){0,1}([А-яЁё\\\-]+)(.*?)$","gi");
  var re11 = "$2$3$4$5$6";
  var re12 = "$1$2"; 
@@ -14740,6 +14746,57 @@ tirCol["ясные — решения"] = true;
 
 
  var s="";
+
+ var re1cl = new RegExp("<[^<>]+>","g");
+ var re11cl = "";
+
+ var re3cl = new RegExp("&#\\\d+;","g");
+ var re31cl = "q";
+
+//                  Подсветка                                  //
+ function JustBacklighting(s1, sl1) {
+
+ var b0 = s1.length;
+ var CodeMode = false;
+
+ var ss = sl1;                      // очистка части абзаца от тегов, умляутов
+ if (sl1.search(re1cl)!=-1) {ss = ss.replace(re1cl, re11cl);}
+ if (sl1.search(re3cl)!=-1) {ss = ss.replace(re3cl, re31cl);}
+
+ if (s1.search(re1cl)!=-1) { CodeMode = true;}
+ if (s1.search(re3cl)!=-1) { CodeMode = true;}
+
+ if ( ss.search(re_fin1)!=-1 || ss.search(re_fin2)!=-1 || ss.search(re20)!=-1 || ss.search(re22)!=-1) {      // Восстановление временных замен
+   for (z=0;z<k;z++) {
+
+     if (z < 10)  { var re30x = new RegExp("♣("+z+")","g");
+                    var re31x = xCol[z];
+                    ss=ss.replace(re30x,re31x); }
+     if (z >=10)  { var re32x = new RegExp("♠("+z+")","g"); 
+                    var re33x = xCol[z];  
+                    ss=ss.replace(re32x,re33x); }
+   }
+  } 
+
+ var a1 = 0;
+
+ if (CodeMode) {
+   ss=ptr.innerHTML;
+   if (ss.search(re1cl)!=-1) {ss = ss.replace(re1cl, re11cl);}
+   if (ss.search(re3cl)!=-1) {ss = ss.replace(re3cl, re31cl);}
+
+   b0 = ss.length;
+  }
+ else { a1 = ss.length; }
+
+ var range1=document.body.createTextRange();
+ range1.moveToElementText(ptr);
+ range1.collapse();
+ range1.move("character",a1);
+ range1.moveEnd("character",b0);
+ range1.select();
+ }
+//                   Конец подсветки                           //
 
  // функция, обрабатывающая абзац P
  function HandleP(ptr) {
@@ -14791,13 +14848,13 @@ while (ptr2!=fbw_body && ptr2.nodeName!="P") {
 
   if (eduCol[vis]==true)  {
         if (k<10)   { provCol[k] = vis;    s=stt+ ("♣" +k)+fin; counttt++ } 
-        if (k>10)   { provCol[k] = vis;    s=stt+ ("♠" +k)+fin; counttt++ } k++;}     //меняю на заглушки предыдущие «отмены», чтобы второй раз не попадались
+        if (k>10)   { provCol[k] = vis;    s=stt+ ("♠" +k)+fin; counttt++ } xCol[k] = vis; k++;}     //меняю на заглушки предыдущие «отмены», чтобы второй раз не попадались
 
   if ( preCol[pre]==null && preCol[preLow]==null && sufCol[suf]==null && sufCol[sufLow]==null && ssCol[sls]==null && ssCol[slsLow]==null && tirCol[tir]==null  && tirCol[tirLow]==null && eduCol[vis]==null)
-
-
                                                                                                                    // только слова, которых нет ни в одной из коллекций
 					{
+ JustBacklighting(vis, stt);
+
  var r=Object();
  if (InputBox(':: Тире - vs - Дефис ::                                       '+countt1+' … '+countt2+' … '+count+'\n'+
                       'Введите свой вариант:        ' +vis,vis, r) == IDCANCEL) return false;                                                // patch
@@ -14808,8 +14865,7 @@ if (k<10)     { if(r!=null && r.$!="") { provCol[k] = r.$;  s=stt+ ("♣" +k)+fi
                                      else   { provCol[k] = vis; eduCol[vis]=true; s=stt+ ("♣" +k)+fin; counttt++ } } 
 if (k>=10)   { if(r!=null && r.$!="") { provCol[k] = r.$;  s=stt+ ("♠" +k)+fin; count++} 
                                     else    { provCol[k] = vis; eduCol[vis]=true; s=stt+ ("♠" +k)+fin; } counttt++ } 
-   k++;
-					}
+xCol[k] = vis; k++; }
 
 
 //  Автоматические замены на бесспорный дефис
@@ -14846,7 +14902,16 @@ for (z=0;z<k;z++)
  var ProcessingEnding=false;
     var PoraNaVyhod = false;
 
-
+// сканирование начинается с "курсорного" абзаца
+ var tr=document.selection.createRange();
+ if (!tr) { alert("Отсутствие присутствия текста для проверки!"); return;}
+ tr.collapse();
+ var ptr=tr.parentElement();
+ if (!body.contains(ptr)) { alert("Спозиционируйте курсор что ли!"); return;}
+ var ptr2=ptr;
+ while (ptr2 && ptr2.nodeName!="BODY" && ptr2.nodeName!="P")
+  ptr2=ptr2.parentNode;
+ if (ptr2 && ptr2.nodeName=="P") ptr=ptr2;
 
  while (!ProcessingEnding && ptr) {
   SaveNext=ptr;

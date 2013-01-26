@@ -41,7 +41,10 @@
 //======================================
 // v.2.9 — доработка движка под прерывание и выход — sclex, май 2010
 //======================================
-var VersionNumber="2.9";
+// v.2.92 — доработка подсветки для найденных рез-тов поиска — Alex2L, май, июнь 2012
+//======================================
+
+var VersionNumber="2.92";
 
 //обрабатывать ли history
 var ObrabotkaHistory=true;
@@ -50,7 +53,7 @@ var ObrabotkaAnnotation=true;
 // обрабатывать ли апостроф
  var Apostrophe=false;
   var PromptApostrophe=true;
-// обрабатывать ли апостроф
+// обрабатывать ли слэш
  var Slash=false;
   var PromptSlash=true;
 
@@ -76,8 +79,10 @@ function Run() {
 
           Col = new Object();                        // коллекции проверенных словосочетаний
            var k = 0;
-          sobCol = new Object();                   // коллекция «отменённых», чтобы по десять раз их не проверять
-          Coldef = new Object();                        // коллекция ДО дефиса
+          sobCol = new Object();                     // коллекция «отменённых», чтобы по десять раз их не проверять
+          Coldef = new Object();                     // коллекция ДО дефиса
+
+          xCol = new Object();                       // коллекции оригинальных словосочетаний
 
 Coldef["радио"] = true;
 Coldef["теле"] = true;
@@ -90,6 +95,7 @@ Coldef["право"] = true;
  var re12 = "$1";                           // с начала абзаца до искомого места
  var re13 = "$7";                           // до конца параграфа
 
+ var re14 = "$2 $5";
                                                     // исключая ";" — чтобы не спотыкаться на неразрывных пробелах
  var re20 = new RegExp("^(.*?){0,1}([А-яЁё]+)("+aIB+"){0,1}([\\\.,\\\"„“”!\\\?\\\|:\\\*%\\\^\\\d])("+aIB+"){0,1}([А-яЁё]+)(.*?){0,1}$","gi");
  var re21 = "$2$3$4$5$6";
@@ -116,7 +122,7 @@ Coldef["право"] = true;
  var re53 = "$5";
 
                                                       // строчная. после точки и т. п.
- var re60 = new RegExp("^(.*?){0,1}([^"+nbspChar+"\\\(\\\)][А-яЁё]+)("+fIB+"){0,1}([\\\.!\\\?\\\|\\\^\\\(]+)(\\\s*)("+sIB+"){0,1}([а-яё]+)(.*?){0,1}$","g");
+ var re60 = new RegExp("^(.*?){0,1}([^"+nbspChar+"\\\(\\\)][А-яЁё]+)("+fIB+"){0,1}([\\\.!\\\?\\\|\\\^\\\(]+)(["+nbspEntity+"|\\\s]*)("+sIB+"){0,1}([а-яё]+)(.*?){0,1}$","g");
  var re61 = "$2$3$4$5$6$7";
  var re62 = "$1";
  var re63 = "$8";
@@ -162,7 +168,7 @@ Coldef["право"] = true;
  var re113 = "$5";
 
                                                        // Ненужный апостроф по'среди строчных.
- var re120 = new RegExp("^(.*?){0,1}([а-яё]+)(['`])([а-яё]+)(.*?){0,1}$","g");
+ var re120 = new RegExp("^(.*?){0,1}([а-яё]+)([‘'`])([а-яё]+)(.*?){0,1}$","g");
  var re121 = "$2$3$4";
  var re122 = "$1";
  var re123 = "$5";
@@ -174,6 +180,13 @@ Coldef["право"] = true;
  var re122a = "$1";
  var re123a = "$5";
  var re124a = "$2$4";
+
+                                                       // Ненужный апостроф 'перед строчными.
+ var re120b = new RegExp("^(.*?){0,1}([‘'`])([а-яё]+)(.*?){0,1}$","g");
+ var re121b = "$2$3";
+ var re122b = "$1";
+ var re123b = "$4";
+ var re124b = "$3";
 
                                                        // Разнообразный мусор.
  var re130 = new RegExp("^(.*?){0,1}([а-яё\\\.;:,!\\\?—]+)((\\\s)|("+nbspEntity+")){0,1}([_\\\<\\\>•■~])((\\\s)|("+nbspEntity+")){0,1}([а-яё—–«»„“]+)(.*?){0,1}$","gi");
@@ -227,8 +240,57 @@ Coldef["право"] = true;
   var re_fin1 = new RegExp("col1_\\\d†","g");
   var re_fin2 = new RegExp("col2_\\\d{2}†","g");
 
-
  var s="";
+
+ var re1cl = new RegExp("<[^<>]+>","g");
+ var re11cl = "";
+
+ var re3cl = new RegExp("&#\\\d+;","g");
+ var re31cl = "q";
+
+//                  Подсветка                                  //
+ function JustBacklighting(s1, sl1) {
+
+ var b0 = s1.length;
+ var CodeMode = false;
+
+ var ss = sl1;                      // очистка части абзаца от тегов, умляутов
+ if (sl1.search(re1cl)!=-1) {ss = ss.replace(re1cl, re11cl);}
+ if (sl1.search(re3cl)!=-1) {ss = ss.replace(re3cl, re31cl);}
+
+ if (s1.search(re1cl)!=-1) { CodeMode = true;}
+ if (s1.search(re3cl)!=-1) { CodeMode = true;}
+
+ if ( ss.search(re_fin1)!=-1 || ss.search(re_fin2)!=-1) {                                                 // Восстановление временных замен
+   for (z=0;z<k;z++) {
+     if (z < 10)  { var re200x = new RegExp("col1_("+z+")†","g");
+                    var re201x = xCol[z];
+                    ss = ss.replace(re200x,re201x); }
+     if (z >= 10) { var re210x = new RegExp("col2_("+z+")†","g");
+                    var re211x = xCol[z];
+                    ss=ss.replace(re210x,re211x); }
+   }
+  } 
+
+ var a1 = 0;
+
+ if (CodeMode) {
+   ss=ptr.innerHTML;
+   if (ss.search(re1cl)!=-1) {ss = ss.replace(re1cl, re11cl);}
+   if (ss.search(re3cl)!=-1) {ss = ss.replace(re3cl, re31cl);}
+
+   b0 = ss.length;
+  }
+ else { a1 = ss.length; }
+
+ var range1=document.body.createTextRange();
+ range1.moveToElementText(ptr);
+ range1.collapse();
+ range1.move("character",a1);
+ range1.moveEnd("character",b0);
+ range1.select();
+ }
+//                   Конец подсветки                           //
 
 
  // функция, обрабатывающая абзац P
@@ -236,9 +298,8 @@ Coldef["право"] = true;
   s=ptr.innerHTML;
 
 
-       if (s.search(re10)!=-1 || s.search(re20)!=-1 || s.search(re30)!=-1 || s.search(re40)!=-1 || s.search(re50)!=-1 || s.search(re60)!=-1 || s.search(re70)!=-1 || s.search(re_70)!=-1 || s.search(re80)!=-1 || s.search(re90)!=-1 || s.search(re100)!=-1 || s.search(re110)!=-1 || s.search(re120)!=-1  || s.search(re120a)!=-1 || s.search(re130)!=-1 || s.search(re140)!=-1 || s.search(re150)!=-1 || s.search(re160)!=-1 || s.search(re170)!=-1 || s.search(re180)!=-1 || s.search(re190)!=-1)
+       if (s.search(re10)!=-1 || s.search(re20)!=-1 || s.search(re30)!=-1 || s.search(re40)!=-1 || s.search(re50)!=-1 || s.search(re60)!=-1 || s.search(re70)!=-1 || s.search(re_70)!=-1 || s.search(re80)!=-1 || s.search(re90)!=-1 || s.search(re100)!=-1 || s.search(re110)!=-1 || s.search(re120)!=-1  || s.search(re120a)!=-1 || s.search(re120b)!=-1 || s.search(re130)!=-1 || s.search(re140)!=-1 || s.search(re150)!=-1 || s.search(re160)!=-1 || s.search(re170)!=-1 || s.search(re180)!=-1 || s.search(re190)!=-1)
          { GoTo(ptr);
-
 
 
        while (s.search(re10)!=-1) {
@@ -249,9 +310,10 @@ Coldef["право"] = true;
   if (sobCol[v1]==true)  {
         if (k<10)   { Col[k] = v1;    s=sl1+("col1_" +k+ "†")+sp1; } 
         if (k>10)   { Col[k] = v1;    s=sl1+("col2_" +k+ "†")+sp1; }
-		 k++;} 
- var r=Object();                                                 
+	xCol[k] = v1; k++; }
+  else { JustBacklighting(v1, sl1); }
 
+ var r=Object();                                                 
  if (k<10 && sobCol[v1]==null) {
  if (InputBox(" :: Подозрительные символы ::\nВведите свой вариант:        " +v1,v1, r) == IDCANCEL) return "exit";
  if(r!=null && r.$!="")  { Col[k] = r.$;    s=sl1+("col1_" +k+ "†")+sp1;  count++; }
@@ -260,9 +322,7 @@ Coldef["право"] = true;
  if (InputBox(" :: Подозрительные символы ::\nВведите свой вариант:        " +v1,v1, r) == IDCANCEL) return "exit";
  if(r!=null && r.$!="")  { Col[k] = r.$;    s=sl1+("col2_" +k+ "†")+sp1;  count++; }
  else                       { Col[k] = v1; sobCol[v1]=true;  s=sl1+("col2_" +k+ "†")+sp1} }
-k++; }
-
-
+xCol[k] = v1; k++; }
 
        while (s.search(re60)!=-1) {
     var v6  = s.replace(re60, re61);
@@ -272,7 +332,9 @@ k++; }
   if (sobCol[v6]==true)  {
         if (k<10)   { Col[k] = v6;    s=sl6+("col1_" +k+ "†")+sp6; } 
         if (k>10)   { Col[k] = v6;    s=sl6+("col2_" +k+ "†")+sp6; }
-		 k++;}
+	xCol[k] = v6; k++; }
+  else { JustBacklighting(v6, sl6); }
+
  var r=Object();                                                 
  if (k<10 && sobCol[v6]==null) {
  if (InputBox(" :: Подозрительная пунктуация ::\nВведите свой вариант:        " +v6,v6, r) == IDCANCEL) return "exit";
@@ -282,9 +344,7 @@ k++; }
  if (InputBox(" :: Подозрительная пунктуация ::\nВведите свой вариант:        " +v6,v6, r) == IDCANCEL) return "exit";
  if(r!=null && r.$!="")  { Col[k] = r.$;    s=sl6+("col2_" +k+ "†")+sp6;  count++; }
  else                       { Col[k] = v6; sobCol[v6]=true;  s=sl6+("col2_" +k+ "†")+sp6} }
-k++; }
-
-
+xCol[k] = v6; k++; }
 
        while (s.search(re20)!=-1) {
     var v2  = s.replace(re20, re21);
@@ -294,7 +354,9 @@ k++; }
   if (sobCol[v2]==true)  {
         if (k<10)   { Col[k] = v2;    s=sl1+("col1_" +k+ "†")+sp2; } 
         if (k>10)   { Col[k] = v2;    s=sl1+("col2_" +k+ "†")+sp2; }
-		 k++;} 
+	xCol[k] = v2; k++; }
+  else { JustBacklighting(v2, sl2); }
+
  var r=Object();                                                 
  if (k<10 && sobCol[v2]==null) {
  if (InputBox(" :: Подозрительные символы ::\nВведите свой вариант:        " +v2,v2, r) == IDCANCEL) return "exit";
@@ -304,9 +366,7 @@ k++; }
  if (InputBox(" :: Подозрительные символы ::\nВведите свой вариант:        " +v2,v2, r) == IDCANCEL) return "exit";
  if(r!=null && r.$!="")  { Col[k] = r.$;    s=sl2+("col2_" +k+ "†")+sp2; count++; }
  else                       { Col[k] = v2; sobCol[v2]=true;  s=sl2+("col2_" +k+ "†")+sp2; } }
-k++; }
-
-
+xCol[k] = v2; k++; }
 
        while (s.search(re30)!=-1) {
     var v3  = s.replace(re30, re31);
@@ -317,7 +377,9 @@ k++; }
   if (sobCol[v3]==true)  {
         if (k<10)   { Col[k] = v3;    s=sl3+("col1_" +k+ "†")+sp3; } 
         if (k>10)   { Col[k] = v3;    s=sl3+("col2_" +k+ "†")+sp3; }
-		 k++;} 
+	xCol[k] = v3; k++; }
+  else { JustBacklighting(v3, sl3); }
+
  var r=Object();                                                 
  if (k<10 && sobCol[v3]==null) {
  if (InputBox(" :: Подозрительные символы ::\nВведите свой вариант:        " +v3,vv3, r) == IDCANCEL) return "exit";
@@ -327,9 +389,7 @@ k++; }
  if (InputBox(" :: Подозрительные символы ::\nВведите свой вариант:        " +v3,vv3, r) == IDCANCEL) return "exit";
  if(r!=null && r.$!="")  { Col[k] = r.$;    s=sl3+("col2_" +k+ "†")+sp3; count++; }
  else                       { Col[k] = v3; sobCol[v3]=true;  s=sl3+("col2_" +k+ "†")+sp3; } }
-k++; }
-
-
+xCol[k] = v3; k++; }
 
        while (s.search(re40)!=-1) {
     var v4  = s.replace(re40, re41);
@@ -339,7 +399,9 @@ k++; }
   if (sobCol[v4]==true)  {
         if (k<10)   { Col[k] = v4;    s=sl4+("col1_" +k+ "†")+sp4; } 
         if (k>10)   { Col[k] = v4;    s=sl4+("col2_" +k+ "†")+sp4; }
-		 k++;} 
+	xCol[k] = v4; k++; }
+  else { JustBacklighting(v4, sl4); }
+
  var r=Object();                                                 
  if (k<10 && sobCol[v4]==null) {
  if (InputBox(" :: Подозрительные символы ::\nВведите свой вариант:        " +v4,v4, r) == IDCANCEL) return "exit";
@@ -349,9 +411,7 @@ k++; }
  if (InputBox(" :: Подозрительные символы ::\nВведите свой вариант:        " +v4,v4, r) == IDCANCEL) return "exit";
  if(r!=null && r.$!="")  { Col[k] = r.$;    s=sl4+("col2_" +k+ "†")+sp4; count++; }
  else                       { Col[k] = v4; sobCol[v4]=true;  s=sl4+("col2_" +k+ "†")+sp4; } }
-k++; }
-
-
+xCol[k] = v4; k++; }
 
        while (s.search(re50)!=-1) {
     var v5  = s.replace(re50, re51);
@@ -361,7 +421,9 @@ k++; }
   if (sobCol[v5]==true)  {
         if (k<10)   { Col[k] = v5;    s=sl5+("col1_" +k+ "†")+sp5; } 
         if (k>10)   { Col[k] = v5;    s=sl5+("col2_" +k+ "†")+sp5; }
-		 k++;} 
+	xCol[k] = v5; k++; }
+  else { JustBacklighting(v5, sl5); }
+
  var r=Object();                                                 
  if (k<10 && sobCol[v5]==null) {
  if (InputBox(" :: Подозрительные символы ::\nВведите свой вариант:        " +v5,v5, r) == IDCANCEL) return "exit";
@@ -371,9 +433,7 @@ k++; }
  if (InputBox(" :: Подозрительные символы ::\nВведите свой вариант:        " +v5,v5, r) == IDCANCEL) return "exit";
  if(r!=null && r.$!="")  { Col[k] = r.$;    s=sl5+("col2_" +k+ "†")+sp5; count++; }
  else                       { Col[k] = v5; sobCol[v5]=true;  s=sl5+("col2_" +k+ "†")+sp5; } }
-k++; }
-
-
+xCol[k] = v5; k++; }
 
        while (s.search(re70)!=-1) {
     var v7  = s.replace(re70, re71);
@@ -383,7 +443,9 @@ k++; }
   if (sobCol[v7]==true)  {
         if (k<10)   { Col[k] = v7;    s=sl7+("col1_" +k+ "†")+sp7; } 
         if (k>10)   { Col[k] = v7;    s=sl7+("col2_" +k+ "†")+sp7; }
-		 k++;} 
+	xCol[k] = v7; k++; }
+  else { JustBacklighting(v7, sl7); }
+
  var r=Object();                                                 
  if (k<10 && sobCol[v7]==null) {
  if (InputBox(" :: Цифры 1 ::\nВведите свой вариант:        " +v7,v7, r) == IDCANCEL) return "exit";
@@ -393,9 +455,7 @@ k++; }
  if (InputBox(" :: Цифры 1 ::\nВведите свой вариант:        " +v7,v7, r) == IDCANCEL) return "exit";
  if(r!=null && r.$!="")  { Col[k] = r.$;    s=sl7+("col2_" +k+ "†")+sp7;  count++; }
  else                       { Col[k] = v7; sobCol[v7]=true;  s=sl7+("col2_" +k+ "†")+sp7} }
-k++; }
-
-
+xCol[k] = v7; k++; }
 
        while (s.search(re_70)!=-1) {
     var v_7  = s.replace(re_70, re_71);
@@ -406,7 +466,9 @@ k++; }
   if (sobCol[v_7]==true)  {
         if (k<10)   { Col[k] = v_7;    s=sl_7+("col1_" +k+ "†")+sp_7; } 
         if (k>10)   { Col[k] = v_7;    s=sl_7+("col2_" +k+ "†")+sp_7; }
-		 k++;} 
+	xCol[k] = v_7; k++; }
+ else { JustBacklighting(v_7, sl_7); }
+
  var r=Object();                                                 
  if (k<10 && sobCol[v_7]==null) {
  if (InputBox(" :: Цифры 2 ::\nВведите свой вариант:        " +v_7,vv_7, r) == IDCANCEL) return "exit";
@@ -416,9 +478,7 @@ k++; }
  if (InputBox(" :: Цифры 2 ::\nВведите свой вариант:        " +v_7,vv_7, r) == IDCANCEL) return "exit";
  if(r!=null && r.$!="")  { Col[k] = r.$;    s=sl_7+("col2_" +k+ "†")+sp_7;  count++; }
  else                       { Col[k] = v_7; sobCol[v_7]=true;  s=sl_7+("col2_" +k+ "†")+sp_7} }
-k++; }
-
-
+xCol[k] = v_7; k++; }
 
        while (s.search(re80)!=-1) {
     var v8  = s.replace(re80, re81);
@@ -428,7 +488,9 @@ k++; }
   if (sobCol[v8]==true)  {
         if (k<10)   { Col[k] = v8;    s=sl8+("col1_" +k+ "†")+sp8; } 
         if (k>10)   { Col[k] = v8;    s=sl8+("col2_" +k+ "†")+sp8; }
-		 k++;} 
+	xCol[k] = v8; k++; }
+  else { JustBacklighting(v8, sl8); }
+
  var r=Object();                                                 
  if (k<10 && sobCol[v8]==null) {
  if (InputBox(" :: Кавычки ::\nВведите свой вариант:        " +v8,v8, r) == IDCANCEL) return "exit";
@@ -438,9 +500,7 @@ k++; }
  if (InputBox(" :: Кавычки ::\nВведите свой вариант:        " +v8,v8, r) == IDCANCEL) return "exit";
  if(r!=null && r.$!="")  { Col[k] = r.$;    s=sl8+("col2_" +k+ "†")+sp8;  count++; }
  else                       { Col[k] = v8; sobCol[v8]=true;  s=sl8+("col2_" +k+ "†")+sp8} }
-k++; }
-
-
+xCol[k] = v8; k++; }
 
        while (s.search(re90)!=-1) {
     var v9  = s.replace(re90, re91);
@@ -450,7 +510,9 @@ k++; }
   if (sobCol[v9]==true)  {
         if (k<10)   { Col[k] = v9;    s=sl9+("col1_" +k+ "†")+sp9; } 
         if (k>10)   { Col[k] = v9;    s=sl9+("col2_" +k+ "†")+sp9; }
-		 k++;} 
+	xCol[k] = v9; k++; }
+  else { JustBacklighting(v9, sl9); }
+
  var r=Object();                                                 
  if (k<10 && sobCol[v9]==null) {
  if (InputBox(" :: Дефис ::\nВведите свой вариант:        " +v9,v9, r) == IDCANCEL) return "exit";
@@ -460,9 +522,7 @@ k++; }
  if (InputBox(" :: Дефис ::\nВведите свой вариант:        " +v9,v9, r) == IDCANCEL) return "exit";
  if(r!=null && r.$!="")  { Col[k] = r.$;    s=sl9+("col2_" +k+ "†")+sp9;  count++; }
  else                       { Col[k] = v9; sobCol[v9]=true;  s=sl9+("col2_" +k+ "†")+sp9} }
-k++; }
-
-
+xCol[k] = v9; k++; }
 
        while (s.search(re100)!=-1) {
     var v10  = s.replace(re100, re101);
@@ -474,7 +534,9 @@ k++; }
   if (sobCol[v10]==true || Coldef[def]==true)  {
         if (k<10)   { Col[k] = v10;    s=sl10+("col1_" +k+ "†")+sp10; } 
         if (k>10)   { Col[k] = v10;    s=sl10+("col2_" +k+ "†")+sp10; }
-		 k++;} 
+	xCol[k] = v10; k++; }
+  else { JustBacklighting(v10, sl10); }
+
  var r=Object();                                                 
  if (k<10 && sobCol[v10]==null && Coldef[def]==null) {
  if (InputBox(" :: Дефис до пробела ::\nВведите свой вариант:        " +v10,vv10, r) == IDCANCEL) return "exit";
@@ -484,9 +546,7 @@ k++; }
  if (InputBox(" :: Дефис до пробела ::\nВведите свой вариант:        " +v10,vv10, r) == IDCANCEL) return "exit";
  if(r!=null && r.$!="")  { Col[k] = r.$;    s=sl10+("col2_" +k+ "†")+sp10;  count++; }
  else                       { Col[k] = v10; sobCol[v10]=true;  s=sl10+("col2_" +k+ "†")+sp10} }
-k++; }
-
-
+xCol[k] = v10; k++; }
 
        while (s.search(re110)!=-1) {
     var v11  = s.replace(re110, re111);
@@ -496,7 +556,9 @@ k++; }
   if (sobCol[v11]==true)  {
         if (k<10)   { Col[k] = v11;    s=sl11+("col1_" +k+ "†")+sp11; } 
         if (k>10)   { Col[k] = v11;    s=sl11+("col2_" +k+ "†")+sp11; }
-		 k++;} 
+	xCol[k] = v11; k++; }
+  else { JustBacklighting(v11, sl11); }
+
  var r=Object();                                                 
  if (k<10 && sobCol[v11]==null) {
  if (InputBox(" :: Дефис после пробела ::\nВведите свой вариант:        " +v11,v11, r) == IDCANCEL) return "exit";
@@ -506,12 +568,10 @@ k++; }
  if (InputBox(" :: Дефис после пробела ::\nВведите свой вариант:        " +v11,v11, r) == IDCANCEL) return "exit";
  if(r!=null && r.$!="")  { Col[k] = r.$;    s=sl11+("col2_" +k+ "†")+sp11;  count++; }
  else                       { Col[k] = v11; sobCol[v11]=true;  s=sl11+("col2_" +k+ "†")+sp11} }
-k++; }
-
-
+xCol[k] = v11; k++; }
 
 if (Apostrophe)
-                      { 
+              { 
        while (s.search(re120)!=-1) {
     var v12  = s.replace(re120, re121);
     var sl12   = s.replace(re120, re122);
@@ -521,7 +581,9 @@ if (Apostrophe)
   if (sobCol[v12]==true)  {
         if (k<10)   { Col[k] = v12;    s=sl12+("col1_" +k+ "†")+sp12; } 
         if (k>10)   { Col[k] = v12;    s=sl12+("col2_" +k+ "†")+sp12; }
-		 k++;} 
+	xCol[k] = v12; k++; }
+  else { JustBacklighting(v12, sl12); }
+
  var r=Object();                                                 
  if (k<10 && sobCol[v12]==null) {
  if (InputBox(" :: Апостроф' ::\nВведите свой вариант:        " +v12,vv12, r) == IDCANCEL) return "exit";
@@ -531,13 +593,11 @@ if (Apostrophe)
  if (InputBox(" :: Апостроф' ::\nВведите свой вариант:        " +v12,vv12, r) == IDCANCEL) return "exit";
  if(r!=null && r.$!="")  { Col[k] = r.$;    s=sl12+("col2_" +k+ "†")+sp12;  count++; }
  else                       { Col[k] = v12; sobCol[v12]=true;  s=sl12+("col2_" +k+ "†")+sp12} }
-k++; }
-                     }
-
-
+xCol[k] = v12; k++; }
+              }
 
 if (Slash)
-                      { 
+         { 
        while (s.search(re120a)!=-1) {
     var v12a  = s.replace(re120a, re121a);
     var sl12a   = s.replace(re120a, re122a);
@@ -547,7 +607,9 @@ if (Slash)
   if (sobCol[v12a]==true)  {
         if (k<10)   { Col[k] = v12a;    s=sl12a+("col1_" +k+ "†")+sp12a;  } 
         if (k>10)   { Col[k] = v12a;    s=sl12a+("col2_" +k+ "†")+sp12a;  }
-		 k++;} 
+	xCol[k] = v12a; k++; }
+  else { JustBacklighting(v12a, sl12a); }
+
  var r=Object();                                                 
  if (k<10 && sobCol[v12a]==null) {
  if (InputBox(" :: Сл/эш ::\nВведите свой вариант:        " +v12a,vv12a, r) == IDCANCEL) return "exit";
@@ -557,9 +619,34 @@ if (Slash)
  if (InputBox(" :: Сл/эш ::\nВведите свой вариант:        " +v12a,vv12a, r) == IDCANCEL) return "exit";
  if(r!=null && r.$!="")  { Col[k] = r.$;    s=sl12a+("col2_" +k+ "†")+sp12a;  count++; }
  else                       { Col[k] = v12a; sobCol[v12a]=true;  s=sl12a+("col2_" +k+ "†")+sp12a}  }
-k++; }
-                     }
+xCol[k] = v12a; k++; }
+         }
 
+if (Apostrophe)
+              { 
+       while (s.search(re120b)!=-1) {
+    var v12b   = s.replace(re120b, re121b);
+    var sl12b  = s.replace(re120b, re122b);
+    var sp12b  = s.replace(re120b, re123b);
+    var vv12b  = s.replace(re120b, re124b);
+
+  if (sobCol[v12b]==true)  {
+        if (k<10)   { Col[k] = v12b;    s=sl12b+("col1_" +k+ "†")+sp12b; } 
+        if (k>10)   { Col[k] = v12b;    s=sl12b+("col2_" +k+ "†")+sp12b; }
+	xCol[k] = v12b; k++; }
+  else { JustBacklighting(v12b, sl12b); }
+
+ var r=Object();                                                 
+ if (k<10 && sobCol[v12b]==null) {
+ if (InputBox(" :: Апостроф 'вначале строчных ::\nВведите свой вариант:        " +v12b,vv12b, r) == IDCANCEL) return "exit";
+ if(r!=null && r.$!="")  { Col[k] = r.$;    s=sl12b+("col1_" +k+ "†")+sp12b;  count++; }
+ else                       { Col[k] = v12b; sobCol[v12b]=true;  s=sl12b+("col1_" +k+ "†")+sp12b} }
+ if (k>=10 && sobCol[v12b]==null) {
+ if (InputBox(" :: Апостроф 'вначале строчных ::\nВведите свой вариант:        " +v12b,vv12b, r) == IDCANCEL) return "exit";
+ if(r!=null && r.$!="")  { Col[k] = r.$;    s=sl12b+("col2_" +k+ "†")+sp12b;  count++; }
+ else                       { Col[k] = v12b; sobCol[v12b]=true;  s=sl12b+("col2_" +k+ "†")+sp12b} }
+xCol[k] = v12b; k++; }
+              }
 
        while (s.search(re130)!=-1) {
     var v13  = s.replace(re130, re131);
@@ -570,7 +657,9 @@ k++; }
   if (sobCol[v13]==true)  {
         if (k<10)   { Col[k] = v13;    s=sl13+("col1_" +k+ "†")+sp13;  } 
         if (k>10)   { Col[k] = v13;    s=sl13+("col2_" +k+ "†")+sp13;  }
-		 k++;} 
+	xCol[k] = v13; k++; }
+  else { JustBacklighting(v13, sl13); }
+
  var r=Object();                                                 
  if (k<10 && sobCol[v13]==null) {
  if (InputBox(" :: Мусор ::\nВведите свой вариант:        " +v13,vv13, r) == IDCANCEL) return "exit";
@@ -580,8 +669,7 @@ k++; }
  if (InputBox(" :: Мусор ::\nВведите свой вариант:        " +v13,vv13, r) == IDCANCEL) return "exit";
  if(r!=null && r.$!="")  { Col[k] = r.$;    s=sl13+("col2_" +k+ "†")+sp13;  count++; }
  else                       { Col[k] = v13; sobCol[v13]=true;  s=sl13+("col2_" +k+ "†")+sp13}  }
-k++; }
-
+xCol[k] = v13; k++; }
 
        while (s.search(re140)!=-1) {
     var v14  = s.replace(re140, re141);
@@ -592,7 +680,9 @@ k++; }
   if (sobCol[v14]==true)  {
         if (k<10)   { Col[k] = v14;    s=sl14+("col1_" +k+ "†")+sp14;  } 
         if (k>10)   { Col[k] = v14;    s=sl14+("col2_" +k+ "†")+sp14;  }
-		 k++;} 
+	xCol[k] = v14; k++; }
+  else { JustBacklighting(v14, sl14); }
+
  var r=Object();                                                 
  if (k<10 && sobCol[v14]==null) {
  if (InputBox(" :: Скобка ::\nВведите свой вариант:        " +v14,vv14, r) == IDCANCEL) return "exit";
@@ -602,8 +692,7 @@ k++; }
  if (InputBox(" :: Скобка ::\nВведите свой вариант:        " +v14,vv14, r) == IDCANCEL) return "exit";
  if(r!=null && r.$!="")  { Col[k] = r.$;    s=sl14+("col2_" +k+ "†")+sp14;  count++; }
  else                       { Col[k] = v14; sobCol[v14]=true;  s=sl14+("col2_" +k+ "†")+sp14}  }
-k++; }
-
+xCol[k] = v14; k++; }
 
        while (s.search(re150)!=-1) {
     var v15  = s.replace(re150, re151);
@@ -613,7 +702,9 @@ k++; }
   if (sobCol[v15]==true)  {
         if (k<10)   { Col[k] = v15;    s=sl15+("col1_" +k+ "†")+sp15;  } 
         if (k>10)   { Col[k] = v15;    s=sl15+("col2_" +k+ "†")+sp15;  }
-		 k++;} 
+	xCol[k] = v15; k++; }
+  else { JustBacklighting(v15, sl15); }
+
  var r=Object();                                                 
  if (k<10 && sobCol[v15]==null) {
  if (InputBox(" :: Союз ::\nВведите свой вариант:        " +v15,v15, r) == IDCANCEL) return "exit";
@@ -623,8 +714,7 @@ k++; }
  if (InputBox(" :: Союз ::\nВведите свой вариант:        " +v15,v15, r) == IDCANCEL) return "exit";
  if(r!=null && r.$!="")  { Col[k] = r.$;    s=sl15+("col2_" +k+ "†")+sp15;  count++; }
  else                       { Col[k] = v15; sobCol[v15]=true;  s=sl15+("col2_" +k+ "†")+sp15}  }
-k++; }
-
+xCol[k] = v15; k++; }
 
        while (s.search(re160)!=-1) {
     var v16  = s.replace(re160, re161);
@@ -635,7 +725,9 @@ k++; }
   if (sobCol[v16]==true)  {
         if (k<10)   { Col[k] = v16;    s=sl16+("col1_" +k+ "†")+sp16;  } 
         if (k>10)   { Col[k] = v16;    s=sl16+("col2_" +k+ "†")+sp16;  }
-		 k++;} 
+	xCol[k] = v16; k++; }
+  else { JustBacklighting(v16, sl16); }
+
  var r=Object();                                                 
  if (k<10 && sobCol[v16]==null) {
  if (InputBox(" :: Тире – 1 ::\nВведите свой вариант:        " +v16,vv16, r) == IDCANCEL) return "exit";
@@ -645,8 +737,7 @@ k++; }
  if (InputBox(" :: Тире – 1 ::\nВведите свой вариант:        " +v16,vv16, r) == IDCANCEL) return "exit";
  if(r!=null && r.$!="")  { Col[k] = r.$;    s=sl16+("col2_" +k+ "†")+sp16;  count++; }
  else                       { Col[k] = v16; sobCol[v16]=true;  s=sl16+("col2_" +k+ "†")+sp16}  }
-k++; }
-
+xCol[k] = v16; k++; }
 
        while (s.search(re170)!=-1) {
     var v17  = s.replace(re170, re171);
@@ -657,7 +748,9 @@ k++; }
   if (sobCol[v17]==true)  {
         if (k<10)   { Col[k] = v17;    s=sl17+("col1_" +k+ "†")+sp17;  } 
         if (k>10)   { Col[k] = v17;    s=sl17+("col2_" +k+ "†")+sp17;  }
-		 k++;} 
+	xCol[k] = v17; k++; }
+  else { JustBacklighting(v17, sl17); }
+
  var r=Object();                                                 
  if (k<10 && sobCol[v17]==null) {
  if (InputBox(" :: Тире – 1 ::\nВведите свой вариант:        " +v17,vv17, r) == IDCANCEL) return "exit";
@@ -667,8 +760,7 @@ k++; }
  if (InputBox(" :: Тире – 1 ::\nВведите свой вариант:        " +v17,vv17, r) == IDCANCEL) return "exit";
  if(r!=null && r.$!="")  { Col[k] = r.$;    s=sl17+("col2_" +k+ "†")+sp17;  count++; }
  else                       { Col[k] = v17; sobCol[v17]=true;  s=sl17+("col2_" +k+ "†")+sp17}  }
-k++; }
-
+xCol[k] = v17; k++; }
 
        while (s.search(re180)!=-1) {
     var v18  = s.replace(re180, re181);
@@ -679,7 +771,9 @@ k++; }
   if (sobCol[v18]==true)  {
         if (k<10)   { Col[k] = v18;    s=sl18+("col1_" +k+ "†")+sp18;  } 
         if (k>10)   { Col[k] = v18;    s=sl18+("col2_" +k+ "†")+sp18;  }
-		 k++;} 
+	xCol[k] = v18; k++; }
+  else { JustBacklighting(v18, sl18); }
+
  var r=Object();                                                 
  if (k<10 && sobCol[v18]==null) {
  if (InputBox(" :: Мусор-2 ::\nВведите свой вариант:        " +v18,vv18, r) == IDCANCEL) return "exit";
@@ -689,14 +783,16 @@ k++; }
  if (InputBox(" :: Мусор-2 ::\nВведите свой вариант:        " +v18,vv18, r) == IDCANCEL) return "exit";
  if(r!=null && r.$!="")  { Col[k] = r.$;    s=sl18+("col2_" +k+ "†")+sp18;  count++; }
  else                       { Col[k] = v18; sobCol[v18]=true;  s=sl18+("col2_" +k+ "†")+sp18}  }
-k++; }
-
+xCol[k] = v18; k++; }
 
        while (s.search(re190)!=-1) {
     var v19  = s.replace(re190, re191);
-    var sl19   = s.replace(re190, re192);
-    var sp19   = s.replace(re190, re193);
-    var vv19  = s.replace(re190, re194);
+    var sl19 = s.replace(re190, re192);
+    var sp19 = s.replace(re190, re193);
+    var vv19 = s.replace(re190, re194);
+
+ JustBacklighting(v19, sl19);
+
 	 var r=Object();                                                 
  if (k<10) {
  if (InputBox(" :: Вкрапления ::\nВведите свой вариант:        " +v19,vv19, r) == IDCANCEL) return "exit";
@@ -706,16 +802,8 @@ k++; }
  if (InputBox(" :: Вкрапления ::\nВведите свой вариант:        " +v19,vv19, r) == IDCANCEL) return "exit";
  if(r!=null && r.$!="")  { Col[k] = r.$;    s=sl19+("col2_" +k+ "†")+sp19;  count++; }
  else                       { Col[k] = v19;  s=sl19+("col2_" +k+ "†")+sp19} }
-k++; }
-
-
+xCol[k] = v19; k++; }
 				}
-
-
-
-
-
-
 
 
 if ( s.search(re_fin1)!=-1 || s.search(re_fin2)!=-1) {                                                 // Восстановление временных замен
@@ -737,11 +825,12 @@ for (z=0;z<k;z++)  {
  var ptr=body;
  var ProcessingEnding=false;
 
+// сканирование начинается с "курсорного" абзаца
  var tr=document.selection.createRange();
- if (!tr) return;
+ if (!tr) { alert("Отсутствие присутствия текста для проверки!"); return;}
  tr.collapse();
  var ptr=tr.parentElement();
- if (!body.contains(ptr)) return;
+ if (!body.contains(ptr)) { alert("Спозиционируйте курсор что ли!"); return;}
  var ptr2=ptr;
  while (ptr2 && ptr2.nodeName!="BODY" && ptr2.nodeName!="P")
   ptr2=ptr2.parentNode;
