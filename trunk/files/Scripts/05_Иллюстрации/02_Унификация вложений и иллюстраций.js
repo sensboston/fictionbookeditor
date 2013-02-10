@@ -204,6 +204,24 @@ function Run() {
     else NonJpegPngImgs_list+='\n   "'+NewId+'" (обложка)';
    }
   if (id!=NewId) {
+   if (BinById[NewId]) {
+    for (j=1;j<=ImgCntById[NewId];j++) {
+     ImgsById[strconst4+NewId+'"'+j]=ImgsById[NewId+'"'+j];
+     ImgsById[NewId+'"'+j]=null;
+     ImgsById[strconst4+NewId+'"'+j].setAttribute("href","#"+strconst4+NewId);
+     ImgsById[strconst4+NewId+'"'+j].firstChild.setAttribute("src","fbw-internal:#"+strconst4+NewId);
+    }
+    ChangeSrcInImageInfo(NewId,strconst4+NewId);
+    BinById[strconst4+NewId]=BinById[NewId];
+    BinById[NewId]=null;
+    BinById[strconst4+NewId].all.id.value=strconst4+NewId;
+    BinIdByNum[BinNum]=strconst4+NewId;
+    ImgCntById[strconst4+NewId]=ImgCntById[NewId];
+    ImgCntById[NewId]=null;    
+    IdUsed[strconst4+NewId]=1;
+    tmp_node=BinById[strconst4+NewId].cloneNode(true);
+    NewBinobj.appendChild(tmp_node);
+   }
    for (j=1;j<=ImgCntById[id];j++) {
     ImgsById[NewId+'"'+j]=ImgsById[id+'"'+j];
     ImgsById[id+'"'+j]=null;
@@ -240,6 +258,24 @@ function Run() {
     else NonJpegPngImgs_list+='\n   "'+NewId+'" (обложка ориг. изд.)';
    }
   if (id!=NewId) {
+   if (BinById[NewId]) {
+    for (j=1;j<=ImgCntById[NewId];j++) {
+     ImgsById[strconst4+NewId+'"'+j]=ImgsById[NewId+'"'+j];
+     ImgsById[NewId+'"'+j]=null;
+     ImgsById[strconst4+NewId+'"'+j].setAttribute("href","#"+strconst4+NewId);
+     ImgsById[strconst4+NewId+'"'+j].firstChild.setAttribute("src","fbw-internal:#"+strconst4+NewId);
+    }
+    ChangeSrcInImageInfo(NewId,strconst4+NewId);
+    BinById[strconst4+NewId]=BinById[NewId];
+    BinById[NewId]=null;
+    BinById[strconst4+NewId].all.id.value=strconst4+NewId;
+    BinIdByNum[BinNum]=strconst4+NewId;
+    ImgCntById[strconst4+NewId]=ImgCntById[NewId];
+    ImgCntById[NewId]=null;    
+    IdUsed[strconst4+NewId]=1;
+    tmp_node=BinById[strconst4+NewId].cloneNode(true);
+    NewBinobj.appendChild(tmp_node);
+   }
    for (j=1;j<=ImgCntById[id];j++) {
     ImgsById[NewId+'"'+j]=ImgsById[id+'"'+j];
     ImgsById[id+'"'+j]=null;
