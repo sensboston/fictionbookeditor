@@ -84,6 +84,8 @@ function Run() {
  var BinsWithoutImg_list="";
  var NonLocalImgs_list="";
  var NonJpegPngImgs_list="";
+ var SavedUnusedCover=null;
+ var SavedUnusedSrcCover=null;
  //проход по ImagesInfo
  for (i=0;i<ImagesInfo.length;i++) {
   ImgInfoNumById[ImagesInfo[i].src.replace(/^fbw-internal:#/i,"")]=i;
@@ -219,8 +221,7 @@ function Run() {
     ImgCntById[strconst4+NewId]=ImgCntById[NewId];
     ImgCntById[NewId]=null;    
     IdUsed[strconst4+NewId]=1;
-    tmp_node=BinById[strconst4+NewId].cloneNode(true);
-    NewBinobj.appendChild(tmp_node);
+    SavedUnusedCover=BinById[strconst4+NewId].cloneNode(true);
    }
    for (j=1;j<=ImgCntById[id];j++) {
     ImgsById[NewId+'"'+j]=ImgsById[id+'"'+j];
@@ -273,8 +274,7 @@ function Run() {
     ImgCntById[strconst4+NewId]=ImgCntById[NewId];
     ImgCntById[NewId]=null;    
     IdUsed[strconst4+NewId]=1;
-    tmp_node=BinById[strconst4+NewId].cloneNode(true);
-    NewBinobj.appendChild(tmp_node);
+    var SavedUnusedSrcCover=BinById[strconst4+NewId].cloneNode(true);
    }
    for (j=1;j<=ImgCntById[id];j++) {
     ImgsById[NewId+'"'+j]=ImgsById[id+'"'+j];
@@ -366,6 +366,8 @@ function Run() {
    }
   }
  }
+ if (SavedUnusedCover) NewBinobj.appendChild(SavedUnusedCover);
+ if (SavedUnusedSrcCover) NewBinobj.appendChild(SavedUnusedSrcCover);
  // перенесем вложения, на которые не ссылаются картинки
  var NonUsedBinary=0;
  var n;
