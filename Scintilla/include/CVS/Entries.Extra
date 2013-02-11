@@ -1,0 +1,12 @@
+/.cvsignore////
+/Accessor.h////
+/Face.py////
+/HFacer.py////
+/KeyWords.h////
+/Platform.h////
+/PropSet.h////
+/SciLexer.h////
+/Scintilla.h////
+/Scintilla.iface////
+/ScintillaWidget.h////
+/WindowAccessor.h////

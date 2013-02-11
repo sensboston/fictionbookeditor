@@ -1,0 +1,148 @@
+FileVersion=5
+[GENERAL]
+Name=Session
+Notes=
+Launch="C:\Projects\FBE\scite211\wscite\SciTE.exe" "D:\My eBooks\Tests\Savchenko_Za_perevalom.161673.xml"
+WorkDir=C:\Projects\FBE\scite211\wscite\
+StopOnApp=1
+BreakAfter=0
+Duration=0
+StartPaused=0
+StartImmediately=0
+CSS=0
+CssInterval=10
+StartDelay=0
+CssUnwind=10
+Affinity=1
+SaveRaw=0
+ApplyProcFilter= 0
+LastProfile=Time-based profile
+LaunchHistory="C:\Projects\FBE\scite211\wscite\SciTE.exe" "D:\My eBooks\Tests\Savchenko_Za_perevalom.161673.xml"
+LaunchHistory="" 
+LaunchHistory=
+WorkDirHistory=C:\Projects\FBE\scite211\wscite\
+WorkDirHistory=
+ProcessFilter=
+
+[TBP]
+
+Name=Session 1
+Notes=
+Launch="C:\Projects\FBE\scite211\wscite\SciTE.exe" "D:\My eBooks\Tests\Savchenko_Za_perevalom.161673.xml"
+WorkDir=C:\Projects\FBE\scite211\wscite\
+StopOnApp=1
+BreakAfter=0
+Duration=0
+StartPaused=0
+StartImmediately=0
+CSS=0
+CssInterval=10
+StartDelay=0
+CssUnwind=10
+Affinity=1
+SaveRaw=0
+ApplyProcFilter= 0
+ProfileFile=Session 1.tbp
+Cpus=1
+Interval=1
+
+[End]
+
+[EBP]
+
+Name=Session
+Notes=
+Launch="C:\Projects\FBE\scite211\wscite\SciTE.exe" "D:\My eBooks\Tests\Savchenko_Za_perevalom.161673.xml"
+WorkDir=C:\Projects\FBE\scite211\wscite\
+StopOnApp=1
+BreakAfter=0
+Duration=0
+StartPaused=0
+StartImmediately=0
+CSS=0
+CssInterval=10
+StartDelay=0
+CssUnwind=10
+Affinity=4294967295
+SaveRaw=0
+ApplyProcFilter= 0
+ProfileFile=Session.ebp
+Cpus=1
+MultiplexInterval=1
+EventGroupCount=2
+OneEvent=0,0,192,0,1,1,250000,0
+OneEvent=0,1,118,0,1,1,250000,0
+OneEvent=0,2,194,0,1,1,25000,0
+OneEvent=0,3,195,0,1,1,25000,0
+OneEvent=1,0,64,0,1,1,250000,0
+OneEvent=1,1,65,0,1,1,25000,0
+OneEvent=1,2,70,0,1,1,25000,0
+OneEvent=1,3,71,0,1,1,25000,0
+
+Name=Session 1
+Notes=
+Launch="C:\Projects\FBE\scite211\wscite\SciTE.exe" "D:\My eBooks\Tests\Savchenko_Za_perevalom.161673.xml"
+WorkDir=C:\Projects\FBE\scite211\wscite\
+StopOnApp=1
+BreakAfter=0
+Duration=0
+StartPaused=0
+StartImmediately=0
+CSS=0
+CssInterval=10
+StartDelay=0
+CssUnwind=10
+Affinity=4294967295
+SaveRaw=0
+ApplyProcFilter= 0
+ProfileFile=Session 1.ebp
+Cpus=1
+MultiplexInterval=1
+EventGroupCount=2
+OneEvent=0,0,192,0,1,1,250000,0
+OneEvent=0,1,118,0,1,1,250000,0
+OneEvent=0,2,194,0,1,1,25000,0
+OneEvent=0,3,195,0,1,1,25000,0
+OneEvent=1,0,64,0,1,1,250000,0
+OneEvent=1,1,65,0,1,1,25000,0
+OneEvent=1,2,70,0,1,1,25000,0
+OneEvent=1,3,71,0,1,1,25000,0
+
+Name=Session 2
+Notes=
+Launch="C:\Projects\FBE\scite211\wscite\SciTE.exe" "D:\My eBooks\Tests\Savchenko_Za_perevalom.161673.xml"
+WorkDir=C:\Projects\FBE\scite211\wscite\
+StopOnApp=1
+BreakAfter=0
+Duration=0
+StartPaused=0
+StartImmediately=0
+CSS=0
+CssInterval=10
+StartDelay=0
+CssUnwind=10
+Affinity=4294967295
+SaveRaw=0
+ApplyProcFilter= 0
+ProfileFile=Session 2.ebp
+Cpus=1
+MultiplexInterval=1
+EventGroupCount=2
+OneEvent=0,0,192,0,1,1,250000,0
+OneEvent=0,1,118,0,1,1,250000,0
+OneEvent=0,2,194,0,1,1,25000,0
+OneEvent=0,3,195,0,1,1,25000,0
+OneEvent=1,0,64,0,1,1,250000,0
+OneEvent=1,1,65,0,1,1,25000,0
+OneEvent=1,2,70,0,1,1,25000,0
+OneEvent=1,3,71,0,1,1,25000,0
+
+[End]
+
+[Thread]
+
+[End]
+
+[IBS]
+
+[End]

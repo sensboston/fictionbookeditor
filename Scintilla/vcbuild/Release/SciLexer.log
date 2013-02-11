@@ -1,0 +1,261 @@
+﻿Построение начато 11.02.2013 3:13:04.
+     1>Проект "G:\FBE\scintilla\vcbuild\SciLexer.vcxproj" в узле 2 (целевые объекты rebuild).
+     1>_PrepareForClean:
+         Файл ".\Release\SciLexer.lastbuildstate" удаляется.
+       InitializeBuildStatus:
+         Обращение к ".\Release\SciLexer.unsuccessfulbuild".
+       ClCompile:
+         C:\Program Files\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /I..\include /I..\src /I..\pcre /Zi /nologo /W3 /WX- /Ox /Oy- /D NDEBUG /D WIN32 /D _WINDOWS /D _USRDLL /D SCI_LEXER /D USE_PCRE /D _CRT_SECURE_NO_WARNINGS /D _VC80_UPGRADE=0x0600 /D _WINDLL /D _UNICODE /D UNICODE /GF /Gm /EHsc /MT /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo".\Release/" /Fd".\Release/vc100.pdb" /Gd /TP /analyze- /errorReport:prompt ..\src\AutoComplete.cxx ..\src\CallTip.cxx ..\src\CellBuffer.cxx ..\src\CharClassify.cxx ..\src\ContractionState.cxx ..\src\Decoration.cxx ..\src\Document.cxx ..\src\DocumentAccessor.cxx ..\src\Editor.cxx ..\src\ExternalLexer.cxx ..\src\Indicator.cxx ..\src\KeyMap.cxx ..\src\KeyWords.cxx ..\src\LexAbaqus.cxx ..\src\LexAda.cxx ..\src\LexAPDL.cxx ..\src\LexAsm.cxx ..\src\LexAsn1.cxx ..\src\LexASY.cxx ..\src\LexAU3.cxx ..\src\LexAVE.cxx ..\src\LexBaan.cxx ..\src\LexBash.cxx ..\src\LexBasic.cxx ..\src\LexBullant.cxx ..\src\LexCaml.cxx ..\src\LexCLW.cxx ..\src\LexCmake.cxx ..\src\LexCOBOL.cxx ..\src\LexConf.cxx ..\src\LexCPP.cxx ..\src\LexCrontab.cxx ..\src\LexCsound.cxx ..\src\LexCSS.cxx ..\src\LexD.cxx ..\src\LexEiffel.cxx ..\src\LexErlang.cxx ..\src\LexEScript.cxx ..\src\LexFlagship.cxx ..\src\LexForth.cxx ..\src\LexFortran.cxx ..\src\LexGAP.cxx ..\src\LexGui4Cli.cxx ..\src\LexHaskell.cxx ..\src\LexHTML.cxx ..\src\LexInno.cxx ..\src\LexKix.cxx ..\src\LexLisp.cxx ..\src\LexLout.cxx ..\src\LexLua.cxx ..\src\LexMagik.cxx ..\src\LexMarkdown.cxx ..\src\LexMatlab.cxx ..\src\LexMetapost.cxx ..\src\LexMMIXAL.cxx ..\src\LexMPT.cxx ..\src\LexMSSQL.cxx ..\src\LexMySQL.cxx ..\src\LexNimrod.cxx ..\src\LexNsis.cxx ..\src\LexOpal.cxx ..\src\LexOthers.cxx ..\src\LexPascal.cxx ..\src\LexPB.cxx ..\src\LexPerl.cxx ..\src\LexPLM.cxx ..\src\LexPOV.cxx ..\src\LexPowerPro.cxx ..\src\LexPowerShell.cxx ..\src\LexProgress.cxx ..\src\LexPS.cxx ..\src\LexPython.cxx ..\src\LexR.cxx ..\src\LexRebol.cxx ..\src\LexRuby.cxx ..\src\LexScriptol.cxx ..\src\LexSmalltalk.cxx ..\src\LexSML.cxx ..\src\LexSorcus.cxx ..\src\LexSpecman.cxx ..\src\LexSpice.cxx ..\src\LexSQL.cxx ..\src\LexTACL.cxx ..\src\LexTADS3.cxx ..\src\LexTAL.cxx ..\src\LexTCL.cxx ..\src\LexTeX.cxx ..\src\LexVB.cxx ..\src\LexVerilog.cxx ..\src\LexVHDL.cxx ..\src\LexYAML.cxx ..\src\LineMarker.cxx ..\src\PerLine.cxx ..\win32\PlatWin.cxx ..\src\PositionCache.cxx ..\src\PropSet.cxx ..\src\RESearch.cxx ..\src\RunStyles.cxx ..\src\ScintillaBase.cxx ..\win32\ScintillaWin.cxx ..\src\Selection.cxx ..\src\Style.cxx ..\src\StyleContext.cxx ..\src\UniConversion.cxx ..\src\ViewStyle.cxx ..\src\WindowAccessor.cxx ..\src\XPM.cxx
+         XPM.cxx
+         WindowAccessor.cxx
+         ViewStyle.cxx
+         UniConversion.cxx
+         StyleContext.cxx
+         Style.cxx
+         Selection.cxx
+         ScintillaWin.cxx
+         ScintillaBase.cxx
+         RunStyles.cxx
+         RESearch.cxx
+         PropSet.cxx
+         PositionCache.cxx
+         PlatWin.cxx
+         PerLine.cxx
+         LineMarker.cxx
+         LexYAML.cxx
+         LexVHDL.cxx
+         LexVerilog.cxx
+         LexVB.cxx
+         Создание кода...
+         Компиляция...
+         LexTeX.cxx
+         LexTCL.cxx
+         LexTAL.cxx
+         LexTADS3.cxx
+         LexTACL.cxx
+         LexSQL.cxx
+         LexSpice.cxx
+         LexSpecman.cxx
+         LexSorcus.cxx
+         LexSML.cxx
+         LexSmalltalk.cxx
+         LexScriptol.cxx
+         LexRuby.cxx
+         LexRebol.cxx
+         LexR.cxx
+         LexPython.cxx
+         LexPS.cxx
+         LexProgress.cxx
+         LexPowerShell.cxx
+         LexPowerPro.cxx
+         Создание кода...
+         Компиляция...
+         LexPOV.cxx
+         LexPLM.cxx
+         LexPerl.cxx
+         LexPB.cxx
+         LexPascal.cxx
+         LexOthers.cxx
+         LexOpal.cxx
+         LexNsis.cxx
+         LexNimrod.cxx
+         LexMySQL.cxx
+         LexMSSQL.cxx
+         LexMPT.cxx
+         LexMMIXAL.cxx
+         LexMetapost.cxx
+         LexMatlab.cxx
+         LexMarkdown.cxx
+         LexMagik.cxx
+         LexLua.cxx
+         LexLout.cxx
+         LexLisp.cxx
+         Создание кода...
+         Компиляция...
+         LexKix.cxx
+         LexInno.cxx
+         LexHTML.cxx
+         LexHaskell.cxx
+         LexGui4Cli.cxx
+         LexGAP.cxx
+         LexFortran.cxx
+         LexForth.cxx
+         LexFlagship.cxx
+         LexEScript.cxx
+         LexErlang.cxx
+         LexEiffel.cxx
+         LexD.cxx
+         LexCSS.cxx
+         LexCsound.cxx
+         LexCrontab.cxx
+         LexCPP.cxx
+         LexConf.cxx
+         LexCOBOL.cxx
+         LexCmake.cxx
+         Создание кода...
+         Компиляция...
+         LexCLW.cxx
+         LexCaml.cxx
+         LexBullant.cxx
+         LexBasic.cxx
+         LexBash.cxx
+         LexBaan.cxx
+         LexAVE.cxx
+         LexAU3.cxx
+         LexASY.cxx
+         LexAsn1.cxx
+         LexAsm.cxx
+         LexAPDL.cxx
+         LexAda.cxx
+         LexAbaqus.cxx
+         KeyWords.cxx
+         KeyMap.cxx
+         Indicator.cxx
+         ExternalLexer.cxx
+         Editor.cxx
+         DocumentAccessor.cxx
+         Создание кода...
+         Компиляция...
+         Document.cxx
+         Decoration.cxx
+         ContractionState.cxx
+         CharClassify.cxx
+         CellBuffer.cxx
+         CallTip.cxx
+         AutoComplete.cxx
+         Создание кода...
+       ResourceCompile:
+         C:\Program Files\Microsoft SDKs\Windows\v7.0A\bin\rc.exe /D NDEBUG /D _VC80_UPGRADE=0x0600 /D _UNICODE /D UNICODE /l"0x0409" /I\Projects\FBE\scintilla\win32 /nologo /fo".\Release\ScintRes.res" ..\win32\ScintRes.rc 
+       Link:
+         C:\Program Files\Microsoft Visual Studio 10.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:".\../bin/SciLexer.dll" /INCREMENTAL:NO /NOLOGO /LIBPATH:..\pcre imm32.lib comctl32.lib pcre.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /ManifestFile:".\Release\SciLexer.dll.intermediate.manifest" /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /PDB:"G:\FBE\scintilla\bin\SciLexer.pdb" /MAP:".\Release/SciLexer.map" /TLBID:1 /DYNAMICBASE:NO /IMPLIB:".\../bin/SciLexer.lib" /MACHINE:X86 /DLL .\Release\ScintRes.res
+         .\Release/AutoComplete.obj
+         .\Release/CallTip.obj
+         .\Release/CellBuffer.obj
+         .\Release/CharClassify.obj
+         .\Release/ContractionState.obj
+         .\Release/Decoration.obj
+         .\Release/Document.obj
+         .\Release/DocumentAccessor.obj
+         .\Release/Editor.obj
+         .\Release/ExternalLexer.obj
+         .\Release/Indicator.obj
+         .\Release/KeyMap.obj
+         .\Release/KeyWords.obj
+         .\Release/LexAbaqus.obj
+         .\Release/LexAda.obj
+         .\Release/LexAPDL.obj
+         .\Release/LexAsm.obj
+         .\Release/LexAsn1.obj
+         .\Release/LexASY.obj
+         .\Release/LexAU3.obj
+         .\Release/LexAVE.obj
+         .\Release/LexBaan.obj
+         .\Release/LexBash.obj
+         .\Release/LexBasic.obj
+         .\Release/LexBullant.obj
+         .\Release/LexCaml.obj
+         .\Release/LexCLW.obj
+         .\Release/LexCmake.obj
+         .\Release/LexCOBOL.obj
+         .\Release/LexConf.obj
+         .\Release/LexCPP.obj
+         .\Release/LexCrontab.obj
+         .\Release/LexCsound.obj
+         .\Release/LexCSS.obj
+         .\Release/LexD.obj
+         .\Release/LexEiffel.obj
+         .\Release/LexErlang.obj
+         .\Release/LexEScript.obj
+         .\Release/LexFlagship.obj
+         .\Release/LexForth.obj
+         .\Release/LexFortran.obj
+         .\Release/LexGAP.obj
+         .\Release/LexGui4Cli.obj
+         .\Release/LexHaskell.obj
+         .\Release/LexHTML.obj
+         .\Release/LexInno.obj
+         .\Release/LexKix.obj
+         .\Release/LexLisp.obj
+         .\Release/LexLout.obj
+         .\Release/LexLua.obj
+         .\Release/LexMagik.obj
+         .\Release/LexMarkdown.obj
+         .\Release/LexMatlab.obj
+         .\Release/LexMetapost.obj
+         .\Release/LexMMIXAL.obj
+         .\Release/LexMPT.obj
+         .\Release/LexMSSQL.obj
+         .\Release/LexMySQL.obj
+         .\Release/LexNimrod.obj
+         .\Release/LexNsis.obj
+         .\Release/LexOpal.obj
+         .\Release/LexOthers.obj
+         .\Release/LexPascal.obj
+         .\Release/LexPB.obj
+         .\Release/LexPerl.obj
+         .\Release/LexPLM.obj
+         .\Release/LexPOV.obj
+         .\Release/LexPowerPro.obj
+         .\Release/LexPowerShell.obj
+         .\Release/LexProgress.obj
+         .\Release/LexPS.obj
+         .\Release/LexPython.obj
+         .\Release/LexR.obj
+         .\Release/LexRebol.obj
+         .\Release/LexRuby.obj
+         .\Release/LexScriptol.obj
+         .\Release/LexSmalltalk.obj
+         .\Release/LexSML.obj
+         .\Release/LexSorcus.obj
+         .\Release/LexSpecman.obj
+         .\Release/LexSpice.obj
+         .\Release/LexSQL.obj
+         .\Release/LexTACL.obj
+         .\Release/LexTADS3.obj
+         .\Release/LexTAL.obj
+         .\Release/LexTCL.obj
+         .\Release/LexTeX.obj
+         .\Release/LexVB.obj
+         .\Release/LexVerilog.obj
+         .\Release/LexVHDL.obj
+         .\Release/LexYAML.obj
+         .\Release/LineMarker.obj
+         .\Release/PerLine.obj
+         .\Release/PlatWin.obj
+         .\Release/PositionCache.obj
+         .\Release/PropSet.obj
+         .\Release/RESearch.obj
+         .\Release/RunStyles.obj
+         .\Release/ScintillaBase.obj
+         .\Release/ScintillaWin.obj
+         .\Release/Selection.obj
+         .\Release/Style.obj
+         .\Release/StyleContext.obj
+         .\Release/UniConversion.obj
+         .\Release/ViewStyle.obj
+         .\Release/WindowAccessor.obj
+         .\Release/XPM.obj
+            Создается библиотека .\../bin/SciLexer.lib и объект .\../bin/SciLexer.exp
+         SciLexer.vcxproj -> G:\FBE\scintilla\vcbuild\.\../bin\SciLexer.dll
+       Manifest:
+         C:\Program Files\Microsoft SDKs\Windows\v7.0A\bin\mt.exe /nologo /verbose /outputresource:".\../bin/SciLexer.dll;#2" /manifest .\Release\SciLexer.dll.intermediate.manifest
+       PostBuildEvent:
+         upx.exe .\../bin\Scilexer.dll
+         :VCEnd
+                                Ultimate Packer for eXecutables
+                                   Copyright (C) 1996 - 2011
+         UPX 3.08w       Markus Oberhumer, Laszlo Molnar & John Reiser   Dec 12th 2011
+         
+                 File size         Ratio      Format      Name
+            --------------------   ------   -----------   -----------
+             710144 ->    284160   40.01%    win32/pe     Scilexer.dll
+         
+         Packed 1 file.
+       FinalizeBuildStatus:
+         Файл ".\Release\SciLexer.unsuccessfulbuild" удаляется.
+         Обращение к ".\Release\SciLexer.lastbuildstate".
+     1>Построение проекта "G:\FBE\scintilla\vcbuild\SciLexer.vcxproj" завершено (целевые объекты rebuild).
+
+Построение успешно завершено.
+
+Затраченное время: 00:00:46.56

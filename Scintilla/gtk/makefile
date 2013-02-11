@@ -1,0 +1,74 @@
+# Make file for Scintilla on Linux or compatible OS
+# Copyright 1998-2010 by Neil Hodgson <neilh@scintilla.org>
+# The License.txt file describes the conditions under which this software may be distributed.
+# This makefile assumes GCC 4.3 is used and changes will be needed to use other compilers.
+# GNU make does not like \r\n line endings so should be saved to CVS in binary form.
+# Builds for GTK+ 2 and no longer supports GTK+ 1.
+# Also works with ming32-make on Windows.
+
+.SUFFIXES: .cxx .c .o .h .a
+ifdef CLANG
+CC = clang
+CCOMP = clang
+else
+CC = g++
+CCOMP = gcc
+endif
+AR = ar
+RANLIB = touch
+
+ifndef windir
+ifeq ($(shell uname),Darwin)
+RANLIB = ranlib
+endif
+endif
+
+COMPLIB=../bin/scintilla.a
+
+vpath %.h ../src ../include
+vpath %.cxx ../src
+
+INCLUDEDIRS=-I ../include -I ../src
+CXXBASEFLAGS=-Wall -Wno-missing-braces -Wno-char-subscripts -pedantic -DGTK -DSCI_LEXER $(INCLUDEDIRS)
+
+ifdef NOTHREADS
+THREADFLAGS=-DG_THREADS_IMPL_NONE
+else
+THREADFLAGS=
+endif
+
+ifdef DEBUG
+CXXFLAGS=-DDEBUG -g $(CXXBASEFLAGS) $(THREADFLAGS)
+else
+CXXFLAGS=-DNDEBUG -Os $(CXXBASEFLAGS) $(THREADFLAGS)
+endif
+
+CONFIGFLAGS:=$(shell pkg-config --cflags gtk+-2.0)
+MARSHALLER=scintilla-marshal.o
+
+.cxx.o:
+	$(CC) $(CONFIGFLAGS) $(CXXFLAGS) -c $<
+.c.o:
+	$(CCOMP) $(CONFIGFLAGS) $(CXXFLAGS) -w -c $<
+
+LEXOBJS:=$(addsuffix .o,$(basename $(notdir $(wildcard ../src/Lex*.cxx))))
+
+all: $(COMPLIB)
+
+clean:
+	rm -f *.o $(COMPLIB)
+
+deps:
+	$(CC) -MM $(CONFIGFLAGS) $(CXXFLAGS) *.cxx ../src/*.cxx | sed -e 's/\/usr.* //' | grep [a-zA-Z] >deps.mak
+
+$(COMPLIB): DocumentAccessor.o WindowAccessor.o KeyWords.o StyleContext.o \
+	CharClassify.o Decoration.o Document.o PerLine.o CallTip.o \
+	ScintillaBase.o ContractionState.o Editor.o ExternalLexer.o PropSet.o PlatGTK.o \
+	KeyMap.o LineMarker.o PositionCache.o ScintillaGTK.o CellBuffer.o ViewStyle.o \
+	RESearch.o RunStyles.o Selection.o Style.o Indicator.o AutoComplete.o UniConversion.o XPM.o \
+	$(MARSHALLER) $(LEXOBJS)
+	$(AR) rc $@ $^
+	$(RANLIB) $@
+
+# Automatically generate header dependencies with "make deps"
+include deps.mak

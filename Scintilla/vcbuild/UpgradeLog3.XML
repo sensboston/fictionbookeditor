@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?><?xml-stylesheet type='text/xsl' href='_UpgradeReport_Files/UpgradeReport.xslt'?><UpgradeLog>
+<Properties><Property Name="Solution" Value="SciLexer">
+</Property><Property Name="Файл решения" Value="G:\FBE\scintilla\vcbuild\SciLexer.sln">
+</Property><Property Name="Файл параметров пользователя" Value="G:\FBE\scintilla\vcbuild\SciLexer.suo">
+</Property><Property Name="Date" Value="7 марта 2012 г.">
+</Property><Property Name="Time" Value="10:04">
+</Property><Property Name="Номер записи" Value="3">
+</Property></Properties><Event ErrorLevel="2" Project="" Source="SciLexer.sln" Description="Ошибка при создании резервного файла: G:\FBE\scintilla\vcbuild\SciLexer.sln.old">
+</Event><Event ErrorLevel="2" Project="" Source="SciLexer.suo" Description="Ошибка при создании резервного файла: G:\FBE\scintilla\vcbuild\SciLexer.suo.old">
+</Event><Event ErrorLevel="0" Project="SciLexer" Source="SciLexer.vcproj" Description="Converting project file 'G:\FBE\scintilla\vcbuild\SciLexer.vcproj'.">
+</Event><Event ErrorLevel="1" Project="SciLexer" Source="SciLexer.vcproj" Description="VCWebServiceProxyGeneratorTool is no longer supported. The tool has been removed from your project settings.">
+</Event><Event ErrorLevel="1" Project="SciLexer" Source="SciLexer.vcproj" Description="Attribute 'OptimizeForWindows98' of 'VCLinkerTool' is not supported in this version and has been removed during conversion.">
+</Event><Event ErrorLevel="1" Project="SciLexer" Source="SciLexer.vcproj" Description="MSB8012: $(TargetPath) ('G:\FBE\scintilla\vcbuild\.\../bin\SciLexer.dll') does not match the Linker's OutputFile property value '.\../../scite211/wscite/SciLexer.dll' ('G:\FBE\scintilla\vcbuild\../../scite211/wscite/SciLexer.dll') in project configuration 'Debug|Win32'. This may cause your project to build incorrectly. To correct this, please make sure that $(TargetPath) property value matches the value specified in %(Link.OutputFile).">
+</Event><Event ErrorLevel="1" Project="SciLexer" Source="SciLexer.vcproj" Description="MSB8012: $(TargetPath) ('G:\FBE\scintilla\vcbuild\.\../bin\SciLexer.dll') does not match the Linker's OutputFile property value '.\../bin/SciLexer.dll' ('G:\FBE\scintilla\vcbuild\../bin/SciLexer.dll') in project configuration 'Release|Win32'. This may cause your project to build incorrectly. To correct this, please make sure that $(TargetPath) property value matches the value specified in %(Link.OutputFile).">
+</Event><Event ErrorLevel="0" Project="SciLexer" Source="SciLexer.vcproj" Description="Done converting to new project file 'G:\FBE\scintilla\vcbuild\SciLexer.vcxproj'.">
+</Event><Event ErrorLevel="3" Project="SciLexer" Source="SciLexer.vcproj" Description="Converted">
+</Event><Event ErrorLevel="0" Project="" Source="SciLexer.sln" Description="Преобразование решения успешно завершено">
+</Event><Event ErrorLevel="3" Project="" Source="SciLexer.sln" Description="Converted">
+</Event></UpgradeLog>

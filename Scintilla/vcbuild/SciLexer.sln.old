@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SciLexer", "SciLexer.vcproj", "{A1608395-4FF0-44D6-901E-4934B5455614}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A1608395-4FF0-44D6-901E-4934B5455614}.Debug|Win32.ActiveCfg = Debug|Win32
+		{A1608395-4FF0-44D6-901E-4934B5455614}.Debug|Win32.Build.0 = Debug|Win32
+		{A1608395-4FF0-44D6-901E-4934B5455614}.Release|Win32.ActiveCfg = Release|Win32
+		{A1608395-4FF0-44D6-901E-4934B5455614}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		AMDCaPersistentConfig = Debug|Win32
+		AMDCaPersistentStartup = SciLexer
+		AMDCaProjectFile = C:\Projects\FBE\scintilla\vcbuild\CodeAnalyst\SciLexer.caw
+	EndGlobalSection
+EndGlobal

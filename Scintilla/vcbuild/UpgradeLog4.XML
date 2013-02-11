@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?><?xml-stylesheet type='text/xsl' href='_UpgradeReport_Files/UpgradeReport.xslt'?><UpgradeLog>
+<Properties><Property Name="Solution" Value="SciLexer">
+</Property><Property Name="Файл решения" Value="G:\FBE\scintilla\vcbuild\SciLexer.sln">
+</Property><Property Name="Date" Value="11 февраля 2013 г.">
+</Property><Property Name="Time" Value="3:06:46">
+</Property><Property Name="Номер записи" Value="4">
+</Property></Properties><Event ErrorLevel="3" Project="SciLexer" Source="SciLexer.vcproj" Description="Преобразование не требуется">
+</Event></UpgradeLog>
