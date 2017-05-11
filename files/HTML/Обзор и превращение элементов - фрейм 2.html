@@ -1,0 +1,1873 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+ "http://www.w3.org/TR/html4/loose.dtd">
+<HTML style="height:100%;">
+<HEAD>
+ <TITLE>заголовок, который должен быть не виден</TITLE>
+ <META http-equiv="X-UA-Compatible" content="IE=6">
+ <META http-equiv="Content-Type" content="text/html; charset=utf-8">
+ <STYLE>
+  /*body {font-family:Tahoma; font-size:12px;}
+  p {margin:0;}
+  .el_ {width:520px; margin:0; padding:0 1px 0 1px; border:1px solid white; color:black; background-color:white;}
+  .el_sel {width:520px; margin:0; padding:0 1px 0 1px; border:1px solid #3399FF; background-color:#3399FF; color:white;}
+  .el_active {width:520px; margin:0; padding:0 1px 0 1px; border:1px solid black; background-color:white; color:black;}
+  .el_active_sel {width:520px; margin:0; padding:0 1px 0 1px; border:1px solid black; background-color:#3399FF; color:white;}*/
+  body {font-family:Tahoma; font-size:12px;}
+  p {margin:0;}
+  .delim {width:520px; background-color:green; height:2px; overflow:hidden; margin:0; padding:0;}
+  .el_ {width:520px; margin:0; padding:0 1px 0 1px; border:1px solid white; color:#7F7F7F; background-color:black;}
+  .el_sel {width:520px; margin:0; padding:0 1px 0 1px; border:1px solid #3399FF; background-color:#3399FF; color:#BBBBBB;}
+  .el_active {width:520px; margin:0; padding:0 1px 0 1px; border:1px solid black; background-color:white; color:black;}
+  .el_active_sel {width:520px; margin:0; padding:0 1px 0 1px; border:1px solid black; background-color:#3399FF; color:white;}
+  SPAN.href {color:blue; text-decoration: underline; }
+  SPAN.note {color:blue; vertical-align:super; font-size:75%; text-decoration: underline; }
+ </STYLE>
+ <SCRIPT>
+var debugMode=true;
+var fbwBody=window.dialogArguments["fbwBody"];
+var mainDoc=window.dialogArguments["mainDocument"];
+var mainWin=window.dialogArguments["window"];
+try { var nbspChar=window.external.GetNBSP(); }
+catch(e) { var nbspChar=String.fromCharCode(160); } 
+var maxNumberOfTextSymbolsInElement=160; // сколько максимум символов может быть в
+                                         // тексте элемента
+var currentElementType="";
+var currentTargetElementType="";
+var htmlStr="";
+var scrolling="no";
+var insideSection=false;
+var activeElement=null;
+var selectionBegin=null;
+var selectedElements={};
+var mouseTimer=null;
+var scrollbarWidth=0,scrollbarHeight=0;
+var elementsInAll;
+var k;
+var selectedElementsCnt=0;
+var mouseDown=false;
+var ptr2,s1,ptr3,ptr4,ptr5,ptr6,tmpNode,sectionOrPoemOrStanza,prevSectionOrPoemOrStanza;
+var marker,el2,el3,el4,el5,el6,el7,el8,el9,previousSection,elemInList,myN_2,elemInMainDoc2;
+var parentSectionOrPoemOrStanza_of_elemInMainDoc,sortedElementArray,isElement,newTitleElement;
+var markerBegin,markerEnd,saveNext2,saveEl2,titleHtmlStr,kk,kkEl,beginOfBlock,endOfBlock,ttEl;
+var needKillDelim,nPtr,nPtr2,attributeSv,flag2,saveEl5,prev,gg,unselElemInListMatchInMainDoc;
+var newSection,elemInMainDoc,el8,titleElement,nextSectionOrPoemOrStanza,titleInNextSection;
+var newP,thereWasSubtitlesInCite,nPtr3,saveEl2,flag3,flag4,tt,ttt,nextTt,sForText,newEmptyLine;
+var foundInlineElementsInP,caseFlag,pInPreviousSection,subtitleInPreviousSectionBeforeEmptyLines;
+var pInPreviousContainer,subtitleInPreviousContainerBeforeEmptyLines,weMovedAlready;
+var saveNextSiblingAfterSubtitle=null;
+var alreadyAddedEmptyLine,sectionToRemove,doNotAddEmptyLine,weMovedSubtitles;
+var thereAreSubtitlesInPreviousContainer,oldSectionOrPoemOrStanza=null,weRemovedEpigraphs;
+var lastMovingWasNotSubtitleMoving;
+var oldCurrentElementType="titles";
+var htmlTagByFb2Tag={"emphasis":"EM","strong":"STRONG","sup":"SUP","sub":"SUB","strikethrough":"STRIKE"};
+var htmlTagRegExpByFb2Tag={"emphasis":/^(EM|I)$/i, "strong":/^(STRONG|B)$/i, "sup":/^SUP$/i, "sub":/^SUB$/i, "strikethrough":/^STRIKE$/i};
+var randomId="elementBrowsing_"+Math.floor((Math.random()*9)).toString()+Math.floor((Math.random()*9)).toString()+Math.floor((Math.random()*9)).toString()+Math.floor((Math.random()*9)).toString()+Math.floor((Math.random()*9)).toString()+Math.floor((Math.random()*9)).toString();
+
+var re0=new RegExp("(.{160}).+?$");
+var re0_="$1";
+var re2=new RegExp("<BR>","gi");
+var re2_="</P><P>";
+var letterRE=new RegExp(
+  "[0-9а-яёa-zÀÁÂÃÄÅÆÇÈÉÊËÌÍÏÐÑÒÓÔÕÖØÙÚÛÜÝÞßàáâãäåæç"+
+  "èéêëìíîïðñòóôõöøùúûüýþÿĀāăĄąĆćĈĉĊċČčĎďĐđĒēĔĕĖėĘęĚ"+
+  "ěĜĝĞğĠġĢģĤĥĦħĨĩĪīĬĭĮįİıĲĳĴĵĶķĸĹĺĻļĽľĿŀŁłŃńŅņŇňŉŊŋ"+
+  "ŌōŎŏŐőŒœŔŕŖŗŘřŚśŜŝŞşŠšŢţŤťŦŧŨũŪūŬŭŮůŰűŲųŴŵŶŷŸŹźŻż"+
+  "ŽžſƏƒƠơƯưƷǤǥǦǧǨǩǪǫǮǯǺǻǼǽǾǿȘșȚțȨȩəʒΆΈΉΊΌΎΐΑΒΓΔΕΖΗΘ"+
+  "ΙΚΛΜΝΞΟΠΡΣΤΥΦΧΨΩΪΫάέήίΰαβγδεζηθικλμνξοπρςστυφχψωϊ"+
+  "ϋόύώЀЁЂЃЄЅІЇЈЉЊЋЌЍЎЏѐђѓєѕіїјљњћќѝўџҐґҒғҖҗҚқҜҝҢңҮү"+
+  "ҰұҲҳҸҹҺһӘәӨөḀḁḂḃḄḅḆḇḈḉḊḋḌḍḎḏḐḑḒḓḔḕḖḗḘḙḚḛḜḝḞḟḠḡḢḣḤ"+
+  "ḥḦḧḨḩḪḫḬḭḮḯḰḱḲḳḴḵḶḷḸḹḺḻḼḽḾḿṀṁṂṃṄṅṆṇṈṉṊṋṌṍṎṏṐṑṒṓṔṕ"+
+  "ṖṗṘṙṚṛṜṝṞṟṠṡṢṣṤṥṦṧṨṩṪṫṬṭṮṯṰṱṲṳṴṵṶṷṸṹṺṻṼṽṾṿẀẁẂẃẄẅẆ"+
+  "ẇẈẉẊẋẌẍẎẏẐẑẒẓẔẕẖẗẘẙẚẛẠạẢảẤấẦầẨẩẪẫẬậẮắẰằẲẳẴẵẶặẸẹẺẻ"+
+  "ẼẽẾếỀềỂểỄễỆệỈỉỊịỌọỎỏỐốỒồỔổỖỗỘộỚớỜờỞởỠỡỢợỤụỦủỨứỪừỬ"+
+  "ửỮữỰựỲỳỴỵỶỷỸỹἀἁἂἃἄἅἆἇἈἉἊἋἌἍἎἏἐἑἒἓἔἕἘἙἚἛἜἝἠἡἢἣἤἥἦἧ"+
+  "ἨἩἪἫἬἭἮἯἰἱἲἳἴἵἶἷἸἹἺἻἼἽἾἿὀὁὂὃὄὅὈὉὊὋὌὍὐὑὒὓὔὕὖὗὙὛὝὟὠ"+
+  "ὡὢὣὤὥὦὧὨὩὪὫὬὭὮὯὰάὲέὴήὶίὸόὺύὼώᾀᾁᾂᾃᾄᾅᾆᾇᾈᾉᾊᾋᾌᾍᾎᾏᾐᾑᾒᾓ"+
+  "ᾔᾕᾖᾗᾘᾙᾚᾛᾜᾝᾞᾟᾠᾡᾢᾣᾤᾥᾦᾧᾨᾩᾪᾫᾬᾭᾮᾯᾰᾱᾲᾳᾴᾶᾷᾸᾹᾺΆᾼῂῃῄῆῇῈΈῊΉ"+
+  "ῌῐῑῒΐῖῗῘῙῚΊῠῡῢΰῤῥῦῧῨῩῪΎῬῲῳῴῶῷῸΌῺΏῼ]","i");
+var onlySpacesRegExp=new RegExp("^(&nbsp;| |"+nbspChar+")*?$","");
+var poemOrStanzaRegexp=new RegExp("poem|stanza","i");
+var myLinks={};
+var nCnt;
+var emptyLineRE=new RegExp("^( | |&nbsp;|"+nbspChar+")*?$","i");
+
+function debugAlert(msg) {
+ // alert(msg);
+}
+
+function removeFromClassName(elem,regExp) {
+ if (elem.className) {
+  var s;
+  s=elem.className.replace(regExp,"");
+  if (s=="") {
+   elem.removeAttribute("className");
+   elem.removeAttribute("class");
+  }
+  else elem.className=s;
+ }
+}
+
+function isEmptyLine(ptr) {
+ if (ptr)
+  if (ptr.nodeType)
+   if (ptr.nodeType==1)
+    if (ptr.nodeName)
+     if (ptr.nodeName.toUpperCase()=="P")
+      if (emptyLineRE.test(ptr.innerHTML.replace(new RegExp(nbspChar+"|<(?!img)[^>]*?>","gi"),""))) return true;
+ return false;
+}
+
+function isSubtitle(ptr) {
+ if (ptr)
+  if (ptr.nodeType)
+   if (ptr.nodeType==1)
+    if (ptr.nodeName.toUpperCase()=="P")
+     if (ptr.className)
+      if (ptr.className.search(/\bsubtitle\b/i)>=0) return true;
+ return false;
+}
+
+function getScrollBarWidthAndHeight() {
+ var inner = document.createElement('p');
+ inner.style.width = "100%";
+ inner.style.height = "200px";
+
+ var outer = document.createElement('div');
+ outer.style.position = "absolute";
+ outer.style.top = "0px";
+ outer.style.left = "0px";
+ outer.style.visibility = "hidden";
+ outer.style.width = "200px";
+ outer.style.height = "150px";
+ outer.style.overflow = "hidden";
+ outer.appendChild(inner);
+
+ document.getElementById("elementList").appendChild(outer);
+ var w1=inner.offsetWidth;
+ var h1=inner.offsetHeight;
+ outer.style.overflow = 'scroll';
+ var w2=inner.offsetWidth;
+ var h2=inner.offsetHeight;
+ if (w1==w2) w2 = outer.clientWidth;
+ if (h1==h2) h2 = outer.clientWidth;
+ outer.removeNode(true);
+
+ scrollbarWidth=w1-w2;
+ scrollbarHeight=h1-h2;
+};
+
+function removeActivityFromActiveElement() {
+ if (!activeElement) return;
+ if (activeElement.className=="el_active_sel")
+  activeElement.className="el_sel";
+ else if (activeElement.className=="el_active")
+  activeElement.className="el_";
+}
+
+function setActivityToElement(activeElement) {
+ if (!activeElement) return;
+ if (activeElement.className=="el_sel")
+  activeElement.className="el_active_sel";
+ else if (activeElement.className=="el_")
+  activeElement.className="el_active";
+}
+
+function getTitleByElement(el) {
+ ptr5=el;
+ while (ptr5 && ptr5.nodeName!="BODY" &&
+        !(ptr5.nodeName=="DIV" && ptr5.className=="title"))
+  ptr5=ptr5.parentNode;
+ if (!ptr5 || ptr5.nodeName=="BODY") return null;
+ return ptr5;
+}
+
+function selectElements(selectionBegin,selectionEnd) {
+
+ var currN,evaledCurrN;
+
+ function selectAnElement(el) {
+  currN=el.id;
+  if (currN!=null && currN!="" && currN.indexOf("n_")==0)
+   evaledCurrN=eval(currN.substr(2));
+  if (selectedElements[evaledCurrN]!=evaledCurrN)
+   selectedElementsCnt++;
+  currElement.className="el_sel";
+  //добавил элемент в список выделенных элементов:
+  selectedElements[evaledCurrN]=evaledCurrN;
+ }
+
+ var el=selectionEnd;
+ if (selectionBegin && selectionBegin.id)
+  var selectionBeginN=eval(selectionBegin.id.substr(2));
+ else return;
+ var selectionEndN=eval(selectionEnd.id.substr(2));
+ var currElement=(selectionBeginN<selectionEndN)?selectionBegin:el;
+ var endElement=(selectionBeginN<selectionEndN)?el:selectionBegin;
+ while (currElement &&
+        (!currElement.previousSibling ||
+         (currElement.previousSibling && currElement.previousSibling!=endElement)
+        )
+       ) {
+  if (currElement.nodeName=="DIV" && currElement.className.indexOf("el_")==0)
+   selectAnElement(currElement);
+  currElement=currElement.nextSibling;
+ }
+}
+
+function scrollingTimer() {
+ var tmpEl,el,n,r,l,elemListHeight;
+ el=document.getElementById("elementList");
+ if (scrolling=="up") {
+  document.getElementById("elementList").scrollTop-=40;
+  lft=0;
+  rgt=el.children.length-1;
+  while (lft<rgt) {
+   n=Math.round((lft+rgt-1)/2);
+   tmpEl=el.children[n];
+   r=tmpEl.getBoundingClientRect();
+   if (!r) {alert("r==null N1");return false;}
+   if (r.top<0 && r.bottom<0) lft=n+1;
+   else if (r.top>0 && r.bottom>0) rgt=n;
+   else if (r.top==0 || (r.top<0 && r.bottom>=0)) {lft=n; rgt=n;}
+   firstTime=false;
+  }
+  selectElements(activeElement,el.children[lft]);
+  removeActivityFromActiveElement();
+  activeElement=el.children[lft];
+  setActivityToElement(activeElement);
+  //r=el.children[lft].getBoundingClientRect();
+  //document.getElementById("elementList").scrollTop-=r.top;
+ }
+ if (scrolling=="down") {
+  document.getElementById("elementList").scrollTop+=40;
+  lft=0;
+  rgt=el.children.length-1;
+  elemListHeight=el.offsetHeight-scrollbarHeight;
+  while (lft<rgt) {
+   n=Math.round((lft+rgt-1)/2);
+   tmpEl=el.children[n];
+   r=tmpEl.getBoundingClientRect();
+   if (!r) {alert("r==null N2"); return false;}
+   if (r.top<elemListHeight && r.bottom<elemListHeight) lft=n+1;
+   else if (r.top>elemListHeight && r.bottom>elemListHeight) rgt=n;
+   else if (r.bottom==elemListHeight || (r.top<=elemListHeight && r.bottom>elemListHeight)) {lft=n; rgt=n;}
+   firstTime=false;
+  }
+  selectElements(activeElement,el.children[lft]);
+  removeActivityFromActiveElement();
+  activeElement=el.children[lft];
+  setActivityToElement(activeElement);
+ }
+ parent.frame3.document.getElementById("selectedInput").value=selectedElementsCnt.toString();
+}
+
+function myOnClick() {
+ var el=event.srcElement;
+ while (el && el.nodeName!="BODY" && el.nodeName!="DIV" || (el.nodeName=="DIV" && el.className!=null && el.className!="" &&
+        el.className.search("el_")!=0))
+  el=el.parentNode;
+ if (!el || el.nodeName!="DIV" || el.className.search("el_")!=0) { event.returnValue=true; return true; }
+  //теперь в el элемент, по которому кликнул пользователь
+ var rng=mainDoc.body.createTextRange();
+ var myN=el.id;
+ var evaledN=null;
+ if (myN==null || myN=="" || myN.indexOf("n_")!=0) return;
+ evaledN=eval(myN.substr(2));
+ if ((currentElementType.substr(0,6)=="titles" || currentElementType=="subtitles" ||
+      currentElementType=="emphasis" || currentElementType=="strong" ||
+      currentElementType=="sup" || currentElementType=="sub" ||
+      currentElementType=="strikethrough") && evaledN) {
+  try {
+   mainWin.scroll(0,0);
+   rng.moveToElementText(myLinks[evaledN]);
+   mainWin.scrollBy(0,rng.boundingTop-80);
+   rng.select();
+   var winHeight=document.documentElement.clientHeight;
+   /*alert("rng.boundingTop: "+rng.boundingTop+"    winHeight: "+winHeight);
+   if (rng.boundingHeight<=winHeight)
+    mainWin.scroll(0,Math.floor(rng.boundingTop-winHeight/2));
+   else
+    mainWin.scrollBy(0,rng.boundingTop);*/
+  }
+  catch(e) {
+   alert("При установке фокуса видимости на элемент произошла ошибка.");
+  }
+ }
+ //обработка выделения с незажатым шифтом и незажатым контролом
+ if (!event.ctrlKey && !event.shiftKey) {
+  //чистка списка выделенных элементов
+  for (k in selectedElements)
+   if (selectedElements[k]==k)
+    if (document.getElementById("n_"+k))
+     document.getElementById("n_"+k).className="el_";
+  selectedElements={};
+  selectedElementsCnt=0;
+ }
+ //если клик сделан с контролом, уберем стиль активности с активного элемента
+ if (event.ctrlKey)
+  removeActivityFromActiveElement();
+ if (event.shiftKey) {
+  //чистка списка выделенных элементов
+  if (!event.ctrlKey) {
+   for (k in selectedElements)
+    if (selectedElements[k]==k)
+     document.getElementById("n_"+k).className="el_";
+   selectedElements={};
+   selectedElementsCnt=0;
+  }
+ }
+ //обработка выделения с зажатым шифтом и незажатым контролом)
+ if (event.shiftKey && evaledN && selectionBegin) {
+  var oldN=selectionBegin.id;
+  if (oldN==null || oldN=="" || oldN.indexOf("n_")!=0) return;
+  evaledOldN=eval(oldN.substr(2));
+  if (!event.ctrlKey) {
+   //alert("добавляем в список n_"+evaledOldN);
+   selectedElements[evaledOldN]=evaledOldN;
+   selectionBegin.className="el_sel";
+   selectedElementsCnt=1;
+  }
+  if (evaledOldN!=evaledN) {
+   selectElements(selectionBegin,el);
+  }
+ }
+
+ //обработка выделения с зажатым контролом
+ if (event.ctrlKey) {
+  if (el.className=="el_") {
+   if (selectedElements[evaledN]!=evaledN) {
+    selectedElements[evaledN]=evaledN;
+    selectedElementsCnt++;
+   }
+   el.className="el_active_sel";
+  } else if (el.className=="el_sel" || el.className=="el_active_sel") {
+   selectedElements[evaledN]=undefined;
+   selectedElementsCnt--;
+   el.className="el_active";
+  }
+ }
+
+ if (!event.ctrlKey || (event.ctrlKey && event.shiftKey)) {
+  el.className="el_active_sel";
+  if (selectedElements[evaledN]!=evaledN) {
+   selectedElements[evaledN]=evaledN;
+   selectedElementsCnt++;
+  }
+ }
+
+ activeElement=el;
+ if (!event.shiftKey)
+  selectionBegin=el;
+ if (!event.ctrlKey && !event.shiftKey) {
+  //занесем в список выделенных элементов элемент, по которому был клик
+  if (evaledN) {
+   selectedElements[evaledN]=evaledN;
+   selectedElementsCnt=1;
+  }
+ }
+ parent.frame3.document.getElementById("selectedInput").value=selectedElementsCnt.toString();
+ event.returnValue=false;
+ return false;
+}
+
+function replaceWithUpperCase(full_match, brackets1, offset_of_match,
+                          string_we_search_in) {
+ return full_match.toUpperCase();
+}
+
+function changeCaseInOneP(pToProcess,howToChange) {
+ var el=pToProcess.firstChild;
+ var alreadyMetDot=false;
+ var alreadyMadeFirstLetterBig=false;
+ var alreadyMetFirstDot=false;
+ var alreadyMetLetterAfterFirstDot=false;
+ var alreadyMetDotButNotMetLetter=false;
+ var alreadyMetLetterAfterDot=false;
+ var xState=1;
+ var s1,s2,i,j;
+ while (el && el!=pToProcess) {
+  if (el.nodeType==3) {
+   s1=el.nodeValue;
+   if (caseFlag=="allSmall") s2=s1.toLowerCase();
+   if (caseFlag=="allBig") s2=s1.toUpperCase();
+   if (caseFlag=="onlyFirstBig") s2=s1.toLowerCase();
+   if (caseFlag=="onlyFirstBig" && !alreadyMadeFirstLetterBig) {
+    s2=s1.charAt(0).toUpperCase()+s1.substring(1).toLowerCase();
+    //replace(letterRE,replaceWithUpperCase)
+    alreadyMadeFirstLetterBig=true;
+   }
+// ===============================================================
+   if (caseFlag=="firstBigAndAfterFirstDotBig") {
+    s2=s1.toLowerCase();
+    for (i=0; i<s1.length; i++) {
+     if (!alreadyMadeFirstLetterBig) {
+      s2=s2.charAt(0).toUpperCase()+s2.substring(1);
+      alreadyMadeFirstLetterBig=true;
+     }
+     else {
+      if (alreadyMetDotButNotMetLetter && !alreadyMetLetterAfterFirstDot && s2.charAt(i).search(letterRE)>=0) {
+       s2=s2.substring(0,i)+s2.charAt(i).replace(letterRE,replaceWithUpperCase)+s2.substring(i+1);
+       alreadyMetLetterAfterFirstDot=true;
+      }
+      if (!alreadyMetDotButNotMetLetter && s2.charAt(i)==".") {
+       alreadyMetDotButNotMetLetter=true;
+       alreadyMetLetterAfterDot=false;
+      }
+     }
+    } // for
+   } // if
+
+// ===============================================================
+
+   if (caseFlag=="firstLetterBigAndAfterEveryDotBigToo") {
+    s2=s1.toLowerCase();
+
+    for (i=0; i<s1.length; i++) {
+     if (xState==1 && s2.charAt(i).search(letterRE)>=0)
+      {
+      // переводим в верхний регистр символ в позиции i
+      s2=s2.substring(0,i)+s2.charAt(i).toUpperCase()+s2.substring(i+1);
+      xState=2;
+     } // if (alreadyMetDot && !alreadyMetLetterAfterDot && s2.charAt(i).search(letterRE)>=0)
+     else {
+      if (s2.charAt(i)==".") xState=1
+      else if (s2.charAt(i)==" " || s2.charAt(i)==nbspChar)
+       { 
+        if (xState==1 && s2.charAt(i).search(letterRE)>=0) {
+         // переводим в верхний регистр символ в позиции i
+         s2=s2.substring(0,i)+s2.charAt(i).toUpperCase()+s2.substring(i+1);
+         // alreadyMetLetterAfterDot=true; // !!! Ошибка, возможно, в этой строке! !!!
+        } // if (alreadyMetDotButNotMetLetter && !alreadyMetLetterAfterDot && s2.charAt(i).search(letterRE)>=0)
+       } // if (s2.charAt(i)==".") alreadyMetDotButNotMetLetter=true; else 
+     } // if (alreadyMetDotButNotMetLetter && !alreadyMetLetterAfterDot && s2.charAt(i).search(letterRE)>=0) { <...> } else
+    } // for (i=1; i<s1.length; i++)
+   } // if (caseFlag=="firstLetterBigAndAfterEveryDotBigToo")
+// ===============================================================
+   if (s2!=s1) el.nodeValue=s2;
+  } // if (el.nodeType==3)
+  if (el.firstChild)
+   el=el.firstChild;
+  else {
+   while (el && el!=pToProcess && el.nextSibling==null) el=el.parentNode;
+   if (el && el!=pToProcess) el=el.nextSibling;
+  } //else
+ }
+}
+
+function changeCase(direction) {
+ var i;
+ caseFlag=direction;
+ sortElements();
+ mainWin.external.BeginUndoUnit(mainDoc,"смена регистра абзацев");
+ var len=sortedElementArray.length;
+ for (i=0; i<len; i++) {
+  changeCaseInOneP(myLinks[sortedElementArray[i]]);
+  s1=getElementText(myLinks[sortedElementArray[i]]);
+  document.getElementById("n_"+sortedElementArray[i]).innerHTML="<P>"+s1+"</P>";
+ }
+ mainWin.external.EndUndoUnit(mainDoc);
+ alert("Выполнено.");
+}
+
+function contextMenu() {
+ var p=window.createPopup();
+ p.document.body.style.height="100%";
+ p.document.body.style.margin="0";
+ p.document.body.style.padding="0";
+ p.document.body.innerHTML=
+  "<table style='width:100%; height:100%'><tr><td align=center valign=middle style='text-align:left; vertical-align:middle;'>"+
+  "<div style='height:100%; border:1px inset black; color:#7F7F7F; background-color:black; font-family:tahoma; font-size:13px; margin:0;'>"+
+   "<div onmouseover='this.style.backgroundColor=\"yellow\"; this.style.color=\"black\"' onmouseout='this.style.backgroundColor=\"black\"; this.style.color=\"#7F7F7F\";' onclick='parent.changeCase(\"onlyFirstBig\");' style='width:100%; padding:2px; margin:0;'>"+
+    "<p style='padding:0; margin:0;'>Первая буква большая, остальные маленькие</p>"+
+   "</div>"+
+   "<div onmouseover='this.style.backgroundColor=\"yellow\"; this.style.color=\"black\"' onmouseout='this.style.backgroundColor=\"black\"; this.style.color=\"#7F7F7F\";' onclick='parent.changeCase(\"firstBigAndAfterFirstDotBig\");' style='width:100%; padding:2px; margin:0;'>"+
+    "<p style='padding:0; margin:0;'>Первая буква большая, и после первой точки большая буква</p>"+
+   "</div>"+
+   "<div onmouseover='this.style.backgroundColor=\"yellow\"; this.style.color=\"black\"' onmouseout='this.style.backgroundColor=\"black\"; this.style.color=\"#7F7F7F\";' onclick='parent.changeCase(\"firstLetterBigAndAfterEveryDotBigToo\");' style='width:100%; padding:2px; margin:0;'>"+
+    "<p style='padding:0; margin:0;'>Первая буква большая, и после каждой точки большая буква</p>"+
+   "</div>"+
+   "<div onmouseover='this.style.backgroundColor=\"yellow\"; this.style.color=\"black\"' onmouseout='this.style.backgroundColor=\"black\"; this.style.color=\"#7F7F7F\";' onclick='parent.changeCase(\"allBig\");' style='width:100%; padding:2px; margin:0;'>"+
+    "<p style='padding:0; margin:0;'>Все буквы большие</p>"+
+   "</div>"+
+   "<div onmouseover='this.style.backgroundColor=\"yellow\"; this.style.color=\"black\"' onmouseout='this.style.backgroundColor=\"black\"; this.style.color=\"#7F7F7F\";' onclick='parent.changeCase(\"allSmall\");' style='width:100%; padding:2px; margin:0;'>"+
+    "<p style='padding:0; margin:0;'>Все буквы маленькие</p>"+
+   "</div>"+
+  "</div>"+
+  "</td><tr></table>";
+ p.show(event.screenX, event.screenY, 390, 120);
+}
+
+function myOnMouseDown() {
+ if (event.button==1 &&
+     event.y>0 && event.y<document.getElementById("elementList").offsetHeight-scrollbarHeight &&
+     event.x>0 && event.x<document.getElementById("elementList").offsetWidth-scrollbarWidth) {
+  mouseDown=true;
+  myOnClick();
+  document.getElementById("mouseCaptureSpan").setCapture(true);
+  event.returnValue=false;
+  return false;
+ } else if (event.button==2) {
+  if (currentElementType.substr(0,6)=="titles" || currentElementType=="subtitles") contextMenu();
+ } else {
+  event.returnValue=true;
+  return true;
+ }
+}
+
+function capturedMouse() {
+ el=event.srcElement;
+ if (event.type=="mouseover") {
+  if (el.nodeName=="BODY") {
+   scrolling="no";
+   if (mouseTimer!=null) {
+    clearInterval(mouseTimer);
+    mouseTimer=null;
+   }
+  }
+  while (el && el.nodeName!="BODY" && el.nodeName!="DIV" || (el.nodeName=="DIV" && el.className!=null && el.className!="" &&
+         el.className.indexOf("el_")!=0))
+   el=el.parentNode;
+  if (!el || el.nodeName!="DIV" || el.className.indexOf("el_")!=0) return;
+  if (el && el.nodeName=="DIV" && el.className.indexOf("el_")==0) {
+   evaledN=eval(el.id.substr(2));
+   removeActivityFromActiveElement();
+   selectElements(activeElement,el);
+   activeElement=el;
+   setActivityToElement(activeElement);
+   parent.frame3.document.getElementById("selectedInput").value=selectedElementsCnt.toString();
+  }
+  return true;
+ }
+ if (event.type=="mouseup") {
+  document.getElementById("mouseCaptureSpan").releaseCapture();
+  if (mouseTimer!=null) {
+   clearInterval(mouseTimer);
+   mouseTimer=null;
+  }
+  scrolling="no";
+  return true;
+ }
+ if (event.type=="mousemove") {
+  if (event.y<3) {
+   scrolling="up";
+   if (mouseTimer==null) mouseTimer=setInterval("scrollingTimer();",100);
+  }
+  else if (event.y>document.getElementById("elementList").offsetHeight-scrollbarHeight) {
+   scrolling="down";
+   if (mouseTimer==null) mouseTimer=setInterval("scrollingTimer();",100);
+  } else if (mouseTimer!=null) {
+   clearInterval(mouseTimer);
+   mouseTimer=null;
+  }
+ }
+ return true;
+}
+
+function parentIsSection(uuu) {
+ ptr3=uuu;
+ while (ptr3 && ptr3.nodeName && ptr3.nodeName.toUpperCase()!="BODY" && !isSection(ptr3) && !isPoem(ptr3) && !isStanza(ptr3))
+  ptr3=ptr3.parentNode;
+ if (isSection(ptr3)) return true;
+ return false;
+}
+
+function parentIsPoem(uuu) {
+ ptr3=uuu;
+ while (ptr3 && ptr3.nodeName && ptr3.nodeName.toUpperCase()!="BODY" && !isSection(ptr3) && !isPoem(ptr3) && !isStanza(ptr3))
+  ptr3=ptr3.parentNode;
+ if (isPoem(ptr3)) return true;
+ return false;
+}
+
+function parentIsStanza(uuu) {
+ ptr3=uuu;
+ while (ptr3 && ptr3.nodeName && ptr3.nodeName.toUpperCase()!="BODY" && !isSection(ptr3) && !isPoem(ptr3) && !isStanza(ptr3))
+  ptr3=ptr3.parentNode;
+ if (isStanza(ptr3)) return true;
+ return false;
+}
+
+function parentIsSectionOrPoemOrStanza(uuu) {
+ ptr3=uuu;
+ while (ptr3 && ptr3.nodeName && ptr3.nodeName.toUpperCase()!="BODY" && !(isPoem(ptr3) || isSection(ptr3) || isStanza(ptr3)))
+  ptr3=ptr3.parentNode;
+ if (ptr3 && ptr3.nodeName && ptr3.nodeName.toUpperCase()!="BODY") return true;
+ return false;
+}
+
+var cutStrRE=new RegExp("(^|>)([^<>]+)","g");
+var cutHtmlSymbolsCnt=0;
+var addMultidotFlag=false;
+
+function cutHtmlReplaceFunc(full_match, brackets1, brackets2, offset_of_match, string_we_search_in) {
+ var brackets2changed=brackets2.replace(/&amp;/gi,"&").replace(/&lt;/gi,"<").replace(/&gt;/gi,">");
+ cutHtmlSymbolsCnt+=brackets2changed.length;
+ if (cutHtmlSymbolsCnt>maxNumberOfTextSymbolsInElement) {
+  brackets2changed=brackets2changed.substr(0,brackets2changed.length-(cutHtmlSymbolsCnt-maxNumberOfTextSymbolsInElement));
+  addMultidotFlag=true;
+ }
+ brackets2changed=brackets2changed.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+ return brackets1+brackets2changed;
+}
+
+function cutInnerHtml2(ptr,howManySymbolsToAccumulate) {
+ var htmlStr=ptr.innerHTML.replace(/&nbsp;/g," ").replace(/<a(?=[^<>]+\bclass=(note\b|'[^']*\bnote\b[^']*'|"[^"]*\bnote\b[^"]*"))( [^<>]+?)?( href=("(([^"#]+)|([^"]*)main\.html(#[^"]*)?|([^"]*#[^"]*))"|'(([^'#]+)|([^']*)main\.html(#[^']*)?|([^']*#[^"]*))'))( [^<>]+)?>/gi,'<SPAN class="note" title="Адрес сноски: $6$8$9$11$13$14"$15>').replace(/<a(?![^<>]+\bclass=(note\b|'[^']*\bnote\b[^']*'|"[^"]*\bnote\b[^"]*"))( [^<>]+?)?( href="([^"]*)")( [^<>]+)?>/gi,'<SPAN class="href" title="Адрес ссылки: $4"$5>').replace(/<a(?![^<>]+\bclass=(note\b|'[^']*\bnote\b[^']*'|"[^"]*\bnote\b[^"]*"))( [^<>]+?)?( href='([^']*)')( [^<>]+)?>/gi,'<SPAN class="href" title="Адрес ссылки: $4"$5>').replace(/<\/a( [^<>]*)?>/gi,"</SPAN>");
+ cutHtmlSymbolsCnt=0;
+ addMultidotFlag=false;
+ htmlStr=htmlStr.replace(cutStrRE,cutHtmlReplaceFunc);
+ if (addMultidotFlag) htmlStr+="&lt;...&gt;";
+ return htmlStr;
+}
+
+
+function getElementText(ptr) {
+ if (ptr.innerText.search(onlySpacesRegExp)>=0) return " ";
+ else return cutInnerHtml2(ptr,maxNumberOfTextSymbolsInElement);
+}
+
+
+function findBlockElements(ptr,insideSection) {
+ ptr=ptr.firstChild;
+ if (!ptr) return;
+ while (ptr!=null) {
+  if (ptr.nodeType==1)
+   if (ptr.nodeName!="P") {
+    if (
+        (currentElementType=="titles" && isTitle(ptr) &&        parentIsSectionOrPoemOrStanza(ptr) && ptr.parentNode.firstChild==ptr && insideSection)
+        ||
+        (currentElementType=="titles of sections" && isTitle(ptr) &&        parentIsSection(ptr) && ptr.parentNode.firstChild==ptr && insideSection)
+        ||
+        (currentElementType=="titles of poems" && isTitle(ptr) && parentIsPoem(ptr) && ptr.parentNode.firstChild==ptr && insideSection)
+        ||
+        (currentElementType=="titles of stanzas" && isTitle(ptr) && parentIsStanza(ptr) && ptr.parentNode.firstChild==ptr && insideSection)
+       )
+    {
+     ptr2=ptr.firstChild;
+     while (ptr2!=null) {
+      if (ptr2.nodeName=="P") {
+       s1=getElementText(ptr2);
+       htmlStr+="<DIV class=el_ id=n_"+nCnt+"><P>"+s1+"</P></DIV>";
+       elementsInAll++;
+       myLinks[nCnt]=ptr2;
+       nCnt++;
+      }
+      ptr2=ptr2.nextSibling;
+     }
+     htmlStr+="<DIV class=delim></DIV>";
+    } else findBlockElements(ptr,(insideSection || (ptr.nodeName=="DIV" && ptr.className=="section")));
+   }
+  ptr=ptr.nextSibling;
+ }
+}
+
+function findParagraphElements(ptr,insideSection) {
+ ptr=ptr.firstChild;
+ var needGoNext;
+ if (!ptr) return;
+ while (ptr!=null) {
+  needGoNext=true;
+  if (ptr.nodeType==1)
+   if (ptr.nodeName!="P")
+    findParagraphElements(ptr,(insideSection || (ptr.nodeName=="DIV" && ptr.className=="section")));
+   else {
+    if (currentElementType=="subtitles" && ptr.className=="subtitle"
+        && insideSection) {
+     while (ptr!=null && currentElementType=="subtitles" && ptr.className=="subtitle") {
+      s1=getElementText(ptr);
+      htmlStr+="<DIV class=el_ id=n_"+nCnt+"><P>"+s1+"</P></DIV>";
+      elementsInAll++;
+      myLinks[nCnt]=ptr;
+      nCnt++;
+      ptr=ptr.nextSibling;
+      needGoNext=false;
+     }
+     htmlStr+="<DIV class=delim></DIV>";
+    }
+   }
+  if (needGoNext) ptr=ptr.nextSibling;
+ }
+}
+
+function findInlineElements(ptr,insideSection,elemNameRE) {
+ if (ptr.nodeName=="P") foundInlineElementsInP=false;
+ ptr=ptr.firstChild;
+ var needGoNext;
+ if (!ptr) return;
+ while (ptr!=null) {
+  needGoNext=true;
+  if (ptr.nodeType==1) {
+    if (insideSection && ptr.nodeName.search(elemNameRE)>=0) {
+     //while (ptr!=null && ptr.nodeName.search(elemNameRE)>=0) {
+      s1=getElementText(ptr);
+      htmlStr+="<DIV class=el_ id=n_"+nCnt+"><P>"+s1+"</P></DIV>";
+      elementsInAll++;
+      myLinks[nCnt]=ptr;
+      nCnt++;
+      needGoNext=false;
+      foundInlineElementsInP=true;
+     //}
+    }
+   findInlineElements(ptr,(insideSection || (ptr.nodeName=="DIV" && ptr.className=="section")),elemNameRE);
+   if (ptr.nodeName=="P" && foundInlineElementsInP) htmlStr+="<DIV class=delim></DIV>";
+  }
+  ptr=ptr.nextSibling;
+ }
+}
+
+function InflateIt(elem) {
+ if (!elem || elem.nodeType!=1) return;
+ if (elem.tagName=="P") {
+  mainWin.external.inflateBlock(elem)=true;
+  return;
+ }
+ elem=elem.firstChild;
+ while (elem) {
+  InflateIt(elem);
+  elem=elem.nextSibling;
+ }
+}
+
+function getSectionOrPoemOrStanzaByElement(el) {
+ ptr4=el;
+ while (ptr4 && ptr4.nodeName!="BODY" &&
+        !(ptr4.nodeName=="DIV" && (ptr4.className=="section" || ptr4.className=="stanza" || ptr4.className=="poem")))
+  ptr4=ptr4.parentNode;
+ if (!ptr4 || ptr4.nodeName=="BODY") return null;
+ return ptr4;
+}
+
+function getSectionByElement(el) {
+ ptr4=el;
+ while (ptr4 && ptr4.nodeName!="BODY" &&
+        !(ptr4.nodeName=="DIV" && ptr4.className=="section"))
+  ptr4=ptr4.parentNode;
+ if (!ptr4 || ptr4.nodeName=="BODY") return null;
+ return ptr4;
+}
+
+function prevNotSection(ff) {
+ if (ff.id=="fbw_body") return false;
+ if (ff.previousSibling==null || ff.nodeName!="DIV" || !ff.className || ff.className.toLowerCase()!="section") return true;
+ return false;
+}
+
+function isSection(gg) {
+ if (!gg) return false;
+ if (gg.nodeName!="DIV" || !gg.className || gg.className.toLowerCase()!="section") return false;
+ return true;
+}
+
+function isEpigraph(gg) {
+ if (!gg) return false;
+ if (gg.nodeName!="DIV" || !gg.className || gg.className.toLowerCase()!="epigraph") return false;
+ return true;
+}
+
+function isTitle(gg) {
+ if (!gg) return false;
+ if (gg.nodeName!="DIV" || !gg.className || gg.className!="title") return false;
+ return true;
+}
+
+function isStanza(gg) {
+ if (!gg) return false;
+ if (!gg.nodeName || gg.nodeName.toUpperCase()!="DIV" || !gg.className || gg.className.toLowerCase()!="stanza") return false;
+ return true;
+}
+
+function isPoem(gg) {
+ if (!gg) return false;
+ if (!gg.nodeName || gg.nodeName.toUpperCase()!="DIV" || !gg.className || gg.className.toLowerCase()!="poem") return false;
+ return true;
+}
+
+function getDeepestSection(sect) {
+ if (!isSection(sect)) return null;
+ var sect1=sect;
+ while (isSection(sect1.firstChild))
+  sect1=sect1.firstChild;
+ return sect1;
+}
+
+function getParentSection(el) {
+ if (!el) return null;
+ var el1=el;
+ while (el1 && !isSection(el1))
+  el1=el1.parentNode;
+ return el1;
+}
+
+function howManyEmptyLinesInTheEndOf(container1) {
+ var ptr=container1.lastChild;
+ var cnt=0;
+ while (isEmptyLine(ptr)) {
+  cnt++;
+  ptr=ptr.previousSibling;
+ }
+ return cnt;
+}
+
+function moving1(moveIfThereAreNotEmptyLines) {
+ // функция переносит подзаголовки из контейнера-источника
+ // в позицию перед пустыми строками в конце prevSectionOrPoemOrStanza
+ debugAlert("Вошли в moving1.");
+ // alert("prevSectionOrPoemOrStanza: \n\n"+prevSectionOrPoemOrStanza.outerHTML);
+ pInPreviousContainer=prevSectionOrPoemOrStanza.lastChild;
+ if (isEmptyLine(pInPreviousContainer)) {
+  while (isEmptyLine(pInPreviousContainer))
+   pInPreviousContainer=pInPreviousContainer.previousSibling;
+  if (isSubtitle(pInPreviousContainer)) {
+   // переменная thereAreSubtitlesInPreviousContainer равна true, если
+   // в конце prevSectionOrPoemOrStanza - пустая строка либо строки,
+   // а перед ними - хотя бы один подзаголовок. В противном случае - false
+   thereAreSubtitlesInPreviousContainer=true;
+   while (isEmptyLine(tt)) {
+    nextTt=tt.nextSibling;
+    tt.removeNode(true);
+    tt=nextTt;
+   }
+   subtitleInPreviousContainerBeforeEmptyLines=pInPreviousContainer;
+   saveNextSiblingAfterSubtitle=subtitleInPreviousContainerBeforeEmptyLines.nextSibling;
+   if (tt && isSubtitle(tt) && saveNextSiblingAfterSubtitle) {
+    while (tt && isSubtitle(tt) && saveNextSiblingAfterSubtitle) {
+     nextTt=tt.nextSibling;
+     debugAlert("1. Перенесем элемент: \n\n"+tt.outerHTML);
+     saveNextSiblingAfterSubtitle.insertAdjacentElement("beforeBegin",tt.removeNode(true));
+     tt=nextTt;
+    }
+    weMovedSubtitles=true;
+    weMovedAlready=true;
+   } else return;
+   var numberOfLinesToRemove=howManyEmptyLinesInTheEndOf(prevSectionOrPoemOrStanza);
+   debugAlert("Столько строк нужно удалить в начале контейнера-источника: "+numberOfLinesToRemove);
+   var i;
+   for (i=1; i<=numberOfLinesToRemove; i++) {
+    nextTt=tt.nextSibling;
+    if (isEmptyLine(tt)) tt.removeNode(true);
+    else break;
+    tt=nextTt;
+   }
+  }
+ }
+ else if (moveIfThereAreNotEmptyLines) {
+  while (tt && isSubtitle(tt)) {
+   nextTt=tt.nextSibling;
+   debugAlert("5. Перенесем элемент: \n\n"+tt.outerHTML);
+   prevSectionOrPoemOrStanza.appendChild(tt.removeNode(true));
+   weMovedSubtitles=true;
+   tt=nextTt;
+  }
+ }
+ debugAlert("Сейчас выйдем из moving1.");
+}
+
+function appendEmptyLineToPrevSectionOrPoemOrStanza() {
+ var newEmptyLine=mainDoc.createElement("P");
+ newEmptyLine=prevSectionOrPoemOrStanza.appendChild(newEmptyLine);
+ InflateIt(newEmptyLine);
+}
+
+function createTargetContainer() {
+ debugAlert("Вход в createTargetContainer.\n\nsectionOrPoemOrStanza: \n\n"+sectionOrPoemOrStanza.outerHTML);
+ if (isSection(sectionOrPoemOrStanza)) {
+  // эта ветвь выполняется, если обрабатываемые абзацы заголовка
+  // принадлежат заголовку раздела, а не стиха или строфы
+  el9=sectionOrPoemOrStanza;
+  while (prevNotSection(el9))
+   el9=el9.parentNode;
+  if (el9.id=="fbw_body") return;
+  if (isSection(el9.previousSibling))
+   prevSectionOrPoemOrStanza=el9.previousSibling;
+  else {
+   if (el9!=sectionOrPoemOrStanza) {
+    debugAlert("if (el9!=sectionOrPoemOrStanza)");
+    newSection=mainDoc.createElement("DIV");
+    newSection.className="section";
+    prevSectionOrPoemOrStanza=el9.insertAdjacentElement("afterBegin",newSection);
+   } else {
+    newSection=mainDoc.createElement("DIV");
+    newSection.className="section";
+    prevSectionOrPoemOrStanza=sectionOrPoemOrStanza.insertAdjacentElement("beforeBegin",newSection);
+    /* if (prevSectionOrPoemOrStanza.parentNode.nodeName!="DIV" ||
+        prevSectionOrPoemOrStanza.parentNode.className!="body")
+     killPrev=true; */
+   }
+  }
+ } else
+ if (isStanza(sectionOrPoemOrStanza)) {
+  // эта ветвь выполняется, если обрабатываемые абзацы заголовка
+  // принадлежат заголовку строфы, а не стиха или раздела
+  if (isStanza(sectionOrPoemOrStanza.previousSibling))
+   prevSectionOrPoemOrStanza=sectionOrPoemOrStanza.previousSibling;
+  else {
+   var newStanza=mainDoc.createElement("DIV");
+   newStanza.className="stanza";
+   prevSectionOrPoemOrStanza=sectionOrPoemOrStanza.insertAdjacentElement("beforeBegin",newStanza);
+  }
+ } else
+ if (isPoem(sectionOrPoemOrStanza)) {
+  if (isPoem(sectionOrPoemOrStanza.previousSibling))
+   prevSectionOrPoemOrStanza=sectionOrPoemOrStanza.previousSibling;
+  else {
+   var newPoem=mainDoc.createElement("DIV");
+   newPoem.className="poem";
+   prevSectionOrPoemOrStanza=sectionOrPoemOrStanza.insertAdjacentElement("beforeBegin",newPoem);
+  }
+ }
+
+ if (!prevSectionOrPoemOrStanza || prevSectionOrPoemOrStanza.nodeName!="DIV" ||
+     prevSectionOrPoemOrStanza.className!=sectionOrPoemOrStanza.className) {
+  return;
+ }
+ if (isSection(sectionOrPoemOrStanza))
+  while (isSection(prevSectionOrPoemOrStanza.lastChild))
+   prevSectionOrPoemOrStanza=prevSectionOrPoemOrStanza.lastChild;
+ if (flag3) {
+  newSection=mainDoc.createElement("DIV");
+  newSection.className="section";
+  prevSectionOrPoemOrStanza=prevSectionOrPoemOrStanza.insertAdjacentElement("beforeEnd",newSection);
+ }
+}
+
+function moveBlockIntoPreviousBlock() {
+ debugAlert("Произведен вход в moveBlockIntoPreviousBlock.\n\nfbwBody:\n\n"+fbwBody.innerHTML);
+ weMovedSubtitles=false;
+ thereAreSubtitlesInPreviousContainer=false;
+ killPrev=false;
+ tt=sectionOrPoemOrStanza.firstChild;
+ lastMovingWasNotSubtitleMoving=false;
+
+ createTargetContainer();
+
+ while (tt) {
+  debugAlert("Очередная итерация while (tt). \n\n"+
+        "weMovedSubtitles: "+weMovedSubtitles+"\n\n"+
+        "tt.outerHTML: \n\n"+tt.outerHTML);
+  weMovedAlready=false;
+
+  pInPreviousContainer=prevSectionOrPoemOrStanza.lastChild;
+  doNotAddEmptyLine=false;
+
+  moving1(true);
+
+  if (currentTargetElementType=="subtitles with empty lines before and after") {
+   pInPreviousContainer=prevSectionOrPoemOrStanza.lastChild;
+   while (isEmptyLine(pInPreviousContainer))
+     pInPreviousContainer=pInPreviousContainer.previousSibling;
+   if (isSubtitle(pInPreviousContainer)) {
+    while (isSubtitle(pInPreviousContainer.previousSibling))
+     pInPreviousContainer=pInPreviousContainer.previousSibling;
+    if (!isEmptyLine(pInPreviousContainer.previousSibling)) {
+     var newEmptyLine=mainDoc.createElement("P");
+     newEmptyLine=pInPreviousContainer.insertAdjacentElement("beforeBegin",newEmptyLine);
+     InflateIt(newEmptyLine);
+     debugAlert("Добавили пустую строку. #1\n\n"+ 
+           "Пустая строка была добавлена в конец prevSectionOrPoemOrStanza,\n\n"+
+           "перед пустыми строками и подзаголовками");
+    }
+   }
+  }
+
+  // если в начале контейнера-источника идут пустые строки, а потом -
+  // абзац-подзаголовок, то удалим эти пустые строки перед подзаголовком
+  if (weMovedSubtitles && isEmptyLine(tt)) {
+   ttt=tt;
+   while (isEmptyLine(ttt))
+    ttt=ttt.nextSibling;
+   if (isSubtitle(ttt)) {
+    doNotAddEmptyLine=true;
+    debugAlert("doNotAddEmptyLine=true;");
+    ttt=tt;
+    while (isEmptyLine(ttt)) {
+     ttt=ttt.nextSibling;
+     ttt.previousSibling.removeNode(true);
+    }
+    // удалим пустые строки в конце prevSectionOrPoemOrStanza
+    while (isEmptyLine(prevSectionOrPoemOrStanza.lastChild))
+     prevSectionOrPoemOrStanza.lastChild.removeNode(true);
+    tt=ttt;
+   }
+  }
+
+  debugAlert("После if (isEmptyLine(pInPreviousContainer))");
+  debugAlert("tt: "+tt);
+
+  // перенесем все подзаголовки из контейнера-источника - в prevSectionOrPoemOrStanza
+  if (tt) moving1(true);
+  /* while (isSubtitle(tt)) {
+   nextTt=tt.nextSibling;
+   debugAlert("2. Перенесем элемент: \n\n"+tt.outerHTML);
+   prevSectionOrPoemOrStanza.insertAdjacentElement("beforeEnd",tt.removeNode(true));
+   weMovedSubtitles=true;
+   lastMovingWasNotSubtitleMoving=false;
+   tt=nextTt;
+  } */
+  debugAlert("hhh");
+  // учтем ситуацию, при которой в начале контейнера-источника
+  // сейчас находятся пустые строки, а потом абзац подзаголовка
+  ttt=tt;
+  if (!lastMovingWasNotSubtitleMoving && isEmptyLine(ttt)) {
+   while (isEmptyLine(ttt)) ttt=ttt.nextSibling;
+   if (isSubtitle(ttt)) {
+    while (isEmptyLine(tt)) { // цикл для удаления пустых строк
+     nextTt=tt.nextSibling;
+     tt.removeNode(true); // удаляем пустую строку
+     tt=nextTt;
+    } 
+   } 
+  }
+  // перенесем все подзаголовки из контейнера-источника - в prevSectionOrPoemOrStanza
+  if (isSubtitle(tt)) {
+   // удалим пустые строки в конце prevSectionOrPoemOrStanza
+   /* while (isEmptyLine(prevSectionOrPoemOrStanza.lastChild))
+    prevSectionOrPoemOrStanza.lastChild.removeNode(true); */
+   while (isSubtitle(tt)) {
+    nextTt=tt.nextSibling;
+    debugAlert("4. Перенесем элемент: \n\n"+tt.outerHTML);
+    prevSectionOrPoemOrStanza.insertAdjacentElement("beforeEnd",tt.removeNode(true));
+    weMovedSubtitles=true;
+    lastMovingWasNotSubtitleMoving=false;
+    tt=nextTt;
+   }
+  }
+  // если надо, добавим пустые строки в конце prevSectionOrPoemOrStanza,
+  // после перенесенных подзаголовков
+  debugAlert("Место игрек. prevSectionOrPoemOrStanza: "+prevSectionOrPoemOrStanza);
+  debugAlert("Проверяем, надо ли произвести добавление пустой строки #2.\n\n"+
+        "Пустая строка, возможно, будет добавлена в конец prevSectionOrPoemOrStanza.\n\n"+
+        "weMovedSubtitles: "+weMovedSubtitles+"\n\n"+
+        "!thereAreSubtitlesInPreviousContainer: "+(!thereAreSubtitlesInPreviousContainer)+"\n\n" /* +
+        "!isEmptyLine(prevSectionOrPoemOrStanza.lastChild): "+(!isEmptyLine(prevSectionOrPoemOrStanza.lastChild))+"\n\n"+ */
+        /* "!(isEmptyLine(getDeepestSection(getParentSection(tt)).firstChild)): "+(!(isEmptyLine(getDeepestSection(getParentSection(tt)).firstChild)))+"\n\n"+ */
+        /* "tt: \n\n"+tt.outerHTML */);
+  if (currentTargetElementType=="subtitles with empty lines before and after"
+      &&
+      weMovedSubtitles
+      &&
+      !thereAreSubtitlesInPreviousContainer
+      &&
+      !isEmptyLine(prevSectionOrPoemOrStanza.lastChild)
+      &&
+      !(isSection(getSectionOrPoemOrStanzaByElement(tt)) && (isEmptyLine(getDeepestSection(getParentSection(tt)).firstChild)))
+      &&
+      !(isStanza(getSectionOrPoemOrStanzaByElement(tt)) && isEmptyLine(tt))
+    ) {
+   appendEmptyLineToPrevSectionOrPoemOrStanza();
+   debugAlert("Добавили пустую строку. #2 \n\n" +"Пустая строка была добавлена в конец prevSectionOrPoemOrStanza.");
+  }
+  debugAlert("Перед removeEmptyLinesUpward. \n\n fbwBody: \n\n"+fbwBody.innerHTML);
+  if (currentTargetElementType=="subtitle")
+    removeEmptyLinesUpward(prevSectionOrPoemOrStanza.lastChild);
+  debugAlert("После removeEmptyLinesUpward. \n\n fbwBody: \n\n"+fbwBody.innerHTML);
+  // перенесем оставшиеся строки (строки после подзаголовков)
+  // into prevSectionOrPoemOrStanza
+  while (tt && !isSection(tt)) {
+   nextTt=tt.nextSibling;
+   // debugAlert("3. Перенесем элемент: \n\n"+tt.outerHTML);
+   prevSectionOrPoemOrStanza.insertAdjacentElement("beforeEnd",tt.removeNode(true));
+   weMovedSubtitles=false;
+   tt=nextTt;
+   lastMovingWasNotSubtitleMoving=true;
+  }
+  if (!tt) {
+   // window.clipboardData.setData("text",sectionOrPoemOrStanza.outerHTML);
+   // удалим контейнер sectionOrPoemOrStanza
+   tt=sectionOrPoemOrStanza.parentNode;
+   sectionOrPoemOrStanza.removeNode(true);
+   // удалим родительские section'ы of sectionOrPoemOrStanza
+   while (isSection(tt) && !tt.firstChild) {
+    nextTt=tt.parentNode;
+    tt.removeNode(true);
+    tt=nextTt;
+   }
+   tt=null;
+  } else if (isSection(sectionOrPoemOrStanza)) {
+   nextTt=sectionOrPoemOrStanza;
+   while (isSection(nextTt.firstChild))
+    nextTt=nextTt.firstChild;
+   oldSectionOrPoemOrStanza=sectionOrPoemOrStanza; // сохраним значение
+   sectionOrPoemOrStanza=nextTt;
+   nextTt=nextTt.firstChild;
+   debugAlert("sectionOrPoemOrStanza.removeNode(false); - if (!tt) ELSE \n\n"+
+        "tt: \n\n"+tt.outerHTML);
+   oldSectionOrPoemOrStanza.removeNode(false); // используем сохраненное значение
+   tt=nextTt;
+   if (tt)
+    if (isTitle(tt))
+     tt=null;
+   // debugAlert("Новый tt: \n\n"+tt.outerHTML);
+  } else tt=null;
+ }
+ if (killPrev) {
+  prevSectionOrPoemOrStanza.removeNode(false);
+  debugAlert("prevSectionOrPoemOrStanza.removeNode(false) - потому что killPrev==true");
+ }
+}
+
+function undo() {
+ mainDoc.execCommand('undo');
+ changingOfSelect(currentElementType);
+}
+
+function redo() {
+ mainDoc.execCommand('redo');
+ changingOfSelect(currentElementType);
+}
+
+function selectAllElements() {
+ var n;
+ var pp=document.getElementById("elementList");
+ if (!pp) {alert("Ошибка. Код ошибки ch26cb27db."); return;}
+ pp=pp.firstChild;
+ if (!pp) return;
+ while (pp) {
+  if (pp.nodeName=="DIV" && pp.className.indexOf("el_")==0 && pp.className.indexOf("sel")<0) {
+   n=eval(pp.id.substr(2));
+   selectedElements[n]=n;
+   selectedElementsCnt++;
+   if (pp.className=="el_") pp.className="el_sel";
+   else if (pp.className=="el_active") pp.className="el_active_sel";
+  }
+  pp=pp.nextSibling;
+ }
+ parent.frame3.document.getElementById("selectedInput").value=selectedElementsCnt.toString();
+}
+
+function myOnKeydown() {
+  // следует помнить, что нажатия клавиш могут ловиться другими фреймами
+ if (event.keyCode=="65" && event.ctrlKey && !event.altKey && !event.shiftKey) {
+  selectAllElements();
+  return false;
+ }
+ return true;
+}
+
+function sortElements() {
+
+ var k,cnt=0;
+ sortedElementArray=[];
+ for (k in selectedElements)
+  if (selectedElements[k]==k) {
+   sortedElementArray[cnt]=k;
+   cnt++;
+  }
+ sortedElementArray=sortedElementArray.sort(function(a,b) { return a-b; });
+}
+
+function changingOfSelect(whatSelected) {
+ var fbwBody=window.dialogArguments["mainDocument"].getElementById("fbw_body");
+ if (!fbwBody) {
+  alert("Error! fbw_body not found!");
+  return;
+ }
+ var elementList=document.getElementById("elementList");
+ currentElementType=whatSelected;
+ htmlStr="";
+ insideSection=false;
+ selectedElements={};
+ activeElement=null;
+ elementsInAll=0;
+ selectedElementsCnt=0;
+ selectionBegin=null;
+ nCnt=1;
+ if (currentElementType.substr(0,6)=="titles") findBlockElements(fbwBody,false);
+ else if (currentElementType=="subtitles") findParagraphElements(fbwBody,false);
+ else if (currentElementType=="emphasis") findInlineElements(fbwBody,false,/^(EM|I)$/i);
+ else if (currentElementType=="strong") findInlineElements(fbwBody,false,/^(B|STRONG)$/i);
+ else if (currentElementType=="sup") findInlineElements(fbwBody,false,/^(SUP)$/i);
+ else if (currentElementType=="sub") findInlineElements(fbwBody,false,/^(SUB)$/i);
+ else if (currentElementType=="strikethrough") findInlineElements(fbwBody,false,/^(STRIKE)$/i);
+ elementList.innerHTML=htmlStr;
+ parent.frame3.document.getElementById("inAllInput").value=elementsInAll.toString();
+ var el=parent.frame3.document.getElementById("reformatTo_select");
+ var val=el.value;
+ if (currentElementType.substr(0,6)=="titles" && oldCurrentElementType.substr(0,6)!="titles") {
+  el.outerHTML=
+   "<SELECT id=reformatTo_select>"+
+   "<OPTION value=subtitles>Подзаголовки</OPTION>"+
+   "<OPTION value='subtitles with empty lines before and after' selected>Подзаголовки, обрамленные пустыми строками</OPTION>"+
+   "<OPTION value=text>Текст</OPTION></SELECT>";
+  if (val=="text") parent.frame3.document.getElementById("reformatTo_select").value=val;
+ } else if (currentElementType=="subtitles" && oldCurrentElementType!="subtitles") {
+  el.outerHTML=
+   "<SELECT id=reformatTo_select>"+
+   "<OPTION value=titles selected>Заголовки</OPTION>"+
+   "<OPTION value=text>Текст</OPTION></SELECT>";
+   if (val=="text") parent.frame3.document.getElementById("reformatTo_select").value=val;
+ } else if (currentElementType=="emphasis" ||
+            currentElementType=="strong" || currentElementType=="sup" ||
+            currentElementType=="sub" || currentElementType=="strikethrough") {
+  el.outerHTML=("<SELECT id=reformatTo_select>"+
+   "<OPTION value=text>Текст</OPTION>"+
+   "<OPTION value=emphasis>Курсив</OPTION>"+
+   "<OPTION value=strong>Жирность</OPTION>"+
+   "<OPTION value=sup>Верхние индексы</OPTION>"+
+   "<OPTION value=sub>Нижние индексы</OPTION>"+
+   "<OPTION value=strikethrough>Зачеркивание</OPTION></SELECT>").replace(new RegExp("<OPTION value="+currentElementType+">[^<>]+</OPTION>","i"),"")/*.replace(/(value=[a-z]+?)(>)/i,"$1 selected$2")*/;
+  if ((val=="subtitles" || val=="emphasis" || val=="strong" || val=="sup" || val=="sub" ||
+      val=="strikethrough") && val!=currentElementType)
+   parent.frame3.document.getElementById("reformatTo_select").value=val;
+ }
+ oldCurrentElementType=currentElementType;
+}
+
+function removeReformattedElementsFromList() {
+ nPtr=0;
+ while (nPtr<sortedElementArray.length) {
+  kkEl=document.getElementById("n_"+sortedElementArray[nPtr]);
+  if (!kkEl) {alert("Ошибка. Код ошибки mv74hf7b7."); return;}
+  ttEl=kkEl;
+  if (kkEl.getAttribute("NoDel")!=null) {
+   kkEl.removeAttribute("NoDel");
+   nPtr++;
+   continue;
+  }
+  //проверим элемент перед текущим
+  if (kkEl.previousSibling==null ||
+      (kkEl.previousSibling && kkEl.previousSibling.nodeName=="DIV" && kkEl.previousSibling.className=="delim"))
+   needKillDelim=true;
+  else
+   needKillDelim=false;
+  //пройдемся вперед по элементам, которые нужно удалить
+  while (kkEl.nextSibling && kkEl.nextSibling.nodeName=="DIV" && kkEl.nextSibling.className.indexOf("el_")==0 &&
+         selectedElements[eval(kkEl.nextSibling.id.substr(2))]==kkEl.nextSibling.id.substr(2) &&
+         kkEl.nextSibling.getAttribute("NoDel")==null) {
+   nPtr++;
+   kkEl=kkEl.nextSibling;
+  }
+  //удалим элементы
+  while (ttEl!=kkEl) {
+   ttEl=ttEl.nextSibling;
+   selectedElements[eval(ttEl.previousSibling.id.substr(2))]=undefined;
+   ttEl.previousSibling.removeNode(true);
+   selectedElementsCnt--;
+   elementsInAll--;
+  }
+  if (ttEl && ttEl.nextSibling.nodeName=="DIV" && ttEl.nextSibling.className=="delim")
+    { if (needKillDelim) ttEl.nextSibling.removeNode(true); }
+  else if (!needKillDelim)
+   ttEl.insertAdjacentHTML("afterEnd","<DIV class=delim></DIV>");
+  ttEl.removeNode(true);
+  selectedElements[eval(ttEl.id.substr(2))]=undefined;
+  selectedElementsCnt--;
+  elementsInAll--;
+  nPtr++;
+ }
+}
+
+function reformatSubtitlesToText() {
+ sortElements();
+ var myElem5,newStanza;
+ for (nPtr=0;nPtr<sortedElementArray.length;nPtr++) {
+  //запишем в myElem5 ссылку на абзац-подзаголовок, который нужно сконвертировать
+  myElem5=myLinks[sortedElementArray[nPtr]];
+  removeFromClassName(myElem5,/\bsubtitle\b/gi);
+  if (getSectionOrPoemOrStanzaByElement(myElem5).className=="poem") {
+   newStanza=mainDoc.createElement("DIV");
+   newStanza.className="stanza";
+   myElem5.applyElement(newStanza,"outside");
+  }
+ }
+ removeReformattedElementsFromList();
+}
+
+function reformatInlineToInlineOrText(reformatToWhat) {
+ sortElements();
+ var myElem7,myElem8,el,nextEl;
+ for (nPtr=0;nPtr<sortedElementArray.length;nPtr++) {
+  //запишем в myElem5 ссылку на абзац-подзаголовок, который нужно сконвертировать
+  myElem6=myLinks[sortedElementArray[nPtr]];
+  if (reformatToWhat!="text") {
+   myElem8=mainDoc.createElement(htmlTagByFb2Tag[reformatToWhat]);
+   myElem6.applyElement(myElem8,"outside");
+  }
+  myElem6.removeNode(false);
+  if (reformatToWhat=="text") continue;  
+  el=myElem8.firstChild;
+  while (el && el!=myElem8) {
+   nextEl=el;
+   if (nextEl.firstChild)
+    nextEl=nextEl.firstChild;
+   else {
+    while (nextEl!=myElem8 && nextEl.nextSibling==null) nextEl=nextEl.parentNode;
+    if (nextEl!=myElem8) nextEl=nextEl.nextSibling;
+   }
+   if (el.nodeName.search(htmlTagRegExpByFb2Tag[reformatToWhat])>=0) el.removeNode(false);
+   el=nextEl;
+  }
+  el=myElem8;
+  while (el.nodeName!="BODY") {
+   el=el.parentNode;
+   if (el.nodeName.search(htmlTagRegExpByFb2Tag[reformatToWhat])>=0) {
+    myElem8.removeNode(false);
+    break;
+   }
+  }
+ }
+ removeReformattedElementsFromList();
+}
+
+function getNextEl2(rrr,lll) {
+ var ddd=rrr;
+ if (ddd.firstChild && ddd.nodeName!="P")
+  ddd=ddd.firstChild;
+ else {
+  while (ddd!=prevSectionOrPoemOrStanza && ddd.nextSibling==null && ddd!=lll) ddd=ddd.parentNode;
+  if (ddd!=prevSectionOrPoemOrStanza && ddd!=markerEnd) ddd=ddd.nextSibling;
+ }
+ return ddd;
+}
+
+function reformatSubtitlesToTitles() {
+
+ function setPrevSectionOrPoemOrStanza() {
+  prevSectionOrPoemOrStanza=sectionOrPoemOrStanza.previousSibling;
+  if (!prevSectionOrPoemOrStanza || prevSectionOrPoemOrStanza.className!=sectionOrPoemOrStanza.className || isTitle(sectionOrPoemOrStanza.firstChild)) {
+   prevSectionOrPoemOrStanza=mainDoc.createElement("DIV");
+   prevSectionOrPoemOrStanza.className=sectionOrPoemOrStanza.className;
+   sectionOrPoemOrStanza.insertAdjacentElement("beforeBegin",prevSectionOrPoemOrStanza);
+  }
+ }
+
+ function setNextSectionOrPoemOrStanza() {
+  nextSectionOrPoemOrStanza=sectionOrPoemOrStanza.nextSibling;
+  if (!nextSectionOrPoemOrStanza || nextSectionOrPoemOrStanza.nodeName!="DIV" ||
+      nextSectionOrPoemOrStanza.className!=sectionOrPoemOrStanza.className) {
+   nextSectionOrPoemOrStanza=mainDoc.createElement("DIV");
+   nextSectionOrPoemOrStanza.className=sectionOrPoemOrStanza.className;
+   newP=nextSectionOrPoemOrStanza.insertAdjacentElement("beforeEnd",mainDoc.createElement("P"));
+   mainWin.external.inflateBlock(newP)=true;
+   sectionOrPoemOrStanza.insertAdjacentElement("afterEnd",nextSectionOrPoemOrStanza);
+  }
+ }
+
+ var myEl,parentSection,thereWasSubtitlesInCite=false;
+ sortElements();
+ for (var nPtr=0;nPtr<sortedElementArray.length;nPtr++) {
+  elemInMainDoc=myLinks[sortedElementArray[nPtr]];
+  if (elemInMainDoc.parentNode.nodeName=="DIV" && elemInMainDoc.parentNode.className=="cite") {
+   thereWasSubtitlesInCite=true;
+   document.getElementById("n_"+sortedElementArray[nPtr]).setAttribute("NoDel","");
+   continue;
+  }
+  if (!elemInMainDoc) {alert("Ошибка. Код ошибки 26cb37cn3."); return;}
+  sectionOrPoemOrStanza=getSectionOrPoemOrStanzaByElement(elemInMainDoc);
+  if (!sectionOrPoemOrStanza) {alert("Ошибка. Код ошибки xhc83nx38."); return;}
+  //перенесем содержимое секции от начала до текущего подзаголовка - в секцию перед текущей
+  myEl=sectionOrPoemOrStanza.firstChild;
+  if (!myEl) {alert("Ошибка. Код ошибки 9c7c32n27."); return;}
+  htmlStr="";
+  if (elemInMainDoc.previousSibling && !(elemInMainDoc.previousSibling.nodeName=="DIV" && elemInMainDoc.previousSibling.className=="title")) {
+   setPrevSectionOrPoemOrStanza();
+   while (myEl && myEl!=elemInMainDoc) {
+    //перенесем содержимое-не подзаголовки
+    saveNext=myEl.nextSibling;
+    prevSectionOrPoemOrStanza.insertAdjacentElement("beforeEnd",myEl);
+    myEl=saveNext;
+   }
+  }
+  //превратим подзаголовок в заголовок
+  if (!(elemInMainDoc.previousSibling && elemInMainDoc.previousSibling.nodeName=="DIV" &&
+        elemInMainDoc.previousSibling.className=="title")
+     ) {
+   titleElement=mainDoc.createElement("DIV");
+   titleElement.className="title";
+   titleElement=elemInMainDoc.parentNode.insertAdjacentElement("afterBegin",titleElement);
+  } else
+   titleElement=elemInMainDoc.previousSibling;
+  if (!titleElement) {alert("Ошибка. Код ошибки 73db37d36."); return;}
+  elemInMainDoc.removeAttribute("className");
+  elemInMainDoc.removeAttribute("class");
+  titleElement.insertAdjacentElement("beforeEnd",elemInMainDoc.removeNode(true));
+  if (titleElement.parentNode.lastChild==titleElement) {
+   //если заголовок получился в конце секции, перенесем его в следующую секцию,
+   //возможно присоединив к уже имеющемуся там заголовку
+   setNextSectionOrPoemOrStanza();
+   if (!nextSectionOrPoemOrStanza.firstChild ||
+       nextSectionOrPoemOrStanza.firstChild.nodeName!="DIV" ||
+       nextSectionOrPoemOrStanza.firstChild.className!="title") {
+    nextSectionOrPoemOrStanza.insertAdjacentElement("afterBegin",titleElement.removeNode(true));
+   } else {
+    titleInNextSection=nextSectionOrPoemOrStanza.firstChild;
+    titleInNextSection.insertAdjacentHTML("afterBegin",titleElement.innerHTML);
+    if (titleElement.parentNode.firstChild==titleElement && titleElement.parentNode.lastChild==titleElement)
+     titleElement.parentNode.removeNode(true);
+    else
+     titleElement.removeNode(true);
+   }
+  }
+ } //for (var nPtr=0;nPtr<sortedElementArray.length;nPtr++)
+ removeReformattedElementsFromList();
+ if (thereWasSubtitlesInCite)
+  alert("Среди выделенных подзаголовков имелись подзаголовки, вложенные в цитаты. Они не были превращены в заголовки в процессе обработки, потому что согласно схеме формата FictionBook2 у цитат не может быть заголовков.");
+} //reformatSubtitlesToTitles();
+
+function getMatchOfElemInList(el) {
+ if (el.id.indexOf("n_")!=0) {alert("Ошибка. Код ошибки bvd2jhd28."); return;}
+ return myLinks[el.id.substr(2)];
+}
+
+function removeEmptyLinesUpward(elem) {
+ debugAlert("Вошли в removeEmptyLinesUpward");
+ var saveElem;
+ while (isEmptyLine(elem)) {
+  saveElem=elem.previousSibling;
+  elem.removeNode(true);
+  elem=saveElem;
+ }
+}
+
+function removeEmptyLinesDownward(elem) {
+ debugAlert("Вошли в removeEmptyLinesUpward");
+ var saveElem;
+ while (isEmptyLine(elem)) {
+  saveElem=elem.nextSibling;
+  elem.removeNode(true);
+  elem=saveElem;
+ }
+}
+
+function reformatTitlesToSubtitlesOrText() {
+
+ var myEl;
+
+ function collectHtmlCodeForMoving(p) {
+  el3=getSectionOrPoemOrStanzaByElement(parentTitle);
+  if (!el3) {alert("Ошибка. Код ошибки 7cb37cxb632."); return;}
+  previousSection=el3.previousSibling;
+  if (previousSection && previousSection.nodeName!="DIV" && previousSection.className!=el3.className)
+   previousSection=null;
+  myEl=p.cloneNode(true);
+  myEl.id=p.id;
+  if (currentTargetElementType=="p")
+   removeFromClassName(myEl,/\btitle\b/gi);
+  if (currentTargetElementType=="subtitle" || currentTargetElementType=="subtitles with empty lines before and after") myEl.className="subtitle";
+  htmlStr+=myEl.outerHTML;
+  p.removeNode(true);
+ }
+
+ function reformatTextAuthorsToParagraphs(epigraph1) {
+  var ptr=epigraph1.lastChild;
+  var flagToExit=false;
+  while (!flagToExit) {
+   if (ptr &&
+       ptr.nodeType &&
+       ptr.nodeType==1 &&
+       ptr.nodeName &&
+       ptr.nodeName.toUpperCase()=="P" &&
+       ptr.className &&
+       ptr.className.search(/\btext-author\b/i)>=0
+      )
+   removeFromClassName(ptr,/\btext-author\b/gi);
+   if (ptr!=epigraph1.firstChild) ptr=ptr.previousSibling;
+   else flagToExit=true;
+  }
+ }
+
+ function moveHtmlCodeIntoTargetContainer(flag1) {
+  var poemFlag, stanzaFlag;
+  debugAlert("Вошли в moveHtmlCodeIntoTargetContainer.");
+  el3=getSectionOrPoemOrStanzaByElement(parentTitle);
+  poemFlag=isPoem(el3) && currentTargetElementType=="p";
+  stanzaFlag=false /*isStanza(el3)*/;
+  if (flag1) {
+   // в этой ветви вставляем HTML-код перед title-ом, абзац которого конвертируем
+   debugAlert("Ветвь 1.");
+   debugAlert("el3: \n\n"+el3.outerHTML);
+   flag3=false; /*el3.parentNode && el3.parentNode.className && el3.parentNode.className=="section" && el3.parentNode.lastChild && el3.parentNode.lastChild.nodeName=="DIV" && el3.parentNode.lastChild.className && el3.parentNode.lastChild.className=="section";*/
+   parentTitle.insertAdjacentHTML("beforeBegin",
+    "<SPAN id='"+randomId+"_begin'></SPAN>"+
+    (stanzaFlag?"<DIV class=stanza>":"")+
+    (poemFlag?"<DIV class=section>":"")+
+    htmlStr+
+    (stanzaFlag||poemFlag?"</DIV>":"")+
+    "<SPAN id='"+randomId+"_end'></SPAN>");
+    el5=parentTitle.nextSibling;
+   while (isEpigraph(el5)) {
+    saveEl5=el5;
+    el5=el5.nextSibling;
+    reformatTextAuthorsToParagraphs(saveEl5);
+    saveEl5.removeNode(false);
+    weRemovedEpigraphs=true;
+   }
+   sectionOrPoemOrStanza=el3;
+   debugAlert("fbwBody: \n\n"+fbwBody.innerHTML);
+  }
+  else { // flag1==false
+   // в этой ветви вставляем HTML-код в предыдущий контейнер
+   debugAlert("Ветвь 2.");
+   if (!el3) {alert("Ошибка. Код ошибки 7g3od8c6nm."); return;}
+   if (isSection(el3))
+    if (!isSection(el3.previousSibling)) {
+     // создадим раздел previousSection, вставим его перед el3
+     newSection=mainDoc.createElement("DIV");
+     newSection.className=el3.className;
+     previousSection=el3.insertAdjacentElement("beforeBegin",newSection);
+     debugAlert("Вставили раздел. #1");
+     // в el3 - элемент section, poem или stanza, являющийся
+     // являющийся непосредственным родителем parentTitle
+     if (el3.previousSibling)
+      if (el3.parentNode)
+       if (isSection(el3.parentNode) && !isSection(el3.parentNode.lastChild)) {
+        sectionToRemove=previousSection;
+        debugAlert("sectionToRemove=previousSection;");
+       }
+    }
+    else {
+     debugAlert("Найдем раздел. #1");
+     while (isSection(previousSection.lastChild))
+     previousSection=previousSection.lastChild;
+    }
+   else
+   if (isStanza(el3))
+    if (!isStanza(el3.previousSibling)) {
+    // создадим новую stanza
+    var newStanza=mainDoc.createElement("DIV");
+    newStanza.className="stanza";
+    previousSection=el3.insertAdjacentElement("beforeBegin",newStanza);
+    }
+    else
+     previousSection=el3.previousSibling;
+   flag2=previousSection.className=="poem";
+   // возьмем последний сыновний элемент предыдущего раздела:
+   pInPreviousSection=previousSection.lastChild;
+   if (isEmptyLine(pInPreviousSection)) {
+    debugAlert("Место SSS \n\nfbwBody: \n\n"+fbwBody.innerHTML);
+    if (currentTargetElementType=="subtitle")
+      removeEmptyLinesUpward(pInPreviousSection);
+    pInPreviousSection=previousSection.lastChild;
+    while (isEmptyLine(pInPreviousSection))
+     pInPreviousSection=pInPreviousSection.previousSibling;
+    debugAlert("Место SSS продолжение \n\nfbwBody: \n\n"+fbwBody.innerHTML);
+    if (isSubtitle(pInPreviousSection)) {
+     // нашли подзаголовок перед пустыми строками в конце предыдущего раздела
+     subtitleInPreviousSectionBeforeEmptyLines=pInPreviousSection;
+      // вставляем насобираный htmlStr после заголовков и
+     // перед пустыми строками в previousSection
+     subtitleInPreviousSectionBeforeEmptyLines.insertAdjacentHTML("afterEnd","<SPAN id='"+randomId+"_begin'></SPAN>"+(flag2?"<DIV class=stanza>":"")+htmlStr+(flag2?"</DIV>":"")+"<SPAN id='"+randomId+"_end'></SPAN>");
+     debugAlert("SSS1");
+    }
+    else if (isSubtitle(pInPreviousSection)) {
+     previousSection.insertAdjacentHTML("beforeEnd","<SPAN id='"+randomId+"_begin'></SPAN>"+(flag2?"<DIV class=stanza>":"")+htmlStr+(flag2?"</DIV>":"")+"<SPAN id='"+randomId+"_end'></SPAN>");
+     if (currentTargetElementType=="subtitles with empty lines before and after") {
+      newEmptyLine=mainDoc.createElement("P");
+      newEmptyLine=previousSection.appendChild(newEmptyLine);
+      InflateIt(newEmptyLine);     
+     }
+     debugAlert("SSS2");
+    }
+   } // (isEmptyLine(pInPreviousSection))
+   else {
+    debugAlert("Место DDD");
+    // эта ветка выполняется, если последний 
+    // сыновний элемент previousSection - не пустая строка
+    previousSection.insertAdjacentHTML("beforeEnd","<SPAN id='"+randomId+"_begin'></SPAN>"+(flag2?"<DIV class=stanza>":"")+htmlStr+(flag2?"</DIV>":"")+"<SPAN id='"+randomId+"_end'></SPAN>");
+    markerBegin=mainDoc.getElementById(randomId+"_begin");
+    markerEnd=mainDoc.getElementById(randomId+"_end");
+    if (currentTargetElementType=="subtitles with empty lines before and after") {
+     el2=markerBegin;
+     // получим элемент перед маркером начала
+     debugAlert("fbwBody перед проверкой, есть ли элементы перед маркером начала:\n\n"+
+           fbwBody.outerHTML);
+     if (markerBegin.previousSibling) {
+      el2=markerBegin.previousSibling;
+      if (isSubtitle(el2)) {
+       while (isSubtitle(el2.previousSibling))
+        el2=el2.previousSibling;
+       if (!isEmptyLine(el2.previousSibling)) {
+        newEmptyLine=mainDoc.createElement("P");
+        newEmptyLine=el2.insertAdjacentElement("beforeBegin",newEmptyLine);
+        InflateIt(newEmptyLine);
+        alreadyAddedEmptyLine=true;
+       }
+      }
+      el2=markerBegin;
+     }
+     else {
+      // эта ветка выполняется, если перед маркером начала нет элементов
+      // вставим перед маркером начала пустую строку
+      newEmptyLine=mainDoc.createElement("P");
+      newEmptyLine=markerBegin.parentNode.insertBefore(newEmptyLine,markerBegin);
+      InflateIt(newEmptyLine);
+      alreadyAddedEmptyLine=true;
+      debugAlert("Добавили пустую строку. #7");
+     }
+     if (el2 && isEmptyLine(el2)) {
+     // будем пропускать пустые строки перед маркером начала,
+     // и посмотрим, не найдем ли перед пустыми строками подзаголовок
+      while (el2 && isEmptyLine(el2))
+       el2=el2.previousSibling;
+      if (el2 && el2.className && el2.className.search(/\bsubtitle\b/)>=0) {
+       // если нашли перед пустыми строками подзаголовок
+       el2=el2.nextSibling;
+       while (el2 && el2!=markerBegin) { 
+        saveEl2=getNextEl2(el2,markerBegin);
+        if (el2!=markerEnd) { debugAlert("Удаляем элемент: \n\n"+el2.outerHTML); el2.removeNode(true); }
+        el2=saveEl2;
+       }
+      }
+     }
+     else if (!alreadyAddedEmptyLine && el2 && (!el2.className || (el2.className && el2.className.search(/\bsubtitle\b/)<0))) {
+      // вставим пустую строку перед маркером начала
+      newEmptyLine=mainDoc.createElement("P");
+      newEmptyLine=markerBegin.parentNode.insertBefore(newEmptyLine,markerBegin);
+      InflateIt(newEmptyLine);
+      debugAlert("Добавили пустую строку. #8");
+     }
+     // добавим, если надо, пустые строки после абзацев-подзаголовков
+     if (!isEmptyLine(markerEnd.nextSibling)) {
+      newEmptyLine=mainDoc.createElement("P");
+      newEmptyLine=markerEnd.parentNode.insertBefore(newEmptyLine,markerEnd.nextSibling);
+      InflateIt(newEmptyLine);
+      debugAlert("Добавили пустую строку. #9");
+     }
+    }
+   }
+  }
+  //найдем маркер начала вставленного html-кода
+  markerBegin=mainDoc.getElementById(randomId+"_begin");
+  //найдем маркер конца вставленного html-кода
+  markerEnd=mainDoc.getElementById(randomId+"_end");
+  alreadyAddedEmptyLine=false;
+  if (markerBegin && markerEnd) {
+   el2=markerBegin;
+   el2=getNextEl2(el2,markerEnd);
+   markerBegin.removeNode(true);
+   //пройдемся по вставленному html-коду, делая пустые строки пустыми
+   while (el2!=prevSectionOrPoemOrStanza && el2!=markerEnd) {
+    if (el2.nodeName=="P") mainWin.external.inflateBlock(el2)=true;
+    el2=getNextEl2(el2,markerEnd);
+   }
+  }
+  markerEnd.removeNode(true);
+ }
+
+ function getNext(ggg) {
+  if (!ggg) {alert("Ошибка. Параметр getNext() равен null."); return;}
+  saveNext=ggg;
+  if (saveNext.firstChild && saveNext.nodeName!="P")
+   saveNext=saveNext.firstChild;
+  else {
+   while (saveNext!=parentTitle && saveNext.nextSibling==null) {
+    saveNext=saveNext.parentNode;
+   }
+   if (saveNext!=parentTitle)
+    saveNext=saveNext.nextSibling;
+  }
+  while (saveNext!=parentTitle && saveNext.nodeName!="P") {
+   if (saveNext.firstChild && saveNext.nodeName!="P")
+    saveNext=saveNext.firstChild;
+   else {
+    while (saveNext!=parentTitle && saveNext.nextSibling==null)
+     saveNext=saveNext.parentNode;
+    if (saveNext!=parentTitle)
+     saveNext=saveNext.nextSibling;
+   }
+  }
+  return saveNext;
+ }
+
+ var saveNext;
+ var firstElFromCurrentBlock;
+ sortElements();
+ nPtr=0;
+ var parentTitle=null;
+ while (nPtr<sortedElementArray.length) {
+  firstElFromCurrentBlock=myLinks[sortedElementArray[nPtr]];
+  parentTitle=getTitleByElement(firstElFromCurrentBlock);
+  if (parentTitle) if (parentTitle.nodeName) if (parentTitle.nodeName.toUpperCase()=="BODY") {alert("Ошибка!\nКод ошибки: mc93jf7hnf."); return;}
+  //alert(parentTitle.outerHTML);
+
+  elemInMainDoc=parentTitle.firstChild;
+  //var childsOfParentBlock=[];
+  /*while (!(elemInMainDoc.nodeName=="DIV" && elemInMainDoc.className!="title")) {
+   childsOfParentBlock.push(elemInMainDoc);*/
+
+  //попытаемся перейти на предыдущий абзац,
+  //но не выходя за пределы блочного родителя
+  while (elemInMainDoc!=parentTitle && elemInMainDoc.nodeName!="P") {
+   if (elemInMainDoc.firstChild)
+    elemInMainDoc=elemInMainDoc.firstChild;
+   else {
+    while (elemInMainDoc!=parentTitle && elemInMainDoc.nextSibling==null)
+     elemInMainDoc=elemInMainDoc.parentNode;
+    if (elemInMainDoc!=parentTitle)
+     elemInMainDoc=elemInMainDoc.nextSibling;
+   }
+  }
+
+  elemInList=document.getElementById("n_"+sortedElementArray[nPtr]);
+  gg=getSectionOrPoemOrStanzaByElement(myLinks[sortedElementArray[nPtr]]);
+  while (elemInList.previousSibling &&
+         (elemInList.previousSibling.className.indexOf("el_")==0 &&
+          getSectionOrPoemOrStanzaByElement(getMatchOfElemInList(elemInList.previousSibling))==gg
+         )
+        )
+   elemInList=elemInList.previousSibling;
+  //условие в следующей строке выполняется,
+  //если текущий выделенный элемент - первый в блочном родителе
+  if (elemInMainDoc==firstElFromCurrentBlock) {
+   //ПЕРВАЯ ОБРАБОТКА
+   //обработаем выделенные абзацы заголовка в начале контейнера
+   var elemInListMatchInMainDoc;
+   var quitByMeetingUnselectedElement=false;
+   htmlStr="";
+   var firstTime=true;
+
+   //WHILE
+   while (elemInMainDoc && nPtr<sortedElementArray.length && elemInMainDoc==myLinks[sortedElementArray[nPtr]]) {
+    elemInListMatchInMainDoc=getMatchOfElemInList(elemInList);
+    if (getTitleByElement(elemInListMatchInMainDoc)!=parentTitle)
+     break;
+
+    if (elemInMainDoc && elemInMainDoc!=parentTitle) {
+     //запомним в saveNext следующий элемент P после того, на который указывает elemInMainDoc
+     saveNext=getNext(elemInMainDoc);
+     collectHtmlCodeForMoving(elemInMainDoc);
+     nPtr++;
+     elemInList=elemInList.nextSibling;
+     //"вспомним" запомненный элемент
+     elemInMainDoc=saveNext;
+    }
+    if (elemInMainDoc!=myLinks[sortedElementArray[nPtr]]) break;
+   }
+   debugAlert("Вызов moveHtmlCodeIntoTargetContainer #1.\n\nПараметр: "+(elemInMainDoc==parentTitle));
+   sectionToRemove=null;
+   moveHtmlCodeIntoTargetContainer(elemInMainDoc==parentTitle);
+   sectionOrPoemOrStanza=getSectionOrPoemOrStanzaByElement(parentTitle);
+   if (!parentTitle.firstChild || elemInMainDoc==parentTitle) parentTitle.removeNode(true);
+   //если условие верно, нужно перенести остаток секции в предыдущую секцию
+   if (!sectionOrPoemOrStanza) {alert("Ошибка!\nКод ошибки g5d8bc5nd."); return;}
+  } //if (elemInMainDoc==firstElFromCurrentBlock)
+  else {
+   elemInMainDoc=getNext(parentTitle);
+   sectionOrPoemOrStanza=getSectionOrPoemOrStanzaByElement(parentTitle);
+  }
+
+  if (elemInMainDoc==parentTitle) { 
+   debugAlert("Вызов moveBlockIntoPreviousBlock № 1.");
+   moveBlockIntoPreviousBlock();
+  }
+  else {
+   // ВТОРАЯ ОБРАБОТКА
+   // в этой ветке надо обработать невыделенные и выделенные абзацы заголовка,
+   // идущие после выделенной группы абзацев в начале заголовка
+   while (elemInMainDoc && elemInMainDoc!=parentTitle && nPtr<sortedElementArray.length) {
+    elemInListMatchInMainDoc=myLinks[sortedElementArray[nPtr]];
+    // создадим DIV с таким же классом, как у sectionOrPoemOrStanza
+    el4=mainDoc.createElement("DIV");
+    el4.className=sectionOrPoemOrStanza.className;
+    // создадим элемент title
+    newTitleElement=mainDoc.createElement("DIV");
+    newTitleElement.className="title";
+    // вставим этот title в созданный DIV с таким же классом, как у sectionOrPoemOrStanza
+    newTitleElement=el4.appendChild(newTitleElement);
+    // вставим созданный DIV перед section, poem или stanza, в котором находится
+    // заголовок, абзацы которого мы конвертируем
+    el4=sectionOrPoemOrStanza.insertAdjacentElement("beforeBegin",el4);
+    // сохраним ссылку на созданный и вставленный DIV - в переменной previousSection
+    previousSection=el4;
+    if (!el4) {alert("Ошибка. Код ошибки: 7b37cb3h7."); return;}
+    //пройдемся по невыделенным абзацам, т.е. по таким, которые нужно оставить заголовками
+    while (elemInMainDoc!=parentTitle && elemInMainDoc!=elemInListMatchInMainDoc) {
+     unselElemInListMatchInMainDoc=myLinks[eval(elemInList.id.substr(2))];
+     if (elemInMainDoc!=unselElemInListMatchInMainDoc) {alert("Ошибка. Код ошибки nv7vhnv383."); return;}
+     saveNext=getNext(elemInMainDoc);
+     el6=elemInMainDoc.removeNode(true);
+     el7=newTitleElement.insertAdjacentElement("beforeEnd",el6);
+     //alert("unselElemInListMatchInMainDoc\n\n"+unselElemInListMatchInMainDoc.outerHTML+"\n\n"+
+     //      "elemInListMatchInMainDoc:\n\n"+elemInListMatchInMainDoc.outerHTML+"\n\n"+
+     //      "el6:\n\n"+el6.outerHTML+"\n\n"+
+     //      "eval(elemInList.id.substr(2)): "+eval(elemInList.id.substr(2))+"\n\n"+
+     //      "el7:\n\n"+el7.outerHTML);
+     myLinks[eval(elemInList.id.substr(2))]=el7;
+     elemInMainDoc=saveNext;
+     elemInList=elemInList.nextSibling;
+     unselElemInListMatchInMainDoc=myLinks[eval(elemInList.id.substr(2))];
+    }
+
+    //пройдемся по выделенным абзацам
+    htmlStr="";
+    while (elemInMainDoc && elemInMainDoc!=parentTitle && nPtr<sortedElementArray.length && elemInMainDoc==myLinks[sortedElementArray[nPtr]]) {
+     elemInListMatchInMainDoc=myLinks[sortedElementArray[nPtr]];
+     if (getTitleByElement(elemInListMatchInMainDoc)!=parentTitle)
+     break;
+     if (elemInMainDoc && elemInMainDoc!=parentTitle) {
+      //запомним в saveNext следующий элемент P после того, на который указывает elemInMainDoc
+      saveNext=getNext(elemInMainDoc);
+      collectHtmlCodeForMoving(elemInMainDoc);
+      nPtr++;
+      elemInList=elemInList.nextSibling;
+      //"вспомним" запомненный элемент
+      elemInMainDoc=saveNext;
+     }
+     if (elemInMainDoc!=myLinks[sortedElementArray[nPtr]]) break;
+    }
+    debugAlert("Вызов moveHtmlCodeIntoTargetContainer #2.\n\nhtmlStr: \n\n"+'"'+htmlStr+'"');
+    sectionToRemove=null;
+    moveHtmlCodeIntoTargetContainer(false);
+    InflateIt(previousSection);
+   } //while
+   if (elemInMainDoc==parentTitle) {
+    parentTitle.removeNode(true);
+    debugAlert("Вызов moveBlockIntoPreviousBlock № 2.");
+    moveBlockIntoPreviousBlock();
+   }
+  } //else (elemInMainDoc!=parentTitle)
+  if (sectionToRemove) sectionToRemove.removeNode(false);
+ } //while (nPtr<sortedElementArray.length)
+ //удалим элементы из списка
+ removeReformattedElementsFromList();
+} //reformatTitlesToSubtitlesOrText();
+
+function reformat(reformatToWhat) {
+ if (selectedElementsCnt==0) { alert("Не выбран ни один элемент."); return; }
+ if (currentElementType==reformatToWhat) { alert("Вы пытаетесь преобразовать что-то в то же самое."); return; }
+ currentTargetElementType="";
+ if (reformatToWhat=="subtitles") currentTargetElementType="subtitle";
+ if (reformatToWhat=="subtitles with empty lines before and after") currentTargetElementType="subtitles with empty lines before and after";
+ if (reformatToWhat=="text") currentTargetElementType="p";
+ if (currentElementType.substr(0,6)=="titles" && (reformatToWhat=="subtitles" || reformatToWhat=="text" || reformatToWhat=="subtitles with empty lines before and after")) {
+  mainWin.external.BeginUndoUnit(mainDoc,"reformatting "+selectedElementsCnt+" titles as "+reformatToWhat);
+  reformatTitlesToSubtitlesOrText();
+  mainDoc.selection.empty();
+  mainWin.external.EndUndoUnit(mainDoc);
+ } else if (currentElementType=="subtitles" && reformatToWhat=="text") {
+  mainWin.external.BeginUndoUnit(mainDoc,"reformatting "+selectedElementsCnt+" subtitles as text");
+  reformatSubtitlesToText();
+  mainDoc.selection.empty();
+  mainWin.external.EndUndoUnit(mainDoc);
+ }
+ else if (currentElementType=="subtitles" && reformatToWhat=="titles") {
+  mainWin.external.BeginUndoUnit(mainDoc,"reformatting "+selectedElementsCnt+" subtitles as titles");
+  reformatSubtitlesToTitles();
+  mainDoc.selection.empty();
+  mainWin.external.EndUndoUnit(mainDoc);
+ } else if (currentElementType.search(/^(emphasis|strong|sup|sub|strikethrough)$/i)>=0 && reformatToWhat.search(/^(emphasis|strong|sup|sub|strikethrough|text)$/i)>=0) {
+  mainWin.external.BeginUndoUnit(mainDoc,"reformatting "+selectedElementsCnt+" subtitles as titles");
+  reformatInlineToInlineOrText(reformatToWhat);
+  mainDoc.selection.empty();
+  mainWin.external.EndUndoUnit(mainDoc);
+ }
+ else return;
+ parent.frame3.document.getElementById("selectedInput").value=selectedElementsCnt.toString();
+ parent.frame3.document.getElementById("inAllInput").value=elementsInAll.toString();
+}
+
+ </SCRIPT>
+</HEAD>
+<BODY style="width:100%; height:100%; padding:0; margin:0;" onload="getScrollBarWidthAndHeight();" onkeydown="myOnKeydown();">
+<SPAN id=mouseCaptureSpan style="display:none;" onmousemove="capturedMouse();" onmouseout="capturedMouse();" onmouseup="capturedMouse();" onmouseover="capturedMouse();"></SPAN>
+<FIELDSET style="width:98%; height:98%; padding:0; white-space:nowrap; margin:1px auto;">
+<DIV id=elementList style="width:100%; height:100%; padding:0; overflow:scroll;" onmousedown="myOnMouseDown();" ondblclick="myOnClick();">
+<!--
+<DIV class=el_><P>Глава 1</P></DIV>
+<DIV class=delim></DIV>
+<DIV class=el_><P>Глава 2</P><P>Приключения в Тилимилитрямдии</P></DIV>
+<DIV class=delim></DIV>
+<DIV class=el_><P>Глава 3</P></DIV>
+-->
+</DIV>
+</FIELDSET>
+</BODY>
+</HTML>
