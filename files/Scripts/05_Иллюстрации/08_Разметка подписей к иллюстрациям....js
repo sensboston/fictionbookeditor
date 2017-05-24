@@ -1,4 +1,3 @@
-//скрипт «Разметка подписей к картинкам»
 //автор Sclex
 //сайт скриптов: http://scripts.fictionbook.org
 
@@ -10,6 +9,10 @@ var prkk_tr=null;
 var prkk_lenLimit=100;
 var prkk_changeAll=false;
 var prkk_titlesCnt=0;
+var prkk_flashNow=false;
+var prkk_variableForCheck=true;
+var prkk_howManyMillisecondsBeSelectedWhenFlashing=400;
+var prkk_howManyMillisecondsBeNotSelectedWhenFlashing=400;
 
 function mayAutoprocess(pp) {
  return pp.innerHTML.search(/[^.…?!<>](<[^>]*?>)*?$/)>=0 && pp.innerHTML.replace(/<(?!img)[^>]*?>/gi,"").replace(/<img[^>]*?>/gi,".").length<=prkk_lenLimit;
@@ -26,6 +29,54 @@ function processAll(doc,win,markupType) {
  win.close();
 }
 
+function flash() {
+ if (!prkk_fbwBody) {
+  MsgBox("Произошла ошибка. Переменная prkk_fbwBody потеряла свое значение.");
+ }
+ if (!prkk_fbwBody.contains(prkk_pToChange)) {
+  MsgBox("Во дела! Абзац, который должен был быть размечен как подпись, куда-то пропал. Поэтому мигать им не получится.");
+  return;
+ }
+ var ptr2=prkk_pToChange;
+ var tr=document.body.createTextRange();
+ tr.moveToElementText(ptr2);
+ tr.select(); // выделить абзац
+ tr.collapse(true);
+ prkk_tr=tr;
+ var a=ptr2.getBoundingClientRect().top;      
+ window.scrollBy(-10000,a-Math.floor(window.external.getViewHeight()/2));      
+ setTimeout("flash2();",prkk_howManyMillisecondsBeSelectedWhenFlashing);
+}
+
+function markupAsSubscript() {
+ try {
+  mainWin.prkk_markupImageTitleAndGoFurther(document,window,getMarkupType());
+ }
+ catch (e) {
+  alert("Произошла ошибка. Возможной причиной явлется то, что вы создали новый документ после того, как был открыт диалог скрипта.");
+  window.close();
+ }
+}
+
+function flash2() {
+ if (!prkk_fbwBody) {
+  MsgBox("Произошла ошибка. Переменная prkk_fbwBody потеряла свое значение.");
+ }
+ if (!prkk_fbwBody.contains(prkk_pToChange)) {
+  MsgBox("Во дела! Абзац, который должен был быть размечен как подпись, куда-то пропал. Поэтому мигать им не получится.");
+  return;
+ }
+ var ptr2=prkk_pToChange;
+ var tr=document.body.createTextRange();
+ tr.moveToElementText(ptr2);
+ tr.collapse(true);
+ tr.select(); // снимает выделение абзаца
+ prkk_tr=tr;
+ var a=ptr2.getBoundingClientRect().top;      
+ window.scrollBy(-10000,a-Math.floor(window.external.getViewHeight()/2));      
+ if (prkk_flashNow) setTimeout("flash();",prkk_howManyMillisecondsBeNotSelectedWhenFlashing);
+}
+
 function prkk_doSearch(doc,win,markupType) {
  var re0=new RegExp("^( | |&nbsp;|"+prkk_nbspChar+")*?$","i");
 
@@ -35,6 +86,7 @@ function prkk_doSearch(doc,win,markupType) {
 
  var ptr2;
  var ptr=prkk_ptr; 
+
  while (ptr!=prkk_fbwBody) {
   if (ptr.nodeName=="DIV" && ptr.className=="image") {
    ptr2=ptr.nextSibling;
@@ -56,7 +108,7 @@ function prkk_doSearch(doc,win,markupType) {
       window.scrollBy(-10000,a-Math.floor(window.external.getViewHeight()/2));      
       setTimeout("prkk_tr.select();",100);      
       if (!prkk_buttonsChanged) {
-       doc.getElementById("ButtonsP").innerHTML='<INPUT type=button value="Искать дальше" onclick="startFromCursor();" style="height:30px;"> <INPUT type=button value="Это подпись" onclick="mainWin.prkk_markupImageTitleAndGoFurther(document,window,getMarkupType());" style="height:30px;"> <INPUT type=button value="Все" onclick="mainWin.processAll(document,window,getMarkupType());" style="height:30px;" id=allButton> <INPUT type=button value="Закрыть" style="height:30px;" onclick="window.close();"><SPAN onclick="showHelp(3,270,98);" style="color: blue;">[?]</SPAN>';
+       doc.getElementById("ButtonsP").innerHTML='<INPUT type=button value="Искать дальше – K" onclick="startFromCursor();" style="height:30px; margin:1px;"> <INPUT type=button value="Разметить как подпись – L" onclick="mainWin.markupAsSubscript();" style="height:30px; margin:1px;"> <INPUT type=button value="Закрыть диалог – Esc" style="height:30px;" onclick="window.close();"> <INPUT type=button value="Мигать абзацем" onmouseover="mainWin.prkk_flashNow=true; mainWin.flash();" onmouseout="mainWin.prkk_flashNow=false;" style="height:30px; margin:1px;">  <INPUT type=button value="Во всех дальнейших случаях разметить как подписи – A" onclick="mainWin.processAll(document,window,getMarkupType());" style="height:30px; margin:1px;" id=allButton>';
        prkk_buttonsChanged=true;
        win.buttonsChanged=true;
       }
@@ -127,6 +179,10 @@ function prkk_doSearch2() {
 }
 
 function prkk_markupImageTitleAndGoFurther(doc,win,markupType) {
+ if (!prkk_fbwBody.contains(prkk_pToChange)) {
+  MsgBox("Во дела! Абзац, который должен был быть размечен как подпись, куда-то пропал.");
+  return;
+ }
  prkk_markupImageTitle(doc,win,markupType);
  prkk_ptr=prkk_pToChange; 
  prkk_doc=doc;
@@ -136,9 +192,10 @@ function prkk_markupImageTitleAndGoFurther(doc,win,markupType) {
 }
 
 function Run() {
- var elementBrowser_versionNum="1.2";
- var dialogWidth="420px";
- var dialogHeight="110px";
+ var elementBrowser_versionNum="1.3";
+ var dialogWidth_number=710;
+ var dialogWidth=dialogWidth_number+"px";
+ var dialogHeight="150px";
  var fbwBody=document.getElementById("fbw_body");
  try { var nbspChar=window.external.GetNBSP(); var nbspEntity; if (nbspChar.charCodeAt(0)==160) nbspEntity="&nbsp;"; else nbspEntity=nbspChar;}
  catch(e) { var nbspChar=String.fromCharCode(160); var nbspEntity="&nbsp;";} 
@@ -150,8 +207,8 @@ function Run() {
  coll["window"]=window;
  coll["versionNum"]=elementBrowser_versionNum;
  coll["nbspChar"]=nbspChar;
- window.showModelessDialog("HTML/Разметка подписей к картинкам.html",coll,
+ window.showModelessDialog("HTML/Разметка подписей к иллюстрациям.html",coll,
    "dialogHeight: "+dialogHeight+"; dialogWidth: "+dialogWidth+"; "+
-   "dialogLeft: "+(window.screenLeft+window.external.getViewWidth()-420)+"px; dialogTop: "+window.screenTop+"; "+
+   "dialogLeft: "+(window.screenLeft+window.external.getViewWidth()-dialogWidth_number)+"px; dialogTop: "+window.screenTop+"; "+
    "center: No; help: No; resizable: No; status: No;");
 }
