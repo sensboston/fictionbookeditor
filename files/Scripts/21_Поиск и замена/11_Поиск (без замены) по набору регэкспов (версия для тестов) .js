@@ -1,5 +1,5 @@
-﻿//Скрипт «Поиск по набору регэкспов»
-//Версия 2.9
+//Скрипт «Поиск по набору регэкспов»
+//Версия 2.7
 //Автор Sclex
 
 function Run() {
@@ -42,8 +42,8 @@ function Run() {
   // Конструкции look behind, т.е. (?<! ...) и (?<= ...) разрешены только
   //   только в начале регэкспа и проверяются независимо от остальной части
   //   регэкспа. То есть (?<=а)б|в найдет не "б, перед которым а" либо "в",
-  //   а "{б или в}, перед которым а".
-  // addRegExp("","i","Задайте список регэкспов, отредактировав скрипт в текстовом редакторе (кодировка UTF-8). Инструкция – в скрипте.");
+  //   а найдет "{б или в}, перед которым а".
+
   // Когда будете задавать свои регэкспы, сотрите или закомментируйте предыдущую строку.
   // tagRegExp("(?<=[а-яё])<strong>[а-яё]+?</strong>","i","Найдено: курсив в слове.");
   // tagRegExp("<strong>[а-яё]+?</strong>(?=[а-яё])","i","Найдено: курсив в слове.");
@@ -57,11 +57,6 @@ function Run() {
   //   <sup>, </sup>, <sub>, </sub>, <strikethrough>, </strikethrough>,
   //   <code>, </code>, <любые-теги>
   //tagRegExp("[а-яё]<emphasis>[а-яё]+?</emphasis>|<emphasis>[а-яё]+?</emphasis>[а-яё]","i","Найдено: курсивность части слова.");
-
-
-// -------------начало блока TaKir - регэкспы:---------------
-
-// tagRegExp("(?<![а-яё])[бвгджзйклмнпрстфхцчшщъ]{2}(?![а-яё])","","Найдено: предлог из 2 согласных типа ст вместо от.");
   tagRegExp("(?<![а-яё])[бвгджзйклмнпрстфхцчшщъ]{3}(?![а-яё])","","Найдено: предлог из 3 согласных типа чтб вместо что.");
 
   addRegExp("([бвгджзйклмнпрстфхцчшщъь]й)","i","Найдено: согласная и буква й подряд");
@@ -268,6 +263,7 @@ function Run() {
   tagRegExp("[а-яёa-z]<sub>[а-яёa-z]+?</sub>|<sub>[а-яёa-z]+?</sub>[а-яёa-z]","i","Найдено: нижний индекс в слове.");
   tagRegExp("<emphasis><strong>[а-яёa-z]+?</strong></emphasis>[а-яёa-z]|[а-яёa-z]<emphasis><strong>[а-яёa-z]+?</strong></emphasis>","","Найдено: жирность и курсивность в слове.");
   tagRegExp("<strong><emphasis>[а-яёa-z]+?</emphasis></strong>[а-яёa-z]|[а-яёa-z]<strong><emphasis>[а-яёa-z]+?</emphasis></strong>","","Найдено: курсивность и жирность в слове.");
+
   
 // -------------конец блока TaKir - регэкспы:---------------
 
@@ -302,8 +298,9 @@ function Run() {
  var macroses={};
  var lookBehLimit=[];
  var regExpCnt=0;
- var re,inTags,ss,tagFlag,s_len,rslt,ff,offset;
+ var re,inTags,ss,tagFlag,s_len,rslt,ff,offset,nn;
  var level,ch,begin,lookBeh,lookBehCnt,ii,limit,rslt_;
+ var saveIndex1,saveIndex2,saveIndex3,saveIndex4,saveIndex5,saveIndex6,saveIndex7;
  var errorList="";
  var checkTagStrRE=new RegExp("^(([-+](section|body|epigraph|cite|poem|stanza|title|subtitle|text-author))([ \t]+?[-+](section|body|epigraph|cite|poem|stanza|title|subtitle|text-author))*?|^$)$","i");
  var findTagRE=new RegExp("(^| )([-+])(section|body|epigraph|cite|poem|stanza|title|subtitle|text-author)(?= |$)","ig");
@@ -482,9 +479,26 @@ function Run() {
   s_len=s.length;
   for (ff=0; ff<lookBehinds[reNum].length; ff++) {
    lookBehinds[reNum][ff].lastIndex=0;
-   rslt_=lookBehinds[reNum][ff].exec(s);
-   while (rslt_ && rslt_.index+rslt_[0].length!=s_len) {
+   nn=s.search(lookBehinds[reNum][ff]);
+   saveIndex1=0;
+   if (nn>=0) {
+    lookBehinds[reNum][ff].lastIndex=saveIndex1;
     rslt_=lookBehinds[reNum][ff].exec(s);
+    saveIndex1=lookBehinds[reNum][ff].lastIndex;
+   }
+   else
+    rslt_=null;
+   lookBehinds[reNum][ff].lastIndex=saveIndex1;
+   while (rslt_ && rslt_.index+rslt_[0].length!=s_len) {
+    saveIndex4=lookBehinds[reNum][ff].lastIndex;
+    nn=s.search(lookBehinds[reNum][ff]);
+    if (nn>=0) {
+     lookBehinds[reNum][ff].lastIndex=saveIndex4;
+     rslt_=lookBehinds[reNum][ff].exec(s);
+     saveIndex4=lookBehinds[reNum][ff].lastIndex;
+    }
+    else
+     rslt_=null;
    }
    if (positive[reNum][ff]) {
     if (!rslt_ || rslt_.index+rslt_[0].length!=s_len) return false;
@@ -566,18 +580,7 @@ function Run() {
   tr2.setEndPoint("EndToEnd",tr);
   s1_len=tr2.text.length;
   s=el.innerHTML.replace(removeTagsRE,removeTagsRE_).replace(imgTagRE,imgTagRE_).replace(ltRE,ltRE_).replace(gtRE,gtRE_).replace(ampRE,ampRE_).replace(nbspRE,nbspRE_);
-  var s1=tr2.htmlText.replace(/\s{2,}/g," ");
-  var s1_len2=s1.length;
-  var s2=el.innerHTML;
-  var k1=0;
-  var k1=s1.search(/(<\/[^<>]+>)+$/);
-  if (k1==-1) {
-    s1_html_len=s1_len2;
-  } 
-  else {
-   while (k1<s1_len2 && s1.charAt(k1)==s2.charAt(k1)) k1++;
-   s1_html_len=k1;
-  }
+  s1_html_len=tr2.htmlText.replace(/\s{2,}/g," ").length;
   s_html=el.innerHTML;
  }
  while (el && el!=fbwBody) {
@@ -590,9 +593,31 @@ function Run() {
     if (checkAreWeInRightTags(i)) {
      if (itsTagRegExp[i]==false) {
       //rslt=regExps[i].exec(s);
+
       regExps[i].lastIndex=s1_len+(ignoreNullPosition?1:0);
       rslt=regExps[i].exec(s);
-      while (rslt && !checkLookBehs(i, s, rslt.index, false)) rslt=regExps[i].exec(s);
+
+      regExps[i].lastIndex=s1_len+(ignoreNullPosition?1:0);
+      saveIndex2=s1_len+(ignoreNullPosition?1:0);
+      nn=s.search(regExps[i]);
+      if (nn>=0) {
+       regExps[i].lastIndex=saveIndex2;
+       rslt=regExps[i].exec(s);
+       saveIndex2=regExps[i].lastIndex;
+      }
+      else
+       rslt=null;
+      while (rslt && !checkLookBehs(i, s, rslt.index, false)) {
+       saveIndex2=regExps[i].lastIndex2;
+       nn=s.search(regExps[i]);
+       if (nn>=0) {
+        regExps[i].lastIndex=saveIndex2;
+        rslt=regExps[i].exec(s);
+        saveIndex2=regExps[i].lastIndex;
+       } 
+       else
+        rslt=null;
+      }
       if (rslt) {
        founds[foundsCnt]={"pos":rslt.index, "len":rslt[0].length, "re":i};
        foundsCnt++;
@@ -601,10 +626,27 @@ function Run() {
      }
      else { //itsTagRegExp[i]==true, т.е. в этой ветке ищем по теговым регэкспам
       flag1=true;
-      rslt=regExps[i].exec(s_html);
-      regExps[i].lastIndex=s1_html_len+(ignoreNullPosition?1:0);
-      while (flag1) {
+      saveIndex3=regExps[i].lastIndex;
+      nn=s_html.search(regExps[i]);
+      if (nn>=0) {
+       regExps[i].lastIndex=saveIndex2;
        rslt=regExps[i].exec(s_html);
+       saveIndex2=regExps[i].lastIndex;
+      }
+      else
+       rslt=null;
+      regExps[i].lastIndex=s1_html_len+(ignoreNullPosition?1:0);
+      saveIndex2=s1_html_len+(ignoreNullPosition?1:0);
+      while (flag1) {
+       saveIndex2=regExps[i].lastIndex;
+       nn=s_html.search(regExps[i]);
+       if (nn>=0) {
+        regExps[i].lastIndex=saveIndex2;
+        rslt=regExps[i].exec(s_html);
+        saveIndex2=s1_html_len+(ignoreNullPosition?1:0);
+       }
+       else
+        rslt=null;
        flag1=false;
        if (rslt) {
         newPos=s_html.substr(0,rslt.index).replace(removeTagsRE,removeTagsRE_).replace(imgTagRE,imgTagRE_).replace(ltRE,ltRE_).replace(gtRE,gtRE_).replace(ampRE,ampRE_).replace(nbspRE,nbspRE_).length;
