@@ -149,7 +149,7 @@ function win1252_search() {
 }
 
 function Run() {
- var elementBrowser_versionNum="1.2";
+ var elementBrowser_versionNum="1.3";
  var dialogWidth="460px";
  var dialogHeight="580px";
  var fbwBody=document.getElementById("fbw_body");

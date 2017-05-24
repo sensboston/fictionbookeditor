@@ -6,7 +6,7 @@ function Run() {
  var rslt;
  body=document.getElementById("fbw_body");
  params["fbw_body"]=body;
- rslt=window.showModalDialog("HTML/modal_dialog.htm",params,
+ rslt=window.showModalDialog("HTML/Управление структурой разделов и их заголовками - набор фреймов.html",params,
        "dialogHeight: "+dialogHeight+"; dialogWidth: "+dialogWidth+"; "+
        "center: Yes; help: No; resizable: Yes; status: No;");
  if (rslt) {
