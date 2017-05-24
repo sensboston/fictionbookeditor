@@ -221,7 +221,7 @@
   </xsl:template>
   <!-- Added by SeNS -->
   <!-- inline images -->
-  <xsl:template match="f:p//f:image | f:subtitle//f:image | f:text-author//f:image">
+  <xsl:template match="f:p//f:image | f:subtitle//f:image | f:text-author//f:image | f:td//f:image | f:th//f:image | f:v//f:image">
    <span onresizestart="return false" class='image' contentEditable='false' href="{@l:href}">
 	<xsl:call-template name="image_title"/>
 	<img src="fbw-internal:{@l:href}"/>
