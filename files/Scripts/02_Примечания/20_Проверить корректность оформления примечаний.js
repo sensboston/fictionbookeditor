@@ -1,5 +1,5 @@
 // Тест сносок
-// Версия: 1.2
+// Версия: 1.3
 
 function Run() {
  var Ts=new Date().getTime();
@@ -28,7 +28,7 @@ function Run() {
     NoteNumById[id]=SectCnt;
    }
    else {
-    MsgBox("Секция номер "+SectCnt+" в body примечаний не имеет id.\n"+
+    MsgBox("Раздел номер "+SectCnt+" в body примечаний не имеет id.\n"+
            "Перемещаемся на нее...");
     GoTo(ptr);
     return;
@@ -49,11 +49,11 @@ function Run() {
   href=GetLocalHref(href);
   if (href=="1") {ErrTxt="Отсутствует # в адресе ссылки."; break;}
   if (NoteCntById[href]==null) {
-   ErrTxt="В body примечаний нет секции примечания с id, указанным в ссылке.";
+   ErrTxt="В body примечаний нет раздела примечания с id, указанным в ссылке.";
    break;
   }
   if (NoteCntById[href]!=0) {
-   ErrTxt="Вторая сноска, которая ссылается на ту же секцию.";
+   ErrTxt="Вторая сноска, которая ссылается на тот же раздел.";
    break;
   }
   NoteCntById[href]++;
@@ -69,7 +69,7 @@ function Run() {
            "Текст ссылки: "+MyLinks[i].innerHTML+"\n";
     }
     else {
-    ErrTxt="Первая ссылка ссылается не на первую секцию.\n\n"+
+    ErrTxt="Первая ссылка ссылается не на первый раздел.\n\n"+
            "А вот сюда:\n"+
            "Номер: "+Num+"        id: "+NoteIdByNum[Num]+"\n";
            "Текст ссылки: "+MyLinks[i].innerHTML+"\n";
@@ -93,9 +93,9 @@ function Run() {
   }
  }
  if (ErrTxt!="") {
-  MsgBox("Отсутствуют ссылки на некоторые секции примечаний.\n"+
+  MsgBox("Отсутствуют ссылки на некоторые разделы примечаний.\n"+
          "Ниже можете увидеть их перечисление.\n\n"+ErrTxt+"\n"+
-         "Переходим на первую из таких секций...");
+         "Переходим на первый из таких разделов...");
   GoTo(FirstErrSect);
   return;
  }
@@ -104,7 +104,7 @@ function Run() {
  var Tsek = Math.ceil(10*((Tf-Ts)/1000-Tmin*60))/10;
  if (Tmin>0) {var TimeStr=Tmin+" мин. "+Tsek+" с"}
  else {var TimeStr=Tsek+" с"}
- MsgBox("Тест сносок завершен. Ошибок не обнаружено.\n"+
+ MsgBox("Проверка корректности оформления примечаний завершена. Ошибок не обнаружено.\n"+
         "Затраченное время: "+TimeStr);
 }
 

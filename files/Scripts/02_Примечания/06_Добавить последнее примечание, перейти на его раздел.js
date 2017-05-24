@@ -1,6 +1,6 @@
 // добавление сноски между уже имеющимися
 // написал Sclex
-// версия 2.6
+// версия 2.8
 
 function Run () {
  var Ts=new Date().getTime();
@@ -8,38 +8,38 @@ function Run () {
  //НАСТРОЙКИ - начало
  //здесь шаблоны, которые используются при работе скрипта
  //используйте макрос %N для указания номера примечания
- var strConst1="c_%N"; //шаблон ID секций примечаний
+ var strConst1="n_%N"; //шаблон ID разделов примечаний
  var strConst2="%N";//шаблон заголовка примечания
  var strConst3="";//шаблон содержания вставленного примечания
- var strConst4="<SUP>{%N}</SUP>"; //шаблон текста ссылки
- var strConst5="Комментарии"; //шаблон заголовка боди нотесов
- var strConst6="comments"; //имя секции примечаний
- var strConst7="Comment adding";
+ var strConst4="[%N]"; //шаблон текста ссылки
+ var strConst5="Примечания"; //шаблон заголовка боди нотесов
+ var strConst6="notes"; //значение атрибута name у body примечаний
+ var strConst7="Note adding";
  //функция, которая определяет, является ли элемент el, который
  //заведомо является ссылкой, ссылкой на тот тип примечаний,
  //который обрабатывается данным скриптом
- var isItNote=function (el) {return getLocalHref(el.href).toString().search(commentRegExp)>=0 ? true : false};
- var makeNoteFromHref=function (el) {};
+ var isItNote=function (el) {return el.className=="note" ? true : false};
+ var makeNoteFromHref=function (el) {el.className="note"};
  // выводить ли окно, извещающее о конце работы скрипта?
  // true - выводить. false - не выводить
- var EndWindow=true;
+ var EndWindow=false;
  //добавлять ли новую сноску или только провести работы по упорядочению существующих
  //true - добавлять. false - не добавлять
- var addSnoska=false;
+ var addSnoska=true;
  //показывать ли форму для ввода текста примечания
  //true - показывать. false - не показывать
  var InputSnoskaText=false;
- //перемещать ли фокус видимости на секцию свежесозданного примечания
- var MoveFocusToNote=false;
+ //перемещать ли фокус видимости на раздел свежесозданного примечания
+ var MoveFocusToNote=true;
  //true, если это скрипт добавления последней сноски
- var lastSnoskaMode=false;
+ var lastSnoskaMode=true;
  //режим ускоренной работы
  var forsazh=false;
  //НАСТРОЙКИ - конец
  
- // функция находит номер комментария, соответствующего определенному имени секции
- // в исходном документе. В name передаем имя секции, перед ним символ #, если это
- // локальная ссылка. В SectID передаем массив имен секций.
+ // функция находит номер комментария, соответствующего определенному имени раздела
+ // в исходном документе. В name передаем имя раздела, перед ним символ #, если это
+ // локальная ссылка. В SectID передаем массив имен разделов.
  function findNum(name) {
    var i=1;
    var name1=name;
@@ -165,21 +165,21 @@ function Run () {
  
  window.external.BeginUndoUnit(document,strConst7);
  var body=document.getElementById("fbw_body");
- var whileFlag,hhh,nashliBodyNotes,bodyNotes,el,insertN,uic,i3,newSnoskaNum;
+ var whileFlag,hhh,nashliBodyNotes,bodyNotes,el,insertN,uic,i3,newSnoskaNum,tmpVar;
  if (!body) {MsgBox("ошибка. body не найден!"); return;}
  var insertCnt=1;
 //следующие строки нужно раскомментировать, чтобы восстановить
 //запрос параметров для вставки сноски
 //ОТСЮДА
 /*
- strConst1=prompt("Шаблон ID секции примечания. Используйте макрос %N"+
-                  " для указания номера секции.",strConst1);
+ strConst1=prompt("Шаблон ID раздела примечания. Используйте макрос %N"+
+                  " для указания номера раздела.",strConst1);
  strConst4=prompt("Шаблон текста ссылки. Используйте макрос %N"+
-                  " для указания номера секции.",strConst4);
+                  " для указания номера раздела.",strConst4);
  strConst2=prompt("Шаблон заголовка примечания. Используйте макрос %N"+
-                  " для указания номера секции.",strConst2);
- strConst3=prompt("Шаблон содержания новых секций примечаний. Используйте макрос %N"+
-                  " для указания номера секции.",strConst3);
+                  " для указания номера раздела.",strConst2);
+ strConst3=prompt("Шаблон содержания новых разделов примечаний. Используйте макрос %N"+
+                  " для указания номера раздела.",strConst3);
 */
 //ДОСЮДА
  el=body.firstChild;
@@ -227,7 +227,7 @@ function Run () {
   }
   bbb=undefined;
  }
-//прочитаем в массив SectID ID-ы секций примечаний
+//прочитаем в массив SectID ID-ы разделов примечаний
  var sectsColl=new Object();
  var sectIds=new Object();
  var sectNumById=new Object();
@@ -246,7 +246,8 @@ function Run () {
  } 
  //определяем номер нашей сноски
  if (addSnoska) {
-  j5=0;  while (true)
+  j5=0;
+  while (true)
    if (j5<document.links.length)
     if (document.links[j5].innerHTML!="Sclex_Note") j5++;
     else break;
@@ -274,8 +275,18 @@ function Run () {
    if (abc!=-1) insertN=sectNumById[abc];
    if (abc==-1 || insertN==undefined) {
     document.links[newSnoskaNum].removeNode(true);
-    MsgBox("Не удается по ссылке перед вставляемой определить номер вставляемого примечания.");
-    return;                                          1
+    MsgBox("Не удалось создать примечание.\n\n"+
+           "Чтобы определить, с каким разделом в body примечаний "+
+           "связать сноску, которую пользователь хочет вставить, "+
+           "скрипт смотрит, с каким разделом в body примечаний "+
+           "связана определенная ранее созданная сноска. А именно – "+
+           "скрипт смотрит на ближайшую сноску вверх по документу "+
+           "от той сноски, которую пытается создать и вставить. "+
+           "Но в этот раз оказалось, что эта ближайшая сверху "+
+           "сноска не связана корректным образом с разделом в body "+
+           "примечаний. Поэтому, чтобы вставить новую сноску, "+
+           "исправьте, пожалуйста, сноску, которая идет перед ней.");
+    return;
    }
    insertN++;
   } else insertN=1;
@@ -291,7 +302,7 @@ function Run () {
    document.links[newSnoskaNum].href="#"+PoShablonu(strConst1,newSnoskaId);
   }
  } else {insertN=1000000; insertCnt=0}
-//проверим, нет ли в боди нотесов секций второго уровня вложения
+//проверим, нет ли в боди нотесов разделов второго уровня вложенности
  if (!forsazh) {
   var ptr1=bodyNotes.firstChild
   var ptr2;
@@ -301,7 +312,7 @@ function Run () {
      while (ptr2) {
       if (ptr2.nodeName=="DIV") {
         if (ptr2.className=="section") {
-         MsgBox("В body примечаний есть секции второго уровня вложения. Такие файлы не обрабатываются данным скриптом. Работа скрипта завершена.");
+         MsgBox("В body примечаний есть разделы второго уровня вложенности. Такие файлы не обрабатываются данным скриптом. Работа скрипта завершена.");
          document.links[newSnoskaNum].removeNode(true);
          return;
         }
@@ -341,7 +352,7 @@ function Run () {
    var code=miniValidate(snoskaText);
   }
  }
- //поменяем ID у секций примечаний
+ //поменяем ID у разделов примечаний
  if (nashliBodyNotes && !lastSnoskaMode) {
   //for (var j1=1; j1<=sectNum; j1++)
   // sectsColl[j1].id=undefined; 
@@ -371,7 +382,7 @@ function Run () {
    }
   }
  }
- // поменяем заголовки секций примечаний
+ // поменяем заголовки разделов примечаний
  if (nashliBodyNotes && !lastSnoskaMode) 
   for (i2=1;i2<=sectNum;i2++) {
    if (sectsColl[i2].firstChild!=null) 
@@ -399,7 +410,7 @@ function Run () {
   var MyTitle="&nbsp;";
   var MyId1=PoShablonu(strConst1,newSnoskaId);
  };
- //вставим новую секцию примечания
+ //вставим новый раздел примечания
  el=document.createElement("DIV");
  el.id=MyId1;
  el.className="section";
@@ -423,7 +434,8 @@ function Run () {
     if (el2.nodeName=="P") { 
      GoTo(el2);
      whileFlag=false;
-    } else el2=el2.nextSibling;   else whileFlag=false;
+    } else el2=el2.nextSibling;
+   else whileFlag=false;
   if (el2=null && el.firstChild!=null) GoTo(el.firstChild);
  }
  var Tf=new Date().getTime();
@@ -431,7 +443,13 @@ function Run () {
  var Tsek = Math.ceil(10*((Tf-Ts)/1000-Tmin*60))/10;
  if (Tmin>0) {var TimeStr=Tmin+" мин. "+Tsek+" с"}
  else {var TimeStr=Tsek+" с"}
-  if ((EndWindow)&&(addSnoska)) { MsgBox("\n\nДобавлена сноска   \n\n         № " +insertN+ "   \n\nВремя работы скрипта: "+TimeStr); }
-  if ((EndWindow)&&(!addSnoska)) { MsgBox("Обработка сносок закончена. Добавления новой сноски не было, так как это отключено в настройках скрипта.\nВремя работы скрипта: "+TimeStr); }
+ try {
+  if (addSnoska)
+   window.external.SetStatusBarText("Добавлена сноска № " +insertN+ ". Время работы скрипта: "+TimeStr);
+  else
+    window.external.SetStatusBarText("Перенумерация сносок успешно завершена. Время работы скрипта: "+TimeStr);
+ }
+ catch (e)
+ {}
  window.external.EndUndoUnit(document);  
 }
