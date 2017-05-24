@@ -58,12 +58,17 @@ function win1252_search() {
  tr.collapse(false);
  el=tr.parentElement();
  el2=el; 
+ while (el2 && el2.nodeName!="BODY" && el2.nodeName!="P")
+  el2=el2.parentNode;
  if (el2.nodeName=="P") {
   el=el2;
   tr2=document.body.createTextRange();
   tr2.moveToElementText(el);
   tr2.setEndPoint("EndToEnd",tr);
-  s1_html_len=tr2.htmlText.replace(/\s{2,}/g," ").length;
+  if (tr2.htmlText.replace(/<[^>]*>/gi,"")=="")
+   s1_html_len=0;
+  else
+   s1_html_len=tr2.htmlText.replace(/\\\s{2,}/g," ").length;
   s_html=el.innerHTML;
   engToTheLeft=checkToTheLeft();
  }
@@ -146,13 +151,14 @@ function win1252_search() {
 function Run() {
  var elementBrowser_versionNum="1.2";
  var dialogWidth="460px";
- var dialogHeight="540px";
+ var dialogHeight="580px";
  var fbwBody=document.getElementById("fbw_body");
  var coll={};
  coll["fbwBody"]=fbwBody;
  coll["document"]=document;
  coll["window"]=window;
  coll["versionNum"]=elementBrowser_versionNum;
+ coll["msg"]="Произведены автоматические замены такого количества букв:";
  window.showModalDialog("HTML/Символы win-1252 в файле win-1251 - набор фреймов.html",coll,
    "dialogHeight: "+dialogHeight+"; dialogWidth: "+dialogWidth+"; "+
    "center: Yes; help: No; resizable: Yes; status: No;");
