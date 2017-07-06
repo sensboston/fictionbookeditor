@@ -1,8 +1,8 @@
-// Интерактивная ликвидация разрывов абзацев
+// Управляемое исправление разрывов абзацев
 // Автор скрипта: Sclex
 // Сайт скриптов FBE Sclex’а: http://scripts.fictionbook.org
 
-var versionStr="3.8";
+var versionStr="3.9";
 var CutLength=100;
 
 function Run() {
@@ -14,14 +14,16 @@ function Run() {
  try { var nbspChar=window.external.GetNBSP(); var nbspEntity; if (nbspChar.charCodeAt(0)==160) nbspEntity="&nbsp;"; else nbspEntity=nbspChar;}
  catch(e) { var nbspChar=String.fromCharCode(160); var nbspEntity="&nbsp;";}
 
- var re0=new RegExp("[а-яёa-z]","");
+ var smallLettersStr="а-яёa-zіїєґ";
+ var bigLettersStr="А-ЯЁA-ZІЇЄҐ";
+ var re0=new RegExp("["+smallLettersStr+"]","");
  var re1=new RegExp("[ "+nbspChar+"\"—–«»„”“()]","");
  var re2=new RegExp("[ "+nbspChar+"]","");
  var re3=new RegExp("[;:]","");
  var re4=new RegExp("[«(\\\[\\\"\\\=–—]","");
  var re5=new RegExp("[!…?.*]","");
- var bigLetterRegExp=new RegExp("[А-ЯA-ZЁ]","");
- var bigLetterOrDigitRegExp=new RegExp("[А-ЯA-ZЁ\\d]","");
+ var bigLetterRegExp=new RegExp("["+bigLettersStr+"]","");
+ var bigLetterOrDigitRegExp=new RegExp("["+bigLettersStr+"\\d]","");
  var re7=new RegExp("[!?….]");
  var re8=new RegExp("[-«–—]","");
  var re9=new RegExp("[-–—]","");
@@ -454,7 +456,7 @@ function Run() {
 
  window.external.BeginUndoUnit(document,"abruption killing");
  var coll=new Object();
- var modes=window.showModalDialog("HTML/интеракт. удаление разрывов - выбор режимов.htm",coll,
+ var modes=window.showModalDialog("HTML/Управляемое исправление разрывов абзацев - выбор режимов.html",coll,
      "dialogHeight: "+dialogHeight+"; dialogWidth: "+dialogWidth+"; "+
      "center: Yes; help: No; resizable: Yes; status: No;");
  if (modes==undefined) return;
@@ -632,7 +634,7 @@ function Run() {
   coll["modes"]=modes;
   coll["nbspChar"]=nbspChar;
   coll["nbspEntity"]=nbspEntity;
-  var rslt=window.showModalDialog("HTML/интеракт. удаление разрывов - спорные места.htm",coll,
+  var rslt=window.showModalDialog("HTML/Управляемое исправление разрывов абзацев - спорные места.html",coll,
        "dialogHeight: "+dialogHeight+"; dialogWidth: "+dialogWidth+"; "+
        "center: Yes; help: No; resizable: Yes; status: No;");
   msgStr+="Подтвержденных вручную коррекций: "+rslt+".\n";
