@@ -375,7 +375,7 @@ function replaceWithUpperCase(full_match, brackets1, offset_of_match,
  return full_match.toUpperCase();
 }
 
-function changeCaseInOneP(pToProcess,howToChange) {
+function changeCaseInOneP(pToProcess,numberOfWordToProcess) {
  var el=pToProcess.firstChild;
  var alreadyMetDot=false;
  var alreadyMadeFirstLetterBig=false;
@@ -384,7 +384,9 @@ function changeCaseInOneP(pToProcess,howToChange) {
  var alreadyMetDotButNotMetLetter=false;
  var alreadyMetLetterAfterDot=false;
  var xState=1;
+ var currWordNum=0;
  var s1,s2,i,j;
+ if (caseFlag=="secondWordBigLetters") var numberOfWordToProcess=2;
  while (el && el!=pToProcess) {
   if (el.nodeType==3) {
    s1=el.nodeValue;
@@ -423,8 +425,7 @@ function changeCaseInOneP(pToProcess,howToChange) {
     s2=s1.toLowerCase();
 
     for (i=0; i<s1.length; i++) {
-     if (xState==1 && s2.charAt(i).search(letterRE)>=0)
-      {
+     if (xState==1 && s2.charAt(i).search(letterRE)>=0) {
       // переводим в верхний регистр символ в позиции i
       s2=s2.substring(0,i)+s2.charAt(i).toUpperCase()+s2.substring(i+1);
       xState=2;
@@ -443,6 +444,23 @@ function changeCaseInOneP(pToProcess,howToChange) {
     } // for (i=1; i<s1.length; i++)
    } // if (caseFlag=="firstLetterBigAndAfterEveryDotBigToo")
 // ===============================================================
+   if (caseFlag=="secondWordBigLetters" || caseFlag=="nthWordBigLetters") {
+    s2=s1;
+    for (i=0; i<s1.length; i++) {
+     // xState==1 - еще не встретилось первого слова или встретились небуквенные символы после после слова
+     // xState==2 - встретились буквенные символы (или один символ)
+     // xState==3 - пора переводить слово в верхний регистр
+     // xState==4 - после n-го слова
+     if (xState==3 && s2.charAt(i).search(letterRE)<0) xState=4;
+     else if (xState==1 && s2.charAt(i).search(letterRE)>=0) {
+      currWordNum++;
+      if (currWordNum<numberOfWordToProcess) xState=2;
+      else xState=3;
+     }
+     else if (xState==2 && s2.charAt(i).search(letterRE)<0) xState=1;
+     if (xState==3) s2=s2.substring(0,i)+s2.charAt(i).replace(letterRE,replaceWithUpperCase)+s2.substring(i+1);
+    } // for (i=0; i<s1.length; i++) { {
+   } // if (caseFlag=="secondWordBigLetters")
    if (s2!=s1) el.nodeValue=s2;
   } // if (el.nodeType==3)
   if (el.firstChild)
@@ -458,10 +476,27 @@ function changeCase(direction) {
  var i;
  caseFlag=direction;
  sortElements();
- mainWin.external.BeginUndoUnit(mainDoc,"смена регистра абзацев");
  var len=sortedElementArray.length;
+ if (direction=="nthWordBigLetters") {
+  var numberOfWordToProcess=prompt("Введите номер «слова» для перевода в верхний регистр:","2");
+  if (numberOfWordToProcess==null || numberOfWordToProcess==undefined) return;
+  if (numberOfWordToProcess=="") {
+   alert("Вы ввели не корректный номер слова, а пустую строку. Изменение регистра не будет произведено.");
+   return;
+  }
+  if (numberOfWordToProcess.search(/^[0-9]+$/)<0) {
+   alert("Введенный вами номер «слова» содержит недопустимые символы. Изменение регистра не будет произведено.");
+   return;
+  }
+  numberOfWordToProcess=window.eval(numberOfWordToProcess);
+  if (numberOfWordToProcess<1) {
+   alert("Вы ввели некорректное значение номера «слова». Изменение регистра не будет произведено.");
+   return;
+  }
+ }
+ mainWin.external.BeginUndoUnit(mainDoc,"смену регистра абзацев"); 
  for (i=0; i<len; i++) {
-  changeCaseInOneP(myLinks[sortedElementArray[i]]);
+  changeCaseInOneP(myLinks[sortedElementArray[i]],numberOfWordToProcess);
   s1=getElementText(myLinks[sortedElementArray[i]]);
   document.getElementById("n_"+sortedElementArray[i]).innerHTML="<P>"+s1+"</P>";
  }
@@ -486,6 +521,12 @@ function contextMenu() {
    "<div onmouseover='this.style.backgroundColor=\"yellow\"; this.style.color=\"black\"' onmouseout='this.style.backgroundColor=\"black\"; this.style.color=\"#7F7F7F\";' onclick='parent.changeCase(\"firstLetterBigAndAfterEveryDotBigToo\");' style='width:100%; padding:2px; margin:0;'>"+
     "<p style='padding:0; margin:0;'>Первая буква большая, и после каждой точки большая буква</p>"+
    "</div>"+
+   "<div onmouseover='this.style.backgroundColor=\"yellow\"; this.style.color=\"black\"' onmouseout='this.style.backgroundColor=\"black\"; this.style.color=\"#7F7F7F\";' onclick='parent.changeCase(\"secondWordBigLetters\");' style='width:100%; padding:2px; margin:0;'>"+
+    "<p style='padding:0; margin:0;'>Второе «слово» каждого элемента – большими буквами</p>"+
+   "</div>"+
+   "<div onmouseover='this.style.backgroundColor=\"yellow\"; this.style.color=\"black\"' onmouseout='this.style.backgroundColor=\"black\"; this.style.color=\"#7F7F7F\";' onclick='parent.changeCase(\"nthWordBigLetters\");' style='width:100%; padding:2px; margin:0;'>"+
+    "<p style='padding:0; margin:0;'>N-ное «слово» каждого элемента – большими буквами…</p>"+
+   "</div>"+
    "<div onmouseover='this.style.backgroundColor=\"yellow\"; this.style.color=\"black\"' onmouseout='this.style.backgroundColor=\"black\"; this.style.color=\"#7F7F7F\";' onclick='parent.changeCase(\"allBig\");' style='width:100%; padding:2px; margin:0;'>"+
     "<p style='padding:0; margin:0;'>Все буквы большие</p>"+
    "</div>"+
@@ -494,7 +535,7 @@ function contextMenu() {
    "</div>"+
   "</div>"+
   "</td><tr></table>";
- p.show(event.screenX, event.screenY, 390, 120);
+ p.show(event.screenX, event.screenY, 390, 156);
 }
 
 function myOnMouseDown() {
