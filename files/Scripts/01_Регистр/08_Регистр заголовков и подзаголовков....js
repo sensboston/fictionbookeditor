@@ -3,7 +3,7 @@
 //сайт скриптов: http://scripts.fictionbook.org
 
 function Run() {
- var elementBrowser_versionNum="1.7";
+ var elementBrowser_versionNum="1.8";
  var dialogWidth="800px";
  var dialogHeight="540px";
  var fbwBody=document.getElementById("fbw_body");
@@ -12,7 +12,7 @@ function Run() {
  coll["document"]=document;
  coll["window"]=window;
  coll["versionNum"]=elementBrowser_versionNum;
- window.showModalDialog("HTML/Регистр заголовков - набор фреймов.html",coll,
+ window.showModalDialog("HTML/Регистр заголовков и подзаголовков - набор фреймов.html",coll,
    "dialogHeight: "+dialogHeight+"; dialogWidth: "+dialogWidth+"; "+
    "center: Yes; help: No; resizable: Yes; status: No;"); 
 }
