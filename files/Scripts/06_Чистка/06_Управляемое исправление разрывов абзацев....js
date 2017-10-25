@@ -2,7 +2,7 @@
 // Автор скрипта: Sclex
 // Сайт скриптов FBE Sclex’а: http://scripts.fictionbook.org
 
-var versionStr="4.0";
+var versionStr="4.2";
 var CutLength=100;
 
 function Run() {
@@ -94,6 +94,7 @@ function Run() {
  var re9=new RegExp("[-–—]","");
  var kavychkiRegExp=new RegExp('["»”“]',"");
  var nonEndingCharRegExp=new RegExp("[^.,?!…]");
+ var emptyLineRE=new RegExp("^( | |&nbsp;|"+nbspChar+")*?$","i");
 
  var coll=new Object();
  var collCnt=0;
@@ -110,9 +111,9 @@ function Run() {
   var i;
   for (i=1;i<=DelCollCnt;i++) {
    var ptr2=DelColl[i];
-   ptr2.parentNode.removeChild(ptr2);
+   ptr2.removeNode(true);
   }
-  ptr.parentNode.removeChild(ptr);
+  ptr.removeNode(true);
  }
 
  function addPointToP(ptr) {
@@ -132,12 +133,16 @@ function Run() {
   myPtr.nodeValue+="."
  }
 
- function IsLineEmpty(ptr) {
-  var txt=ptr.innerText;
-  var i=0;
-  while (i<txt.length && (txt.substr(i,1)==" " || txt.substr(i,1)==nbspChar)) {i++}
-  if (i==txt.length) {return true;}
-  else {return false;}
+ var regExpToDetectEmpties=RegExp(nbspChar+"|<(?!img)[^>]*?>","gi")
+ 
+ function isEmptyLine(ptr) {
+  if (ptr)
+   if (ptr.nodeType)
+    if (ptr.nodeType==1)
+     if (ptr.nodeName)
+      if (ptr.nodeName.toUpperCase()=="P")
+       if (emptyLineRE.test(ptr.innerHTML.replace(regExpToDetectEmpties,""))) return true;
+  return false;
  }
 
  var hyphenOntoShortDashRegExp=new RegExp("-$","");
@@ -266,6 +271,27 @@ function Run() {
   }
  }
 
+ var makeFirstLetterSmallRegExp=new RegExp("^([^"+bigLettersStr+"]*?)(["+bigLettersStr+"])","g");
+ 
+ function makeFirstLetterSmall(ptr) {
+  var myPtr=ptr.firstChild;
+  while (myPtr!=ptr) {
+   if (myPtr.nodeType==3) {
+    myPtr.nodeValue=myPtr.nodeValue.replace(makeFirstLetterSmallRegExp, function myFunction(allWhatFound, brackets1, brackets2) { return brackets1 + brackets2.toLowerCase(); } );
+    break;
+   }
+   if (myPtr.firstChild!=null) {
+    myPtr=myPtr.firstChild;
+   } else {
+    while (myPtr.nextSibling==null) {
+     myPtr=myPtr.parentNode;
+     if (myPtr==ptr) break;
+    }
+    myPtr=myPtr.nextSibling;
+   }
+  }
+ }
+ 
  function doAction(code) {
   switch(code) {
    case 1: {
@@ -328,6 +354,17 @@ function Run() {
     killHyphen(prevP);
     trimLeft(ptr);
     JustAddP(prevP,ptr,undefined,false);
+    ptr=prevP;
+    CntZamen++;
+    break;
+   }
+   case 9: {
+    // Соединить через пробел, букву в начале
+    // 2-го абзаца сделать маленькой
+    trimRight(prevP);
+    trimLeft(ptr);
+    makeFirstLetterSmall(ptr);
+    JustAddP(prevP,ptr);
     ptr=prevP;
     CntZamen++;
     break;
@@ -520,6 +557,7 @@ function Run() {
  }
 
  var coll=new Object();
+ coll["versionStr"]=versionStr;
  var modes=window.showModalDialog("HTML/Управляемое исправление разрывов абзацев - выбор режимов.html",coll,
      "dialogHeight: "+dialogHeight+"; dialogWidth: "+dialogWidth+"; "+
      "center: Yes; help: No; resizable: Yes; status: No;");
@@ -553,7 +591,7 @@ function Run() {
   }
   if (ptr.nodeName=="P") {
    var SavePrevP=null;
-   if (prevP!=null && !IsLineEmpty(ptr)) {
+   if (prevP!=null && !isEmptyLine(ptr)) {
     if (!(prevP.parentNode.className=="epigraph" || ptr.parentNode.className=="epigraph"
           || prevP.className=="text-author" || ptr.className=="text-author"
           || (modes["handle1Cite"]==false && prevP.parentNode.className=="cite")
@@ -670,7 +708,7 @@ function Run() {
      }
     }
    }
-   if (!IsLineEmpty(ptr)) {
+   if (!isEmptyLine(ptr)) {
     DelCollCnt=0;
     prevP=ptr;
    }
@@ -699,7 +737,8 @@ function Run() {
   coll["nbspChar"]=nbspChar;
   coll["nbspEntity"]=nbspEntity;
   coll["smallLettersStr"]=smallLettersStr;
-  var rslt=window.showModalDialog("HTML/Управляемое исправление разрывов абзацев - спорные места.html",coll,
+  coll["bigLettersStr"]=bigLettersStr;
+  var rslt=window.showModalDialog("HTML/Управляемое исправление разрывов абзацев - сомнительные места.html",coll,
        "dialogHeight: "+dialogHeight+"; dialogWidth: "+dialogWidth+"; "+
        "center: Yes; help: No; resizable: Yes; status: No;");
   msgStr+="Подтвержденных вручную коррекций: "+rslt+".\n";

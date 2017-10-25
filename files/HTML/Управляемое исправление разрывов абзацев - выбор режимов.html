@@ -12,6 +12,7 @@
  <script>
   var rslt=new Object();
   var params=window.dialogArguments;
+  document.title="Выбор режимов обработки. – Скрипт «Управляемое исправление разрывов абзацев v"+params["versionStr"]+"» (автор Sclex).";
   window.returnValue=rslt;
   //здесь можно выставить настройки по умолчанию
   rslt[1]=true;
@@ -198,20 +199,22 @@ onclick="byId('s7_3_').checked=true; rslt['7_']=8;">Соединить без
 checked>Ручной выбор</input><br>     <input type=radio name=s2_ id=s2_1_ 
 onclick="rslt['2_']=0;" checked><span onclick="byId('s2_1_').checked=true; 
 rslt['2_']=0;">Не трогать</span></input><br>
-     <input type=radio name=s2_ id=s2_2_ onclick="rslt['2_']=1;"><span 
-onclick="byId('s2_2_').checked=true; rslt['2_']=1;" checked>Соединить через 
+     <input type=radio name=s2_ id=s2_2_ onclick="rslt['2_']=2;"><span 
+onclick="byId('s2_2_').checked=true; rslt['2_']=2;">Добавить 
+точку</span></input><br>
+     <input type=radio name=s2_ id=s2_3_ onclick="rslt['2_']=1;"><span 
+onclick="byId('s2_3_').checked=true; rslt['2_']=1;" checked>Соединить через 
 пробел</span></input><br>
-     <input type=radio name=s2_ id=s2_3_ onclick="rslt['2_']=2;"><span 
-onclick="byId('s2_3_').checked=true; rslt['2_']=2;">Добавить 
-точку</span></input>
+     <input type=radio name=s2_ id=s2_4_ onclick="rslt['2_']=9;"><span 
+onclick="byId('s2_4_').checked=true; rslt['2_']=9;">Соединить через
+пробел, букву в начале 2-го абзаца сделать маленькой</span></input>
      </div>
     </td>
    </tr>
   </table>
   <br>
   <input type=button value="ОК" onclick="window.close();" style="width:200px; height:40px;">
-  <input type=button value="Отмена" onclick="window.returnValue=undefined; 
-window.close();" style="height:40px;">
+  <input type=button value="Отмена" onclick="window.returnValue=undefined; window.close();" style="height:40px;">
   <br><br>
  </div>
 </html>

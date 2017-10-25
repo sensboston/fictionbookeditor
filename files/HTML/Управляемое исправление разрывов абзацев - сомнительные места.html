@@ -10,6 +10,8 @@
   var nbspChar=window.dialogArguments["nbspChar"];
   var nbspEntity=window.dialogArguments["nbspEntity"];
   var smallLettersStr=window.dialogArguments["smallLettersStr"];
+  var bigLettersStr=window.dialogArguments["bigLettersStr"];
+  var emptyLineRE=new RegExp("^( | |&nbsp;|"+nbspChar+")*?$","i");
 
   var resultColl=new Array();
   var n,i,myDoc;
@@ -218,6 +220,27 @@
   }
  }
 
+ var makeFirstLetterSmallRegExp=new RegExp("^[^"+bigLettersStr+"]*?["+bigLettersStr+"]","g");
+ 
+ function makeFirstLetterSmall(ptr) {
+  var myPtr=ptr.firstChild;
+  while (myPtr!=ptr) {
+   if (myPtr.nodeType==3) {
+    myPtr.nodeValue=myPtr.nodeValue.replace(makeFirstLetterSmallRegExp, function myFunction(x) { return x.toLowerCase(); } );
+    break;
+   }
+   if (myPtr.firstChild!=null) {
+    myPtr=myPtr.firstChild;
+   } else {
+    while (myPtr.nextSibling==null) {
+     myPtr=myPtr.parentNode;
+     if (myPtr==ptr) break;
+    }
+    myPtr=myPtr.nextSibling;
+   }
+  }
+ }
+ 
  function trimRight(ptr) {
   var SavePtr=ptr;
   ptr=ptr;
@@ -296,24 +319,23 @@
   }
   MoveTree(PrevP,ptr);
   var i;
-  if (delP!=undefined && delP!=null) {
+  while (delP!=undefined && delP!=null && delP!=ptr) {
    saveNext=delP;
-   if (saveNext.firstChild!=null && saveNext.nodeName!="P" &&
+   if (saveNext.firstChild && saveNext.nodeName!="P" &&
        !(saveNext.nodeName=="DIV" &&
          (saveNext.className=="title" || saveNext.className=="table" ||
          saveNext.className=="history" || saveNext.className=="annotation" ||
          saveNext.className=="poem"))) {
      saveNext=saveNext.firstChild; // либо углубляемся...
    } else {
-     while (saveNext.nextSibling==null) {
+     while (saveNext && saveNext.nextSibling==null)
       saveNext=saveNext.parentNode; // ...либо поднимаемся (если уже сходили вглубь)
-     }
-    saveNext=saveNext.nextSibling; //и переходим на соседний элемент
+     if (saveNext) saveNext=saveNext.nextSibling; //и переходим на соседний элемент
    }
    delP.removeNode(true);
    delP=saveNext;
   }  
-  ptr.parentNode.removeChild(ptr);
+  ptr.removeNode(true);
  }
   
   function applyChanges() {
@@ -385,27 +407,40 @@
       lastPrevP=prevP;
     } else if (k==7) { 
       //соединить через дефис, или заменив тире на дефис
-      prevP=params[i+"_2"];    
-      if (prevP==lastPtr) prevP=lastPrevP;     
+      prevP=params[i+"_2"];
+      if (prevP==lastPtr) prevP=lastPrevP;
       lastPtr=params[i+"_3"];
       trimRight(prevP);
       changeDashOntoHyphenLongDash(prevP);
       trimLeft(lastPtr);
       if (elementToGo==lastPtr) elementToGo=prevP;
-      if (elementToView==lastPtr) elementToView=prevP;          
+      if (elementToView==lastPtr) elementToView=prevP;
       JustAddP(prevP,lastPtr,params[i+"_4"],false);
       lastPrevP=prevP;
-    } else if (k==8) { 
-      prevP=params[i+"_2"];    
-      if (prevP==lastPtr) prevP=lastPrevP;     
-      lastPtr=params[i+"_3"];    
+    } else if (k==8) {
+      prevP=params[i+"_2"];
+      if (prevP==lastPtr) prevP=lastPrevP;
+      lastPtr=params[i+"_3"];
       trimRight(prevP);
       trimLeft(lastPtr);
       if (elementToGo==lastPtr) elementToGo=prevP;
-      if (elementToView==lastPtr) elementToView=prevP;          
+      if (elementToView==lastPtr) elementToView=prevP;
       JustAddP(prevP,lastPtr,params[i+"_4"],false);
-      lastPrevP=prevP;     
-    }
+      lastPrevP=prevP;
+    } else if (k==9) {
+     // Соединить через пробел, букву в начале
+     // 2-го абзаца сделать маленькой
+      prevP=params[i+"_2"];
+      if (prevP==lastPtr) prevP=lastPrevP;
+      lastPtr=params[i+"_3"];
+      trimRight(prevP);
+      trimLeft(lastPtr);
+      makeFirstLetterSmall(lastPtr);
+      if (elementToGo==lastPtr) elementToGo=prevP;
+      if (elementToView==lastPtr) elementToView=prevP;     
+      JustAddP(prevP,lastPtr,params[i+"_4"]);
+      lastPrevP=prevP;
+   }
     if (k!=0) changesCnt++;
    }
    window.returnValue=changesCnt;
@@ -456,7 +491,7 @@
     resultColl[i]=modes["1_"];
     break;
    case "2":
-    htmlStr+="<INPUT"+(modes["2_"]==0?" checked":"")+" type=radio name=r"+i+" value=0>Не трогать</INPUT><BR><INPUT"+(modes["2_"]==1?" checked":"")+" type=radio name=r"+i+" value=1>Соединить через пробел</INPUT><BR><INPUT"+(modes["2_"]==2?" checked":"")+" type=radio name=r"+i+" value=2>Добавить точку</INPUT>";   
+    htmlStr+="<INPUT"+(modes["2_"]==0?" checked":"")+" type=radio name=r"+i+" value=0>Не трогать</INPUT><BR><INPUT"+(modes["2_"]==2?" checked":"")+" type=radio name=r"+i+" value=2>Добавить точку</INPUT><BR><INPUT"+(modes["2_"]==1?" checked":"")+" type=radio name=r"+i+" value=1>Соединить через пробел</INPUT><BR><INPUT"+(modes["2_"]==9?" checked":"")+" type=radio name=r"+i+" value=9>Соединить через пробел, букву в начале 2-го абзаца сделать маленькой</INPUT>";
     resultColl[i]=modes["2_"];
     break;
    case "3":
@@ -603,6 +638,9 @@
  fbw_body.innerHTML=htmlStr;
  //alert("htmlStr после обработки браузером:\n"+fbw_body.innerHTML); 
 </script>  
-<DIV style="text-align:center;"><input type=button value="Отмена" onclick="window.close();" style="height:40px;"><input type=button value=OK onclick="applyChanges(); window.close();" style="width:200px; height:40px;"></DIV>
+  <DIV style="text-align:center;">
+   <input type=button value=OK onclick="applyChanges(); window.close();" style="width:200px; height:40px;">
+   <input type=button value="Отмена" onclick="window.close();" style="height:40px;">
+  </DIV>
  </body>
 </html>
