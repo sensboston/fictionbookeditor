@@ -85,6 +85,23 @@
    return tagStr2;
  } 
 
+ function addSymbolToP(ptr,symb) {
+  var myPtr=ptr.lastChild;
+  while (myPtr!=ptr) {
+   if (myPtr.nodeType==3) break;
+   if (myPtr.lastChild!=null) {
+    myPtr=myPtr.lastChild;
+   } else {
+    while (myPtr.previousSibling==null) {
+     myPtr=myPtr.parentNode;
+     if (myPtr==ptr) break;
+    }
+    myPtr=myPtr.previousSibling;
+   }
+  }
+  myPtr.nodeValue+=symb;
+ }
+
  function addPointToP(ptr) {
   var myPtr=ptr.lastChild;
   while (myPtr!=ptr) {
@@ -354,22 +371,22 @@
       trimLeft(lastPtr);
       if (elementToGo==lastPtr) elementToGo=prevP;
       if (elementToView==lastPtr) elementToView=prevP;     
-      JustAddP(prevP,lastPtr,params[i+"_4"]);
+      JustAddP(prevP,lastPtr,params[i+"_4"],true);
       lastPrevP=prevP;
     } else if (k==2) { 
-      //добавляем точку
+      // добавить точку
       prevP=params[i+"_2"];    
       if (prevP==lastPtr) prevP=lastPrevP;         
       trimRight(prevP);
       addPointToP(prevP);
     } else if (k==3) { 
-      //точка вместо запятой
+      // заменить запятую на точку
       prevP=params[i+"_2"];    
       if (prevP==lastPtr) prevP=lastPrevP;
       trimRight(prevP);
       changeCommaOntoPoint(prevP);
     } else if (k==4) { 
-      //короткое тире вместо дефиса и соединить
+      // короткое тире вместо дефиса и соединить
       prevP=params[i+"_2"];    
       if (prevP==lastPtr) prevP=lastPrevP;     
       lastPtr=params[i+"_3"];
@@ -393,7 +410,7 @@
       JustAddP(prevP,lastPtr,params[i+"_4"]);
       lastPrevP=prevP;
     } else if (k==6) { 
-      //соединить, удалив тире или дефис
+      // удалить тире/дефис, соединить абзацы через пробел
       prevP=params[i+"_2"];    
       if (prevP==lastPtr) prevP=lastPrevP;     
       lastPtr=params[i+"_3"];
@@ -403,10 +420,10 @@
       trimLeft(lastPtr);
       if (elementToGo==lastPtr) elementToGo=prevP;
       if (elementToView==lastPtr) elementToView=prevP;          
-      JustAddP(prevP,lastPtr,params[i+"_4"],false);
+      JustAddP(prevP,lastPtr,params[i+"_4"],true);
       lastPrevP=prevP;
     } else if (k==7) { 
-      //соединить через дефис, или заменив тире на дефис
+      // соединить через дефис, или заменив тире на дефис
       prevP=params[i+"_2"];
       if (prevP==lastPtr) prevP=lastPrevP;
       lastPtr=params[i+"_3"];
@@ -418,9 +435,12 @@
       JustAddP(prevP,lastPtr,params[i+"_4"],false);
       lastPrevP=prevP;
     } else if (k==8) {
+      // удалить дефис, соединить абзацы без пробелов между ними
       prevP=params[i+"_2"];
       if (prevP==lastPtr) prevP=lastPrevP;
       lastPtr=params[i+"_3"];
+      trimRight(prevP);
+      killHyphen(prevP);
       trimRight(prevP);
       trimLeft(lastPtr);
       if (elementToGo==lastPtr) elementToGo=prevP;
@@ -428,8 +448,7 @@
       JustAddP(prevP,lastPtr,params[i+"_4"],false);
       lastPrevP=prevP;
     } else if (k==9) {
-     // Соединить через пробел, букву в начале
-     // 2-го абзаца сделать маленькой
+     // соединить через пробел, первую букву 2-го абзаца сделать маленькой
       prevP=params[i+"_2"];
       if (prevP==lastPtr) prevP=lastPrevP;
       lastPtr=params[i+"_3"];
@@ -437,10 +456,37 @@
       trimLeft(lastPtr);
       makeFirstLetterSmall(lastPtr);
       if (elementToGo==lastPtr) elementToGo=prevP;
-      if (elementToView==lastPtr) elementToView=prevP;     
+      if (elementToView==lastPtr) elementToView=prevP;
       JustAddP(prevP,lastPtr,params[i+"_4"]);
       lastPrevP=prevP;
-   }
+   } else if (k==10) {
+      //соединить через ":" и пробел
+      prevP=params[i+"_2"];
+      if (prevP==lastPtr) prevP=lastPrevP;
+      lastPtr=params[i+"_3"];
+      trimRight(prevP);
+      trimLeft(lastPtr);
+      addSymbolToP(prevP,":");
+      JustAddP(prevP,lastPtr,params[i+"_4"]);
+      lastPrevP=prevP;
+    } else if (k==11) {
+      //добавить ":"
+      prevP=params[i+"_2"];
+      if (prevP==lastPtr) prevP=lastPrevP;
+      trimRight(prevP);
+      addSymbolToP(prevP,":");
+    } if (k==12) {
+      // соединить абзацы без пробелов между ними
+      prevP=params[i+"_2"];
+      if (prevP==lastPtr) prevP=lastPrevP;
+      lastPtr=params[i+"_3"];
+      trimRight(prevP);
+      trimLeft(lastPtr);
+      if (elementToGo==lastPtr) elementToGo=prevP;
+      if (elementToView==lastPtr) elementToView=prevP;     
+      JustAddP(prevP,lastPtr,params[i+"_4"],false);
+      lastPrevP=prevP;
+    }
     if (k!=0) changesCnt++;
    }
    window.returnValue=changesCnt;
@@ -478,7 +524,7 @@
  var htmlStr="";
  var tmpStr,tagStr,letterCnt,myNodeValue,len;
  var collCnt=params["collCnt"];
- document.title="Сомнительных мест: "+collCnt+". Управляемое исправление разрывов абзацев "+params["versionStr"];
+ document.title="Предположительных разрывов: "+collCnt+". Управляемое исправление разрывов абзацев "+params["versionStr"];
  myDoc=params["document"];
  var my_fbw_body=myDoc.getElementById("fbw_body");
  var range1, range2, prevP, ptr, cnt;
@@ -487,28 +533,56 @@
   htmlStr+="<DIV style='float:right; width:200px; margin:0 0 0 8px; padding:0 3px 0 3px; border-left:1px dotted gray; border-right:0; border-top:0; border-bottom:0;'>";
   switch(params[i+"_1"]) {
    case "1":
-    htmlStr+="<INPUT"+(modes["1_"]==0?" checked":"")+" type=radio name=r"+i+" value=0>Не трогать</INPUT><BR><INPUT"+(modes["1_"]==1?" checked":"")+" type=radio name=r"+i+" value=1>Соединить через пробел</INPUT><BR><INPUT"+(modes["1_"]==8?" checked":"")+" type=radio name=r"+i+" value=8>Соединить без пробела</INPUT>";
+    htmlStr+="<INPUT"+(modes["1_"]==0?" checked":"")+" type=radio name=r"+i+" value=0>Не трогать</INPUT><BR>"+
+             "<INPUT"+(modes["1_"]==11?" checked":"")+" type=radio name=r"+i+' value=11>Добавить ":"</INPUT><BR>'+
+             "<INPUT"+(modes["1_"]==8?" checked":"")+" type=radio name=r"+i+" value=8>Соединить без пробела</INPUT><BR>"+
+             "<INPUT"+(modes["1_"]==1?" checked":"")+" type=radio name=r"+i+" value=1>Соединить через пробел</INPUT><BR>"+
+             "<INPUT"+(modes["1_"]==10?" checked":"")+" type=radio name=r"+i+" value=10>Соединить через &quot;:&quot; и пробел</INPUT>";
     resultColl[i]=modes["1_"];
     break;
    case "2":
-    htmlStr+="<INPUT"+(modes["2_"]==0?" checked":"")+" type=radio name=r"+i+" value=0>Не трогать</INPUT><BR><INPUT"+(modes["2_"]==2?" checked":"")+" type=radio name=r"+i+" value=2>Добавить точку</INPUT><BR><INPUT"+(modes["2_"]==1?" checked":"")+" type=radio name=r"+i+" value=1>Соединить через пробел</INPUT><BR><INPUT"+(modes["2_"]==9?" checked":"")+" type=radio name=r"+i+" value=9>Соединить через пробел, букву в начале 2-го абзаца сделать маленькой</INPUT>";
+    htmlStr+="<INPUT"+(modes["2_"]==0?" checked":"")+" type=radio name=r"+i+" value=0>Не трогать</INPUT><BR>"+
+             "<INPUT"+(modes["2_"]==2?" checked":"")+" type=radio name=r"+i+" value=2>Добавить точку</INPUT><BR>"+
+             "<INPUT"+(modes["2_"]==11?" checked":"")+" type=radio name=r"+i+' value=11>Добавить ":"</INPUT><BR>'+
+             "<INPUT"+(modes["2_"]==1?" checked":"")+" type=radio name=r"+i+" value=1>Соединить через пробел</INPUT><BR>"+
+             "<INPUT"+(modes["2_"]==10?" checked":"")+" type=radio name=r"+i+' value=10>Соединить через ":" и пробел</INPUT><BR>'+
+             "<INPUT"+(modes["2_"]==9?" checked":"")+" type=radio name=r"+i+" value=9>Соединить через пробел, первую букву 2-го абзаца сделать маленькой</INPUT>";
     resultColl[i]=modes["2_"];
     break;
    case "3":
-    htmlStr+="<INPUT"+(modes["3_"]==0?" checked":"")+" type=radio name=r"+i+" value=0>Не трогать</INPUT><BR><INPUT"+(modes["3_"]==1?" checked":"")+" type=radio name=r"+i+" value=1>Соединить через пробел</INPUT><BR><INPUT"+(modes["3_"]==3?" checked":"")+" type=radio name=r"+i+" value=3>Точку вместо запятой</INPUT>";   
+    htmlStr+="<INPUT"+(modes["3_"]==0?" checked":"")+" type=radio name=r"+i+" value=0>Не трогать</INPUT><BR>"+
+             "<INPUT"+(modes["3_"]==1?" checked":"")+" type=radio name=r"+i+" value=1>Сохранить запятую, соединить абзацы через пробел</INPUT><BR>"+
+             "<INPUT"+(modes["3_"]==3?" checked":"")+" type=radio name=r"+i+' value=3>Сделать точку вместо запятой</INPUT><BR>'+
+             "<INPUT"+(modes["3_"]==9?" checked":"")+" type=radio name=r"+i+" value=9>Сохранить запятую, соединить абзацы через пробел. Первую букву 2-го абзаца сделать маленькой (если надо)</INPUT>";
     resultColl[i]=modes["3_"];
     break;
    case "4":
-    htmlStr+="<INPUT"+(modes["4_"]==0?" checked":"")+" type=radio name=r"+i+" value=0>Не трогать</INPUT><BR><INPUT"+(modes["4_"]==4?" checked":"")+" type=radio name=r"+i+" value=4>Соединить через короткое тире и пробел</INPUT><BR><INPUT"+(modes["4_"]==5?" checked":"")+" type=radio name=r"+i+" value=5>Соединить через длинное тире и пробел</INPUT><BR><INPUT"+(modes["4_"]==8?" checked":"")+" type=radio name=r"+i+" value=6>Соединить, удалив дефис</INPUT>";   
+    htmlStr+="<INPUT"+(modes["4_"]==0?" checked":"")+" type=radio name=r"+i+" value=0>Не трогать</INPUT><BR>"+
+             "<INPUT"+(modes["4_"]==4?" checked":"")+" type=radio name=r"+i+" value=4>Соединить через короткое тире и пробел</INPUT><BR>"+
+             "<INPUT"+(modes["4_"]==5?" checked":"")+" type=radio name=r"+i+" value=5>Соединить через длинное тире и пробел</INPUT><BR>"+
+             "<INPUT"+(modes["4_"]==8?" checked":"")+" type=radio name=r"+i+" value=8>Удалить дефис, соединить абзацы без пробела между ними</INPUT><BR>"+
+             "<INPUT"+(modes["4_"]==6?" checked":"")+" type=radio name=r"+i+" value=6>Удалить дефис, соединить абзацы через пробел</INPUT>";
     resultColl[i]=modes["4_"];
     break;
    case "5":
-    htmlStr+="<INPUT"+(modes["5_"]==0?" checked":"")+" type=radio name=r"+i+" value=0>Не трогать</INPUT><BR><INPUT"+(modes["5_"]==6?" checked":"")+" type=radio name=r"+i+" value=6>Соединить, удалив дефис</INPUT><BR><INPUT"+(modes["5_"]==7?" checked":"")+" type=radio name=r"+i+" value=7>Соединить через дефис без пробела</INPUT><BR><INPUT"+(modes["5_"]==8?" checked":"")+" type=radio name=r"+i+" value=8>Соединить без пробела, сохранив тире/дефис</INPUT>";
+    htmlStr+="<INPUT"+(modes["5_"]==0?" checked":"")+" type=radio name=r"+i+" value=0>Не трогать</INPUT><BR>"+
+             "<INPUT"+(modes["5_"]==12?" checked":"")+" type=radio name=r"+i+" value=12>Сохранить тире/дефис, соединить абзацы (без пробелов между ними)</INPUT><BR>"+
+             "<INPUT"+(modes["5_"]==7?" checked":"")+" type=radio name=r"+i+" value=7>Соединить абзацы через дефис (без пробелов)</INPUT><BR>"+
+             "<INPUT"+(modes["5_"]==6?" checked":"")+" type=radio name=r"+i+" value=6>Удалить дефис/тире, соединить абзацы через пробел</INPUT><BR>"+
+             "<INPUT"+(modes["5_"]==8?" checked":"")+" type=radio name=r"+i+" value=8>Удалить дефис/тире, соединить абзацы без пробела между ними</INPUT><BR>";
     resultColl[i]=modes["5_"];
     break;
    case "6":
-    htmlStr+="<INPUT"+(modes["6_"]==0?" checked":"")+" type=radio name=r"+i+" value=0>Не трогать</INPUT><BR><INPUT"+(modes["6_"]==1?" checked":"")+" type=radio name=r"+i+" value=1>Соединить через пробел</INPUT><BR><INPUT"+(modes["6_"]==8?" checked":"")+" type=radio name=r"+i+" value=8>Соединить без пробела</INPUT>";
+    htmlStr+="<INPUT"+(modes["6_"]==0?" checked":"")+" type=radio name=r"+i+" value=0>Не трогать</INPUT><BR>"+
+             "<INPUT"+(modes["6_"]==1?" checked":"")+" type=radio name=r"+i+" value=1>Сохранить тире, присоединить абзац через пробел</INPUT><BR>"+
+             "<INPUT"+(modes["6_"]==8?" checked":"")+" type=radio name=r"+i+" value=8>Удалить тире, соединить абзацы без пробелов между ними</INPUT>";
     resultColl[i]=modes["6_"];
+    break;
+   case "7":
+    htmlStr+="<INPUT"+(modes["7_"]==0?" checked":"")+" type=radio name=r"+i+" value=0>Не трогать</INPUT><BR>"+
+             "<INPUT"+(modes["7_"]==1?" checked":"")+" type=radio name=r"+i+" value=1>Соединить через пробел</INPUT><BR>"+
+             "<INPUT"+(modes["7_"]==8?" checked":"")+" type=radio name=r"+i+" value=8>Соединить без пробела</INPUT>";
+    resultColl[i]=modes["7_"];
     break;
   }
   htmlStr+="<BR><A name=go>ОК и перейти</A> <A name=show>Показать</a>";  
@@ -632,7 +706,7 @@
   htmlStr+="</DIV>";
   htmlStr+="</DIV><HR style='clear:both;'>";
  }
- htmlStr="Всего найдено сомнительных мест: "+collCnt+"<HR>"+htmlStr;
+ htmlStr="Всего найдено предположительных разрывов: "+collCnt+"<HR>"+htmlStr;
  //alert("htmlStr после всего:\n"+htmlStr);
  //window.clipboardData.setData("text",htmlStr);
  fbw_body.innerHTML=htmlStr;

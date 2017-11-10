@@ -2,7 +2,7 @@
 // Автор скрипта: Sclex
 // Сайт скриптов FBE Sclex’а: http://scripts.fictionbook.org
 
-var versionStr="4.2";
+var versionStr="4.3";
 var CutLength=100;
 
 function Run() {
@@ -46,7 +46,7 @@ function Run() {
                      "ꭃꭄꭅꭇꭈꭉꭊꭋꭌꭍꭎꭏꭐꭑꭒꭓꭔꭕꭖꭗꭘꭙꭚꭠꭡꭢꭣꭤꭰꭱꭲꭳꭴꭵꭶꭷꭸꭹꭺꭻꭼꭽꭾꭿꮀ"+
                      "ꮁꮂꮃꮄꮅꮆꮇꮈꮉꮊꮋꮌꮍꮎꮏꮐꮑꮒꮓꮔꮕꮖꮗꮘꮙꮚꮛꮜꮝꮞꮟꮠꮡꮢꮣꮤꮥꮦꮧꮨꮩꮪꮫꮬꮭ"+
                      "ꮮꮯꮰꮱꮲꮳꮴꮵꮶꮷꮸꮹꮺꮻꮼꮽꮾꮿａｂｃｄｅｆｇｈｉｊｋｌｍｎｏ"+
-                     "ｐｑｒｓｔｕｖｗｘｙｚШЩЪЫЬЭЮЯабвгдежзийклмнопрс"+
+                     "ｐｑｒｓｔｕｖｗｘｙｚабвгдежзийклмнопрс"+
                      "туфхцчшщъыьэюяӘәӚӛӜӝӞӟӠӡӢӣӤӥӦӧӨөӪӫӬӭӮӯӰӱӲӳӴӵӶ"+
                      "ӷӸӹӺӻೀುೂೃೄ೅ೆೇೈ೉ೊೋ"+
                      "ೌ್೎೏೐೑೒೓೔ೕೖ೗೘೙೚೛೜ೝೞ೟ೠೡೢೣ೤೥೦೧೨೩೪"+
@@ -81,7 +81,7 @@ function Run() {
                    ""+
                    ""+
                    "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
- var re0=new RegExp("["+smallLettersStr+"]","");
+ var smallLetterRegExp=new RegExp("["+smallLettersStr+"]","");
  var re1=new RegExp("[ "+nbspChar+"\"—–«»„”“()]","");
  var re2=new RegExp("[ "+nbspChar+"]","");
  var re3=new RegExp("[;:]","");
@@ -92,7 +92,7 @@ function Run() {
  var re7=new RegExp("[!?….]");
  var re8=new RegExp("[-«–—]","");
  var re9=new RegExp("[-–—]","");
- var kavychkiRegExp=new RegExp('["»”“]',"");
+ var closingKavychkiRegExp=new RegExp('["»”“]',"");
  var nonEndingCharRegExp=new RegExp("[^.,?!…]");
  var emptyLineRE=new RegExp("^( | |&nbsp;|"+nbspChar+")*?$","i");
 
@@ -116,7 +116,7 @@ function Run() {
   ptr.removeNode(true);
  }
 
- function addPointToP(ptr) {
+ function addSymbolsToP(ptr, symb) {
   var myPtr=ptr.lastChild;
   while (myPtr!=ptr) {
    if (myPtr.nodeType==3) break;
@@ -130,7 +130,7 @@ function Run() {
     myPtr=myPtr.previousSibling;
    }
   }
-  myPtr.nodeValue+="."
+  myPtr.nodeValue+=symb;
  }
 
  var regExpToDetectEmpties=RegExp(nbspChar+"|<(?!img)[^>]*?>","gi")
@@ -295,28 +295,28 @@ function Run() {
  function doAction(code) {
   switch(code) {
    case 1: {
-    //соединить через пробел
+    // соединить через пробел
     JustAddP(prevP,ptr);
     ptr=prevP;
     CntZamen++;
     break;
    }
    case 2: {
-   //добавить точку
+   // добавить точку
     trimRight(prevP);
-    addPointToP(prevP);
+    addSymbolsToP(prevP,".");
     CntZamen++;
     break;
    }
    case 3: {
-    //точка вместо запятой
+    // точка вместо запятой
     trimRight(prevP);
     changeCommaOntoPoint(prevP);
     CntZamen++;
     break;
    }
    case 4: {
-    //короткое тире вместо дефиса и соединить
+    // короткое тире вместо дефиса и соединить
     trimRight(prevP);
     changeHyphenOntoShortDash(prevP);
     JustAddP(prevP,ptr);
@@ -325,7 +325,7 @@ function Run() {
     break;
    }
    case 5: {
-    //длинное тире вместо дефиса и соединить
+    // длинное тире вместо дефиса и соединить
     trimRight(prevP);
     changeHyphenOntoLongDash(prevP);
     JustAddP(prevP,ptr);
@@ -334,14 +334,17 @@ function Run() {
     break;
    }
    case 6: {
-    //соединить, удалив тире или дефис
-    AddPKillingHyphen(prevP,ptr);
+    // удалить дефис/тире, соединить абзацы через пробел
+    trimRight(prevP);
+    killHyphen(prevP);
+    trimLeft(ptr);
+    JustAddP(prevP,ptr,undefined,true);
     ptr=prevP;
     CntZamen++;
     break;
    }
    case 7: {
-    //соединить через дефис, или заменив тире на дефис
+    // соединить через дефис, или заменив тире на дефис
     trimRight(prevP);
     changeDashOntoHyphenLongDash(prevP);
     JustAddP(prevP,ptr,undefined,false);
@@ -350,6 +353,7 @@ function Run() {
     break;
    }
    case 8: {
+    // удалить дефис, соединить абзацы без пробела
     trimRight(prevP);
     killHyphen(prevP);
     trimLeft(ptr);
@@ -365,6 +369,30 @@ function Run() {
     trimLeft(ptr);
     makeFirstLetterSmall(ptr);
     JustAddP(prevP,ptr);
+    ptr=prevP;
+    CntZamen++;
+    break;
+   }
+   case 10: {
+    // Добавить ":" и соединить через пробел
+    trimRight(prevP);
+    trimLeft(ptr);
+    addSymbolsToP(prevP,":");
+    JustAddP(prevP,ptr);
+    ptr=prevP;
+    CntZamen++;
+    break;
+   }
+   case 11: {
+    // Добавить ":"
+    trimRight(prevP);
+    addSymbolsToP(prevP,":");
+    CntZamen++;
+    break;
+   }
+   case 12: {
+    // соединить через пробел
+    JustAddP(prevP,ptr,undefined,false);
     ptr=prevP;
     CntZamen++;
     break;
@@ -556,6 +584,19 @@ function Run() {
   }
  }
 
+ function addCaseOrDoAction(actionCode) {
+  //alert(actionCode);
+  if (modes[actionCode]) {
+   collCnt++;
+   coll[collCnt+"_1"]=String(actionCode);
+   coll[collCnt+"_2"]=prevP;
+   coll[collCnt+"_3"]=ptr;
+   if (DelCollCnt!=0) coll[collCnt+"_4"]=DelColl[1];
+   handHandle=true;
+  } else doAction(modes[actionCode+"_"]);
+  wasReplace=true;
+ }
+
  var coll=new Object();
  coll["versionStr"]=versionStr;
  var modes=window.showModalDialog("HTML/Управляемое исправление разрывов абзацев - выбор режимов.html",coll,
@@ -569,6 +610,9 @@ function Run() {
  var CntZamen=0;
  var DelCollCnt=0;
  var DelColl=new Object();
+
+
+
  while (!ProcessingEnding && ptr) {
   SaveNext=ptr;
   if (SaveNext.firstChild!=null && SaveNext.nodeName!="P" &&
@@ -607,104 +651,51 @@ function Run() {
      getFirstAndSecondLetterOfPtr(ptr);
      if (lastSymbolOfPrevP=="-" && isSpaceBeforeLastSymbol) {
       //когда первый абзац кончается на дефис, а перед ним пробел
-      if (modes[4]==true) {
-       collCnt++;
-       coll[collCnt+"_1"]="4";
-       coll[collCnt+"_2"]=prevP;
-       coll[collCnt+"_3"]=ptr;
-       if (DelCollCnt!=0) coll[collCnt+"_4"]=DelColl[1];
-       handHandle=true;
-       wasReplace=true
-      } else doAction(modes["4_"]);
-     } else if (lastSymbolOfPrevP.search(re9)>=0 && !isSpaceBeforeLastSymbol) {
-        //последний символ первого абзаца тире, и перед ним нет пробела
-        if (modes[5]==false) doAction(modes["5_"]);
-        else {
-         collCnt++;
-         coll[collCnt+"_1"]="5";
-         coll[collCnt+"_2"]=prevP;
-         coll[collCnt+"_3"]=ptr;
-         if (DelCollCnt!=0) coll[collCnt+"_4"]=DelColl[1];
-         handHandle=true;
-         wasReplace=true;
-       }
+      addCaseOrDoAction(4);
+     } else if (!wasReplace && lastSymbolOfPrevP.search(re9)>=0 && !isSpaceBeforeLastSymbol) {
+      //последний символ первого абзаца тире, и перед ним нет пробела
+      addCaseOrDoAction(5);
      }
      if (!wasReplace && lastSymbolOfPrevP==",") {
-      if (modes[3]==true) {
-       //случай, когда первый абзац кончается запятой
-       collCnt++;
-       coll[collCnt+"_1"]="3";
-       coll[collCnt+"_2"]=prevP;
-       coll[collCnt+"_3"]=ptr;
-       if (DelCollCnt!=0) coll[collCnt+"_4"]=DelColl[1];
-       handHandle=true;
-      } else doAction(modes["3_"]);
+      addCaseOrDoAction(3);
      } 
-     if (firstSymbol.search(re0)>=0) {
+     if (firstSymbol.search(smallLetterRegExp)>=0) {
       {
-       if (!wasReplace && firstSymbol.search(re0)>=0 && lastSymbolOfPrevP.search(re0)>=0) {
+       if (!wasReplace && firstSymbol.search(smallLetterRegExp)>=0 && lastSymbolOfPrevP.search(smallLetterRegExp)>=0) {
         //последняя буква первого и первая буква второго абзаца - маленькие
-        wasReplace=true;
-        if (modes[1]==false) doAction(modes["1_"]);
-        else {
-         collCnt++;
-         coll[collCnt+"_1"]="1";
-         coll[collCnt+"_2"]=prevP;
-         coll[collCnt+"_3"]=ptr;
-         if (DelCollCnt!=0) coll[collCnt+"_4"]=DelColl[1];
-         handHandle=true;
-        }
+         addCaseOrDoAction(1);
        } else if (!wasReplace && (lastSymbolOfPrevP=="–" || lastSymbolOfPrevP=="—")) {
         if (isSpaceBeforeLastSymbol) {
          //последний символ первого абзаца - тире, перед ним пробел
-         wasReplace=true;
-         if (modes[6]==false) doAction(modes["6_"]);
-         else {
-          collCnt++;
-          coll[collCnt+"_1"]="6";
-          coll[collCnt+"_2"]=prevP;
-          coll[collCnt+"_3"]=ptr;
-          if (DelCollCnt!=0) coll[collCnt+"_4"]=DelColl[1];
-          handHandle=true;
-         }
+         addCaseOrDoAction(6);
         }
        }
       }
      } else if (!wasReplace && lastSymbolOfPrevP.search(nonEndingCharRegExp)>=0 &&
-                 (lastSymbolOfPrevP.search(kavychkiRegExp)<0 ||
-                  (lastSymbolOfPrevP.search(kavychkiRegExp)>=0 && preLastSymbolOfPrevP.search(re7)<0)
+                 (lastSymbolOfPrevP.search(closingKavychkiRegExp)<0 ||
+                  (lastSymbolOfPrevP.search(closingKavychkiRegExp)>=0 && preLastSymbolOfPrevP.search(re7)<0)
                  ) &&
                  ((firstSymbol.search(re4)>=0  && secondSymbol.search(bigLetterOrDigitRegExp)>=0) || firstSymbol.search(bigLetterOrDigitRegExp)>=0) &&
                  !(lastSymbolOfPrevP==":" || lastSymbolOfPrevP==";")
                 ) {
        //это обработка случая, когда второй абзац начинается с большой буквы,
-       //а первый не кончается на символ (символы), который характерен для конца строки
-       if (modes[2]==true) {
-        collCnt++;
-        coll[collCnt+"_1"]="2";
-        coll[collCnt+"_2"]=prevP;
-        coll[collCnt+"_3"]=ptr;
-        if (DelCollCnt!=0) coll[collCnt+"_4"]=DelColl[1];
-        handHandle=true;
-       } else doAction(modes["2_"]);
+       addCaseOrDoAction(2);
       }
      if (!wasReplace && (lastSymbolOfPrevP!="," &&
-                 (lastSymbolOfPrevP.search(kavychkiRegExp)<0 ||
-                  (lastSymbolOfPrevP.search(kavychkiRegExp)>=0 && preLastSymbolOfPrevP.search(re7)<0)
+                 (!closingKavychkiRegExp.test(lastSymbolOfPrevP) ||
+                  (closingKavychkiRegExp.test(lastSymbolOfPrevP) && re7.test(preLastSymbolOfPrevP))
                  )
                 ) &&
-                ((firstSymbol.search(re4)>=0 && secondSymbol.search(re0)>=0) || firstSymbol.search(re0)>=0) &&
-                !((lastSymbolOfPrevP==":" || lastSymbolOfPrevP==";")&& firstSymbol.search(re8)>=0)
+                ((re4.test(firstSymbol) && smallLetterRegExp.test(secondSymbol)) || smallLetterRegExp.test(firstSymbol)) &&
+                !((lastSymbolOfPrevP==":" || lastSymbolOfPrevP==";")&& re8.test(firstSymbol))
                ) {
+      //alert("!closingKavychkiRegExp.test(lastSymbolOfPrevP): "+!(closingKavychkiRegExp.test(lastSymbolOfPrevP))); // false
+      //alert("2: "+(closingKavychkiRegExp.test(lastSymbolOfPrevP) && !re7.test(preLastSymbolOfPrevP))); // true
+      //alert("3: "+re7.test(preLastSymbolOfPrevP)); // false
       //случай, когда первый-второй символ второго абзаца - маленькая буква
-      if (modes[7]) {
-       collCnt++;
-       coll[collCnt+"_1"]="1";
-       coll[collCnt+"_2"]=prevP;
-       coll[collCnt+"_3"]=ptr;
-       if (DelCollCnt!=0) coll[collCnt+"_4"]=DelColl[1];
-       handHandle=true;
-      } else doAction(modes["7_"]);
+      // Конец первого абзаца: Не запятая и не закрывающая кавычка, либо закрывающая кавычка, перед которой один из знаков: ?.!…
+      // Начало второго абзаца: Маленькая буква. Или символ из перечисленных: «"(–[=— а потом маленькая буква
+      addCaseOrDoAction(7);
      }
     }
    }
@@ -726,8 +717,8 @@ function Run() {
  else {var TimeStr=Tsek+" с"}
  var Ts=new Date().getTime();
  var msgStr="Версия "+versionStr+".\n"+
-            "Ликвидация разрывов абзацев завершена.\n"+
-            "Автоматических слияний абзацев: "+CntZamen+".\n";
+            "Исправление разрывов абзацев завершено.\n"+
+            "Произведено автоматических слияний абзацев: "+CntZamen+".\n";
  if (handHandle) {
   coll["collCnt"]=collCnt;
   coll["document"]=document;
