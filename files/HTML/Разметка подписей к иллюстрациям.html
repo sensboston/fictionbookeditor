@@ -2,7 +2,7 @@
  "http://www.w3.org/TR/html4/loose.dtd">
 <HTML style="height:100%;">
 <HEAD>
-<TITLE>Разметка подписей к картинкам v1.3</TITLE>
+<TITLE>Разметка подписей к картинкам</TITLE>
 <META http-equiv="X-UA-Compatible" content="IE=6">
 <META http-equiv="Content-Type" content="text/html; charset=utf-8">
 <META http-equiv="MSThemeCompatible" content="yes">
@@ -17,7 +17,7 @@ var fbwBody=window.dialogArguments["fbwBody"];
 var mainDoc=window.dialogArguments["mainDocument"];
 var mainWin=window.dialogArguments["window"];
 var nbspChar=window.dialogArguments["nbspChar"];
-document.title=document.title+" v"+window.dialogArguments["versionNum"];
+document.title+=" v"+window.dialogArguments["versionNum"];
 var ptr="nothing";
 var buttonsChanged=false;
 var oldLength=100;
@@ -27,7 +27,6 @@ function byId(ID) {
 }
 
 function preventFromError() {
- preventFromError();
  try {
   mainWin.prkk_variableForCheck=true;
  }
@@ -46,7 +45,7 @@ function startFromBegin() {
   mainWin.prkk_doSearch(document,window,getMarkupType());
  }
  catch (e) {
-  alert("Произошла ошибка. Возможной причиной явлется то, что вы создали новый документ после того, как был открыт диалог скрипта.");
+  alert("Произошла ошибка. Возможной причиной является то, что вы создали новый документ после того, как был открыт диалог скрипта.");
   window.close();
  }
 }
@@ -136,7 +135,7 @@ function startFromCursor() {
    var tr=mainDoc.selection.createRange();
   }
   catch (e) {
-   alert("Произошла ошибка. Возможной причиной явлется то, что вы создали новый документ после того, как был открыт диалог скрипта.");
+   alert("Произошла ошибка. Возможной причиной является то, что вы создали новый документ после того, как был открыт диалог скрипта.");
    window.close();
    return;
   }

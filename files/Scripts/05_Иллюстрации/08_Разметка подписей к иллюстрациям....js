@@ -13,6 +13,7 @@ var prkk_flashNow=false;
 var prkk_variableForCheck=true;
 var prkk_howManyMillisecondsBeSelectedWhenFlashing=400;
 var prkk_howManyMillisecondsBeNotSelectedWhenFlashing=400;
+var prkk_dialogWin=null;
 
 function mayAutoprocess(pp) {
  return pp.innerHTML.search(/[^.…?!<>](<[^>]*?>)*?$/)>=0 && pp.innerHTML.replace(/<(?!img)[^>]*?>/gi,"").replace(/<img[^>]*?>/gi,".").length<=prkk_lenLimit;
@@ -48,12 +49,12 @@ function flash() {
  setTimeout("flash2();",prkk_howManyMillisecondsBeSelectedWhenFlashing);
 }
 
-function markupAsSubscript() {
+function markupAsSubscript(mainWin, markupType) {
  try {
-  mainWin.prkk_markupImageTitleAndGoFurther(document,window,getMarkupType());
+  mainWin.prkk_markupImageTitleAndGoFurther(document,window,markupType);
  }
  catch (e) {
-  alert("Произошла ошибка. Возможной причиной явлется то, что вы создали новый документ после того, как был открыт диалог скрипта.");
+  alert("При попытке разметить абзац как подпись произошла ошибка. Возможной причиной является то, что вы создали новый документ после того, как был открыт диалог скрипта.");
   window.close();
  }
 }
@@ -108,7 +109,7 @@ function prkk_doSearch(doc,win,markupType) {
       window.scrollBy(-10000,a-Math.floor(window.external.getViewHeight()/2));      
       setTimeout("prkk_tr.select();",100);      
       if (!prkk_buttonsChanged) {
-       doc.getElementById("ButtonsP").innerHTML='<INPUT type=button value="Искать дальше – K" onclick="startFromCursor();" style="height:30px; margin:1px;"> <INPUT type=button value="Разметить как подпись – L" onclick="mainWin.markupAsSubscript();" style="height:30px; margin:1px;"> <INPUT type=button value="Закрыть диалог – Esc" style="height:30px;" onclick="window.close();"> <INPUT type=button value="Мигать абзацем" onmouseover="mainWin.prkk_flashNow=true; mainWin.flash();" onmouseout="mainWin.prkk_flashNow=false;" style="height:30px; margin:1px;">  <INPUT type=button value="Во всех дальнейших случаях разметить как подписи – A" onclick="mainWin.processAll(document,window,getMarkupType());" style="height:30px; margin:1px;" id=allButton>';
+       doc.getElementById("ButtonsP").innerHTML='<INPUT type=button value="Искать дальше – K" onclick="startFromCursor();" style="height:30px; margin:1px;"> <INPUT type=button value="Разметить как подпись – L" onclick="mainWin.markupAsSubscript(mainWin, getMarkupType());" style="height:30px; margin:1px;"> <INPUT type=button value="Закрыть диалог – Esc" style="height:30px;" onclick="window.close();"> <INPUT type=button value="Мигать абзацем" onmouseover="mainWin.prkk_flashNow=true; mainWin.flash();" onmouseout="mainWin.prkk_flashNow=false;" style="height:30px; margin:1px;">  <INPUT type=button value="Во всех дальнейших случаях разметить как подписи – A" onclick="mainWin.processAll(document,window,getMarkupType());" style="height:30px; margin:1px;" id=allButton>';
        prkk_buttonsChanged=true;
        win.buttonsChanged=true;
       }
@@ -126,7 +127,8 @@ function prkk_doSearch(doc,win,markupType) {
  }
  if (prkk_changeAll) return; 
  alert("Достигнут конец документа.");
- win.close();
+ if (prkk_dialogWin) if (prkk_dialogWin.close) prkk_dialogWin.close();
+ // setTimeout("win.prkk_dialogWin.close();",0)
 }
 
 function killTags(pp,tag1,tag2) {
@@ -192,7 +194,7 @@ function prkk_markupImageTitleAndGoFurther(doc,win,markupType) {
 }
 
 function Run() {
- var elementBrowser_versionNum="1.3";
+ var elementBrowser_versionNum="1.4";
  var dialogWidth_number=710;
  var dialogWidth=dialogWidth_number+"px";
  var dialogHeight="150px";
@@ -207,7 +209,7 @@ function Run() {
  coll["window"]=window;
  coll["versionNum"]=elementBrowser_versionNum;
  coll["nbspChar"]=nbspChar;
- window.showModelessDialog("HTML/Разметка подписей к иллюстрациям.html",coll,
+ window.prkk_dialogWin=window.showModelessDialog("HTML/Разметка подписей к иллюстрациям.html",coll,
    "dialogHeight: "+dialogHeight+"; dialogWidth: "+dialogWidth+"; "+
    "dialogLeft: "+(window.screenLeft+window.external.getViewWidth()-dialogWidth_number)+"px; dialogTop: "+window.screenTop+"; "+
    "center: No; help: No; resizable: No; status: No;");
