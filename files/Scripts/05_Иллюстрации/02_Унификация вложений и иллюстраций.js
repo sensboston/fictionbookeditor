@@ -1,10 +1,10 @@
-// Унификация вложений и картинок
+﻿// Унификация вложений и картинок
 // автор Sclex
 
 function Run() {
  var Ts=new Date().getTime();
  
- var versionNumber="1.4";
+ var versionNumber="1.5";
 
  // шаблон id картинок и вложений
  // вместо %N будет подставлен номер картинки
@@ -25,6 +25,34 @@ function Run() {
  var DigitsInTempName = 10;
  //если true, выводить списки в столбик
  var ColumnView=true;
+
+ /**
+  * Возвращает единицу измерения с правильным окончанием
+  * 
+  * @param {Number} num      Число
+  * @param {Object} cases    Варианты слова {nom: 'час', gen: 'часа', plu: 'часов'}
+  * @return {String}            
+  */
+ function units(num, cases) {
+     num = Math.abs(num);
+     
+     var word = '';
+     
+     if (num.toString().indexOf('.') > -1) {
+         word = cases.gen;
+     } else { 
+         word = (
+             num % 10 == 1 && num % 100 != 11 
+                 ? cases.nom
+                 : num % 10 >= 2 && num % 10 <= 4 && (num % 100 < 10 || num % 100 >= 20) 
+                     ? cases.gen
+                     : cases.plu
+         );
+     }
+     
+     return word;
+ }
+
 
  function PoShablonu(s,n) {
   var ttt3 = new RegExp("\%N");
@@ -445,21 +473,20 @@ function Run() {
  else if (Tmin>=1) var TimeStr=Tmin+ " мин " +Tsec+ " с" }}
 
  var st2="";
- if (BinsWithoutImg_list!="") {st2+='\nВложения, на которые нет ссылки:'+BinsWithoutImg_list;}
- if (ImgsWithoutBin_list!="") {st2+='\nРисунки, для которых нет вложения:'+ImgsWithoutBin_list;}
- if (NonLocalImgs_list!="") {st2+='\nКартинки с нелокальными ссылками:'+NonLocalImgs_list;}
+ if (BinsWithoutImg_list!="") {st2+='\nНеиспользуемые бинарные объекты:'+BinsWithoutImg_list;}
+ if (ImgsWithoutBin_list!="") {st2+='\nБезбинарные иллюстрации:'+ImgsWithoutBin_list;}
+ if (NonLocalImgs_list!="") {st2+='\nИзображения с нелокальными адресами:'+NonLocalImgs_list;}
  if (NonJpegPngImgs_list!="") {st2+='\nВложения не image/jpg, не image/png:'+NonJpegPngImgs_list;}
  if (st2!="") st2="\n"+st2;
  MsgBox('            –= Sclex Script =– \n'+
     ' "Унификация вложений и картинок"\n'+
     '                          v'+versionNumber+'\n\n'+
 
-        'Переименовано иллюстраций: …… '+ImgCnt+'\n'+
-        '    Переименовано обложек:  ……… '+CoversCnt+'\n'+
-        '    Нездешние изображения:  ……… '+NonLocalAddress+'\n'+
-        '    Лишние бинарные объекты: …… '+NonUsedBinary+'\n'+
-        '    Безбинарные иллюстрации: …… '+BinaryNotPresent+'\n'+
-        '   Не image/jpeg, не image/png: …… '+NonJpegPngImgs["0"]+'\n\n'+
-
+        units(ImgCnt,{nom: 'Переименована', gen: 'Переименованы', plu: 'Переименовано'})+' '+ImgCnt+' '+units(ImgCnt,{nom: 'иллюстрация', gen: 'иллюстрации', plu: 'иллюстраций'})+'.\n'+
+        units(CoversCnt,{nom: 'Переименована', gen: 'Переименованы', plu: 'Переименовано'})+' '+CoversCnt+' '+units(CoversCnt,{nom: 'обложка', gen: 'обложки', plu: 'обложек'})+'.\n'+
+        units(NonLocalAddress,{nom: 'Обнаружено', gen: 'Обнаружены', plu: 'Обнаружено'})+' '+NonLocalAddress+' '+units(NonLocalAddress,{nom: 'изображение', gen: 'изображения', plu: 'изображений'})+' с нелокальным адресом.\n'+
+        units(NonUsedBinary,{nom: 'Обнаружен', gen: 'Обнаружены', plu: 'Обнаружено'})+' '+NonUsedBinary+' '+units(NonUsedBinary,{nom: 'неиспользуемый бинарный объект', gen: 'неиспользуемых бинарных объекта', plu: 'неиспользуемых бинарных объектов'})+'.\n'+
+        units(BinaryNotPresent,{nom: 'Обнаружена', gen: 'Обнаружены', plu: 'Обнаружено'})+' '+BinaryNotPresent+' '+units(BinaryNotPresent,{nom: 'безбинарная иллюстрация', gen: 'безбинарные иллюстрации', plu: 'безбинарных иллюстраций'})+'.\n'+
+        units(NonJpegPngImgs["0"],{nom: 'Обнаружена', gen: 'Обнаружены', plu: 'Обнаружено'})+' '+NonJpegPngImgs["0"]+' '+units(NonJpegPngImgs["0"],{nom: 'иллюстрация', gen: 'иллюстрации', plu: 'иллюстраций'})+' с типом не image/jpeg, не image/png.\n\n'+
         'Время выполнения: '+TimeStr+'.'+st2);
 }
