@@ -1,4 +1,4 @@
-// Скрипт "Удалить теги style, id разделов и id абзацев v1.0" 
+// Скрипт "Удалить теги style, id разделов, id абзацев и id картинок v1.0" 
 // Автор Sclex
 
 function Run() {
@@ -16,7 +16,7 @@ function Run() {
   }
   if (ptr.nodeName.toUpperCase()=="SPAN" && ptr.className!="code" && ptr.className!="image") {
    if (firstRemoving) {
-    window.external.BeginUndoUnit(document,"удаление тегов style, id разделов и id абзацев");
+    window.external.BeginUndoUnit(document,"удаление тегов style, id разделов, id абзацев и id картинок");
     firstRemoving=false;
    }
    ptr.removeNode(false);
@@ -37,7 +37,7 @@ function Run() {
     elem2=elems2[j];
     if (elem2.getAttribute("id")!=null && elem2.getAttribute("id")!="") {
      if (firstRemoving) {
-      window.external.BeginUndoUnit(document,"удаление тегов style, id разделов и id абзацев");
+      window.external.BeginUndoUnit(document,"удаление тегов style, id разделов, id абзацев и id картинок");
       firstRemoving=false;
      }
      elem2.removeAttribute("id");
@@ -59,7 +59,7 @@ function Run() {
     elem2=elems2[j];
     if (elem2.className && elem2.className=="section" && elem2.getAttribute("id")!=null && elem2.getAttribute("id")!="") {
      if (firstRemoving) {
-      window.external.BeginUndoUnit(document,"удаление тегов style, id разделов и id абзацев");
+      window.external.BeginUndoUnit(document,"удаление тегов style, id разделов, id абзацев и id картинок");
       firstRemoving=false;
      }
      elem2.removeAttribute("id");
@@ -68,8 +68,32 @@ function Run() {
    }
   }
  }
+
+ var fbwBody=document.getElementById("fbw_body");
+ var elems=fbwBody.getElementsByTagName("DIV");
+ var firstRemoving=true;
+ var elem, elem2, elems2, i, j;
+ var replaceCounter4=0;
+ for (var i=0; i<elems.length; i++) {
+  elem=elems[i];
+  if (elem.className && elem.className.toLowerCase()=="body") {
+   elems2=elem.getElementsByTagName("DIV");
+   for (var j=0; j<elems2.length; j++) {
+    elem2=elems2[j];
+    if (elem2.className && elem2.className=="image" && elem2.getAttribute("id")!=null && elem2.getAttribute("id")!="") {
+     if (firstRemoving) {
+      window.external.BeginUndoUnit(document,"удаление тегов style, id разделов, id абзацев и id картинок");
+      firstRemoving=false;
+     }
+     elem2.removeAttribute("id");
+     replaceCounter4+=1;
+    }
+   }
+  }
+ }
  if (!firstRemoving) window.external.EndUndoUnit(document);
  MsgBox("Всего удалено тегов style: "+replaceCounter3+"\n"+
                   "Всего удалено id абзацев: "+replaceCounter1+"\n"+
-                  "Всего удалено id разделов: "+replaceCounter2);
+                  "Всего удалено id разделов: "+replaceCounter2+"\n"+
+                  "Всего удалено id картинок: "+replaceCounter4);
 }
