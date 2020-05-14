@@ -1,7 +1,22 @@
 function Run() {
- var versionNum="1.3";
- var range,el,el2,saveNextAfterEl,saveNextAfterEl2,elParent;
- var randomNum=Math.floor((Math.random()*9)).toString()+Math.floor((Math.random()*9)).toString()+Math.floor((Math.random()*9)).toString()+Math.floor((Math.random()*9)).toString()+Math.floor((Math.random()*9)).toString()+Math.floor((Math.random()*9)).toString();
+
+ var versionNum="1.5";
+
+ function thereIsParentBodyDiv(ptr) {
+  while (ptr && ptr.nodeName && ptr.nodeName!="BODY" &&
+   !(ptr.nodeName=="DIV" && ptr.className && ptr.className=="body"))
+   ptr=ptr.parentNode;
+  if (ptr.nodeName=="DIV" && ptr.className && ptr.className=="body")
+   return true;
+  else
+   return false;
+ }
+
+ var range,el,el2,saveNextAfterEl,saveNextAfterEl2;
+ var elParent,i,j,divs,ps,saveClassName;
+ var randomNum=Math.floor((Math.random()*9)).toString()+Math.floor((Math.random()*9)).toString()+
+         Math.floor((Math.random()*9)).toString()+Math.floor((Math.random()*9)).toString()+
+      Math.floor((Math.random()*9)).toString()+Math.floor((Math.random()*9)).toString();
  var selectionBeginId="removePoemOrCiteBeginId_"+randomNum;
  var selectionEndId="removePoemOrCiteEndId"+randomNum;
  var fbw_body=document.getElementById("fbw_body");
@@ -11,17 +26,19 @@ function Run() {
   return;
  } 
  var tr=document.selection.createRange();
- window.external.BeginUndoUnit(document,"снятие форматирования стихом, цитатой или эпиграфом (v"+versionNum+")"); 
+ window.external.BeginUndoUnit(document,"снятие форматирования блочным элементом (v"+versionNum+")"); 
  tr.pasteHTML("<B id="+selectionBeginId+"></B>");
  el=document.getElementById(selectionBeginId);
  var selectionIsNone=tr.compareEndPoints("StartToEnd",tr)==0;
  if (selectionIsNone && fbw_body.contains(el)) {
   while (!(el.nodeName=="BODY" ||
            (el.nodeName=="DIV" &&
-            (el.className=="poem" || el.className=="epigraph" || el.className=="cite")
+            (el.className=="poem" || el.className=="epigraph" || el.className=="cite" ||
+             el.className=="title" || el.className=="annotation" || el.className=="table")
            )
          )) el=el.parentNode;
   if (el.nodeName!="BODY") {
+   saveClassName=el.className;
    elParent=el.parentNode;
    if (el.className=="poem") {
     el2=el.firstChild;
@@ -51,9 +68,34 @@ function Run() {
      }
      el2=el2.nextSibling;
     }
+   } else if (el.className=="title") {
+    divs=el.parentNode.getElementsByTagName("DIV");
+    for (var i=divs.length-1; i>=0; i--)
+      if (divs[i].className && divs[i].className=="epigraph") {
+       ps=divs[i].getElementsByTagName("P");
+       for (j=0; j<ps.length; j++)
+        if (ps[j].className && ps[j].className=="text-author")
+         ps[j].removeAttribute("className");
+       divs[i].removeNode(false);
+      } else if (divs[i].className && divs[i].className=="annotation") {
+       divs[i].removeNode(false);
+      }
+   } else if (el.className=="table") {
+    divs=el.getElementsByTagName("DIV");
+    for (var i=divs.length-1; i>=0; i--)
+     if (divs[i].nodeName=="DIV" && divs[i].className && divs[i].className=="tr")
+      divs[i].removeNode(false);
+     ps=el.getElementsByTagName("P");
+     for (j=0; j<ps.length; j++)
+      if (ps[j].className && (ps[j].className=="td" || ps[j].className=="th"))
+       ps[j].removeAttribute("className");
    }
    saveNextAfterEl=el.nextSibling;
-   el.removeNode(false);
+   if (el.className!="annotation")
+    el.removeNode(false);
+   else
+     if (thereIsParentBodyDiv(el))
+      el.removeNode(false);
    if (saveNextAfterEl==null)
     InflateIt(elParent.lastChild);
    else
@@ -66,5 +108,5 @@ function Run() {
   alert("При запуске скрипта не должно быть выделения. Должен быть просто курсор.");
   el.removeNode(false);
  }
- window.external.EndUndoUnit(document);
+ window.external.EndUndoUnit(document); 
 }
