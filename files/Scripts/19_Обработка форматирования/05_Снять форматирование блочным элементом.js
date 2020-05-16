@@ -1,6 +1,6 @@
 function Run() {
 
- var versionNum="1.5";
+ var versionNum="1.6";
 
  function thereIsParentBodyDiv(ptr) {
   while (ptr && ptr.nodeName && ptr.nodeName!="BODY" &&
@@ -87,8 +87,15 @@ function Run() {
       divs[i].removeNode(false);
      ps=el.getElementsByTagName("P");
      for (j=0; j<ps.length; j++)
-      if (ps[j].className && (ps[j].className=="td" || ps[j].className=="th"))
+      if (ps[j].className && (ps[j].className=="td" || ps[j].className=="th")) {
        ps[j].removeAttribute("className");
+       ps[j].removeAttribute("fbalign");
+       ps[j].removeAttribute("fbvalign");
+       ps[j].removeAttribute("fbcolspan");
+       ps[j].removeAttribute("fbrowspan");
+       ps[j].removeAttribute("id");
+       ps[j].removeAttribute("fbstyle");
+      }
    }
    saveNextAfterEl=el.nextSibling;
    if (el.className!="annotation")
