@@ -1,6 +1,6 @@
-//скрипт «Нумерацию в началах строк - надстрочным текстом»
+//скрипт «Нумерацию 'число пробел' в началах абзацев сделать надстрочным текстом»
 //автор Sclex
-//v1.0
+//v1.1
 
 function Run() {
 
@@ -33,7 +33,7 @@ function Run() {
   MsgBox("Ошибка. Должно быть выделение в тексте книги, а не в поле ввода.");
   return;
  }
- window.external.BeginUndoUnit(document,"нумерацию строк – надстрочным текстом");
+ window.external.BeginUndoUnit(document,"сделывание нумерации в началах абзацев – надстрочным текстом");
  try { window.external.SetStatusBarText("Делаем числа в началах абзацев надстрочным текстом…"); }
  catch(e) {}
  var body=document.getElementById("fbw_body");
