@@ -1,15 +1,15 @@
 <html>
 <head>
- <meta http-equiv="Content-Type" content="text/html; charset=windows-1251">
+ <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
  <meta http-equiv="MSThemeCompatible" content="yes">
  <style>
   body{font-family:Tahoma; font-size:16px;margin:2px;}
  </style>
- <title>Разметить заголовки, найденные по регэкспу</title>
+ <title>Р Р°Р·РјРµС‚РёС‚СЊ Р·Р°РіРѕР»РѕРІРєРё, РЅР°Р№РґРµРЅРЅС‹Рµ РїРѕ СЂРµРіСЌРєСЃРїСѓ</title>
  <script language=JavaScript type="text/javascript">
   window.returnValue=0;
   var params=window.dialogArguments;
-  document.title="Разметить заголовки, найденные по регэкспу v"+params["versionNum"]+". Автор Sclex.";
+  document.title="Р Р°Р·РјРµС‚РёС‚СЊ Р·Р°РіРѕР»РѕРІРєРё, РЅР°Р№РґРµРЅРЅС‹Рµ РїРѕ СЂРµРіСЌРєСЃРїСѓ v"+params["versionNum"]+". РђРІС‚РѕСЂ Sclex.";
   var myWin=params["window"];
 
   function OK() {
@@ -17,7 +17,7 @@
    myWin.eval('function splittingIntoSections_OK(dialogDoc) {'+
     ''+
     ' function getVersionStr() {'+
-    '  return "Разметить заголовки, найденные по регэкспу v"+splittingIntoSections_versionNum+".\\nАвтор Sclex.";'+
+    '  return "Р Р°Р·РјРµС‚РёС‚СЊ Р·Р°РіРѕР»РѕРІРєРё, РЅР°Р№РґРµРЅРЅС‹Рµ РїРѕ СЂРµРіСЌРєСЃРїСѓ v"+splittingIntoSections_versionNum+".\\nРђРІС‚РѕСЂ Sclex.";'+
     ' }'+
     ''+
     ' function getRandomNum(n) {'+
@@ -107,13 +107,13 @@
     ' window.external.BeginUndoUnit(document,"splitting into sections");'+
     ' var mainDocument=document;'+
     ' var regExpEdit=dialogDoc.getElementById("regExpId");'+
-    ' if (!regExpEdit) {alert("Ошибка. Не найдено поле ввода регэкспа.");return}'+
+    ' if (!regExpEdit) {alert("РћС€РёР±РєР°. РќРµ РЅР°Р№РґРµРЅРѕ РїРѕР»Рµ РІРІРѕРґР° СЂРµРіСЌРєСЃРїР°.");return}'+
     ' var caseSensitiveCheckbox=dialogDoc.getElementById("caseSensitiveId");'+
-    ' if (!caseSensitiveCheckbox) {alert("Ошибка. Не найден чекбокс чувствительности к регэкспу.");return}'+
+    ' if (!caseSensitiveCheckbox) {alert("РћС€РёР±РєР°. РќРµ РЅР°Р№РґРµРЅ С‡РµРєР±РѕРєСЃ С‡СѓРІСЃС‚РІРёС‚РµР»СЊРЅРѕСЃС‚Рё Рє СЂРµРіСЌРєСЃРїСѓ.");return}'+
     ' var captureBeforeSelect=dialogDoc.getElementById("captureBeforeId");'+
-    ' if (!captureBeforeSelect) {alert("Ошибка. Не найден выпадающий список, сколько строк захватывать до.");return}'+
+    ' if (!captureBeforeSelect) {alert("РћС€РёР±РєР°. РќРµ РЅР°Р№РґРµРЅ РІС‹РїР°РґР°СЋС‰РёР№ СЃРїРёСЃРѕРє, СЃРєРѕР»СЊРєРѕ СЃС‚СЂРѕРє Р·Р°С…РІР°С‚С‹РІР°С‚СЊ РґРѕ.");return}'+
     ' var captureAfterSelect=dialogDoc.getElementById("captureAfterId");'+
-    ' if (!captureAfterSelect) {alert("Ошибка. Не найден выпадающий список, сколько строк захватывать после.");return}'+
+    ' if (!captureAfterSelect) {alert("РћС€РёР±РєР°. РќРµ РЅР°Р№РґРµРЅ РІС‹РїР°РґР°СЋС‰РёР№ СЃРїРёСЃРѕРє, СЃРєРѕР»СЊРєРѕ СЃС‚СЂРѕРє Р·Р°С…РІР°С‚С‹РІР°С‚СЊ РїРѕСЃР»Рµ.");return}'+
     ' var captureBeforeCnt=eval(captureBeforeSelect.value);'+
     ' var captureAfterCnt=eval(captureAfterSelect.value);'+
     ' try {'+
@@ -121,7 +121,7 @@
     ' }'+
     ' catch(e) {'+
     '  if (e instanceof RegExpError) {'+
-    '   alert(getVersionStr()+"\\n\\nОшибка при компиляции регэкспа.\\nПожалуйста, проверьте, скорей всего вы ввели некорректный регэксп.");'+
+    '   alert(getVersionStr()+"\\n\\nРћС€РёР±РєР° РїСЂРё РєРѕРјРїРёР»СЏС†РёРё СЂРµРіСЌРєСЃРїР°.\\nРџРѕР¶Р°Р»СѓР№СЃС‚Р°, РїСЂРѕРІРµСЂСЊС‚Рµ, СЃРєРѕСЂРµР№ РІСЃРµРіРѕ РІС‹ РІРІРµР»Рё РЅРµРєРѕСЂСЂРµРєС‚РЅС‹Р№ СЂРµРіСЌРєСЃРї.");'+
     '   return;'+
     '  }'+
     ' }'+
@@ -134,10 +134,10 @@
     '  ptrInFbwBody=ptrInFbwBody.nextSibling;'+
     ' }'+
     ' window.external.EndUndoUnit(document);'+
-    ' alert(getVersionStr()+"\\n\\nОбработка завершена.\\nРазмечено заголовков: "+newTitleCnt+".");'+
+    ' alert(getVersionStr()+"\\n\\nРћР±СЂР°Р±РѕС‚РєР° Р·Р°РІРµСЂС€РµРЅР°.\\nР Р°Р·РјРµС‡РµРЅРѕ Р·Р°РіРѕР»РѕРІРєРѕРІ: "+newTitleCnt+".");'+
     '}');}
    catch (e) {
-    alert("Произошла ошибка. Возможная причина –\nвы запускаете обработку после\nтого, как создали новый документ\nв основном окне FBE. В таком\nслучае перезапустите скрипт.");
+    alert("РџСЂРѕРёР·РѕС€Р»Р° РѕС€РёР±РєР°. Р’РѕР·РјРѕР¶РЅР°СЏ РїСЂРёС‡РёРЅР° вЂ“\nРІС‹ Р·Р°РїСѓСЃРєР°РµС‚Рµ РѕР±СЂР°Р±РѕС‚РєСѓ РїРѕСЃР»Рµ\nС‚РѕРіРѕ, РєР°Рє СЃРѕР·РґР°Р»Рё РЅРѕРІС‹Р№ РґРѕРєСѓРјРµРЅС‚\nРІ РѕСЃРЅРѕРІРЅРѕРј РѕРєРЅРµ FBE. Р’ С‚Р°РєРѕРј\nСЃР»СѓС‡Р°Рµ РїРµСЂРµР·Р°РїСѓСЃС‚РёС‚Рµ СЃРєСЂРёРїС‚.");
     return;
    } 
    myWin.splittingIntoSections_OK(document);
@@ -155,11 +155,11 @@
 
  </script>
 <body onbeforeunload="myBeforeUnload();">
- Регэксп для поиска абзацев, которые следует превратить в заголовки, а перед ними сделать разрыв раздела:<br>
+ Р РµРіСЌРєСЃРї РґР»СЏ РїРѕРёСЃРєР° Р°Р±Р·Р°С†РµРІ, РєРѕС‚РѕСЂС‹Рµ СЃР»РµРґСѓРµС‚ РїСЂРµРІСЂР°С‚РёС‚СЊ РІ Р·Р°РіРѕР»РѕРІРєРё, Р° РїРµСЂРµРґ РЅРёРјРё СЃРґРµР»Р°С‚СЊ СЂР°Р·СЂС‹РІ СЂР°Р·РґРµР»Р°:<br>
  <input type=text style="width:600px;" id=regExpId><br>
- <input type=checkbox id=caseSensitiveId> учитывать регистр при поиске по регэкспу<br>
- <select id=captureBeforeId><option selected value=0>0<option value=1>1<option value=2>2<option value=3>3</option></select> сколько захватывать в заголовок абзацев, находящихся <b>перед</b> абзацем, найденным по регэкспу<br>
- <select id=captureAfterId><option selected value=0>0<option value=1>1<option value=2>2<option value=3>3</option></select> сколько захватывать в заголовок абзацев, находящихся <b>после</b> абзаца, найденного по регэкспу<br>
- <input type=button value="Обработать" onclick="OK();" style="width:120px;"><input type=button value="Обработать и выйти" onclick="OK(); window.close();" style="width:200px;"><input type=button onclick="window.close();" value="Выйти" style="width:120px;"> 
+ <input type=checkbox id=caseSensitiveId> СѓС‡РёС‚С‹РІР°С‚СЊ СЂРµРіРёСЃС‚СЂ РїСЂРё РїРѕРёСЃРєРµ РїРѕ СЂРµРіСЌРєСЃРїСѓ<br>
+ <select id=captureBeforeId><option selected value=0>0<option value=1>1<option value=2>2<option value=3>3</option></select> СЃРєРѕР»СЊРєРѕ Р·Р°С…РІР°С‚С‹РІР°С‚СЊ РІ Р·Р°РіРѕР»РѕРІРѕРє Р°Р±Р·Р°С†РµРІ, РЅР°С…РѕРґСЏС‰РёС…СЃСЏ <b>РїРµСЂРµРґ</b> Р°Р±Р·Р°С†РµРј, РЅР°Р№РґРµРЅРЅС‹Рј РїРѕ СЂРµРіСЌРєСЃРїСѓ<br>
+ <select id=captureAfterId><option selected value=0>0<option value=1>1<option value=2>2<option value=3>3</option></select> СЃРєРѕР»СЊРєРѕ Р·Р°С…РІР°С‚С‹РІР°С‚СЊ РІ Р·Р°РіРѕР»РѕРІРѕРє Р°Р±Р·Р°С†РµРІ, РЅР°С…РѕРґСЏС‰РёС…СЃСЏ <b>РїРѕСЃР»Рµ</b> Р°Р±Р·Р°С†Р°, РЅР°Р№РґРµРЅРЅРѕРіРѕ РїРѕ СЂРµРіСЌРєСЃРїСѓ<br>
+ <input type=button value="РћР±СЂР°Р±РѕС‚Р°С‚СЊ" onclick="OK();" style="width:120px;"><input type=button value="РћР±СЂР°Р±РѕС‚Р°С‚СЊ Рё РІС‹Р№С‚Рё" onclick="OK(); window.close();" style="width:200px;"><input type=button onclick="window.close();" value="Р’С‹Р№С‚Рё" style="width:120px;"> 
  </body>
 </html>
