@@ -5,11 +5,11 @@
  <style>
   body{font-family:Tahoma; font-size:16px;margin:2px;}
  </style>
- <title>Разбиение на секции</title>
+ <title>Разметить заголовки, найденные по регэкспу</title>
  <script language=JavaScript type="text/javascript">
   window.returnValue=0;
   var params=window.dialogArguments;
-  document.title="Разбиение на секции v"+params["versionNum"]+". Автор Sclex.";
+  document.title="Разметить заголовки, найденные по регэкспу v"+params["versionNum"]+". Автор Sclex.";
   var myWin=params["window"];
 
   function OK() {
@@ -17,7 +17,7 @@
    myWin.eval('function splittingIntoSections_OK(dialogDoc) {'+
     ''+
     ' function getVersionStr() {'+
-    '  return "Разбиение на секции v"+splittingIntoSections_versionNum+".\\nАвтор Sclex.";'+
+    '  return "Разметить заголовки, найденные по регэкспу v"+splittingIntoSections_versionNum+".\\nАвтор Sclex.";'+
     ' }'+
     ''+
     ' function getRandomNum(n) {'+
@@ -155,12 +155,11 @@
 
  </script>
 <body onbeforeunload="myBeforeUnload();">
- Регэксп для поиска строки, которую следует превратить в заголовок, а перед ней сделать разрыв секции:<br>
+ Регэксп для поиска абзацев, которые следует превратить в заголовки, а перед ними сделать разрыв раздела:<br>
  <input type=text style="width:600px;" id=regExpId><br>
  <input type=checkbox id=caseSensitiveId> учитывать регистр при поиске по регэкспу<br>
- <select id=captureBeforeId><option selected value=0>0<option value=1>1<option value=2>2<option value=3>3</option></select> сколько строк захватывать в заголовок <b>перед</b> строкой, найденной по регэкспу<br>
- <select id=captureAfterId><option selected value=0>0<option value=1>1<option value=2>2<option value=3>3</option></select> сколько строк захватывать в заголовок <b>после</b> строки, найденной по регэкспу<br>
+ <select id=captureBeforeId><option selected value=0>0<option value=1>1<option value=2>2<option value=3>3</option></select> сколько захватывать в заголовок абзацев, находящихся <b>перед</b> абзацем, найденным по регэкспу<br>
+ <select id=captureAfterId><option selected value=0>0<option value=1>1<option value=2>2<option value=3>3</option></select> сколько захватывать в заголовок абзацев, находящихся <b>после</b> абзаца, найденного по регэкспу<br>
  <input type=button value="Обработать" onclick="OK();" style="width:120px;"><input type=button value="Обработать и выйти" onclick="OK(); window.close();" style="width:200px;"><input type=button onclick="window.close();" value="Выйти" style="width:120px;"> 
- 
-</body>
+ </body>
 </html>
