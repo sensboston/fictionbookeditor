@@ -1,7 +1,7 @@
 //Скрипт «Создать сноски из выделенных абзацев»
 //Автор Sclex
 
-var notesFromGroupedParagraphs_versionNum="1.0";
+var notesFromSelectedParagraphs_versionNum="1.1";
 
 function Run() {
  var dialogWidth="700px";
@@ -11,7 +11,7 @@ function Run() {
  coll["fbwBody"]=fbwBody;
  coll["mainDocument"]=document;
  coll["window"]=window;
- coll["versionNum"]=notesFromGroupedParagraphs_versionNum;
+ coll["versionNum"]=notesFromSelectedParagraphs_versionNum;
  var modes=window.showModelessDialog("HTML/Создать сноски из выделенных абзацев - задание параметров.htm",coll,
      "dialogHeight: "+dialogHeight+"; dialogWidth: "+dialogWidth+"; "+
      "center: Yes; help: No; resizable: Yes; status: No;");

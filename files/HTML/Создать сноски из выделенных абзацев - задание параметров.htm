@@ -26,6 +26,7 @@
     ' var currNewNoteNumber=1;'+
     ' var removeAllTagsRegExp;'+
     ' var whatDoWeDo=null;'+
+    ' var openingAndClosingTagRegExp=new RegExp("(<STRONG><\\/STRONG>)|(<EM><\\/EM>)|(<SUP><\\/SUP>)|(<SUB><\\/SUB>)|(<SPAN( [^>]*)?><\\/SPAN>)|(<B><\\/B>)|(<I><\\/I>)|(<STRIKE><\\/STRIKE>)|(<FONT( [^\>]+)?><\\/FONT>)", "ig");'+
     ' try { var nbspChar=window.external.GetNBSP(); var nbspEntity; if (nbspChar.charCodeAt(0)==160) nbspEntity="&nbsp;"; else nbspEntity=nbspChar; }'+
     ' catch(e) { var nbspChar=String.fromCharCode(160); var nbspEntity="&nbsp;";};'
     );
@@ -150,7 +151,6 @@
     ' var firstNoteFlag=true;'+
     ' var firstNonTagSymbolRegExp=new RegExp("^((<[^>]+>)*)[^<>](.*)$","m");'+
     ' var removeNotAllTagsRegExp=new RegExp("<\\/?(?!(IMG|A))[a-z]+( [^>]+)?>","ig");'+
-    ' var openingAndClosingTagRegExp=new RegExp("(<STRONG><\\/STRONG>)|(<EM><\\/EM>)|(<SUP><\\/SUP>)|(<SUB><\\/SUB>)|(<SPAN( [^>]*)?><\\/SPAN>)|(<B><\\/B>)|(<I><\\/I>)|(<STRIKE><\\/STRIKE>)|(<FONT( [^\>]+)?><\\/FONT>)", "ig");'+
     ''+
     ' function processP(p) {'+
     ' '+
@@ -335,7 +335,7 @@
     '   pInnerHTML=removeSymbolsBeyondTags(pInnerHTML,myPos+1,refMarkerStrLen,"<A id=\'tmpId_"+rndm2+"\' class=note href=\'#tmpId_"+rndm3+"\'>[0]</A>");'+
     '   pInnerHTML=pInnerHTML.replace(/&nbsp;/g,nbspChar);'+
     '   pInnerHTML=removeSpacesBeyondTags(pInnerHTML,myPos+1);'+
-    '   p.innerHTML=pInnerHTML;'+
+    '   p.innerHTML=pInnerHTML.replace(openingAndClosingTagRegExp,"");'+
     '   newRef=document.getElementById("tmpId_"+rndm2);'+
     '   newRef.removeAttribute("id");'+
     '   pInnerHTML=p.innerHTML;'+
@@ -458,7 +458,7 @@
     '}'); //конец функции addNotesInMyWin
    myWin.eval(
     ' function getVersionStr() {'+
-    '  return "Создать сноски из выделенных абзацев v"+notesFromGroupedParagraphs_versionNum+".\\nАвтор Sclex.";'+
+    '  return "Создать сноски из выделенных абзацев v"+notesFromSelectedParagraphs_versionNum+".\\nАвтор Sclex.";'+
     ' }');
    myWin.eval(
     ' function renumberNotes() {'+
