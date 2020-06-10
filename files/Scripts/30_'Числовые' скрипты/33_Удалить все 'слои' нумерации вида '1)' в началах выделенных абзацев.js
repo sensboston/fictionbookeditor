@@ -1,6 +1,6 @@
 //скрипт «Удалить все 'слои' нумерации вида "1)" в началах выделенных абзацев»
 //автор Sclex
-//v1.1
+//v1.2
 
 function Run() {
 
@@ -97,7 +97,7 @@ function Run() {
   MsgBox("Ошибка. Должно быть выделение в тексте книги, а не в поле ввода.");
   return;
  }
- window.external.BeginUndoUnit(document,"удаление все 'слои' нумерации вида '1)' в началах выделенных абзацев");
+ window.external.BeginUndoUnit(document,"удаление всех 'слоев' нумерации вида '1)' в началах выделенных абзацев");
  try { window.external.SetStatusBarText("Удаляем все 'слои' нумерации вида '1)' в началах выделенных абзацев..."); }
  catch(e) {}
  var body=document.getElementById("fbw_body");
