@@ -1,6 +1,6 @@
 //скрипт «Удалить все 'слои' нумерации вида "1)" в началах выделенных абзацев»
 //автор Sclex
-//v1.2
+//v1.3
 
 function Run() {
 
@@ -88,6 +88,7 @@ function Run() {
  var ss="(</?(EM|I|B|STRONG)\\b[^>]*?>)*?";
  var re0=new RegExp("^"+ss+"([0-9]+?)"+ss+"( |"+nbspChar+")( |"+nbspChar+")*","i"); 
  var errMsg="Нет выделения.\n\nПеред запуском скрипта нужно выделить абзацы, которые будут обработаны.";
+
  tr=document.selection.createRange();
  if (!tr || tr.compareEndPoints("StartToEnd",tr)==0) {
   MsgBox(errMsg);
@@ -130,36 +131,28 @@ function Run() {
   ptr=el;
   blockStartNode=document.getElementById(startId);
   blockEndNode=document.getElementById(endId);
+  
   var blockStartP=blockStartNode;
   while (blockStartP && blockStartP.nodeName!="P" && blockStartP.nodeName!="BODY")
    blockStartP=blockStartP.parentNode;
+  
+  window.clipboardData.setData("text",document.getElementById("fbw_body").outerHTML);
   var blockEndP=blockEndNode;
   while (blockEndP && blockEndP.nodeName!="P" && blockEndP.nodeName!="BODY")
    blockEndP=blockEndP.parentNode;
+  if (blockEndP.nodeName=="BODY" && blockEndNode.previousSibling && blockEndNode.previousSibling.nodeName=="P")
+   blockEndP=blockEndNode.previousSibling;
+   
+  var nextPAfterBlockEndP=null;
+  if (blockEndNode == blockEndNode.parentNode.firstChild) {
+   nextPAfterBlockEndP=blockEndNode.parentNode;
+   blockEndP=null;
+  }
   ptr=blockStartP;
-  while (!processingEnded) {
+//  alert("blockStartP:\n\n"+blockStartP.outerHTML+"\n\nblockEndNode:\n\n"+blockEndNode.outerHTML+"\n\nblockEndP:\n\n"+blockEndP.outerHTML);
+  while (ptr) {
+//   alert("ptr.outerHTML:\n\n"+ptr.outerHTML);
 //   alert("Итерация while.");
-   // nodeType=1 для элемента (тэга) и nodeType=3 для текста
-   // если встретили маркер начала блока, ...
-   if (ptr.nodeType==1 && ptr.nodeName==MyTagName &&
-       ptr.getAttribute("id")==startId) {
-    // меняем флаг, т.к. попали внутрь выделения
-    insideSelection=true;
-    // запомним ноду ссылки, чтобы потом удалить ее
-    var blockStartNode=ptr;
-    var pp=ptr;
-    while (pp && pp.nodeName.toUpperCase()!="BODY" && pp.nodeName.toUpperCase()!="P") pp=pp.parentNode;
-    if (pp.nodeName.toUpperCase()=="P") {
-     //processFlag=true;
-//     alert("Первый processP");
-     processP(pp);
-     if (pp==blockEndP) break;
-     ptr=pp;
-     while (ptr.nextSibling==null) ptr=ptr.parentNode;
-     ptr=ptr.nextSibling;
-     continue;
-    }
-   }
    if (ptr.nodeName.toUpperCase()=="P") {
 //    alert("Второй processP");
     processP(ptr);
@@ -168,17 +161,10 @@ function Run() {
      ptr=ptr.nextSibling;
     continue;
    }
-   // аналогично для маркера конца выделения
-   if (ptr.nodeType==1 && ptr.nodeName==MyTagName &&
-       ptr.getAttribute("id")==endId) {
-    insideSelection=false;
-    processingEnded=true;
-    var blockEndNode=ptr;
-   }
    // если нашли текст и находимся внутри P и внутри выделения...
    //if (insideSelection && ptr.nodeName=="P") processP(ptr);
    // переходим на следующий узел
-     if (ptr.firstChild!=null) {
+   if (ptr.firstChild!=null && ptr.nodeName!="P") {
      nextPtr=ptr.firstChild; // либо углубляемся...
    } else {
      nextPtr=ptr;
@@ -188,8 +174,8 @@ function Run() {
      if (nextPtr && nextPtr!=body) nextPtr=nextPtr.nextSibling; //и переходим на соседний элемент
      else nextPtr=null;
    }
-   if (!nextPtr) break;
    ptr=nextPtr;
+   if (ptr==nextPAfterBlockEndP) break;
   }
   // удаляем маркеры блока
   var tr1=document.body.createTextRange();
