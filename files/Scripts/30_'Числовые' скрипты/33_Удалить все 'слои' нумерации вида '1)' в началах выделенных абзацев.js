@@ -1,6 +1,6 @@
 //скрипт «Удалить все 'слои' нумерации вида "1)" в началах выделенных абзацев»
 //автор Sclex
-//v1.0
+//v1.1
 
 function Run() {
 
@@ -20,7 +20,7 @@ function Run() {
   var nbspEntity="&nbsp;";
  };
  
-  var re3=new RegExp("^(\\d+\\\)( |"+nbspChar+")*)+","");
+ var re3=new RegExp("^(\\d+\\\)( |"+nbspChar+")*)+","");
  
  function removeSymbolsBeyondTags(str,beginIndex,howManySymbolsToRemove,substrToInsert) {
   var i=0;
@@ -70,8 +70,8 @@ function Run() {
 //     alert("Будем заменять вот на что:\n\n"+pInnerHTML);
      p.innerHTML="1";
      p.innerHTML=pInnerHTML;
-     BlockStartNode=document.getElementById(startId);
-     BlockEndNode=document.getElementById(endId);
+     blockStartNode=document.getElementById(startId);
+     blockEndNode=document.getElementById(endId);
     }
     cnt++;
  }
@@ -87,7 +87,7 @@ function Run() {
  var processFlag=false;
  var ss="(</?(EM|I|B|STRONG)\\b[^>]*?>)*?";
  var re0=new RegExp("^"+ss+"([0-9]+?)"+ss+"( |"+nbspChar+")( |"+nbspChar+")*","i"); 
- var errMsg="Нет выделения.\n\nПеред запуском скрипта нужно выделить текст, который будет обработан, а именно: будут сделаны надстрочными индексами числа в началах абзацев, попавших в выделение, после которых (чисел) идет пробел. И если после числа в начале абзаца идет несколько пробелов (простых или неразрывных), они будут заменены на один пробел.";
+ var errMsg="Нет выделения.\n\nПеред запуском скрипта нужно выделить абзацы, которые будут обработаны.";
  tr=document.selection.createRange();
  if (!tr || tr.compareEndPoints("StartToEnd",tr)==0) {
   MsgBox(errMsg);
@@ -128,6 +128,15 @@ function Run() {
   var insideSelection = false; // true, когда текущая позиция внутри выделенного текста
   var processingEnded=false; // true, когда обработка закончена и пора выходить
   ptr=el;
+  blockStartNode=document.getElementById(startId);
+  blockEndNode=document.getElementById(endId);
+  var blockStartP=blockStartNode;
+  while (blockStartP && blockStartP.nodeName!="P" && blockStartP.nodeName!="BODY")
+   blockStartP=blockStartP.parentNode;
+  var blockEndP=blockEndNode;
+  while (blockEndP && blockEndP.nodeName!="P" && blockEndP.nodeName!="BODY")
+   blockEndP=blockEndP.parentNode;
+  ptr=blockStartP;
   while (!processingEnded) {
 //   alert("Итерация while.");
    // nodeType=1 для элемента (тэга) и nodeType=3 для текста
@@ -137,13 +146,14 @@ function Run() {
     // меняем флаг, т.к. попали внутрь выделения
     insideSelection=true;
     // запомним ноду ссылки, чтобы потом удалить ее
-    var BlockStartNode=ptr;
+    var blockStartNode=ptr;
     var pp=ptr;
     while (pp && pp.nodeName.toUpperCase()!="BODY" && pp.nodeName.toUpperCase()!="P") pp=pp.parentNode;
     if (pp.nodeName.toUpperCase()=="P") {
      //processFlag=true;
 //     alert("Первый processP");
      processP(pp);
+     if (pp==blockEndP) break;
      ptr=pp;
      while (ptr.nextSibling==null) ptr=ptr.parentNode;
      ptr=ptr.nextSibling;
@@ -153,6 +163,7 @@ function Run() {
    if (ptr.nodeName.toUpperCase()=="P") {
 //    alert("Второй processP");
     processP(ptr);
+    if (ptr==blockEndP) break;
     while (ptr.nextSibling==null) ptr=ptr.parentNode;
      ptr=ptr.nextSibling;
     continue;
@@ -162,7 +173,7 @@ function Run() {
        ptr.getAttribute("id")==endId) {
     insideSelection=false;
     processingEnded=true;
-    var BlockEndNode=ptr;
+    var blockEndNode=ptr;
    }
    // если нашли текст и находимся внутри P и внутри выделения...
    //if (insideSelection && ptr.nodeName=="P") processP(ptr);
@@ -183,19 +194,19 @@ function Run() {
   // удаляем маркеры блока
   var tr1=document.body.createTextRange();
   if (!cursorPos) {
-   BlockStartNode=document.getElementById(startId);
-   BlockEndNode=document.getElementById(endId);
-   tr1.moveToElementText(BlockStartNode);
+   blockStartNode=document.getElementById(startId);
+   blockEndNode=document.getElementById(endId);
+   tr1.moveToElementText(blockStartNode);
    var tr2=document.body.createTextRange();
-   tr2.moveToElementText(BlockEndNode);
+   tr2.moveToElementText(blockEndNode);
    tr1.setEndPoint("StartToStart",tr2);
    tr1.select();
   } else {
    tr1.moveToElementText(cursorPos);
    tr1.select();
   }
-  BlockStartNode.parentNode.removeChild(BlockStartNode);
-  BlockEndNode.parentNode.removeChild(BlockEndNode);
+  blockStartNode.parentNode.removeChild(blockStartNode);
+  blockEndNode.parentNode.removeChild(blockEndNode);
  if (processFlag) {      /* alert("Третий processP"); */ processP(pp); }
  try { window.external.SetStatusBarText("ОК"); }
  catch(e) {} 
