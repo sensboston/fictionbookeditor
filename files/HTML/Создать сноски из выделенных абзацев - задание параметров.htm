@@ -314,24 +314,68 @@
     '  return(name1);'+
     ' } '
    );
+  myWin.eval(
+    ' function checkIfTagsAreInFoundSubstr(s,fromIndex,substrLen) {'+
+    ' '+
+    '  var regExp10=/<[^>]*>|[^<>]+/gi;'+
+    '  var srchConst1=/^<A /ig;'+
+    '  var srchConst2=/^<A>/ig;'+
+    '  var srchConst3=/^<\\/A>/ig;'+
+    '  var srchConst4=/^<IMG/ig;'+
+    '  var symbolsSkipped;'+
+    '  var insideATag;'+
+    '  var containsTagFlag;'+
+    ' '+
+    '  function replaceFunc1(foundSubstr) {'+
+    '    if (foundSubstr.search(srchConst4)!=-1 && symbolsSkipped>=fromIndex && symbolsSkipped<fromIndex+substrLen-1)'+
+    '     containsTagFlag=false;'+
+    '    if (foundSubstr.charAt(0)!="<") {'+
+    '     if (insideATag && symbolsSkipped<fromIndex+substrLen-1 && fromIndex-1<symbolsSkipped+foundSubstr.length)'+
+    '      containsTagFlag=true;'+
+    '     symbolsSkipped+=foundSubstr.length;'+
+    '    }'+
+    '   if (foundSubstr.search(srchConst1)!=-1 || foundSubstr.search(srchConst2)!=-1)'+
+    '    insideATag=true;'+
+    '   if (foundSubstr.search(srchConst3)!=-1)'+
+    '    insideATag=false;'+
+    '  }'+
+    '  '+
+    '  symbolsSkipped=0;'+
+    '  insideATag=false;'+
+    '  containsTagFlag=false;'+
+    '  s.replace(regExp10,replaceFunc1);'+
+    '  return containsTagFlag;'+
+    ' }');
    myWin.eval(
     ' function processP_2(p) {'+
 //    '  alert("processP_2:\\n\\n"+p.outerHTML);'+
-    '  var myPos,newRef,previousNote,previousNoteHref,previousNoteSection,str3,rndm2,rndm3,el;'+
+    '  var i,myPos,newRef,previousNote,previousNoteHref,previousNoteSection,str3,rndm2,rndm3,el;'+
     '  var pInnerHTML=p.innerHTML;'+
+    '  var pInnerHTML_begin="";'+
+    '  var symbolsBeforeCnt=0;'+
+    '  var checkResult=false;'+
+    '  var howManySymbolsSkip=0;'+
+    '  var removeNotAllTagsRegExp=new RegExp("<\\/?(?!(IMG|A))[a-z]+( [^>]+)?>","ig");'+
     '  refMarkerStr=makeEntities("'+document.getElementById("refMarkerStr").value+'");'+
     '  refMarkerStrLen=refMarkerStr.length;'+
     '  removeAllTagsRegExp=new RegExp("<\\/?[a-z]+( [^>]+)?>","ig");'+
 //    '  alert("a: "+pInnerHTML.replace(removeAllTagsRegExp,""));'+
     '  while (pInnerHTML.replace(removeAllTagsRegExp,"").indexOf(refMarkerStr)>=0) {'+
-//    '   alert("indexOf(refMarkerStr)>=0");'+
     '   myPos=pInnerHTML.replace(removeAllTagsRegExp,"").indexOf(refMarkerStr);'+
+//    '   alert("myPos: "+myPos+"\\n\\npInnerHTML:\\n\\n"+ pInnerHTML+ "\\n\\nrefMarkerStr:\\n\\n"+refMarkerStr+"\\n\\nrefMarkerStrLen: "+refMarkerStrLen+"\\n\\n"+'+
+ //   '    checkIfTagsAreInFoundSubstr(pInnerHTML,myPos+1,refMarkerStrLen));'+
+    '   var checkResult=checkIfTagsAreInFoundSubstr(pInnerHTML,myPos+1,refMarkerStrLen);'+
+//   '   alert("checkResult: "+checkResult);'+
     '   rndm2=Math.round(Math.random()*100000).toString();'+
     '   while(document.getElementById("tmpId_"+rndm2))'+
     '    rndm2=Math.round(Math.random()*100000).toString();'+
     '   rndm3=Math.round(Math.random()*100000).toString();'+
     '   while(document.getElementById("tmpId_"+rndm3))'+
     '    rndm3=Math.round(Math.random()*100000).toString();'+
+    '   if (checkResult) {'+
+    '    pInnerHTML=removeSymbolsBeyondTags(pInnerHTML,myPos+1,refMarkerStrLen,"RefMarkerStr");'+
+    '    continue;'+
+    '   }'+
     '   pInnerHTML=removeSymbolsBeyondTags(pInnerHTML,myPos+1,refMarkerStrLen,"<A id=\'tmpId_"+rndm2+"\' class=note href=\'#tmpId_"+rndm3+"\'>[0]</A>");'+
     '   pInnerHTML=pInnerHTML.replace(/&nbsp;/g,nbspChar);'+
     '   pInnerHTML=removeSpacesBeyondTags(pInnerHTML,myPos+1);'+
@@ -399,20 +443,28 @@
     '   }'+ // конец else if (previousNote=="Нет предыдущей ссылки.")
 //    '   alert("previousNoteHref:\\n\\n"+previousNoteHref);'+
     '  }'+ // конец цикла while (pInnerHTML.replace(removeAllTagsRegExp,"").indexOf(refMarkerStr)>=0)
-    '  p.innerHTML=pInnerHTML;'+
+    '  p.innerHTML=pInnerHTML.replace(/RefMarkerStr/g,refMarkerStr);'+
     ' }' // конец функции processP_2
    );
    myWin.eval(
     ' function processP_3(p) {'+
     '  var myPos,pInnerHTML_2;'+
-    '  var pInnerHTML=p.innerHTML;'+
+    '  var pInnerHTMLSrc=p.innerHTML;'+
+    '  var pInnerHTML2=null;'+
+    '  var pInnerHTML;'+
     '  refMarkerStr=makeEntities("'+document.getElementById("refMarkerStr").value+'");'+
     '  refMarkerStrLen=refMarkerStr.length;'+
     '  removeAllTagsRegExp=new RegExp("<\\/?[a-z]+( [^>]+)?>","ig");'+
-    '  pInnerHTML=pInnerHTML.replace(removeAllTagsRegExp,"");'+
+    '  var removeNotAllTagsRegExp=new RegExp("<\\/?(?!(IMG|A))[a-z]+( [^>]+)?>","ig");'+
+    '  var symbolsBefore=0;'+
+    '  pInnerHTML=pInnerHTMLSrc.replace(removeAllTagsRegExp,"");'+
+    '  pInnerHTML2=pInnerHTMLSrc.replace(removeNotAllTagsRegExp,"");'+
     '  if (pInnerHTML.indexOf(refMarkerStr)>=0) {'+
     '   while (pInnerHTML.indexOf(refMarkerStr)>=0) {'+
-    '    refMarkersCnt++;'+
+//    '    alert("pInnerHTML2:\\n\\n"+pInnerHTML2+"\\n\\nsymbolsBefore+pInnerHTML.indexOf(refMarkerStr): "+(symbolsBefore+pInnerHTML.indexOf(refMarkerStr))+"\\n\\nrefMarkerStrLen: "+refMarkerStrLen+"\\n\\nCheck вот такой: "+checkIfTagsAreInFoundSubstr(pInnerHTML2,symbolsBefore+pInnerHTML.indexOf(refMarkerStr)+1,refMarkerStrLen));'+
+    '    if (!checkIfTagsAreInFoundSubstr(pInnerHTML2,symbolsBefore+pInnerHTML.indexOf(refMarkerStr)+1,refMarkerStrLen))'+
+    '     refMarkersCnt++;'+
+    '    symbolsBefore+=pInnerHTML.indexOf(refMarkerStr)+refMarkerStrLen;'+
     '    pInnerHTML=pInnerHTML.substr(pInnerHTML.indexOf(refMarkerStr)+refMarkerStrLen);'+
     '   }'+
     '  }'+
