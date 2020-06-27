@@ -465,7 +465,9 @@
     '     previousNoteSection.insertAdjacentHTML("afterend",'+
     '                  "<DIV class=section id=tmpId_"+rndm3+">"+'+
     '                     "<DIV class=title><P>0</P></DIV>"+'+
-    '                     notesTexts[currNewNoteNumber.toString()]);'+
+    '                     notesTexts[currNewNoteNumber.toString()]+'+
+    '                  "</DIV>");'+
+    '     InflateIt(previousNoteSection.nextSibling);'+
     '    }'+
     '   else if (previousNote=="Нет предыдущей ссылки.") {'+
     '    '+
@@ -483,7 +485,7 @@
     '                     notesTexts[currNewNoteNumber.toString()]+'+
     '                  "</DIV>";'+
     '      notesBody=fbwBody.appendChild(el);'+
-    '      window.external.inflateBlock(notesBody);'+
+    '      InflateIt(notesBody);'+
 //    '     previousNoteSection=document.getElementById(previousNoteHref);'+
 //    '     previousNoteSection.insertAdjacentHTML("afterend",str3);'+
 //    '     newRef.setAttribute("href")="#tmpId_"+rndm3;'+
@@ -491,17 +493,22 @@
     '    }'+ // if (!notesBody)
     '    else {'+
     '     el=notesBody.firstChild;'+
-    '     if (el && el.nodeName && el.nodeName=="DIV"  && el.className=="title")'+
+    '     if (el && el.nodeName && el.nodeName=="DIV"  && el.className=="title") {'+
     '      el.insertAdjacentHTML("afterend",'+
     '                  "<DIV class=section id=tmpId_"+rndm3+">"+'+
     '                     "<DIV class=title><P>0</P></DIV>"+'+
-    '                     notesTexts[currNewNoteNumber.toString()]);'+
+    '                     notesTexts[currNewNoteNumber.toString()]+'+
+    '                   "</DIV>");'+
+    '      InflateIt(el.nextSibling);'+
+    '     }'+
     '     else {'+
     '      notesBody.insertAdjacentHTML("afterbegin",'+
     '                  "<DIV class=title><P>Примечания</P></DIV>"+'+
     '                  "<DIV class=section id=tmpId_"+rndm3+">"+'+
     '                     "<DIV class=title><P>0</P></DIV>"+'+
-    '                     notesTexts[currNewNoteNumber.toString()]);'+
+    '                     notesTexts[currNewNoteNumber.toString()]+'+
+    '                  "</DIV>");'+
+//    '      InflateIt(notesBody.firstChild);'+
     '     }'+
     '    }'+
     '   }'+ // конец else if (previousNote=="Нет предыдущей ссылки.")
@@ -889,12 +896,12 @@
  </script>
 <body onbeforeunload="myBeforeUnload();">
  Выберите маркер для поиска знаков сноски:<br>
- <label for="radio1"><input type=radio id="radio1" name=noteSign checked value="[1]"> вида [1]</label>
- <label for="radio2"><input type=radio id="radio2" name=noteSign value="{1}"> вида {1}</label>
- <label for="radio3"><input type=radio id="radio3" name=noteSign value="[~1~]"> вида [~1~]</label>
- <label for="radio4"><input type=radio id="radio4" name=noteSign value="{~1~}"> вида {~1~}</label>
- <label for="radio5"><input type=radio id="radio5" name=noteSign value="*"> вида *</label><br>
- <label for="radio20"><input type=radio id="radio20" name=noteSign value="own">задать свой:</label>
+ <label for="radio1"><input type=radio id="radio1" name=noteSign checked> вида [1]</label>
+ <label for="radio2"><input type=radio id="radio2" name=noteSign> вида {1}</label>
+ <label for="radio3"><input type=radio id="radio3" name=noteSign"> вида [~1~]</label>
+ <label for="radio4"><input type=radio id="radio4" name=noteSign> вида {~1~}</label>
+ <label for="radio5"><input type=radio id="radio5" name=noteSign> вида *</label><br>
+ <label for="radio20"><input type=radio id="radio20" name=noteSign>задать свой:</label>
  <div style="padding-left:30px; padding-right:0; padding-top:0; padding-bottom:0;">
   <input type=text style="width:600px;" id=refMarkerStr value="[*]"><br>
   <input type=checkbox id=interpretAsRegExpCheckbox> трактовать как регулярное выражение
