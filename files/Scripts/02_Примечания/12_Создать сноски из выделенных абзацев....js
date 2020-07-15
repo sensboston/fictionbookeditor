@@ -1,11 +1,11 @@
 //Скрипт «Создать сноски из выделенных абзацев»
 //Автор Sclex
 
-var notesFromSelectedParagraphs_versionNum="1.8";
+var notesFromSelectedParagraphs_versionNum="2.0";
 
 function Run() {
  var dialogWidth="700px";
- var dialogHeight="320px";
+ var dialogHeight="360px";
  var fbwBody=document.getElementById("fbw_body");
  var coll=new Object();
  coll["fbwBody"]=fbwBody;

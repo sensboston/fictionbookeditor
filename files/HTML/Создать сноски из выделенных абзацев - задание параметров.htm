@@ -11,6 +11,11 @@
   var params=window.dialogArguments;
   document.title="Создать сноски из выделенных абзацев v"+params["versionNum"]+". Автор Sclex.";
   var myWin=params["window"];
+  var targetBodyName="targetBodyName не задано.";
+  var targetBodyTitle="targetBodyTitle не задано.";
+  var noteAddressPrefix="noteAddressPrefix не задано.";
+  var notePrefix="notePrefix не задано.";
+  var notePostfix="notePostfix не задано.";
 
   function evalMyCode() {
    myWin.eval(
@@ -19,7 +24,7 @@
     ' var notesTextCnt=0;'+
     ' var interpretAsRegExp=null;'+
     ' var notesTexts={};'+
-    ' var notesBody=null;'+
+    ' var targetBody=null;'+
     ' var refMarkersCnt;'+
     ' var searchOnlyBeforeSelection=true;'+
     ' var blockStartParagraph=null;'+
@@ -27,6 +32,11 @@
     ' var currNewNoteNumber=1;'+
     ' var removeAllTagsRegExp,refMarkerRegExp;'+
     ' var whatDoWeDo=null;'+
+    ' var targetBodyName="'+targetBodyName+'";'+
+    ' var targetBodyTitle="'+targetBodyTitle+'";'+
+    ' var noteAddressPrefix="'+noteAddressPrefix+'";'+
+    ' var notePrefix="'+notePrefix+'";'+
+    ' var notePostfix="'+notePostfix+'";'+
     ' var openingAndClosingTagRegExp=new RegExp("(<STRONG><\\/STRONG>)|(<EM><\\/EM>)|(<SUP><\\/SUP>)|(<SUB><\\/SUB>)|(<SPAN( [^>]*)?><\\/SPAN>)|(<B><\\/B>)|(<I><\\/I>)|(<STRIKE><\\/STRIKE>)|(<FONT( [^\>]+)?><\\/FONT>)", "ig");'+
     ' try { var nbspChar=window.external.GetNBSP(); var nbspEntity; if (nbspChar.charCodeAt(0)==160) nbspEntity="&nbsp;"; else nbspEntity=nbspChar; }'+
     ' catch(e) { var nbspChar=String.fromCharCode(160); var nbspEntity="&nbsp;";};'
@@ -36,11 +46,11 @@
     '  return s.replace(/&/gi,"&amp;").replace(/</gi,"&lt;").replace(/>/gi,"&gt;");'+
     ' }');
    myWin.eval(
-    'function findNotesBody() {'+
+    'function findTargetBody() {'+
     ' fbwBody=document.getElementById("fbw_body");'+
     ' var ptr=fbwBody.firstChild;'+
     ' while (ptr && ptr!=fbwBody && !(ptr.nodeName && ptr.nodeName=="DIV" && ptr.getAttribute("fbname") &&'+
-    '        ptr.getAttribute("fbname")=="notes"))'+
+    '        ptr.getAttribute("fbname")==targetBodyName))'+
     '  { ptr=ptr.nextSibling; }'+
     ' return ptr;'+
     '}');
@@ -328,7 +338,17 @@
 //    ' alert("Найдено текстов сносок: "+notesTextCnt);'+
     '}'); // конец функции extractNotesInMyWin
    myWin.eval(
+    ' function hrefPointsIntoTargetBody(myHref) {'+
+//    '  alert("Вошли в hrefPointsIntoTargetBody с параметром:\\n\\n"+myHref);'+
+    '  if (myHref.indexOf("#")<0) return false;'+
+    '  myHref=myHref.replace(/^[^#]+#/,"");'+
+    '  if (!document.getElementById(myHref)) return false;'+
+    '  if (!targetBody.contains(document.getElementById(myHref))) return false;'+
+    '  return true;'+
+    '}'); // конец функции hrefPointsIntoTargetBody
+   myWin.eval(
     ' function findPreviousNote(aTag) {'+
+    '  if (!targetBody) return "Нет предыдущей ссылки.";'+
     '  var i=0;'+
     '  var linksLen=document.links.length;'+
     '  while (i<linksLen) {'+
@@ -338,8 +358,10 @@
     '  if (i==linksLen) return "Ошибка.";'+
     '  if (i==0) return "Нет предыдущей ссылки.";'+
     '  i--;'+
-    '  while (i>=0 && !document.links[i].getAttribute("className") &&'+
-    '         document.links[i].getAttribute("className").toLowerCase()!="note") {'+
+    '  while (i>=0 && (targetBodyName!="notes" || (!document.links[i].getAttribute("className") &&'+
+    '         document.links[i].getAttribute("className").toLowerCase()!="note")) &&'+
+    '         !hrefPointsIntoTargetBody(document.links[i].getAttribute("href"))'+
+    '        ) {'+
     '   i--;'+
     '  }'+
     '  if (i<0) return null;'+
@@ -394,9 +416,12 @@
     '  s.replace(regExp10,replaceFunc1);'+
     '  return containsTagFlag;'+
     ' }');
+
    myWin.eval(
     ' function processP_2(p) {'+
+//    Эта функция добавляет сноски или комментарии
 //    '  alert("processP_2:\\n\\n"+p.outerHTML);'+
+//    '  alert("Вошли в processp_2");'+
     '  var i,myPos,newRef,previousNote,previousNoteHref,previousNoteSection,str3,rndm2,rndm3,el;'+
     '  var matchLen;'+
     '  var pInnerHTML=p.innerHTML;'+
@@ -440,14 +465,16 @@
     '    pInnerHTML=removeSymbolsBeyondTags(pInnerHTML,myPos+1,matchLen,"RReeffMMaarrkkeerrSSttrr");'+
     '    continue;'+
     '   }'+
-    '   pInnerHTML=removeSymbolsBeyondTags(pInnerHTML,myPos+1,matchLen,"<A id=\'tmpId_"+rndm2+"\' class=note href=\'#tmpId_"+rndm3+"\'>[0]</A>");'+ // ошибка - в этой строке
+    '   pInnerHTML=removeSymbolsBeyondTags(pInnerHTML,myPos+1,matchLen,"<A id=\'tmpId_"+rndm2+"\' class=note href=\'#tmpId_"+rndm3+"\'>[0]</A>");'+
     '   pInnerHTML=pInnerHTML.replace(/&nbsp;/g,nbspChar);'+
     '   pInnerHTML=removeSpacesBeyondTags(pInnerHTML,myPos+1);'+
     '   p.innerHTML=pInnerHTML.replace(openingAndClosingTagRegExp,"");'+
     '   newRef=document.getElementById("tmpId_"+rndm2);'+
     '   newRef.removeAttribute("id");'+
     '   pInnerHTML=p.innerHTML;'+
+//    '   alert("Перед вызовом findPreviousNote.");'+
     '   previousNote=findPreviousNote(newRef);'+
+//    '   alert("После вызова findPreviousNote.\\n\\nРезультат:\\n\\n"+previousNote.outerHTML);'+
 //    '   window.clipboardData.setData("text","previousNote: "+previousNote);'+
     '   str3="<DIV class=section id=tmpId_"+rndm3+">";'+
     '   str3+="<DIV class=title><P>0</P></DIV>";'+
@@ -471,28 +498,28 @@
     '    }'+
     '   else if (previousNote=="Нет предыдущей ссылки.") {'+
     '    '+
-    '    if (!notesBody) {'+
+    '    if (!targetBody) {'+
     '     el=document.createElement("DIV");'+
     '     el.className="body";'+
     '     el.setAttribute("xlmns:l","http://www.w3.org/1999/xlink");'+
     '     el.setAttribute("xlmns:f","http://www.gribuser.ru/xml/fictionbook/2.0");'+
-    '     el.setAttribute("fbname","notes");'+
+    '     el.setAttribute("fbname",targetBodyName);'+
 //    '     alert("currNewNoteNumber: "+currNewNoteNumber);'+
 //    '     alert("notesTexts: "+notesTexts);'+
-    '     el.innerHTML="<DIV class=title><P>Примечания</P></DIV>"+'+
+    '     el.innerHTML="<DIV class=title><P>"+targetBodyTitle+"</P></DIV>"+'+
     '                  "<DIV class=section id=tmpId_"+rndm3+">"+'+
     '                     "<DIV class=title><P>0</P></DIV>"+'+
     '                     notesTexts[currNewNoteNumber.toString()]+'+
     '                  "</DIV>";'+
-    '      notesBody=fbwBody.appendChild(el);'+
-    '      InflateIt(notesBody);'+
+    '      targetBody=fbwBody.appendChild(el);'+
+    '      InflateIt(targetBody);'+
 //    '     previousNoteSection=document.getElementById(previousNoteHref);'+
 //    '     previousNoteSection.insertAdjacentHTML("afterend",str3);'+
 //    '     newRef.setAttribute("href")="#tmpId_"+rndm3;'+
 //    '     alert("previousNoteSection.nextSibling:\n\n"+previousNoteSection.nextSibling);'+
     '    }'+ // if (!notesBody)
     '    else {'+
-    '     el=notesBody.firstChild;'+
+    '     el=targetBody.firstChild;'+
     '     if (el && el.nodeName && el.nodeName=="DIV"  && el.className=="title") {'+
     '      el.insertAdjacentHTML("afterend",'+
     '                  "<DIV class=section id=tmpId_"+rndm3+">"+'+
@@ -502,8 +529,8 @@
     '      InflateIt(el.nextSibling);'+
     '     }'+
     '     else {'+
-    '      notesBody.insertAdjacentHTML("afterbegin",'+
-    '                  "<DIV class=title><P>Примечания</P></DIV>"+'+
+    '      targetBody.insertAdjacentHTML("afterbegin",'+
+    '                  "<DIV class=title><P>"+targetBodyTitle+"</P></DIV>"+'+
     '                  "<DIV class=section id=tmpId_"+rndm3+">"+'+
     '                     "<DIV class=title><P>0</P></DIV>"+'+
     '                     notesTexts[currNewNoteNumber.toString()]+'+
@@ -516,10 +543,12 @@
     '   if (interpretAsRegExp) refMarkerRegExp.lastIndex=0;'+
     '  }'+ // конец цикла while (pInnerHTML.replace(removeAllTagsRegExp,"").indexOf(refMarkerStr)>=0)
     '  p.innerHTML=pInnerHTML.replace(/RReeffMMaarrkkeerrSSttrr/g,refMarkerStr);'+
+//    '  alert("вышли из processp_2");'+
     ' }' // конец функции processP_2
    );
    myWin.eval(
     ' function processP_3(p) {'+
+//   Эта функция считает маркеры знака сноски
     '  var myPos,pInnerHTML_2,myPos2,srchResult,matchLen;'+
     '  var pInnerHTMLSrc=p.innerHTML;'+
     '  var pInnerHTML2=null;'+
@@ -572,7 +601,7 @@
     ' var removeAllTagsRegExp=new RegExp("<\\/?[a-z]+( [^>]+)?>","ig");'+
     ' currNewNoteNumber=0;'+
     ' fbwBody=document.getElementById("fbw_body");'+
-    ' notesBody=findNotesBody();'+
+    ' targetBody=findTargetBody();'+
     ' var ptr=fbwBody.firstChild;'+
     ' var saveNext;'+
     ' var processingEnding=false;'+
@@ -608,14 +637,15 @@
     ' }');
    myWin.eval(
     ' function renumberNotes() {'+
+//    '  alert("Входим в renumberNotes();");'+
     '  fbwBody=document.getElementById("fbw_body");'+
-    '  notesBody=findNotesBody();'+
-    '  if (!notesBody) return;'+
+    '  targetBody=findTargetBody();'+
+    '  if (!targetBody) return;'+
     '  var sectionNumberById={};'+
     '  var sectionNumberByOldId={};'+
     '  var sectionByNumber={};'+
     '  var sectionCnt=0;'+
-    '  var el=notesBody.firstChild;'+
+    '  var el=targetBody.firstChild;'+
     '  while (el && !(el.nodeName && el.nodeName=="DIV" && '+
     '          (el.className=="title" || el.className=="image" || el.className=="epigraph")))'+
     '   el=el.nextSibling;'+
@@ -624,9 +654,9 @@
     '      el=el.nextSibling;'+
     '   sectionCnt++;'+
     '   sectionNumberByOldId[el.id]=sectionCnt;'+
-    '   if (document.getElementById("n_"+sectionCnt))'+
-    '    document.getElementById("n_"+sectionCnt).removeAttribute("n_"+sectionCnt);'+
-    '   el.id="n_"+sectionCnt;'+
+    '   if (document.getElementById(noteAddressPrefix+sectionCnt))'+
+    '    document.getElementById(noteAddressPrefix+sectionCnt).removeAttribute(noteAddressPrefix+sectionCnt);'+
+    '   el.id=noteAddressPrefix+sectionCnt;'+
     '   sectionNumberById[el.id]=sectionCnt;'+
     '   sectionByNumber[sectionCnt]=el;'+
     '   if (!el.firstChild || '+
@@ -642,8 +672,8 @@
     '  for (i=0; i<linksLen; i++) {'+
     '   localHref=getLocalHref(document.links[i].href);'+
     '   if (localHref!=-1 && sectionNumberByOldId[localHref]) {'+
-    '    document.links[i].href="#n_"+sectionNumberByOldId[localHref];'+
-    '    document.links[i].innerHTML="["+sectionNumberByOldId[localHref]+"]";'+
+    '    document.links[i].href="#"+noteAddressPrefix+sectionNumberByOldId[localHref];'+
+    '    document.links[i].innerHTML=notePrefix+sectionNumberByOldId[localHref]+notePostfix;'+
     '   }'+
     '  }'+
     ' }'
@@ -690,6 +720,34 @@
       
       return word;
   }
+  
+  function initVarsForNotes() {
+   try {
+    targetBodyName="notes";
+    targetBodyTitle="Примечания";
+    noteAddressPrefix="n_";
+    notePrefix="[";
+    notePostfix="]";
+   }
+   catch(e) {
+    alert("Возникла ошибка при выполнении initVarsForNotes().\n\nИмя ошибки: "+e.name+"\n\n"+
+          "Сообщение об ошибке: "+e.message);
+   }
+  }
+   
+  function initVarsForComments() {
+   try {
+    targetBodyName="comments";
+    targetBodyTitle="Комментарии";
+    noteAddressPrefix="c_";
+    notePrefix="<SUP>{";
+    notePostfix="}</SUP>";
+   }
+   catch(e) {
+    alert("Возникла ошибка при выполнении initVarsForComments().\n\nИмя ошибки: "+e.name+"\n\n"+
+          "Сообщение об ошибке: "+e.message);
+   }
+  }
 
   function extractNotesTexts() {
    try {
@@ -706,34 +764,53 @@
     myWin.whatDoWeDo="Считаем маркеры знаков сноски";
     myWin.refMarkersCnt=0;
     myWin.addNotesInMyWin(document);
+    var wordForms, noteName1, noteName2;
+    if (targetBodyName!="comments") {
+     wordForms={nom: 'текст сноски', gen: 'текста сносок', plu: 'текстов сносок'};
+     noteName1="сносок";
+     noteName2="сноски";
+    }
+    else {
+     wordForms={nom: 'текст комментария', gen: 'текста комментариев', plu: 'текстов комментариев'};
+     noteName1="комментариев";
+     noteName2="комментарии";
+    }
     if (myWin.refMarkersCnt!=myWin.notesTextCnt) {
      alert(units(myWin.refMarkersCnt, {nom: 'Найден', gen: 'Найдены', plu: 'Найдено'})+" "+
       myWin.refMarkersCnt+" "+units(myWin.refMarkersCnt, {nom: 'маркер знака сноски', gen: 'маркера знака сноски', plu: 'маркеров знаков сноски'})+".\n\n"+
       units(myWin.notesTextCnt, {nom: 'Найден', gen: 'Найдены', plu: 'Найдено'})+" "+
-      myWin.notesTextCnt+" "+units(myWin.notesTextCnt, {nom: 'текст сноски', gen: 'текста сносок', plu: 'текстов сносок'})+".\n\n"+
-      "Поскольку эти числа не совпадают, добавление сносок не будет произведено.");
+      myWin.notesTextCnt+" "+units(myWin.notesTextCnt, wordForms)+".\n\n"+
+      "Поскольку эти числа не совпадают, добавление "+noteName1+" не будет произведено.");
       return "Числа не совпадают";
     }
     else
      alert(units(myWin.refMarkersCnt, {nom: 'Найден', gen: 'Найдены', plu: 'Найдено'})+" "+
      myWin.refMarkersCnt+" "+units(myWin.refMarkersCnt, {nom: 'маркер знака сноски', gen: 'маркера знаков сноски', plu: 'маркеров знаков сноски'})+".\n\n"+
      units(myWin.notesTextCnt, {nom: 'Найден', gen: 'Найдены', plu: 'Найдено'})+" "+
-     myWin.notesTextCnt+" "+units(myWin.notesTextCnt, {nom: 'текст сноски', gen: 'текста сносок', plu: 'текстов сносок'})+".\n\n"+
-     "Ура! Эти числа совпали. А значит, сноски будут созданы.");
+     myWin.notesTextCnt+" "+units(myWin.notesTextCnt, wordForms)+".\n\n"+
+     "Ура! Эти числа совпали. А значит, "+noteName2+" будут созданы.");
    }
    catch(e) {
-    alert("Произошла ошибка. Возможная причина –\nвы запускаете обработку после\nтого, как создали новый документ\nв основном окне FBE. В таком\nслучае перезапустите скрипт\n\n"+
-          "Имя ошибки: "+e.name+"n"+
+    alert("Произошла ошибка (код 1). Возможная причина –\nвы запускаете обработку после\nтого, как создали новый документ\nв основном окне FBE. В таком\nслучае перезапустите скрипт\n\n"+
+          "Имя ошибки: "+e.name+"\n"+
           "Сообщение об ошибке: "+e.message);
     return;
+  }
+  try {
+   myWin.targetBody=myWin.findTargetBody();
+  }
+  catch(e) {
+   alert("Произошла ошибка при инициализации targetBody (код 2).\n\n"+
+         "Имя ошибки: "+e.name+"\n"+
+         "Сообщение об ошибке: "+e.message);
   }
   try {
     myWin.whatDoWeDo="Делаем сноски";
     myWin.addNotesInMyWin(document);
    }
    catch(e) {
-    alert("Произошла ошибка. Возможная причина –\nвы запускаете обработку после\nтого, как создали новый документ\nв основном окне FBE. В таком\nслучае перезапустите скрипт\n\n"+
-          "Имя ошибки: "+e.name+"n"+
+    alert("Произошла ошибка (код 2). Возможная причина –\nвы запускаете обработку после\nтого, как создали новый документ\nв основном окне FBE. В таком\nслучае перезапустите скрипт\n\n"+
+          "Имя ошибки: "+e.name+"\n"+
           "Сообщение об ошибке: "+e.message);
     return;
    }
@@ -746,13 +823,14 @@
    }
    
    try {
-    myWin.external.SetStatusBarText(units(myWin.notesTextCnt, {nom: 'Было добавлено', gen: 'Были добавлены', plu: 'Было добавлено'})
+    myWin.external.SetStatusBarText(units(myWin.notesTextCnt, {nom: 'Был добавлен', gen: 'Были добавлены', plu: 'Было добавлено'})
       +" "+myWin.notesTextCnt+" "+
-          units(myWin.notesTextCnt, {nom: 'сноска', gen: 'сноски', plu: 'сносок'})+".");
+          units(myWin.notesTextCnt, wordForms)+".");
    }
    catch(e)
    {}
   }
+
   function createNotes() {
    try {
     var test=myWin.document.body;
@@ -768,7 +846,7 @@
     myWin.external.BeginUndoUnit(myWin.document,"создание сносок из выделенных абзацев");
    }
    catch (e) {
-    alert("Произошла ошибка при выполнении либо evalMyCode().\n\n"+
+    alert("Произошла ошибка при выполнении BeginUndoUnit().\n\n"+
           "Имя ошибки: "+e.name+"\n"+
           "Сообщение об ошибке: "+e.message);
     return;
@@ -781,6 +859,14 @@
           "Имя ошибки: "+e.name+"\n"+
           "Сообщение об ошибке: "+e.message);
     return;
+   }
+   try {
+    myWin.targetBody=myWin.findTargetBody();
+   }
+   catch(e) {
+    alert("Произошла ошибка при инициализации targetBody (код 1).\n\n"+
+          "Имя ошибки: "+e.name+"\n"+
+          "Сообщение об ошибке: "+e.message);
    }
    try {
     myWin.interpretAsRegExp=document.getElementById("interpretAsRegExpCheckbox").checked;
@@ -823,11 +909,12 @@
     return;
    }
    try {
-    if (myWin.notesTextCnt!=0) 
+    if (myWin.notesTextCnt!=0) {
      if (addNotes()=="Числа не совпадают") {
       myWin.external.EndUndoUnit(myWin.document);
       return "Числа не совпадают";
      }
+    }
     else {
      myWin.external.EndUndoUnit(myWin.document);
      return "Ноль сносок";
@@ -861,7 +948,7 @@
    s+=makeEntities("</DIV>")+"<BR>"; // закрывающий тег от DIV class=body
 */
    var s="<DIV id='fbw_body'>";
-   s+='<DIV class=body xmlns:l="http://www.w3.org/1999/xlink" xmlns:f="http://www.gribuser.ru/xml/fictionbook/2.0" fbname="notes">';
+   s+='<DIV class=body xmlns:l="http://www.w3.org/1999/xlink" xmlns:f="http://www.gribuser.ru/xml/fictionbook/2.0" fbname='+targetBodyName+'>';
    s+="<DIV class=title><P>Тексты сносок, извлеченные из выделенных абзацев</P><P>Количество: "+myWin.notesTextCnt+"</P></DIV>";
    var i;
    for (i=1; i<=myWin.notesTextCnt; i++) {
@@ -903,13 +990,13 @@
  <label for="radio5"><input type=radio id="radio5" name=noteSign> вида *</label><br>
  <label for="radio20"><input type=radio id="radio20" name=noteSign>задать свой:</label>
  <div style="padding-left:30px; padding-right:0; padding-top:0; padding-bottom:0;">
-  <input type=text style="width:600px;" id=refMarkerStr value="[*]"><br>
+  <input type=text style="width:600px;" id=refMarkerStr value="[*]" onfocus="getElementById('radio20').checked=true;"><br>
   <input type=checkbox id=interpretAsRegExpCheckbox> трактовать как регулярное выражение
  </div><br>
 
  Маркер 2-го, 3-го и т.д. абзацев текста сноски (не регэксп, а простой текст):<br>
  <input type=text style="width:600px;" id=notFirstParagraphStr value="~~"><br><br>
  
- <input type=button value="Создать сноски" onclick="createNotes();" style="width:200px;"><input type=button value="Создать сноски и выйти" onclick="var rslt=createNotes(); if (rslt!='Ноль сносок' && rslt!='Числа не совпадают') window.close();" style="width:260px;"><input type=button onclick="window.close();" value="Выйти" style="width:120px;"><BR><input type=button style="width:550px;" value="Предпросмотр текстов сносок, содержащихся в выделении" onclick="evalMyCode(); extractNotesTexts(); showNotesTexts();">
+ <input type=button value="Создать сноски" onclick="initVarsForNotes(); createNotes();" style="width:200px;"><input type=button value="Создать сноски и выйти" onclick="initVarsForNotes(); var rslt=createNotes(); if (rslt!='Ноль сносок' && rslt!='Числа не совпадают') window.close();" style="width:260px;"><input type=button onclick="window.close();" value="Выйти" style="width:120px;"><BR><input type=button style="width:550px;" value="Предпросмотр текстов сносок, содержащихся в выделении" onclick="evalMyCode(); extractNotesTexts(); showNotesTexts();"><BR> <input type=button value="Создать комментарии" onclick="initVarsForComments(); createNotes();" style="width:200px;"><input type=button value="Создать комментарии и выйти" onclick="initVarsForComments(); var rslt=createNotes(); if (rslt!='Ноль сносок' && rslt!='Числа не совпадают') window.close();" style="width:260px;"><input type=button onclick="window.close();" value="Выйти" style="width:120px;">
  </body>
 </html>
