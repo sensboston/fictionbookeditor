@@ -296,7 +296,7 @@ function Run() {
    var a3=a5.lastChild;
    if (!firstEmptyMemorized || (a3!=savedFirstEmpty && (!savedFirstEmpty.previousSibling ||
        savedFirstEmpty.previousSibling.className!="image")) || savedFirstEmpty.nextSibling)
-    //чистка пустых строк в конце секции
+    //чистка пустых строк в конце раздела
     removeEmptiesAtEnd("section");
    a3=a5.lastChild;
    if (firstEmptyMemorized && savedFirstEmpty.nextSibling)
@@ -306,7 +306,7 @@ function Run() {
           savedFirstEmpty.nextSibling.nextSibling.className=="image"
          ) && !(savedFirstEmpty.nextSibling.className=="image" && !savedFirstEmpty.nextSibling.nextSibling)
        )
-     //чистка пустых строк в начале секции
+     //чистка пустых строк в начале раздела
      removeEmptiesAtBegin("section");
   }
   else if (savedPtr.parentNode && savedPtr.parentNode.nodeName=="DIV" &&
@@ -379,8 +379,8 @@ function Run() {
         '\n– из-за соседства со стихом: '+EmptyClearedPoem+
         '\n– из-за соседства с подзаголовком: '+EmptyClearedSubtitle+
         '\n– внутри стихов: '+EmptyClearedInPoem+
-        '\n– в начале секции: '+EmptyClearedSectionBegin+
-        '\n– в конце секции: '+EmptyClearedSectionEnd+
+        '\n– в начале раздела: '+EmptyClearedSectionBegin+
+        '\n– в конце раздела: '+EmptyClearedSectionEnd+
         '\n– в начале эпиграфа: '+EmptyClearedEpigraphBegin+
         '\n– в конце эпиграфа: '+EmptyClearedEpigraphEnd+
         '\n– в начале цитаты: '+EmptyClearedCiteBegin+
