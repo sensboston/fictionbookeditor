@@ -16,7 +16,4 @@ function Run() {
  var modes=window.showModelessDialog("HTML/Разметить заголовки, найденные по регэкспу - задание параметров.htm",coll,
      "dialogHeight: "+dialogHeight+"; dialogWidth: "+dialogWidth+"; "+
      "center: Yes; help: No; resizable: Yes; status: No;");
- /*(var mainRegExp=prompt("Введите регэксп для поиска места разрыва секций.","");
- var caseSensitive=confirm*/
- //var mainRegExp=prompt("Введите регэксп для поиска места разрыва секций.","");
 }
