@@ -5,7 +5,7 @@
 
 function Run() {
 
- var versionStr="Скрипт «Проставить только елочки» (версия 2.9)\nАвтор Sclex.\n\n";
+ var versionStr="Скрипт «Проставить только елочки» (версия 3.0)\nАвтор Sclex.\n\n";
  var otstupSverhu=60;
  var debug=false;
  try { var nbspChar=window.external.GetNBSP(); }
@@ -343,7 +343,7 @@ function Run() {
   else alert(versionStr+"Елочки проставлены, но...\n"+
              "\n"+
              "...в некоторых случаях было непонятно,\n"+
-             "левые или правые елочки нужно проставить,\n"+
+             "открывающие или закрывающие елочки нужно проставить,\n"+
              "поэтому скрипт оставлял прямые кавычки.\n"+
              "\n"+
              "   Осталось прямых кавычек – \" – "+notReplacedQuotes+"\n\n"+
