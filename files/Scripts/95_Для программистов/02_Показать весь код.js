@@ -1,5 +1,5 @@
 ﻿//======================================
-// Отображение HTML кода текущей секции (only for script debugging)
+// Отображение HTML кода текущего раздела (only for script debugging)
 // THX to mkb (Konstantin Matveev) for ingenious idea
 //======================================
 
