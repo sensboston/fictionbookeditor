@@ -8,7 +8,7 @@ function Run () {
  //НАСТРОЙКИ - начало
  //здесь шаблоны, которые используются при работе скрипта
  //используйте макрос %N для указания номера примечания
- var strConst1="n_%N"; //шаблон ID секций примечаний
+ var strConst1="n_%N"; //шаблон ID разделов примечаний
  var strConst2="%N";//шаблон заголовка примечания
  var strConst3="";//шаблон содержания вставленного примечания
  var strConst4="[%N]"; //шаблон текста ссылки
@@ -29,7 +29,7 @@ function Run () {
  //показывать ли форму для ввода текста примечания
  //true - показывать. false - не показывать
  var InputSnoskaText=true;
- //перемещать ли фокус видимости на секцию свежесозданного примечания
+ //перемещать ли фокус видимости на раздел свежесозданного примечания
  var MoveFocusToNote=false;
  //true, если это скрипт добавления последней сноски
  var lastSnoskaMode=false;
@@ -37,9 +37,9 @@ function Run () {
  var forsazh=false;
  //НАСТРОЙКИ - конец
  
- // функция находит номер комментария, соответствующего определенному имени секции
- // в исходном документе. В name передаем имя секции, перед ним символ #, если это
- // локальная ссылка. В SectID передаем массив имен секций.
+ // функция находит номер комментария, соответствующего определенному имени раздела
+ // в исходном документе. В name передаем имя раздела, перед ним символ #, если это
+ // локальная ссылка. В SectID передаем массив имен разделов.
  function findNum(name) {
    var i=1;
    var name1=name;
@@ -172,14 +172,14 @@ function Run () {
 //запрос параметров для вставки сноски
 //ОТСЮДА
 /*
- strConst1=prompt("Шаблон ID секции примечания. Используйте макрос %N"+
-                  " для указания номера секции.",strConst1);
+ strConst1=prompt("Шаблон ID раздела примечания. Используйте макрос %N"+
+                  " для указания номера раздела.",strConst1);
  strConst4=prompt("Шаблон текста ссылки. Используйте макрос %N"+
-                  " для указания номера секции.",strConst4);
+                  " для указания номера раздела.",strConst4);
  strConst2=prompt("Шаблон заголовка примечания. Используйте макрос %N"+
-                  " для указания номера секции.",strConst2);
- strConst3=prompt("Шаблон содержания новых секций примечаний. Используйте макрос %N"+
-                  " для указания номера секции.",strConst3);
+                  " для указания номера раздела.",strConst2);
+ strConst3=prompt("Шаблон содержания новых разделов примечаний. Используйте макрос %N"+
+                  " для указания номера раздела.",strConst3);
 */
 //ДОСЮДА
  el=body.firstChild;
@@ -227,7 +227,7 @@ function Run () {
   }
   bbb=undefined;
  }
-//прочитаем в массив SectID ID-ы секций примечаний
+//прочитаем в массив SectID ID-ы разделов примечаний
  var sectsColl=new Object();
  var sectIds=new Object();
  var sectNumById=new Object();
@@ -302,7 +302,7 @@ function Run () {
    document.links[newSnoskaNum].href="#"+PoShablonu(strConst1,newSnoskaId);
   }
  } else {insertN=1000000; insertCnt=0}
-//проверим, нет ли в боди нотесов секций второго уровня вложения
+//проверим, нет ли в боди нотесов разделов второго уровня вложения
  if (!forsazh) {
   var ptr1=bodyNotes.firstChild
   var ptr2;
@@ -312,7 +312,7 @@ function Run () {
      while (ptr2) {
       if (ptr2.nodeName=="DIV") {
         if (ptr2.className=="section") {
-         MsgBox("В body примечаний есть секции второго уровня вложения. Такие файлы не обрабатываются данным скриптом. Работа скрипта завершена.");
+         MsgBox("В body примечаний есть разделы второго уровня вложения. Такие файлы не обрабатываются данным скриптом. Работа скрипта завершена.");
          document.links[newSnoskaNum].removeNode(true);
          return;
         }
@@ -352,7 +352,7 @@ function Run () {
    var code=miniValidate(snoskaText);
   }
  }
- //поменяем ID у секций примечаний
+ //поменяем ID у разделов примечаний
  if (nashliBodyNotes && !lastSnoskaMode) {
   //for (var j1=1; j1<=sectNum; j1++)
   // sectsColl[j1].id=undefined; 
@@ -382,7 +382,7 @@ function Run () {
    }
   }
  }
- // поменяем заголовки секций примечаний
+ // поменяем заголовки разделов примечаний
  if (nashliBodyNotes && !lastSnoskaMode) 
   for (i2=1;i2<=sectNum;i2++) {
    if (sectsColl[i2].firstChild!=null) 
@@ -410,7 +410,7 @@ function Run () {
   var MyTitle="&nbsp;";
   var MyId1=PoShablonu(strConst1,newSnoskaId);
  };
- //вставим новую секцию примечания
+ //вставим новый раздел примечания
  el=document.createElement("DIV");
  el.id=MyId1;
  el.className="section";
