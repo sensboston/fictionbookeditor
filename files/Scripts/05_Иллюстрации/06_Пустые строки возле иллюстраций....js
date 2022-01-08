@@ -51,7 +51,7 @@ function Run() {
  }
 
  //делает так, что в направлении, заданном функцией directionFn, от ptr оказывается
- //одна ровно одна пустая строка, если только это не начало или конец содержимого секции
+ //одна ровно одна пустая строка, если только это не начало или конец содержимого раздела
  //(но если leaveEmptyLineByAllMeans==true, то пустая строка остается даже в этом случае)
  function makeOneEmptyLine(ptr,directionFn,additionalDirectionFn,leaveEmptyLineAnyway) {
   emptyLinePtr=directionFn(ptr);
@@ -78,7 +78,7 @@ function Run() {
   }
  }
 
- //обработка содержимого секции sectionPtr
+ //обработка содержимого раздела sectionPtr
  function processSection(sectionPtr) {
   var ptrInSection=sectionPtr.firstChild;
   var imageCnt, theOnlyImage, border, wasSectionImage, imageInSection, imageAfterBorder,
@@ -139,28 +139,28 @@ function Run() {
    ptrInSection=ptrInSection.nextSibling;
   }
   ptrInSection=sectionPtr.firstChild;
-  //в секции ничего нет, кроме картинки секции
+  //в разделе ничего нет, кроме картинки раздела
   if (!wasSectionInside && wasSectionImage && border==null) {
    makeOneEmptyLine(preBorderElement,getNextSibling,getNextSibling,true);
    return;
   } else
-  //секция содержит только картинку секции и пустые строки
+  //раздел содержит только картинку раздела и пустые строки
   if (!wasSectionInside && wasSectionImage && border!=null && isLineEmpty(border) && imageAfterBorder==undefined) {
    makeOneEmptyLine(preBorderElement,getNextSibling,getNextSibling,true);
    return;
   } else
-  //текстово-графическое содержимое секции начинается с картинки
+  //текстово-графическое содержимое раздела начинается с картинки
   if (!wasSectionInside && border!=null && border.className=="image") {
    makeOneEmptyLine(border,getPreviousSibling,getTheSameElement,true);      
    ptrInSection=border.nextSibling;
   } else
-  //текстово-графическое содержимое секции начинается с "пустая строка (строки) + картинка"
+  //текстово-графическое содержимое раздела начинается с "пустая строка (строки) + картинка"
   if (!wasSectionInside && border!=null && border.nodeName=="P" && isLineEmpty(border) && 
       imageAfterBorder!=undefined && imageAfterBorder!=false) {
    if (mode==false) removeEmptyLines(imageAfterBorder,getNextSibling);
    ptrInSection=imageAfterBorder.nextSibling;
   } 
-  //обход секции с добавлением/удалением пустых строк 
+  //обход раздела с добавлением/удалением пустых строк 
   while (ptrInSection) {
    if (ptrInSection.className=="image") {
     if (mode) {
