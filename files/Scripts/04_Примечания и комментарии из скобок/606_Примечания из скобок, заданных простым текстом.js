@@ -13,11 +13,11 @@ var AddSnoska=true;
 //показывать ли форму для ввода текста примечания
 //true - показывать. false - не показывать
 var inputSnoskaText=false;
-//перемещать ли фокус видимости на секцию свежесозданного примечания
+//перемещать ли фокус видимости на раздел свежесозданного примечания
 var moveFocusToNote=false;
-var strconst1="n_%N"; //название секции примечания
-var strconst2="<P>%N</P>"; // заголовок секции примечания
-var strconst3="&nbsp;"; //содержание секции примечания
+var strconst1="n_%N"; //название раздела примечания
+var strconst2="<P>%N</P>"; // заголовок раздела примечания
+var strconst3="&nbsp;"; //содержание раздела примечания
 var strconst4="[%N]"; //текст ссылки сноски
 var strconst5="Примечания"; //заголовок боди нотесов
 var strconst6=String.fromCharCode(1); //временная метка в тексте
@@ -113,7 +113,7 @@ function init_dobavlenie_snoski() {
   }
   tmpNode=tmpNode.nextSibling;
  }
- //проверим, нет ли в боди нотесов секций второго уровня вложения
+ //проверим, нет ли в боди нотесов раздела второго уровня вложения
  if (NashliBodyNotes) {
    var ptr1 = BodyNotes.firstChild;
    var SecondLevelSection = false;
@@ -130,7 +130,7 @@ function init_dobavlenie_snoski() {
      ptr1 = ptr1.nextSibling;
    }
    if (SecondLevelSection) {
-     MsgBox("В body примечаний есть секции второго уровня вложения. Такие файлы не обрабатываются данным скриптом. Работа скрипта завершена.");
+     MsgBox("В body примечаний есть разделы второго уровня вложения. Такие файлы не обрабатываются данным скриптом. Работа скрипта завершена.");
      return;
    }
 //создадим заголовок боди нотесов, если нет его
@@ -176,7 +176,7 @@ function dobavlenie_snoski(NoteNum) {
    init_dobavlenie_snoski();
    initWasCalled=true;
   }
-  //прочитаем в массив SectID ID-ы секций примечаний
+  //прочитаем в массив SectID ID-ы разделов примечаний
   //for (j1=0; j1<sects.length; j1++) {
   // if (sects[j1].className=="section") {
   //  SectNum++;
@@ -204,7 +204,7 @@ function dobavlenie_snoski(NoteNum) {
      document.links[j5].removeNode(true);
      document.links[j5].scrollIntoView(true);
      finalization();
-     MsgBox(getVersionStr()+"Ссылка сноски ссылается на несуществующую секцию.\nПозиция обзора установлена на неисправную ссылку."+"\n\n"+getExitStr());
+     MsgBox(getVersionStr()+"Ссылка сноски ссылается на несуществующий раздел.\nПозиция обзора установлена на неисправную ссылку."+"\n\n"+getExitStr());
      errorStatus=1;
      window.external.EndUndoUnit(document);
      return;
@@ -213,7 +213,7 @@ function dobavlenie_snoski(NoteNum) {
      document.links[j5].removeNode(true);
      document.links[j5].scrollIntoView(true);
      finalization();
-     MsgBox(getVersionStr()+"Ссылка сноски ссылается не внутрь секции в теле примечаний.\nПозиция обзора установлена на неисправную ссылку."+"\n\n"+getExitStr());
+     MsgBox(getVersionStr()+"Ссылка сноски ссылается не внутрь раздела в теле примечаний.\nПозиция обзора установлена на неисправную ссылку."+"\n\n"+getExitStr());
      errorStatus=1;
      window.external.EndUndoUnit(document);
      return;
@@ -245,7 +245,7 @@ var j2;
 
 function finalization() {
  if (initWasCalled==false) return;
- // поменяем заголовки секций примечаний
+ // поменяем заголовки разделов примечаний
  var sectCnt=0;
  var kdi,while_flag,el,id;
  var sectNumById=new Object();
@@ -613,9 +613,9 @@ function finalization() {
  window.external.EndUndoUnit(document);
  MsgBox(getVersionStr()+getExitStr(true));
 }
-// функция находит номер комментария, соответствующего определенному имени секции
-// в исходном документе. В name передаем имя секции, перед ним символ #, если это
-// локальная ссылка. В SectID передаем массив имен секций.
+// функция находит номер комментария, соответствующего определенному имени раздела
+// в исходном документе. В name передаем имя раздела, перед ним символ #, если это
+// локальная ссылка. В SectID передаем массив имен разделов.
 function FindNum(name,SectID,SectNum) {
   var i=1;
   var name1=name;
