@@ -5,7 +5,7 @@
 
 function Run() {
 
- var versionStr="Скрипт «Проставить елочки и лапки v3.0»\nАвтор Sclex.\n\n";
+ var versionStr="Скрипт «Проставить елочки и лапки (от начала документа)» (версия 3.1)\nАвтор Sclex.\n\n";
  var otstupSverhu=60;
  var debug=false;
  try { var nbspChar=window.external.GetNBSP(); }
@@ -315,7 +315,7 @@ function Run() {
       //невозможно определить, левая или правая кавычка
       el.nodeValue=myNodeValue;
       setCursorIntoTextNode(el,indexOfQuotes);
-      alert(versionStr+"Невозможно определить, какой нужен тип кавычки:\n\n"+(itIsLeftQuotes==true?"кавычка получается и левой и правой.":"кавычка получается ни левой ни правой.")+"\n\n"+getInfoStr());
+      alert(versionStr+"Не удалось определить, является кавычка открывающей или же закрывающей.\n\n"+getInfoStr());
       return "error";
      } 
      indexOfQuotes=myNodeValue.indexOf('"',indexOfQuotes+1);
@@ -346,7 +346,7 @@ function Run() {
      range3.collapse(false);
      range3.select();
      window.scrollBy(0,-otstupSverhu);
-     alert(versionStr+"Ошибка:\n\nВ конце секции получился ненулевой уровень вложенности кавычек.\nКурсор установлен в конец этой секции.\n\n"+getInfoStr());
+     alert(versionStr+"Ошибка:\n\nВ конце раздела получился ненулевой уровень вложенности кавычек.\nТо есть не все открытые в разделе кавычки были в нем закрыты.\nКурсор установлен в конец этого раздела.\n\n"+getInfoStr());
      return "error";
     }    
     if (blockCodename[currentBlockIndex]!=undefined && el.nodeName=="DIV" && el.className!="stanza" && currentQuotesLevel!=blockInitQuotesLevel[currentBlockIndex]) {
@@ -373,7 +373,7 @@ function Run() {
       range3.collapse(false);
       range3.select();
       window.scrollBy(0,-otstupSverhu);
-      alert(versionStr+"Ошибка:\n\nВ конце секции получился ненулевой уровень вложенности кавычек.\nКурсор установлен в конец этой секции.\n\n"+getInfoStr());
+      alert(versionStr+"Ошибка:\n\nВ конце раздела получился ненулевой уровень вложенности кавычек.\nТо есть не все открытые в разделе кавычки были в нем закрыты.\nКурсор установлен в конец этого раздела.\n\n"+getInfoStr());
       return "error";
      }          
      if (blockCodename[currentBlockIndex]!=undefined && el.nodeName=="DIV" && el.className!="stanza" && currentQuotesLevel!=blockInitQuotesLevel[currentBlockIndex]) {
@@ -406,7 +406,7 @@ function Run() {
  //}
  }
 
- window.external.BeginUndoUnit(document,"Кавычки на елочки v2.0");
+ window.external.BeginUndoUnit(document,"проставление елочек и лапок (от начала документа)");
  var randomNum=Math.floor((Math.random()*9)).toString()+Math.floor((Math.random()*9)).toString()+Math.floor((Math.random()*9)).toString()+Math.floor((Math.random()*9)).toString()+Math.floor((Math.random()*9)).toString()+Math.floor((Math.random()*9)).toString();
  var selectionBeginId="sclexQuotesBeginId"+randomNum;
  var selectionEndId="sclexQuotesEndId"+randomNum;

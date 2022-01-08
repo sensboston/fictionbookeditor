@@ -5,7 +5,7 @@
 
 function Run() {
 
- var versionStr="Скрипт «Проставить только елочки v2.9»\nАвтор Sclex.\n\n";
+ var versionStr="Скрипт «Проставить только елочки» (версия 2.9)\nАвтор Sclex.\n\n";
  var otstupSverhu=60;
  var debug=false;
  try { var nbspChar=window.external.GetNBSP(); }
@@ -316,7 +316,7 @@ function Run() {
  //}
  }
 
- window.external.BeginUndoUnit(document,"Кавычки на елочки v2.0");
+ window.external.BeginUndoUnit(document,"проставление только елочек");
  var randomNum=Math.floor((Math.random()*9)).toString()+Math.floor((Math.random()*9)).toString()+Math.floor((Math.random()*9)).toString()+Math.floor((Math.random()*9)).toString()+Math.floor((Math.random()*9)).toString()+Math.floor((Math.random()*9)).toString();
  var selectionBeginId="sclexQuotesBeginId"+randomNum;
  var selectionEndId="sclexQuotesEndId"+randomNum;
