@@ -1395,7 +1395,7 @@ function reformatSubtitlesToTitles() {
   if (!elemInMainDoc) {alert("Ошибка. Код ошибки 26cb37cn3."); return;}
   sectionOrPoemOrStanza=getSectionOrPoemOrStanzaByElement(elemInMainDoc);
   if (!sectionOrPoemOrStanza) {alert("Ошибка. Код ошибки xhc83nx38."); return;}
-  //перенесем содержимое секции от начала до текущего подзаголовка - в секцию перед текущей
+  //перенесем содержимое раздела от начала до текущего подзаголовка - в раздел перед текущей
   myEl=sectionOrPoemOrStanza.firstChild;
   if (!myEl) {alert("Ошибка. Код ошибки 9c7c32n27."); return;}
   htmlStr="";
@@ -1422,7 +1422,7 @@ function reformatSubtitlesToTitles() {
   elemInMainDoc.removeAttribute("class");
   titleElement.insertAdjacentElement("beforeEnd",elemInMainDoc.removeNode(true));
   if (titleElement.parentNode.lastChild==titleElement) {
-   //если заголовок получился в конце секции, перенесем его в следующую секцию,
+   //если заголовок получился в конце раздела, перенесем его в следующий раздел,
    //возможно присоединив к уже имеющемуся там заголовку
    setNextSectionOrPoemOrStanza();
    if (!nextSectionOrPoemOrStanza.firstChild ||
@@ -1778,7 +1778,7 @@ function reformatTitlesToSubtitlesOrText() {
    moveHtmlCodeIntoTargetContainer(elemInMainDoc==parentTitle);
    sectionOrPoemOrStanza=getSectionOrPoemOrStanzaByElement(parentTitle);
    if (!parentTitle.firstChild || elemInMainDoc==parentTitle) parentTitle.removeNode(true);
-   //если условие верно, нужно перенести остаток секции в предыдущую секцию
+   //если условие верно, нужно перенести остаток раздел в предыдущий раздел
    if (!sectionOrPoemOrStanza) {alert("Ошибка!\nКод ошибки g5d8bc5nd."); return;}
   } //if (elemInMainDoc==firstElFromCurrentBlock)
   else {
