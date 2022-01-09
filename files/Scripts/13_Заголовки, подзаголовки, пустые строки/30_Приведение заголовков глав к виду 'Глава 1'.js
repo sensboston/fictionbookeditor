@@ -1,7 +1,7 @@
 // Скрипт "Приведение заголовков к виду "Глава 1"
 // Автор Sclex
 
-var VersionNumber="1.5";
+var VersionNumber="1.6";
 
 //обрабатывать ли history
 var ObrabotkaHistory=false;
@@ -12,6 +12,8 @@ var ObrabotkaAnnotation=false;
 function Run() {
   try { var nbspChar=window.external.GetNBSP(); var nbspEntity; if (nbspChar.charCodeAt(0)==160) nbspEntity="&nbsp;"; else nbspEntity=nbspChar;}
   catch(e) { var nbspChar=String.fromCharCode(160); var nbspEntity="&nbsp;";}
+  
+  var usualNbspChar=String.fromCharCode(160);
 
   var Ts=new Date().getTime();
   var TimeStr=0;
@@ -23,13 +25,13 @@ function Run() {
   var matches;
   var nReplace;
 
-  var re0=new RegExp("^( |"+nbspChar+")*[IVXLCDM]+( |"+nbspChar+")*$","i");
+  var re0=new RegExp("^[ "+nbspChar+"]*[IVXLCDM]+[ "+nbspChar+"]*$","i");
   var re1=new RegExp("[IVXLCDM]+","i");
   
-  var re2=new RegExp("^( |"+nbspChar+")*\\d+( |"+nbspChar+")*$");
+  var re2=new RegExp("^[ "+nbspChar+"]*\\d+[.]?[ "+nbspChar+"]*$");
   var re3=new RegExp("\\d+");
   
-  var re4=new RegExp("^( |"+nbspChar+")*Глава( |"+nbspChar+")+[IVXLCDM]+( |"+nbspChar+")*$","i");
+  var re4=new RegExp("^[ "+nbspChar+"]*Глава[ "+nbspChar+"]+[IVXLCDM]+[ "+nbspChar+"]*$","i");
   var re5=new RegExp("[IVXLCDM]+","i");
   
   var re6=new RegExp("^( |"+nbspChar+")*Глава"+
@@ -40,7 +42,7 @@ function Run() {
                                           "восьмидесятая|восемьдесят|девяностая|девяносто|сотая|сто|двухсотая|двести|трехсотая|"+
                                           "триста|четырехсотая|четыреста|пятисотая|пятьсот|шестисотая|шестьсот|семисотая|семьсот|"+
                                           "восьмисотая|восемьсот|девятисотая|девятьсот|тысячная))+"+
-                      "\\.?( |"+nbspChar+")*$","i");
+                      "[.:]?( |"+nbspChar+")*$","i");
   var re7=new RegExp("(( |"+nbspChar+")+(первая|вторая|третья|четвертая|пятая|шестая|седьмая|восьмая|девятая|десятая|одиннадцатая|двенадцатая|тринадцатая|четырнадцатая|пятнадцатая|шестнадцатая|семнадцатая|восемнадцатая|девятнадцатая|двадцатая|двадцать|тридцатая|тридцать|сороковая|сорок|пятидесятая|пятьдесят|шестидесятая|шестьдесят|семидесятая|семьдесят|восьмидесятая|восемьдесят|девяностая|девяносто|сотая|сто|двухсотая|двести|трехсотая|триста|четырехсотая|четыреста|пятисотая|пятьсот|шестисотая|шестьсот|семисотая|семьсот|восьмисотая|восемьсот|девятисотая|девятьсот|тысячная))+","i");
   
   var re8=new RegExp("^[ "+nbspChar+"]*[IVXLCDM]+\\.[ "+nbspChar+"].*$","i");
@@ -58,10 +60,10 @@ function Run() {
                                           "сороковая|сорок|пятидесятая|пятьдесят|шестидесятая|шестьдесят|семидесятая|семьдесят|"+
                                           "восьмидесятая|восемьдесят|девяностая|девяносто|сотая|сто|двухсотая|двести|трехсотая|"+
                                           "триста|четырехсотая|четыреста|пятисотая|пятьсот|шестисотая|шестьсот|семисотая|семьсот|"+
-                                          "восьмисотая|восемьсот|девятисотая|девятьсот|тысячная))+\\.[ "+nbspChar+"].*$"+
+                                          "восьмисотая|восемьсот|девятисотая|девятьсот|тысячная))+[.:]?[ "+nbspChar+"].*$"+
                       "[ "+nbspChar+"]*$","i");
   var re15=new RegExp("^( |"+nbspChar+")*Глава"+
-                       "([ "+nbspChar+"]+(первая|вторая|третья|четвертая|пятая|шестая|седьмая|восьмая|девятая|десятая|одиннадцатая|двенадцатая|тринадцатая|четырнадцатая|пятнадцатая|шестнадцатая|семнадцатая|восемнадцатая|девятнадцатая|двадцатая|двадцать|тридцатая|тридцать|сороковая|сорок|пятидесятая|пятьдесят|шестидесятая|шестьдесят|семидесятая|семьдесят|восьмидесятая|восемьдесят|девяностая|девяносто|сотая|сто|двухсотая|двести|трехсотая|триста|четырехсотая|четыреста|пятисотая|пятьсот|шестисотая|шестьсот|семисотая|семьсот|восьмисотая|восемьсот|девятисотая|девятьсот|тысячная))+\\.[ "+nbspChar+"]+","i");
+                       "([ "+nbspChar+"]+(первая|вторая|третья|четвертая|пятая|шестая|седьмая|восьмая|девятая|десятая|одиннадцатая|двенадцатая|тринадцатая|четырнадцатая|пятнадцатая|шестнадцатая|семнадцатая|восемнадцатая|девятнадцатая|двадцатая|двадцать|тридцатая|тридцать|сороковая|сорок|пятидесятая|пятьдесят|шестидесятая|шестьдесят|семидесятая|семьдесят|восьмидесятая|восемьдесят|девяностая|девяносто|сотая|сто|двухсотая|двести|трехсотая|триста|четырехсотая|четыреста|пятисотая|пятьсот|шестисотая|шестьсот|семисотая|семьсот|восьмисотая|восемьсот|девятисотая|девятьсот|тысячная))+[.:]?[ "+nbspChar+"]+","i");
   var re16=new RegExp("([ "+nbspChar+"]+(первая|вторая|третья|четвертая|пятая|шестая|седьмая|восьмая|девятая|десятая|одиннадцатая|двенадцатая|тринадцатая|четырнадцатая|пятнадцатая|шестнадцатая|семнадцатая|восемнадцатая|девятнадцатая|двадцатая|двадцать|тридцатая|тридцать|сороковая|сорок|пятидесятая|пятьдесят|шестидесятая|шестьдесят|семидесятая|семьдесят|восьмидесятая|восемьдесят|девяностая|девяносто|сотая|сто|двухсотая|двести|трехсотая|триста|четырехсотая|четыреста|пятисотая|пятьсот|шестисотая|шестьсот|семисотая|семьсот|восьмисотая|восемьсот|девятисотая|девятьсот|тысячная))+","i");
  
   var re17=new RegExp("^( |"+nbspChar+")*\\d+\\.[ "+nbspChar+"].*$");
@@ -2127,18 +2129,18 @@ a2["тысячная"]="1000";
       matches=s.match(re1);
       replaceStr=a1[matches[0].toUpperCase()];
       if (replaceStr!=undefined) {
-        ptr.innerHTML=removeSymbolsBeyondTags(ptr.innerHTML,1,s.length,"Глава "+replaceStr);
+        ptr.innerHTML=removeSymbolsBeyondTags(ptr.innerHTML.replace(/&nbsp;/g,usualNbspChar),1,s.length,"Глава "+replaceStr).replace(/\xA0/g,usualNbspChar);
         count++;
         return;
       }
     }
     searchRslt=s.search(re2);
     if (searchRslt!=-1) {
-      // Поиск заголовков вида "30"
+      // Поиск заголовков вида "30" и "30."
       searchRslt=s.search(re3);
       matches=s.match(re3);
       if (matches) {
-        ptr.innerHTML=removeSymbolsBeyondTags(ptr.innerHTML,1,s.length,"Глава "+matches[0]);
+        ptr.innerHTML=removeSymbolsBeyondTags(ptr.innerHTML.replace(/&nbsp;/g,usualNbspChar),1,s.length,"Глава "+matches[0]).replace(/\xA0/g,usualNbspChar);
         count++;
         return;
       }
@@ -2151,7 +2153,7 @@ a2["тысячная"]="1000";
         matches=s.match(re5);
         replaceStr=a1[matches[0].toUpperCase()];
         if (replaceStr) {
-          ptr.innerHTML=removeSymbolsBeyondTags(ptr.innerHTML,1,s.length,"Глава "+replaceStr);
+          ptr.innerHTML=removeSymbolsBeyondTags(ptr.innerHTML.replace(/&nbsp;/g,usualNbspChar),1,s.length,"Глава "+replaceStr).replace(/\xA0/g,usualNbspChar);
           count++;
           return;
         }
@@ -2165,7 +2167,7 @@ a2["тысячная"]="1000";
           if (matches) {
             replaceStr=a2[matches[0].toLowerCase().replace(/ё/ig,"е").replace(re100,"").replace(re101," ").replace(re102,"")];
             if (replaceStr) {
-              ptr.innerHTML=removeSymbolsBeyondTags(ptr.innerHTML,1,s.length,"Глава "+replaceStr);
+              ptr.innerHTML=removeSymbolsBeyondTags(ptr.innerHTML.replace(/&nbsp;/g,usualNbspChar),1,s.length,"Глава "+replaceStr).replace(/\xA0/g,usualNbspChar);
               count++;
               return;
             }
@@ -2182,7 +2184,7 @@ a2["тысячная"]="1000";
           matches=matches[0].match(re10);
           replaceStr=a1[matches[0].toUpperCase()];
           if (replaceStr!=undefined) {
-            ptr.innerHTML=removeSymbolsBeyondTags(ptr.innerHTML,1,nReplace,"Глава "+replaceStr+". ");
+            ptr.innerHTML=removeSymbolsBeyondTags(ptr.innerHTML.replace(/&nbsp;/g,usualNbspChar),1,nReplace,"Глава "+replaceStr+". ").replace(/\xA0/g,usualNbspChar);
             count++;
             return;
           }
@@ -2198,7 +2200,7 @@ a2["тысячная"]="1000";
           matches=matches[0].match(re13);
           replaceStr=a1[matches[0].toUpperCase()];
           if (replaceStr!=undefined) {
-            ptr.innerHTML=removeSymbolsBeyondTags(ptr.innerHTML,searchRslt,nReplace,"Глава "+replaceStr+".");
+            ptr.innerHTML=removeSymbolsBeyondTags(ptr.innerHTML.replace(/&nbsp;/g,usualNbspChar),searchRslt,nReplace,"Глава "+replaceStr+".").replace(/\xA0/g,usualNbspChar);
             count++;
             return;
           }
@@ -2214,7 +2216,7 @@ a2["тысячная"]="1000";
           matches=matches[0].match(re16);
           replaceStr=a2[matches[0].toLowerCase().replace(/ё/ig,"е").replace(re100,"").replace(re101," ").replace(re102,"")];
           if (replaceStr!=undefined) {
-            ptr.innerHTML=removeSymbolsBeyondTags(ptr.innerHTML,searchRslt,nReplace,"Глава "+replaceStr+".");
+            ptr.innerHTML=removeSymbolsBeyondTags(ptr.innerHTML.replace(/&nbsp;/g,usualNbspChar),searchRslt,nReplace,"Глава "+replaceStr+".").replace(/\xA0/g,usualNbspChar);
             count++;
             return;
           }
@@ -2228,7 +2230,7 @@ a2["тысячная"]="1000";
         if (matches) {
           nReplace=matches[0].length;
           matches=matches[0].match(re19);
-          ptr.innerHTML=removeSymbolsBeyondTags(ptr.innerHTML,1,nReplace,"Глава "+matches[0]+". ");
+          ptr.innerHTML=removeSymbolsBeyondTags(ptr.innerHTML.replace(/&nbsp;/g,usualNbspChar),1,nReplace,"Глава "+matches[0]+". ").replace(/\xA0/g,usualNbspChar);
           count++; 
           return;
         }
