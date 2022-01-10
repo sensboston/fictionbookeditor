@@ -1,5 +1,5 @@
 // Скрипт "Полный срос структуры разделов"
-// version 1.1
+// version 1.2
 // Автор Sclex
 
 function Run() {
@@ -14,13 +14,14 @@ function Run() {
      htmlStr+=el.outerHTML;
    }
    else if (el.nodeName=="DIV" && el.className!="section") {
-     if (el.className!="title" && el.className!="epigraph" && el.className!="annotation"
-         || (el.className=="title" && el.parentNode.className=="body"))
+     if ((el.className!="title" && el.className!="epigraph" && el.className!="annotation")
+          ||
+          ((el.className=="epigraph" || el.className=="title" || el.className=="annotation") && el.parentNode.className=="body")) {
        htmlStr+="<DIV class="+el.className+(el.getAttribute("id")?" id='"+el.getAttribute("id")+"'":"")+">";
-     rec(el.firstChild);
-     if (el.className!="title" && el.className!="epigraph" && el.className!="annotation"
-         || (el.className=="title" && el.parentNode.className=="body"))
+       rec(el.firstChild);
        htmlStr+="</DIV>";
+     }
+    else rec(el.firstChild);
    }
    if (el.nodeName=="DIV" && el.className=="body" && el.firstChild) {
      if (el.getAttribute("fbname")!="notes" && el.getAttribute("fbname")!="comments") {
