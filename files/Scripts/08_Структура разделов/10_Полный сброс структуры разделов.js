@@ -1,4 +1,6 @@
-//version 1.0
+// Скрипт "Полный срос структуры разделов"
+// version 1.1
+// Автор Sclex
 
 function Run() {
 
@@ -8,7 +10,10 @@ function Run() {
   var saveNext,saveNext2,el2;
   while (el) {
    saveNext=el.nextSibling;
-   if (el.nodeName=="DIV" && el.className!="section") {
+   if (el.nodeName=="DIV" && el.className=="image") {
+     htmlStr+=el.outerHTML;
+   }
+   else if (el.nodeName=="DIV" && el.className!="section") {
      if (el.className!="title" && el.className!="epigraph" && el.className!="annotation"
          || (el.className=="title" && el.parentNode.className=="body"))
        htmlStr+="<DIV class="+el.className+(el.getAttribute("id")?" id='"+el.getAttribute("id")+"'":"")+">";
@@ -43,9 +48,14 @@ function Run() {
    }
    if (el.nodeName=="P") {
      if (el.className=="text-author" && el.parentNode.className=="epigraph")
-       htmlStr+="<P"+(el.getAttribute("id")?" id='"+el.getAttribute("id")+"'":"")+">"+el.innerHTML+"</P>";
+       htmlStr+="<P"+(el.getAttribute("id")?" id='"+el.getAttribute("id")+"'":"")+">";
+     else
+       htmlStr+="<P"+(el.getAttribute("id")?" id='"+el.getAttribute("id")+"'":"")+(el.className?" class='"+el.className+"'":"")+">";
+     if (el.innerHTML=="")
+       htmlStr+="&nbsp;";
      else  
-       htmlStr+=el.outerHTML;
+       htmlStr+=el.innerHTML;
+     htmlStr+="</P>";
    }
    el=saveNext;
   }
