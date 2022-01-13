@@ -40,7 +40,7 @@
     '  while (ptrInSection) {'+
     '   if (ptrInSection.nodeName=="P" && ptrInSection.innerHTML=="") '+
     '     ptrInSection.innerHTML=nbspChar;'+
-    '   if (ptrInSection.nodeName=="P" && ptrInSection.innerText.replace(new RegExp("&nbsp;","ig")," ").search(abruptionRegExp)>=0) {'+
+    '   if (ptrInSection.nodeName=="P" && ptrInSection.className!="subtitle" && ptrInSection.innerText.replace(new RegExp("&nbsp;","ig")," ").search(abruptionRegExp)>=0) {'+
     '    titleBegin=ptrInSection;'+
     '    titleEnd=ptrInSection;'+
     '    titleEnd.removeAttribute("className");'+
@@ -52,6 +52,7 @@
     '      titleBeginPrev=titleBegin.previousSibling;'+
     '      if (titleBeginPrev && titleBeginPrev.nodeName=="P" &&'+
     '          titleBeginPrev.innerHTML.search(new RegExp("^Sclex_SplittingIntoSections_"+randomNum+"_"+"\\\\d+"+"_(begin|end)$"),"")<0) {'+
+    '       if (titleBeginPrev.className=="subtitle") break;'+
     '       titleBegin=titleBeginPrev;'+
     '       titleBegin.removeAttribute("class");'+
     '       titleBegin.removeAttribute("className");'+
@@ -71,6 +72,7 @@
     '     while (whileFlag) {'+
     '      titleEndNext=titleEnd.nextSibling;'+
     '      if (titleEndNext && titleEndNext.nodeName=="P") {'+
+    '       if (titleEndNext.className=="subtitle") break;'+
     '       titleEnd=titleEndNext;'+
     '       titleEnd.removeAttribute("className");'+
     '       titleEnd.removeAttribute("class");'+
