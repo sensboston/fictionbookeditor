@@ -2070,6 +2070,11 @@ function AddEpigraph(cp,check)
 
   if(check) return true;
 
+  if (document.selection.type && document.selection.type=="Control") {
+   MsgBox("Вы используете не тот тип выделения, с которым работает вставка эпиграфа. Выделяйте текст для будущего эпиграфа не кликом по картинке, а движением мыши слева направо или справа налево. Либо задайте выделение, используя клавиатуру.");
+   return;
+  }
+
   var rng = document.selection.createRange();
   var txt = "";
   var pps;
@@ -2079,8 +2084,13 @@ function AddEpigraph(cp,check)
     var dpps = document.createElement("DIV");
     dpps.innerHTML = rng.htmlText;
     pps = dpps.getElementsByTagName("P");
-    if(pps.length == 0)
+    if(pps.length == 0) {
+     dpps.innerHTML = "<P>"+rng.htmlText+"</P>";
+     pps = dpps.getElementsByTagName("P");
+     if(pps.length == 0) {
       txt = rng.text;
+     }
+    }
   }
 
   window.external.BeginUndoUnit(document,"add epigraph");
@@ -2130,7 +2140,7 @@ function AddEpigraph(cp,check)
           }
 	}
       }
-      pwt.innerHTML = pps[i].innerText;
+      pwt.innerHTML = pps[i].innerHTML;
       ep.appendChild(pwt);
     }
   }
