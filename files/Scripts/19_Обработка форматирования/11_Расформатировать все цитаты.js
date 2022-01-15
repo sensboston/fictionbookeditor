@@ -1,4 +1,4 @@
-// Скрипт "Удалить все цитаты, но оставить их содержимое" v1.0
+// Скрипт "Расформатировать все цитаты" v1.0
 // Автор Sclex
 
 function Run() {
@@ -11,7 +11,7 @@ function Run() {
  for (i=allDivs.length-1; i>=0; i--) {
   if (allDivs[i].className=="cite") {
    if (itsFirstRemoving) {
-    window.external.BeginUndoUnit(document,"удаление всех цитат, но не их содержимого");
+    window.external.BeginUndoUnit(document,"расформатирование всех цитат");
     itsFirstRemoving=false;
    }
    allDivs[i].removeNode(false);
@@ -22,7 +22,7 @@ function Run() {
   MsgBox("Цитат в документе не нашлось.");
   return;
  }
- try { window.external.SetStatusBarText("Удалено цитат: "+removedCitesCnt+"."); }
+ try { window.external.SetStatusBarText("Расформатировано цитат: "+removedCitesCnt+"."); }
  catch(e) {} 
  window.external.EndUndoUnit(document);
 }
