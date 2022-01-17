@@ -1,6 +1,6 @@
 function Run() {
 
- var versionNum="1.7";
+ var versionNum="1.8";
 
  function thereIsParentBodyDiv(ptr) {
   while (ptr && ptr.nodeName && ptr.nodeName!="BODY" &&
@@ -14,8 +14,6 @@ function Run() {
 
  var range,el,el2,saveNextAfterEl,saveNextAfterEl2;
  var elParent,i,j,divs,ps,saveClassName;
-// try { var nbspChar=window.external.GetNBSP(); }
-// catch(e) { var nbspChar=String.fromCharCode(160); } 
  var randomNum=Math.floor((Math.random()*9)).toString()+Math.floor((Math.random()*9)).toString()+
          Math.floor((Math.random()*9)).toString()+Math.floor((Math.random()*9)).toString()+
       Math.floor((Math.random()*9)).toString()+Math.floor((Math.random()*9)).toString();
@@ -24,7 +22,7 @@ function Run() {
  var fbw_body=document.getElementById("fbw_body");
  if (!fbw_body) return;
  if (document.selection.type.toLowerCase()!="none") {
-  alert("При запуске скрипта не должно быть выделения. Должен быть просто курсор.");
+//  alert("При запуске скрипта не должно быть выделения. Должен быть просто курсор.");
   return;
  } 
  var tr=document.selection.createRange();
