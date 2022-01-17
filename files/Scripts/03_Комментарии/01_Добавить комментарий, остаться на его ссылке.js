@@ -275,7 +275,7 @@ function Run () {
    if (abc!=-1) insertN=sectNumById[abc];
    if (abc==-1 || insertN==undefined) {
     document.links[newSnoskaNum].removeNode(true);
-    MsgBox("Не удалось создать комментарий.\n\n"
+    MsgBox("Не удалось создать комментарий.\n\n"+
            "Чтобы определить, с каким разделом в body комментариев "+
            "связать сноску, которую пользователь хочет вставить, "+
            "скрипт смотрит, с каким разделом в body комментариев "+
