@@ -1,6 +1,6 @@
 function Run() {
 
- var versionNum="1.6";
+ var versionNum="1.7";
 
  function thereIsParentBodyDiv(ptr) {
   while (ptr && ptr.nodeName && ptr.nodeName!="BODY" &&
@@ -14,6 +14,8 @@ function Run() {
 
  var range,el,el2,saveNextAfterEl,saveNextAfterEl2;
  var elParent,i,j,divs,ps,saveClassName;
+// try { var nbspChar=window.external.GetNBSP(); }
+// catch(e) { var nbspChar=String.fromCharCode(160); } 
  var randomNum=Math.floor((Math.random()*9)).toString()+Math.floor((Math.random()*9)).toString()+
          Math.floor((Math.random()*9)).toString()+Math.floor((Math.random()*9)).toString()+
       Math.floor((Math.random()*9)).toString()+Math.floor((Math.random()*9)).toString();
@@ -51,8 +53,17 @@ function Run() {
        saveNextAfterEl2=saveNextAfterEl2.parentNode;
       if (saveNextAfterEl2!=el) saveNextAfterEl2=saveNextAfterEl2.nextSibling;
      } 
-     if (el2.nodeName=="DIV" && (el2.className=="stanza" || el2.className=="epigraph")) 
+     if (el2.nodeName=="DIV" && el2.className=="stanza") {
+      if (el2.nextSibling)
+        if (el2.nextSibling.nodeName=="DIV" && el2.nextSibling.className=="stanza") {
+         el2.insertAdjacentHTML("beforeEnd","<P>&nbsp;</P>");
+         InflateIt(el2);
+        }
       el2.removeNode(false);
+     }
+     else if (el2.nodeName=="DIV" && el2.className=="epigraph") {
+       el2.removeNode(false);
+     }
      else if (el2.nodeName=="P" && el2.className=="text-author" && el2.parentNode==el) {
       el2.removeAttribute("class");
       el2.removeAttribute("className");
