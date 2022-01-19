@@ -342,14 +342,16 @@
        !(saveNext.nodeName=="DIV" &&
          (saveNext.className=="title" || saveNext.className=="table" ||
          saveNext.className=="history" || saveNext.className=="annotation" ||
-         saveNext.className=="poem"))) {
+         saveNext.className=="poem" || saveNext.className=="image"))) {
      saveNext=saveNext.firstChild; // либо углубляемся...
    } else {
      while (saveNext && saveNext.nextSibling==null)
       saveNext=saveNext.parentNode; // ...либо поднимаемся (если уже сходили вглубь)
      if (saveNext) saveNext=saveNext.nextSibling; //и переходим на соседний элемент
    }
-   delP.removeNode(true);
+   //alert("#1. Будем удалять вот что:\n\n"+delP.outerHTML);
+   if (delP.nodeName!="DIV" || delP.className!="image") 
+     delP.removeNode(true);
    delP=saveNext;
   }  
   ptr.removeNode(true);
