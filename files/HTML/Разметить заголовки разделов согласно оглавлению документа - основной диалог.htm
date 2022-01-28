@@ -16,6 +16,13 @@
   var blockBeginParagraph, blockEndParagraph;
   var myRange, myRange2, processingType;
 
+  function removeBlockMarkers() {
+    if (mainDocument.getElementById("mtbc_BlockStart"))
+      mainDocument.getElementById("mtbc_BlockStart").removeNode(false);
+    if (mainDocument.getElementById("mtbc_BlockEnd"))
+      mainDocument.getElementById("mtbc_BlockEnd").removeNode(false);
+  }
+
   function makeSelection() {
     var elem=mainDocument.getElementById("mtbc_BlockStart");
     while (elem.nodeName!="P") elem=elem.parentNode;
@@ -205,7 +212,7 @@
     function getVersionStr() {
       return "Скрипт «Разметить заголовки разделов согласно оглавлению документа» v"+scriptVersion+".\nАвтор Sclex.";
     }
-
+ 
     var fbwBody=mainDocument.getElementById("fbw_body");
     var ptrInFbwBody=fbwBody.firstChild;
     var newTitleCnt=0;
@@ -273,7 +280,7 @@
     //alert(contentsText);
   }
  </script>
-<body onbeforeunload="">
+<body onbeforeunload="removeBlockMarkers();">
 
 <input type="button" value="Удалить из оглавления лишние символы" onclick="removeSymbols();">
 <br>
@@ -293,10 +300,7 @@
 
   // найдем первый и последний абзац в пользовательском выделении
   var MyTagName="B";
-  if (mainDocument.getElementById("mtbc_BlockStart"))
-    mainDocument.getElementById("mtbc_BlockStart").removeNode(false);
-  if (mainDocument.getElementById("mtbc_BlockEnd"))
-    mainDocument.getElementById("mtbc_BlockEnd").removeNode(false);
+  removeBlockMarkers();
   var ttr1=mainDocument.selection.createRange();
   var tr=ttr1.duplicate();
   tr.collapse();
