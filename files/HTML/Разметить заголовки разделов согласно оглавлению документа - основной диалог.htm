@@ -14,7 +14,7 @@
   var mainDocument=params["mainDocument"];
   var scriptVersion=params["versionNum"];
   var blockBeginParagraph, blockEndParagraph;
-  var myRange, myRange2;
+  var myRange, myRange2, processingType;
 
   function makeSelection() {
     var elem=mainDocument.getElementById("mtbc_BlockStart");
@@ -58,12 +58,15 @@
     function getReadyTitlesArray() {
       var crLfRegExp2=new RegExp("[\\r\\n]+","gm");
       var crLfRegExp2_="\n";
-      var contentsText=document.getElementById("contentsTextArea").value.replace(crLfRegExp2,crLfRegExp2_).toLowerCase().replace(/[–—]/g,"-").replace(/[«„“»]/g,'"').replace(/…/g,"...").replace(/’/g,"'");
+      var contentsText=document.getElementById("contentsTextArea").value.replace(crLfRegExp2,crLfRegExp2_).replace(/[–—]/g,"-").replace(/[«„“»]/g,'"').replace(/…/g,"...").replace(/’/g,"'");
+      titlesOutArr=contentsText.match(/^.+$/gm);
+      contentsText=contentsText.toLowerCase();
       titlesArr=contentsText.match(/^.+$/gm);
-      titlesOutArr=[].concat(titlesArr);
       //alert(titlesArr);
     }
-
+  
+    var strEnding=new RegExp("^[ "+nbspChar+"]+\\d*$","g");
+ 
     var titleTextNew;
 
     function detectIfTitleFits(titleText) {
@@ -77,9 +80,23 @@
                          .replace(/…/g,"...")
                          .replace(/’/g,"'");
       for (var i=0; i<titlesArr.length; i++) {
-        if (titleTextNew.indexOf(titlesArr[i])==0) {
-          delete titlesOutArr[i];
-          return true;
+        if (processingType=="PartialMatch") {
+          if (titleTextNew.indexOf(titlesArr[i])==0) {
+            delete titlesOutArr[i];
+            return true;
+          }
+        }
+        else if (processingType=="FullMatch") {
+          if (titleTextNew==titlesArr[i]) {
+            delete titlesOutArr[i];
+            return true;
+          }
+          else if (titleTextNew.indexOf(titlesArr[i])==0 &&
+                   titleTextNew.substr(titlesArr[i].length).search(strEnding)!=-1
+                   ) {
+            delete titlesOutArr[i];
+            return true;
+          }
         }
       }
       return false;
@@ -193,6 +210,8 @@
     var ptrInFbwBody=fbwBody.firstChild;
     var newTitleCnt=0;
     var randomNum=getRandomNum(6);
+    if (document.getElementById("radio1").checked) processingType="FullMatch";
+    if (document.getElementById("radio2").checked) processingType="PartialMatch";
     var captureBeforeCnt=0;
     var captureAfterCnt=0;
     var titlesArr=[];
@@ -258,8 +277,13 @@
 
 <input type="button" value="Удалить из оглавления лишние символы" onclick="removeSymbols();">
 <br>
-<input type="button" value="Разметить заголовки разделов согласно списку" onclick="markupTitles();">
+<input type="radio" id="radio1" name="processingType" value="FullMatch" checked>
+<label for="radio1" checked>Размечать заголовок при точном совпадении с абзацем документа</label>
 <br>
+<input type="radio" id="radio2" name="processingType" value="PartialMatch">
+<label for="radio2">Размечать заголовок при совпадении его с *началом* абзаца документа</label>
+<br>
+<input type="button" value="Разметить заголовки разделов согласно списку" onclick="markupTitles();">
 <textarea style="width:100%; height:70%;" id="contentsTextArea">
 </textarea>
 <script>
@@ -269,6 +293,10 @@
 
   // найдем первый и последний абзац в пользовательском выделении
   var MyTagName="B";
+  if (mainDocument.getElementById("mtbc_BlockStart"))
+    mainDocument.getElementById("mtbc_BlockStart").removeNode(false);
+  if (mainDocument.getElementById("mtbc_BlockEnd"))
+    mainDocument.getElementById("mtbc_BlockEnd").removeNode(false);
   var ttr1=mainDocument.selection.createRange();
   var tr=ttr1.duplicate();
   tr.collapse();
