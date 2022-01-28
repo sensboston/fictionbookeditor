@@ -65,8 +65,9 @@
     function getReadyTitlesArray() {
       var crLfRegExp2=new RegExp("[\\r\\n]+","gm");
       var crLfRegExp2_="\n";
-      var contentsText=document.getElementById("contentsTextArea").value.replace(crLfRegExp2,crLfRegExp2_).replace(/[–—]/g,"-").replace(/[«„“»]/g,'"').replace(/…/g,"...").replace(/’/g,"'");
+      var contentsText=document.getElementById("contentsTextArea").value;
       titlesOutArr=contentsText.match(/^.+$/gm);
+      contentsText=contentsText.replace(crLfRegExp2,crLfRegExp2_).replace(/[–—]/g,"-").replace(/[«„“»]/g,'"').replace(/…/g,"...").replace(/’/g,"'");
       contentsText=contentsText.toLowerCase();
       titlesArr=contentsText.match(/^.+$/gm);
       //alert(titlesArr);
