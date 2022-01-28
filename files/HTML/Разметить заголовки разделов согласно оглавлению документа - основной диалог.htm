@@ -73,20 +73,27 @@
       //alert(titlesArr);
     }
   
-    var strEnding=new RegExp("^[ "+nbspChar+"]+\\d*$","g");
+    var strEnding=new RegExp("^(\\.\\.\\.|[.,\"'<>«»„“:?!;\\)]){0,7}([ "+nbspChar+"]+\\d+(\\.\\.\\.|[.,\"'<>«»„“:?!;\\)]){0,7})?$","g");
  
     var titleTextNew;
 
-    function detectIfTitleFits(titleText) {
-      //alert("detectIfTitleFits:\n\n"+titleText);
-      titleTextNew=titleText.toLowerCase()
-                         .replace(myRegExp1,"")
-                         .replace(myRegExp2," ")
-                         .replace(myRegExp3,"")
-                         .replace(/[–—]/g,"-")
-                         .replace(/[«„“»]/g,'"')
-                         .replace(/…/g,"...")
-                         .replace(/’/g,"'");
+    function detectIfTitleFits(titleHTML) {
+      //alert("titleHTML: \n\n"+titleHTML)
+      titleTextNew=titleHTML.replace(/([\\r\\n\\t "+nbspChar+"]|"+nbspEntity"+)+/," ")
+                            .replace(/<A( [^<>]+)? href=("[^"]*"|'[^']*')( [^<>]+)?>.*?<\/A>/gmi,"")
+                            .replace(/&lt;/gi,"«")
+                            .replace(/&gt;/gi,"»")
+                            .replace(/&amp;/gi,"&")
+                            .replace(/<[^>]+>/gm,"")
+                            .toLowerCase()
+                            .replace(myRegExp1,"")
+                            .replace(myRegExp2," ")
+                            .replace(myRegExp3,"")
+                            .replace(/[–—]/g,"-")
+                            .replace(/[«„“»]/g,'"')
+                            .replace(/…/g,"...")
+                            .replace(/’/g,"'");
+      //alert("titleTextNew after: \n\n"+titleTextNew)
       for (var i=0; i<titlesArr.length; i++) {
         if (processingType=="PartialMatch") {
           if (titleTextNew.indexOf(titlesArr[i])==0) {
@@ -114,7 +121,7 @@
       if (!titlePtr) return;
       var ps=titlePtr.getElementsByTagName("P");
       for (var i=0; i<ps.length; i++)
-        detectIfTitleFits(ps[i].innerText);
+        detectIfTitleFits(ps[i].innerHTML);
     }
 
     function processSectionAndSubsections(sectionPtr) {
@@ -135,7 +142,7 @@
         }
         if (ptrInSection.nodeName=="P" && ptrInSection.innerHTML=="") 
           ptrInSection.innerHTML=nbspChar;
-        if (!weAreInBlock && ptrInSection.nodeName=="P" && ptrInSection.className!="subtitle" && detectIfTitleFits(ptrInSection.innerText)) {
+        if (!weAreInBlock && ptrInSection.nodeName=="P" && ptrInSection.className!="subtitle" && detectIfTitleFits(ptrInSection.innerHTML)) {
          titleBegin=ptrInSection;
          titleEnd=ptrInSection;
          titleEnd.removeAttribute("className");
