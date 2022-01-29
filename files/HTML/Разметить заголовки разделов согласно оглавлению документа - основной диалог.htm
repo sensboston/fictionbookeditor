@@ -15,12 +15,14 @@
   var scriptVersion=params["versionNum"];
   var blockBeginParagraph, blockEndParagraph;
   var myRange, myRange2, processingType;
+  var undoBeginMade=false;
 
   function removeBlockMarkers() {
     if (mainDocument.getElementById("mtbc_BlockStart"))
       mainDocument.getElementById("mtbc_BlockStart").removeNode(false);
     if (mainDocument.getElementById("mtbc_BlockEnd"))
       mainDocument.getElementById("mtbc_BlockEnd").removeNode(false);
+    if (undoBeginMade) myWin.myEndUndoUnit();
   }
 
   function makeSelection() {
@@ -43,6 +45,10 @@
  }
 
   function markupTitles() {
+
+    if (undoBeginMade) myWin.myEndUndoUnit;
+    myWin.myBeginUndoUnit("разметку заголовков разделов согласно оглавлению");
+    undoBeginMade=true;
 
     var weAreInBlock=false;
 
@@ -258,13 +264,11 @@
       alert("Список не содержит ни одного заголовка, поэтому заголовки в этот раз не были размечены.");
       return;
     }
-    myWin.myBeginUndoUnit("разметку заголовков разделов согласно оглавлению");
     // вставим маркеры начала и конца выделения
     while (ptrInFbwBody) {
      if (ptrInFbwBody.className.toLowerCase()=="body") processBodyAndSubsections(ptrInFbwBody);
      ptrInFbwBody=ptrInFbwBody.nextSibling;
     }
-    myWin.myEndUndoUnit();
     var titlesNewArr=[];
     for (var i=0; i<titlesOutArr.length; i++)
       if (titlesOutArr[i])
@@ -278,7 +282,7 @@
     myRange.setEndPoint("EndToEnd",myRange2);
     myRange.select();
     alert(getVersionStr()+"\n\nОбработка завершена.\nРазмечено заголовков: "+newTitleCnt+".");
-  }
+  } // конец функции markupTitles()
 
   function removeSymbols() {    
     try { var nbspChar=params["window"].external.GetNBSP(); var nbspEntity; if (nbspChar.charCodeAt(0)==160) nbspEntity="&nbsp;"; else nbspEntity=nbspChar; }
