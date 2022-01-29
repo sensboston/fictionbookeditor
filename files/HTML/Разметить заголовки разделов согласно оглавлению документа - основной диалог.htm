@@ -116,12 +116,12 @@
             delete titlesOutArr[i];
             return true;
           }
-          else if (titleTextNew.indexOf(titlesArr[i])==0 &&
+/*          else if (titleTextNew.indexOf(titlesArr[i])==0 &&
                    titleTextNew.substr(titlesArr[i].length).search(strEnding)!=-1
                    ) {
             delete titlesOutArr[i];
             return true;
-          }
+          }*/
         }
         else if (processingType=="MatchWithIgnoring") {
           if (titleTextNew2==titlesArr[i]) {
@@ -318,7 +318,7 @@
 <label for="radio1" checked>Размечать заголовок при точном совпадении с абзацем документа</label>
 <br>
 <input type="radio" id="radio2" name="processingType" value="MatchWithIgnoring">
-<label for="radio2">Размечать заголовок, игнорируя знаки препинания и наличие сносок</label>
+<label for="radio2">Размечать заголовок, игнорируя знаки препинания, числа и знаки сносок</label>
 <br>
 <input type="button" value="Разметить заголовки разделов согласно списку" onclick="markupTitles();">
 <textarea style="width:100%; height:70%;" id="contentsTextArea">
