@@ -92,7 +92,8 @@
                             .replace(/[–—]/g,"-")
                             .replace(/[«„“»]/g,'"')
                             .replace(/…/g,"...")
-                            .replace(/’/g,"'");
+                            .replace(/’/g,"'")
+                            .replace(/\[\d+\]|\{\d+\}|\*+/gmi,"");
       //alert("titleTextNew after: \n\n"+titleTextNew)
       for (var i=0; i<titlesArr.length; i++) {
         if (processingType=="PartialMatch") {
