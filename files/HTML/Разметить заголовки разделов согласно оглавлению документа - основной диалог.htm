@@ -72,14 +72,28 @@
       titlesArr=contentsText.match(/^.+$/gm);
       //alert(titlesArr);
     }
-  
-    var strEnding=new RegExp("^(\\.\\.\\.|[.,\"'<>«»„“:?!;\\)]){0,7}([ "+nbspChar+"]+\\d+(\\.\\.\\.|[.,\"'<>«»„“:?!;\\)]){0,7})?$","g");
+
+    var strEnding=new RegExp("^[ "+nbspChar+"]+\\d+$","g");
+    var strEnding2=new RegExp("^(\\.\\.\\.|[.,\"'<>«»„“:?!;\\)]){0,7}([ "+nbspChar+"]+\\d+(\\.\\.\\.|[.,\"'<>«»„“:?!;\\)]){0,7})?$","g");
  
-    var titleTextNew;
+    var titleTextNew,titleTextNew2;
 
     function detectIfTitleFits(titleHTML) {
       //alert("titleHTML: \n\n"+titleHTML)
       titleTextNew=titleHTML.replace(/([\\r\\n\\t "+nbspChar+"]|"+nbspEntity"+)+/," ")
+                            .replace(/&lt;/gi,"«")
+                            .replace(/&gt;/gi,"»")
+                            .replace(/&amp;/gi,"&")
+                            .replace(/<[^>]+>/gm,"")
+                            .toLowerCase()
+                            .replace(myRegExp1,"")
+                            .replace(myRegExp2," ")
+                            .replace(myRegExp3,"")
+                            .replace(/[–—]/g,"-")
+                            .replace(/[«„“»]/g,'"')
+                            .replace(/…/g,"...")
+                            .replace(/’/g,"'")
+      titleTextNew2=titleHTML.replace(/([\\r\\n\\t "+nbspChar+"]|"+nbspEntity"+)+/," ")
                             .replace(/<A( [^<>]+)? href=("[^"]*"|'[^']*')( [^<>]+)?>.*?<\/A>/gmi,"")
                             .replace(/&lt;/gi,"«")
                             .replace(/&gt;/gi,"»")
@@ -93,22 +107,29 @@
                             .replace(/[«„“»]/g,'"')
                             .replace(/…/g,"...")
                             .replace(/’/g,"'")
-                            .replace(/\[\d+\]|\{\d+\}|\*+/gmi,"");
+                            .replace(/\[\d+\]|\{\d+\}|\*+/gmi,"")
+                            .replace(/([a-zа-яё])\d+/ig,"$1");
       //alert("titleTextNew after: \n\n"+titleTextNew)
       for (var i=0; i<titlesArr.length; i++) {
-        if (processingType=="PartialMatch") {
-          if (titleTextNew.indexOf(titlesArr[i])==0) {
-            delete titlesOutArr[i];
-            return true;
-          }
-        }
-        else if (processingType=="FullMatch") {
+        if (processingType=="FullMatch") {
           if (titleTextNew==titlesArr[i]) {
             delete titlesOutArr[i];
             return true;
           }
           else if (titleTextNew.indexOf(titlesArr[i])==0 &&
                    titleTextNew.substr(titlesArr[i].length).search(strEnding)!=-1
+                   ) {
+            delete titlesOutArr[i];
+            return true;
+          }
+        }
+        else if (processingType=="MatchWithIgnoring") {
+          if (titleTextNew2==titlesArr[i]) {
+            delete titlesOutArr[i];
+            return true;
+          }
+          else if (titleTextNew2.indexOf(titlesArr[i])==0 &&
+                   titleTextNew2.substr(titlesArr[i].length).search(strEnding2)!=-1
                    ) {
             delete titlesOutArr[i];
             return true;
@@ -227,7 +248,7 @@
     var newTitleCnt=0;
     var randomNum=getRandomNum(6);
     if (document.getElementById("radio1").checked) processingType="FullMatch";
-    if (document.getElementById("radio2").checked) processingType="PartialMatch";
+    if (document.getElementById("radio2").checked) processingType="MatchWithIgnoring";
     var captureBeforeCnt=0;
     var captureAfterCnt=0;
     var titlesArr=[];
@@ -296,8 +317,8 @@
 <input type="radio" id="radio1" name="processingType" value="FullMatch" checked>
 <label for="radio1" checked>Размечать заголовок при точном совпадении с абзацем документа</label>
 <br>
-<input type="radio" id="radio2" name="processingType" value="PartialMatch">
-<label for="radio2">Размечать заголовок при совпадении его с *началом* абзаца документа</label>
+<input type="radio" id="radio2" name="processingType" value="MatchWithIgnoring">
+<label for="radio2">Размечать заголовок, игнорируя знаки препинания и наличие сносок</label>
 <br>
 <input type="button" value="Разметить заголовки разделов согласно списку" onclick="markupTitles();">
 <textarea style="width:100%; height:70%;" id="contentsTextArea">
