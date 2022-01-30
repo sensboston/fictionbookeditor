@@ -301,9 +301,9 @@
     var spacesAtTheBeginRegExp_="";
     var spacesAndNumberOnTheEndRegExp=new RegExp("[ "+nbspChar+"]*\\d+[ "+nbspChar+"]*$","gm");
     var spacesAndNumberOnTheEndRegExp_="";
-    var trashRegExp=new RegExp("[ "+nbspChar+"'\\*.,’—_]+$","gm");
+    var trashRegExp=new RegExp("[ "+nbspChar+"'\\*.,’\\-–—_]+$","gm");
     var trashRegExp_="";
-    var trashRegExp2=new RegExp("[ "+nbspChar+"'\\*.,’—_]*\\.\\.\\.\\..*$","gm");
+    var trashRegExp2=new RegExp("[ "+nbspChar+"'\\*.,’\\-–—_]*\\.\\.\\.\\..*$","gm");
     var trashRegExp2_="";
     var contentsText=document.getElementById("contentsTextArea").value;
     contentsText=contentsText.replace(crLfRegExp,crLfRegExp_)
