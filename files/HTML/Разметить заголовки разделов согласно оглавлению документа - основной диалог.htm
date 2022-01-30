@@ -32,7 +32,10 @@
     while (elem.nodeName!="P" && elem.nodeName!="BODY") elem=elem.parentNode;
     if (elem.nodeName=="BODY") {
       elem=mainDocument.getElementById("mtbc_BlockStart");
-      window.clipboardData.setData("text",mainDocument.body.outerHTML);
+      while (!elem.nextSibling) elem=elem.parentNode;
+      elem=elem.nextSibling;
+      while (elem.nodeName!="P") elem=elem.firstChild;
+      //window.clipboardData.setData("text",mainDocument.body.outerHTML);
     }
     blockBeginParagraph=elem;
     var elem=mainDocument.getElementById("mtbc_BlockEnd");
