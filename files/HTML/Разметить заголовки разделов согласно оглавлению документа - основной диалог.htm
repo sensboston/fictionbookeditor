@@ -16,6 +16,8 @@
   var blockBeginParagraph, blockEndParagraph;
   var myRange, myRange2, processingType;
   var undoBeginMade=false;
+  try { var nbspChar=params["window"].external.GetNBSP(); var nbspEntity; if (nbspChar.charCodeAt(0)==160) nbspEntity="&nbsp;"; else nbspEntity=nbspChar; }
+  catch(e) { var nbspChar=String.fromCharCode(160); var nbspEntity="&nbsp;";};
 
   function removeBlockMarkers() {
     if (mainDocument.getElementById("mtbc_BlockStart"))
@@ -27,7 +29,11 @@
 
   function makeSelection() {
     var elem=mainDocument.getElementById("mtbc_BlockStart");
-    while (elem.nodeName!="P") elem=elem.parentNode;
+    while (elem.nodeName!="P" && elem.nodeName!="BODY") elem=elem.parentNode;
+    if (elem.nodeName=="BODY") {
+      elem=mainDocument.getElementById("mtbc_BlockStart");
+      window.clipboardData.setData("text",mainDocument.body.outerHTML);
+    }
     blockBeginParagraph=elem;
     var elem=mainDocument.getElementById("mtbc_BlockEnd");
     if (elem.previousSibling && elem.previousSibling.nodeName=="P")
@@ -46,14 +52,11 @@
 
   function markupTitles() {
 
-    if (undoBeginMade) myWin.myEndUndoUnit;
+    if (undoBeginMade) myWin.myEndUndoUnit();
     myWin.myBeginUndoUnit("разметку заголовков разделов согласно оглавлению");
     undoBeginMade=true;
 
     var weAreInBlock=false;
-
-    try { var nbspChar=params["window"].external.GetNBSP(); var nbspEntity; if (nbspChar.charCodeAt(0)==160) nbspEntity="&nbsp;"; else nbspEntity=nbspChar; }
-    catch(e) { var nbspChar=String.fromCharCode(160); var nbspEntity="&nbsp;";};
 
     function getRandomNum(n) {
      var s="";
@@ -69,13 +72,13 @@
     var changedTitleText;
 
     function getReadyTitlesArray() {
-      var crLfRegExp2=new RegExp("[\\r\\n]+","gm");
+      var crLfRegExp2=new RegExp("^([ "+nbspChar+"]*[\\r\\n]+)+","gm");
       var crLfRegExp2_="\n";
-      var contentsText=document.getElementById("contentsTextArea").value;
-      titlesOutArr=contentsText.match(/^.+$/gm);
-      contentsText=contentsText.replace(crLfRegExp2,crLfRegExp2_).replace(/[–—]/g,"-").replace(/[«„“»]/g,'"').replace(/…/g,"...").replace(/’/g,"'");
+      var contentsText=document.getElementById("contentsTextArea").value.replace(crLfRegExp2,crLfRegExp2_);
+      Arr=contentsText.match(/^[^\r\n]+/gm);
+      contentsText=contentsText.replace(/[–—]/g,"-").replace(/[«„“»]/g,'"').replace(/…/g,"...").replace(/’/g,"'");
       contentsText=contentsText.toLowerCase();
-      titlesArr=contentsText.match(/^.+$/gm);
+      titlesArr=contentsText.match(/^[^\r\n]+$/gm);
       //alert(titlesArr);
     }
 
@@ -83,10 +86,11 @@
     var strEnding2=new RegExp("^(\\.\\.\\.|[.,\"'<>«»„“:?!;\\)]){0,7}([ "+nbspChar+"]+\\d+(\\.\\.\\.|[.,\"'<>«»„“:?!;\\)]){0,7})?$","g");
  
     var titleTextNew,titleTextNew2;
+    var emptySpaceRegExp2=new RegExp("([\\r\\n\\t "+nbspChar+"]|"+nbspEntity+")+","gi");
 
     function detectIfTitleFits(titleHTML) {
       //alert("titleHTML: \n\n"+titleHTML)
-      titleTextNew=titleHTML.replace(/([\\r\\n\\t "+nbspChar+"]|"+nbspEntity"+)+/," ")
+      titleTextNew=titleHTML.replace(emptySpaceRegExp2," ")
                             .replace(/&lt;/gi,"«")
                             .replace(/&gt;/gi,"»")
                             .replace(/&amp;/gi,"&")
@@ -99,7 +103,7 @@
                             .replace(/[«„“»]/g,'"')
                             .replace(/…/g,"...")
                             .replace(/’/g,"'")
-      titleTextNew2=titleHTML.replace(/([\\r\\n\\t "+nbspChar+"]|"+nbspEntity"+)+/," ")
+      titleTextNew2=titleHTML.replace(emptySpaceRegExp2," ")
                             .replace(/<A( [^<>]+)? href=("[^"]*"|'[^']*')( [^<>]+)?>.*?<\/A>/gmi,"")
                             .replace(/&lt;/gi,"«")
                             .replace(/&gt;/gi,"»")
@@ -114,30 +118,30 @@
                             .replace(/…/g,"...")
                             .replace(/’/g,"'")
                             .replace(/\[\d+\]|\{\d+\}|\*+/gmi,"")
-                            .replace(/([a-zа-яё])\d+/ig,"$1");
+                            .replace(/([a-zа-яё.,:;!?»"\)])\d+/ig,"$1");
       //alert("titleTextNew after: \n\n"+titleTextNew)
       for (var i=0; i<titlesArr.length; i++) {
         if (processingType=="FullMatch") {
           if (titleTextNew==titlesArr[i]) {
-            delete titlesOutArr[i];
+            delete Arr[i];
             return true;
           }
 /*          else if (titleTextNew.indexOf(titlesArr[i])==0 &&
                    titleTextNew.substr(titlesArr[i].length).search(strEnding)!=-1
                    ) {
-            delete titlesOutArr[i];
+            delete Arr[i];
             return true;
           }*/
         }
         else if (processingType=="MatchWithIgnoring") {
           if (titleTextNew2==titlesArr[i]) {
-            delete titlesOutArr[i];
+            delete Arr[i];
             return true;
           }
           else if (titleTextNew2.indexOf(titlesArr[i])==0 &&
                    titleTextNew2.substr(titlesArr[i].length).search(strEnding2)!=-1
                    ) {
-            delete titlesOutArr[i];
+            delete Arr[i];
             return true;
           }
         }
@@ -258,21 +262,21 @@
     var captureBeforeCnt=0;
     var captureAfterCnt=0;
     var titlesArr=[];
-    var titlesOutArr=[];
+    var Arr=[];
     getReadyTitlesArray();
     if (!titlesArr) {
       alert("Список не содержит ни одного заголовка, поэтому заголовки в этот раз не были размечены.");
       return;
     }
-    // вставим маркеры начала и конца выделения
     while (ptrInFbwBody) {
      if (ptrInFbwBody.className.toLowerCase()=="body") processBodyAndSubsections(ptrInFbwBody);
      ptrInFbwBody=ptrInFbwBody.nextSibling;
     }
     var titlesNewArr=[];
-    for (var i=0; i<titlesOutArr.length; i++)
-      if (titlesOutArr[i])
-        titlesNewArr.push(titlesOutArr[i]);
+    for (var i=0; i<Arr.length; i++)
+      if (Arr[i]) {
+        titlesNewArr.push(Arr[i]);
+    }
     document.getElementById("contentsTextArea").value=titlesNewArr.join("\n\n");
 
     var myRange=mainDocument.body.createTextRange();
@@ -305,7 +309,7 @@
     contentsText=contentsText.replace(crLfRegExp,crLfRegExp_)
                              .replace(nbspRegExp,nbspRegExp_)
                              .replace(emptySpaceRegExp,emptySpaceRegExp_)
-                             .replace(spacesAtTheBeginRegExp,spacesAtTheBeginRegExp_)
+                             .replace(spacesAtTheBeginRegExp,spacesAtTheBeginRegExp_)                                                  .replace(/…/g,"...")
                              .replace(spacesAndNumberOnTheEndRegExp,spacesAndNumberOnTheEndRegExp_)
                              .replace(trashRegExp,trashRegExp_)
                              .replace(trashRegExp2,trashRegExp2_)
@@ -348,7 +352,8 @@
 //    mainDocument.getElementById("mtbc_BlockStart").removeNode(true);
 //  if (mainDocument.getElementById("mtbc_BlockEnd"))
 //    mainDocument.getElementById("mtbc_BlockEnd").removeNode(true);
-  document.getElementById("contentsTextArea").value=myRange.text.replace(crLfRegExp,crLfRegExp_);
+  document.getElementById("contentsTextArea").value=myRange.text.replace(crLfRegExp,crLfRegExp_)
+     .replace(new RegExp("^([ "+nbspChar+"]*[\\r\\n]+)+","gm"),"\n");
 </script>
 </body>
 </html>
