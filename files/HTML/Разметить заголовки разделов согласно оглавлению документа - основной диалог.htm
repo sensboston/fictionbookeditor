@@ -28,20 +28,31 @@
   }
 
   function makeSelection() {
-    var elem=mainDocument.getElementById("mtbc_BlockStart");
+    var blockStartMarker;
+    var blockStartMarker=mainDocument.getElementById("mtbc_BlockStart");
+    var elem=blockStartMarker;
     while (elem.nodeName!="P" && elem.nodeName!="BODY") elem=elem.parentNode;
     if (elem.nodeName=="BODY") {
       elem=mainDocument.getElementById("mtbc_BlockStart");
       while (!elem.nextSibling) elem=elem.parentNode;
       elem=elem.nextSibling;
       while (elem.nodeName!="P") elem=elem.firstChild;
+      // перенесем тег-маркер внутрь тега P, чтобы IE правильно
+      // показывал границу блочного элемента (например, заголовка) перед этим тегом-маркером
+      blockStartMarker=blockStartMarker.removeNode(true);
+      elem.insertBefore(blockStartMarker,elem.firstChild);
       //window.clipboardData.setData("text",mainDocument.body.outerHTML);
     }
     blockBeginParagraph=elem;
-    var elem=mainDocument.getElementById("mtbc_BlockEnd");
-    if (elem.previousSibling && elem.previousSibling.nodeName=="P")
+    var blockEndMarker=mainDocument.getElementById("mtbc_BlockEnd");
+    elem=blockEndMarker;
+    if (elem.previousSibling && elem.previousSibling.nodeName=="P") {
       blockEndParagraph=elem.previousSibling;
-    else {
+      // перенесем тег-маркер внутрь тега P, чтобы IE правильно
+      // показывал границу блочного элемента (например, заголовка) после этого тега-маркера
+      blockEndMarker=blockEndMarker.removeNode(true);
+      blockEndParagraph.appendChild(blockEndMarker);
+    } else {
       while (elem.nodeName!="P") elem=elem.parentNode;
       blockEndParagraph=elem;
     }
@@ -324,6 +335,7 @@
 <body onbeforeunload="removeBlockMarkers();">
 
 <input type="button" value="Удалить из оглавления лишние символы" onclick="removeSymbols();">
+<!-- <input type="button" value="Код в буфер" onclick="window.clipboardData.setData('text',mainDocument.body.outerHTML);"> -->
 <br>
 <input type="radio" id="radio1" name="processingType" value="FullMatch" checked>
 <label for="radio1" checked>Размечать заголовок при точном совпадении с абзацем документа</label>
