@@ -188,7 +188,7 @@
         }
         if (ptrInSection.nodeName=="P" && ptrInSection.innerHTML=="") 
           ptrInSection.innerHTML=nbspChar;
-        if (!weAreInBlock && ptrInSection.nodeName=="P" && ptrInSection.className!="subtitle" && detectIfTitleFits(ptrInSection.innerHTML)) {
+        if (!weAreInBlock && ptrInSection.nodeName=="P" /* && ptrInSection.className!="subtitle" */ && detectIfTitleFits(ptrInSection.innerHTML)) {
          titleBegin=ptrInSection;
          titleEnd=ptrInSection;
          titleEnd.removeAttribute("className");
