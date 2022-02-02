@@ -1,7 +1,7 @@
 //Скрипт «Создать сноски или комментарии из абзацев, помеченных звездочками»
 //Автор Sclex
 
-var notesFromSelectedParagraphs_versionNum="1.0";
+var notesFromSelectedParagraphs_versionNum="1.1";
 
 function Run() {
  var dialogWidth="700px";

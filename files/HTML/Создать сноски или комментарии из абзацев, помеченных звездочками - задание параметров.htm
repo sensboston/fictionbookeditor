@@ -173,7 +173,7 @@
     '  var firstP=ps[0];'+
     '  pInnerHTML=firstP.innerHTML;'+
     '  markerPos=pInnerHTML.replace(removeAllTagsRegExp,"").indexOf(notFirstParagraphMarker);'+
-    '  if (!previosPWasWithStar && markerPos==-1) return;'+
+    '  if (!previosPWasPartOfNote && markerPos==-1) return;'+
     '  if (notesTextCnt==0) notesTextCnt++;'+
     '  if (markerPos<0 && firstNoteFlag==false) {'+
     '   notesTextCnt++;'+
@@ -200,9 +200,11 @@
 //    '  alert("Not First Paragraph Str\\n\\n"+notFirstParagraphMarker);'+
 //    '  alert("pInnerHTML с удаленными тегами:\\n\\n"+pInnerHTML.replace(removeTagsRegExp,""));'+
     '  markerPos=pInnerHTML.replace(removeAllTagsRegExp,"").indexOf(notFirstParagraphMarker);'+
-    '  if (p.innerText.indexOf("*")==-1) previosPWasWithStar=false;'+
     '  if (p.innerText.indexOf("*")!=0 && markerPos==-1) return;'+
-    '  if (!previosPWasWithStar && markerPos!=-1) return;'+
+    '  if (!previosPWasPartOfNote && markerPos!=-1) {'+
+    '    previosPWasPartOfNote=false;'+
+    '    return;'+
+    '  }'+
     '  if (markerPos<0 && firstNoteFlag==false) {'+
     '   notesTextCnt++;'+
     '   notesTexts[notesTextCnt.toString()]="";'+
@@ -221,8 +223,7 @@
     '  if (notesTextCnt==0) notesTextCnt++;'+
     '  notesTexts[notesTextCnt.toString()]+="\\r\\n<P"+(p.className && p.className=="subtitle"?" class=subtitle":"")+">"+pInnerHTML+"</P>";'+
     '  firstNoteFlag=false;'+
-    '  if (p.innerText.indexOf("*")==0) previosPWasWithStar=true;'+
-    '  else previosPWasWithStar=false;'+
+    '  previosPWasPartOfNote=true;'+
     ' }'+ // конец функции processP
     ''+
     ' var errMsg="Пожалуйста вначале выделите абзацы, из которых будут извлечены тексты сносок.";'+
@@ -233,7 +234,7 @@
     ' var rndm=Math.round(Math.random()*100000).toString();'+
     ' var insideSelection = true;'+
     ' var processingEnded=false;'+
-    ' var previosPWasWithStar=false;'+
+    ' var previosPWasPartOfNote=false;'+
     ' ptr=body.firstChild;'+
 //    ' alert("fbwBody: \\n\\n"+document.getElementById("fbw_body").innerHTML);'+
     ' while (!processingEnded) {'+
