@@ -196,6 +196,10 @@
     ' '+
     ' function processP(p) {'+
     ' '+
+    '  if (p.className=="subtitle") {'+
+    '    previosPWasPartOfNote=false;'+
+    '    return;'+
+    '  }'+
     '  var pInnerHTML=p.innerHTML;'+
     '  var notFirstParagraphMarker=makeEntities("'+document.getElementById("notFirstParagraphStr").value+'");'+
 //    '  alert("Not First Paragraph Str\\n\\n"+notFirstParagraphMarker);'+
@@ -379,6 +383,7 @@
 //    Эта функция добавляет сноски или комментарии
 //    '  alert("processP_2:\\n\\n"+p.outerHTML);'+
 //    '  alert("Вошли в processp_2");'+
+    '  if (p.className=="subtitle") return;'+
     '  var i,myPos,newRef,previousNote,previousNoteHref,previousNoteSection,str3,rndm2,rndm3,el;'+
     '  var matchLen;'+
     '  var pInnerHTML=p.innerHTML;'+
@@ -506,6 +511,7 @@
    myWin.eval(
     ' function processP_3(p) {'+
 //   Эта функция считает маркеры знака сноски
+    '  if (p.className=="subtitle") return;'+
     '  var myPos,pInnerHTML_2,myPos2,srchResult,matchLen;'+
     '  var pInnerHTMLSrc=p.innerHTML;'+
     '  var pInnerHTML2=null;'+
