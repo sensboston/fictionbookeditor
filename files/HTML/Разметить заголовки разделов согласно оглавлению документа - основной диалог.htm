@@ -16,6 +16,8 @@
   var blockBeginParagraph, blockEndParagraph;
   var myRange, myRange2, processingType;
   var undoBeginMade=false;
+  var savedPThatFitssavedPThatFits;
+  var adaptCaseMode;
   try { var nbspChar=params["window"].external.GetNBSP(); var nbspEntity; if (nbspChar.charCodeAt(0)==160) nbspEntity="&nbsp;"; else nbspEntity=nbspChar; }
   catch(e) { var nbspChar=String.fromCharCode(160); var nbspEntity="&nbsp;";};
 
@@ -137,30 +139,54 @@
       for (var i=0; i<titlesArr.length; i++) {
         if (processingType=="FullMatch") {
           if (titleTextNew==titlesArr[i]) {
+            savedPThatFits=Arr[i];
             delete Arr[i];
             return true;
           }
-/*          else if (titleTextNew.indexOf(titlesArr[i])==0 &&
-                   titleTextNew.substr(titlesArr[i].length).search(strEnding)!=-1
-                   ) {
-            delete Arr[i];
-            return true;
-          }*/
         }
         else if (processingType=="MatchWithIgnoring") {
           if (titleTextNew2==titlesArr[i]) {
+            savedPThatFits=Arr[i];
             delete Arr[i];
             return true;
           }
           else if (titleTextNew2.indexOf(titlesArr[i])==0 &&
                    titleTextNew2.substr(titlesArr[i].length).search(strEnding2)!=-1
                    ) {
+            savedPThatFits=Arr[i];
             delete Arr[i];
             return true;
           }
         }
       }
       return false;
+    }
+
+    var i2,i3,ch2,insideTag,s3,s4;
+
+    function adaptCase(htmlStr1,textStr2) {
+     //alert("adaptCase:\n\n"+htmlStr1+"\n\n"+textStr2);
+     s4="";
+     for (i2=0; i2<textStr2.length; i2++) {
+       ch2=textStr2.charAt(i2);
+       if (ch2.toLowerCase()!=ch2.toUpperCase())
+         s4+=ch2;
+     }
+     i3=0;
+     insideTag=false;
+     s3="";
+     for (i2=0; i2<htmlStr1.length; i2++) {
+       ch2=htmlStr1.charAt(i2);
+       if (ch2=="<") insideTag=true;
+       if (!insideTag && ch2.toLowerCase()!=ch2.toUpperCase()) {
+         ch2=s4.charAt(i3);
+         i3++;
+       }
+       s3+=ch2;
+       if (ch2=="<") insideTag=false;
+     }
+     //alert("Результат adaptCase:\n\n"+s3);
+     return s3;
     }
 
     function processTitle(titlePtr) {
@@ -189,6 +215,8 @@
         if (ptrInSection.nodeName=="P" && ptrInSection.innerHTML=="") 
           ptrInSection.innerHTML=nbspChar;
         if (!weAreInBlock && ptrInSection.nodeName=="P" /* && ptrInSection.className!="subtitle" */ && detectIfTitleFits(ptrInSection.innerHTML)) {
+         if (adaptCaseMode)
+           ptrInSection.innerHTML=adaptCase(ptrInSection.innerHTML,savedPThatFits);
          titleBegin=ptrInSection;
          titleEnd=ptrInSection;
          newTitleCnt++;
@@ -279,6 +307,7 @@
     var randomNum=getRandomNum(6);
     if (document.getElementById("radio1").checked) processingType="FullMatch";
     if (document.getElementById("radio2").checked) processingType="MatchWithIgnoring";
+    adaptCaseMode=document.getElementById("checkbox1").checked;
     var captureBeforeCnt=0;
     var captureAfterCnt=0;
     var titlesArr=[];
@@ -361,6 +390,9 @@
 <br>
 <input type="radio" id="radio2" name="processingType" value="MatchWithIgnoring">
 <label for="radio2">Размечать заголовок, игнорируя знаки препинания, числа и знаки сносок</label>
+<br>
+<input type="checkbox" id="checkbox1" checked>
+<label for="checkbox1">Регистр символов размечаемых заголовков делать такой же, как в оглавлении</label>
 <br>
 <input type="button" value="Разметить заголовки разделов согласно списку" onclick="markupTitles();">
 <textarea style="width:100%; height:70%;" id="contentsTextArea">
