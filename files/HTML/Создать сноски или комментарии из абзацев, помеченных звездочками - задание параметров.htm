@@ -29,7 +29,7 @@
     ' var refMarkersCnt;'+
     ' var searchOnlyBeforeSelection=true;'+
     ' var blockStartParagraph=null;'+
-    ' var fbwBody,refMarkerStr,BlockStartNode,BlockEndNode;'+
+    ' var fbwBody,refMarkerStr,BlockStartNode,BlockEndNode,starsAtBeginLen;'+
     ' var currNewNoteNumber=1;'+
     ' var removeAllTagsRegExp,refMarkerRegExp;'+
     ' var whatDoWeDo=null;'+
@@ -39,6 +39,7 @@
     ' var notePrefix="'+notePrefix+'";'+
     ' var notePostfix="'+notePostfix+'";'+
     ' var pIsSubtitleRegExp=new RegExp("^[ "+nbspChar+"*]*$");'+
+    ' var starsAtBegin_RE=new RegExp("^[ "+nbspChar+"*]+","");'+
     ' var openingAndClosingTagRegExp=new RegExp("(<STRONG><\\/STRONG>)|(<EM><\\/EM>)|(<SUP><\\/SUP>)|(<SUB><\\/SUB>)|(<SPAN( [^>]*)?><\\/SPAN>)|(<B><\\/B>)|(<I><\\/I>)|(<STRIKE><\\/STRIKE>)|(<FONT( [^\>]+)?><\\/FONT>)", "ig");'+
     ' try { var nbspChar=window.external.GetNBSP(); var nbspEntity; if (nbspChar.charCodeAt(0)==160) nbspEntity="&nbsp;"; else nbspEntity=nbspChar; }'+
     ' catch(e) { var nbspChar=String.fromCharCode(160); var nbspEntity="&nbsp;";};'
@@ -223,7 +224,6 @@
     '   notesTextCnt++;'+
     '   notesTexts[notesTextCnt.toString()]="";'+
     '  }'+
-    '  pInnerHTML=pInnerHTML.replace(/^\\*+/,"");'+
     '  if (markerPos>=0) '+
     '    pInnerHTML=removeSymbolsBeyondTags(pInnerHTML,1,notFirstParagraphMarker.length,"");'+
 //    '  if (pInnerHTML.replace(removeTagsRegExp,"").indexOf(notFirstParagraphMarker)==0) {'+
@@ -235,6 +235,9 @@
 //    '  alert("pInnerHTML перед прибавлением:\\n\\n"+pInnerHTML);'+
     '  while (openingAndClosingTagRegExp.test(pInnerHTML)) pInnerHTML=pInnerHTML.replace(openingAndClosingTagRegExp,"");'+
     '  if (notesTextCnt==0) notesTextCnt++;'+
+    '  starsAtBeginLen=pInnerHTML.replace(removeNotAllTagsRegExp,"").match(starsAtBegin_RE)[0].length;'+
+    '  if (starsAtBeginLen>0)'+ 
+    '    pInnerHTML=removeSymbolsBeyondTags(pInnerHTML,1,starsAtBeginLen,"");'+
     '  notesTexts[notesTextCnt.toString()]+="\\r\\n<P"+(p.className && p.className=="subtitle"?" class=subtitle":"")+">"+pInnerHTML+"</P>";'+
     '  nodesToRemove.push(p);'+
     '  firstNoteFlag=false;'+
@@ -284,7 +287,11 @@
     '   if (ptr.nodeName=="DIV" && ptr.className && '+
     '       (ptr.className=="epigraph" || ptr.className=="poem" || ptr.className=="table" || ptr.className=="cite")) { '+
     '    processContainer(ptr);'+
-    '    nextPtr=ptr.nextSibling;'+
+    '    nextPtr=ptr;'+
+    '    while (nextPtr && nextPtr!=body && !nextPtr.nextSibling) {'+
+    '     nextPtr=nextPtr.parentNode;'+
+    '    }'+
+    '    nextPtr=nextPtr.nextSibling;'+
     '   } else '+
     // переходим на следующий узел
     '   if (ptr.firstChild && '+
