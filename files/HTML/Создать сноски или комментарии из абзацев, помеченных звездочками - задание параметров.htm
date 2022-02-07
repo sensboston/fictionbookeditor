@@ -29,7 +29,7 @@
     ' var refMarkersCnt;'+
     ' var searchOnlyBeforeSelection=true;'+
     ' var blockStartParagraph=null;'+
-    ' var fbwBody,refMarkerStr,BlockStartNode,BlockEndNode,starsAtBeginLen;'+
+    ' var fbwBody,refMarkerStr,BlockStartNode,BlockEndNode,starsAtBeginLen,matches1;'+
     ' var currNewNoteNumber=1;'+
     ' var removeAllTagsRegExp,refMarkerRegExp;'+
     ' var whatDoWeDo=null;'+
@@ -235,9 +235,13 @@
 //    '  alert("pInnerHTML перед прибавлением:\\n\\n"+pInnerHTML);'+
     '  while (openingAndClosingTagRegExp.test(pInnerHTML)) pInnerHTML=pInnerHTML.replace(openingAndClosingTagRegExp,"");'+
     '  if (notesTextCnt==0) notesTextCnt++;'+
-    '  starsAtBeginLen=pInnerHTML.replace(removeNotAllTagsRegExp,"").match(starsAtBegin_RE)[0].length;'+
-    '  if (starsAtBeginLen>0)'+ 
-    '    pInnerHTML=removeSymbolsBeyondTags(pInnerHTML,1,starsAtBeginLen,"");'+
+    '  matches1=pInnerHTML.replace(removeNotAllTagsRegExp,"").match(starsAtBegin_RE);'+
+    '  window.clipboardData.setData("text","matches1: "+matches1);'+
+    '  if (matches1) {'+
+    '    starsAtBeginLen=matches1[0].length;'+
+    '    if (starsAtBeginLen>0)'+ 
+    '      pInnerHTML=removeSymbolsBeyondTags(pInnerHTML,1,starsAtBeginLen,"");'+
+    '  }'+
     '  notesTexts[notesTextCnt.toString()]+="\\r\\n<P"+(p.className && p.className=="subtitle"?" class=subtitle":"")+">"+pInnerHTML+"</P>";'+
     '  nodesToRemove.push(p);'+
     '  firstNoteFlag=false;'+
