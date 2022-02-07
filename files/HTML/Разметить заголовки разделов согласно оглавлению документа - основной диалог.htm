@@ -168,8 +168,8 @@
     var i2,i3,ch2,insideTag,insideEntity,s3,s4;
 
     function adaptCase(htmlStr1,textStr2) {
-     //alert("adaptCase:\n\n"+htmlStr1+"\n\n"+textStr2);
      s4="";
+     textStr2=textStr2.replace(/&/g,"&amp;")
      insideEntity=false;
      for (i2=0; i2<textStr2.length; i2++) {
        ch2=textStr2.charAt(i2);
@@ -195,7 +195,7 @@
        if (ch2==";") insideEntity=false;
      }
      //alert("s4: "+s4);
-     //alert("Результат adaptCase:\n\n"+s3);
+     alert("adaptCase:\n\n"+htmlStr1+"\n\n"+textStr2+"\n\nРезультат adaptCase:\n\n"+s3);
      return s3;
     }
 
