@@ -90,7 +90,10 @@
     function getReadyTitlesArray() {
       var crLfRegExp2=new RegExp("^([ "+nbspChar+"]*[\\r\\n]+)+","gm");
       var crLfRegExp2_="\n";
-      var contentsText=document.getElementById("contentsTextArea").value.replace(crLfRegExp2,crLfRegExp2_);
+      var contentsText=document.getElementById("contentsTextArea").value
+                         .replace(crLfRegExp2,crLfRegExp2_)
+                         .replace(/</g,"&lt;")
+                         .replace(/>/g,"&gt;");
       Arr=contentsText.match(/^[^\r\n]+/gm);
       contentsText=contentsText.replace(/[–—]/g,"-").replace(/[«„“»]/g,'"').replace(/…/g,"...").replace(/’/g,"'");
       contentsText=contentsText.toLowerCase();
@@ -107,8 +110,8 @@
     function detectIfTitleFits(titleHTML) {
       //alert("titleHTML: \n\n"+titleHTML)
       titleTextNew=titleHTML.replace(emptySpaceRegExp2," ")
-                            .replace(/&lt;/gi,"«")
-                            .replace(/&gt;/gi,"»")
+//                            .replace(/&lt;/gi,"«")
+//                            .replace(/&gt;/gi,"»")
                             .replace(/&amp;/gi,"&")
                             .replace(/<[^>]+>/gm,"")
                             .toLowerCase()
@@ -121,8 +124,8 @@
                             .replace(/’/g,"'")
       titleTextNew2=titleHTML.replace(emptySpaceRegExp2," ")
                             .replace(/<A( [^<>]+)? href=("[^"]*"|'[^']*')( [^<>]+)?>.*?<\/A>/gmi,"")
-                            .replace(/&lt;/gi,"«")
-                            .replace(/&gt;/gi,"»")
+  //                          .replace(/&lt;/gi,"«")
+//                            .replace(/&gt;/gi,"»")
                             .replace(/&amp;/gi,"&")
                             .replace(/<[^>]+>/gm,"")
                             .toLowerCase()
@@ -162,28 +165,34 @@
       return false;
     }
 
-    var i2,i3,ch2,insideTag,s3,s4;
+    var i2,i3,ch2,insideTag,insideEntity,s3,s4;
 
     function adaptCase(htmlStr1,textStr2) {
      //alert("adaptCase:\n\n"+htmlStr1+"\n\n"+textStr2);
      s4="";
+     insideEntity=false;
      for (i2=0; i2<textStr2.length; i2++) {
        ch2=textStr2.charAt(i2);
-       if (ch2.toLowerCase()!=ch2.toUpperCase())
+       if (ch2=="&") insideEntity=true;
+       if (!insideEntity && ch2.toLowerCase()!=ch2.toUpperCase())
          s4+=ch2;
+       if (ch2==";") insideEntity=false;
      }
      i3=0;
      insideTag=false;
+     insideEntity=false;
      s3="";
      for (i2=0; i2<htmlStr1.length; i2++) {
        ch2=htmlStr1.charAt(i2);
        if (ch2=="<") insideTag=true;
-       if (!insideTag && ch2.toLowerCase()!=ch2.toUpperCase()) {
+       if (ch2=="&") insideEntity=true;
+       if (!insideTag && !insideEntity && ch2.toLowerCase()!=ch2.toUpperCase()) {
          ch2=s4.charAt(i3);
          i3++;
        }
        s3+=ch2;
        if (ch2==">") insideTag=false;
+       if (ch2==";") insideEntity=false;
      }
      //alert("s4: "+s4);
      //alert("Результат adaptCase:\n\n"+s3);
@@ -327,8 +336,9 @@
       if (Arr[i]) {
         titlesNewArr.push(Arr[i]);
     }
-    document.getElementById("contentsTextArea").value=titlesNewArr.join("\n\n");
-
+    document.getElementById("contentsTextArea").value=titlesNewArr.join("\n\n")
+                                                       .replace(/&lt;/g,"<")
+                                                       .replace(/&gt;/g,">");
     var myRange=mainDocument.body.createTextRange();
     myRange.moveToElementText(blockBeginParagraph);
     var myRange2=mainDocument.body.createTextRange();
