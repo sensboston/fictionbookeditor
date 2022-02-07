@@ -1,7 +1,7 @@
 //Скрипт «Разметить заголовки разделов согласно оглавлению документа»
 //Автор Sclex
 
-var markupTitlesByContents_versionNum="3.3";
+var markupTitlesByContents_versionNum="3.4";
 
 function myBeginUndoUnit(s) {
  window.external.BeginUndoUnit(document,s);
