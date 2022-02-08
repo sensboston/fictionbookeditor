@@ -169,14 +169,17 @@
 
     function adaptCase(htmlStr1,textStr2) {
      s4="";
-     textStr2=textStr2.replace(/&/g,"&amp;")
+     if (!textStr2) return false;
+     textStr2=textStr2.replace(/&(?!lt;|gt;|nbsp;)/g,"&amp;");
      insideEntity=false;
      for (i2=0; i2<textStr2.length; i2++) {
        ch2=textStr2.charAt(i2);
        if (ch2=="&") insideEntity=true;
+       if (ch2=="<") insideTag=true;
        if (!insideEntity && ch2.toLowerCase()!=ch2.toUpperCase())
          s4+=ch2;
        if (ch2==";") insideEntity=false;
+       if (ch2==">") insideTag=false;
      }
      i3=0;
      insideTag=false;
@@ -195,7 +198,7 @@
        if (ch2==";") insideEntity=false;
      }
      //alert("s4: "+s4);
-     //alert("adaptCase:\n\n"+htmlStr1+"\n\n"+textStr2+"\n\nРезультат adaptCase:\n\n"+s3);
+     //alert("adaptCase:\n\n"+htmlStr1+"\n\n"+textStr2+"\n\ns4: "+s4+"\n\nРезультат adaptCase:\n\n"+s3);
      return s3;
     }
 
