@@ -338,7 +338,7 @@
       if (Arr[i]) {
         titlesNewArr.push(Arr[i]);
     }
-    document.getElementById("contentsTextArea").value=titlesNewArr.join("\n\n")
+    document.getElementById("contentsTextArea").value=titlesNewArr.join("\n")
                                                        .replace(/&lt;/g,"<")
                                                        .replace(/&gt;/g,">");
     var myRange=mainDocument.body.createTextRange();
@@ -367,7 +367,7 @@
     try { var nbspChar=params["window"].external.GetNBSP(); var nbspEntity; if (nbspChar.charCodeAt(0)==160) nbspEntity="&nbsp;"; else nbspEntity=nbspChar; }
     catch(e) { var nbspChar=String.fromCharCode(160); var nbspEntity="&nbsp;";};
     var crLfRegExp=new RegExp("[\\r\\n]+","gm");
-    var crLfRegExp_="\n\n";
+    var crLfRegExp_="\n";
     var nbspRegExp=new RegExp(nbspChar,"g");
     var nbspRegExp_=" ";
     var emptySpaceRegExp=new RegExp("[ "+nbspChar+"\\t]+","gm");
@@ -412,7 +412,7 @@
 </textarea>
 <script>
   var crLfRegExp=new RegExp("[\\r\\n]+","gm");
-  var crLfRegExp_="\n\n";
+  var crLfRegExp_="\n";
   var params=window.dialogArguments;
 
   // найдем первый и последний абзац в пользовательском выделении
