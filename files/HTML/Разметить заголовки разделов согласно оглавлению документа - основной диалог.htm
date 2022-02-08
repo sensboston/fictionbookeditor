@@ -16,7 +16,7 @@
   var blockBeginParagraph, blockEndParagraph;
   var myRange, myRange2, processingType;
   var undoBeginMade=false;
-  var savedPThatFitssavedPThatFits;
+  var savedPThatFits;
   var adaptCaseMode;
   try { var nbspChar=params["window"].external.GetNBSP(); var nbspEntity; if (nbspChar.charCodeAt(0)==160) nbspEntity="&nbsp;"; else nbspEntity=nbspChar; }
   catch(e) { var nbspChar=String.fromCharCode(160); var nbspEntity="&nbsp;";};
@@ -169,7 +169,6 @@
 
     function adaptCase(htmlStr1,textStr2) {
      s4="";
-     if (!textStr2) return false;
      textStr2=textStr2.replace(/&(?!lt;|gt;|nbsp;)/g,"&amp;");
      insideEntity=false;
      for (i2=0; i2<textStr2.length; i2++) {
@@ -228,7 +227,7 @@
         if (ptrInSection.nodeName=="P" && ptrInSection.innerHTML=="") 
           ptrInSection.innerHTML=nbspChar;
         if (!weAreInBlock && ptrInSection.nodeName=="P" /* && ptrInSection.className!="subtitle" */ && detectIfTitleFits(ptrInSection.innerHTML)) {
-         if (adaptCaseMode)
+         if (adaptCaseMode && savedPThatFits)
            ptrInSection.innerHTML=adaptCase(ptrInSection.innerHTML,savedPThatFits);
          titleBegin=ptrInSection;
          titleEnd=ptrInSection;
