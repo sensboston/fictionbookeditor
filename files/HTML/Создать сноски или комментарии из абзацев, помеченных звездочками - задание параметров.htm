@@ -45,13 +45,26 @@
     ' catch(e) { var nbspChar=String.fromCharCode(160); var nbspEntity="&nbsp;";};'
     );
    myWin.eval(
+    ' var emptyLineRegExp=new RegExp("^( | |&nbsp;|"+nbspChar+")*?$","i");'+
+    ' function isLineEmpty(ptr) {'+
+    '  return emptyLineRegExp.test(ptr.innerHTML.replace(/<(?!img)[^>]*?>/gi,""));'+
+    ' }'
+    );
+   myWin.eval(
     ' function makeEntities(s) {'+
     '  return s.replace(/&/gi,"&amp;").replace(/</gi,"&lt;").replace(/>/gi,"&gt;");'+
     ' }');
    myWin.eval(
     ' function removeSourceNodes() {'+
-    '  for (var i=0; i<nodesToRemove.length; i++) '+
+    '  for (var i=0; i<nodesToRemove.length; i++) {'+
+    '   while (nodesToRemove[i].previousSibling && nodesToRemove[i].previousSibling.nodeName=="P" && '+
+    '           isLineEmpty(nodesToRemove[i].previousSibling)) '+
+    '    nodesToRemove[i].previousSibling.removeNode(true);'+
+    '   while (nodesToRemove[i].nextSibling && nodesToRemove[i].nextSibling.nodeName=="P" && '+
+    '           isLineEmpty(nodesToRemove[i].nextSibling)) '+
+    '    nodesToRemove[i].nextSibling.removeNode(true);'+
     '   nodesToRemove[i].removeNode(true); '+
+    '  }'+
     ' }');
    myWin.eval(
     'function findTargetBody() {'+
