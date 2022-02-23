@@ -15,7 +15,10 @@ function markerFunc() {
  if (document.getElementById("radio6").checked) return "♣";
  if (document.getElementById("radio7").checked) return "♥";
  if (document.getElementById("radio8").checked) return "♦";
- if (document.getElementById("radio9").checked) return document.getElementById("markerInput").value;
+ if (document.getElementById("radio9").checked) return document.getElementById("markerInput").value
+                                                         .replace(/&/g,"&amp;")
+                                                         .replace(/</g,"&lt;")
+                                                         .replace(/>/g,"&gt;");
 }
 </script>
 <body>
