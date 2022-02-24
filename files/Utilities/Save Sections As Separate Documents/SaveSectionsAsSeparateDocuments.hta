@@ -1,0 +1,638 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<HTML>
+<HEAD>
+<TITLE>Save Sections As Separate Documents v1.5</TITLE>
+<HTA:APPLICATION ID="oHTA"/>
+<META http-equiv="Content-Type" content="text/html; charset=utf-8">
+<STYLE>
+#elementList P {padding:0; margin:0;}
+.delim {width:520px; background-color:green; height:2px; overflow:hidden; margin:0; padding:0;}
+.el_ {width:520px; margin:0; padding:0 1px 0 1px; border:1px solid white; color:black; background-color:white;}
+.el_sel {width:520px; margin:0; padding:0 1px 0 1px; border:1px solid #3399FF; background-color:#3399FF; color:white;}
+.el_active {width:520px; margin:0; padding:0 1px 0 1px; border:1px solid black; background-color:white; color:black;}
+.el_active_sel {width:520px; margin:0; padding:0 1px 0 1px; border:1px solid black; background-color:#3399FF; color:white;}
+input {font-family: Tahoma; font-size:14px;}
+</STYLE>
+<SCRIPT type="text/javascript">
+var scrollbarWidth=0,scrollbarHeight=0;
+var mouseTimer=null;
+var activeElement;
+var selectionBegin=null;
+var selectedElements={};
+var currentElementType="titles";
+var myLinks={};
+var sortedElementArray;
+var xmlDoc,savedXmlDocCode,savedFictionBook,openedFileName,selectedElementsCnt,ns;
+
+function selectAllElements() {
+ var n;
+ var pp=document.getElementById("elementList");
+ if (!pp) {alert("Ошибка. Код ошибки ch26cb27db."); return;}
+ pp=pp.firstChild;
+ if (!pp) return;
+ while (pp) {
+  if (pp.nodeName=="DIV" && pp.className.indexOf("el_")==0 && pp.className.indexOf("sel")<0) {
+   n=eval(pp.id.substr(2));
+   selectedElements[n]=n;
+   selectedElementsCnt++;
+   if (pp.className=="el_") pp.className="el_sel";
+   else if (pp.className=="el_active") pp.className="el_active_sel";
+  }
+  pp=pp.nextSibling;
+ }
+ document.getElementById("selectedInput").value=selectedElementsCnt.toString();
+}
+
+function sortElements() {
+
+ var k,cnt=0;
+ sortedElementArray=[];
+ for (k in selectedElements)
+  if (selectedElements[k]==k) {
+   sortedElementArray[cnt]=k;
+   cnt++;
+  }
+ sortedElementArray=sortedElementArray.sort(function(a,b) { return a-b; });
+}
+
+function saveOneSectionAsSeparateDocuments(titleNum,filenameForSaving) {
+  //xmlDoc.loadXML(savedXmlDocCode);
+  var i,j,sections,sections2;
+  var fictionBook=xmlDoc.documentElement.selectSingleNode("//FictionBook");
+  fictionBook.parentNode.replaceChild(savedFictionBook.cloneNode(true),fictionBook);
+  var titles=xmlDoc.documentElement.selectNodes("//section/title");
+  var myTitle=titles[titleNum];
+  var el1=myTitle;
+  var mySection,myBody,myClonedNode,bodies,i,subsections;
+  while (el1 && el1.nodeName!="section") el1=el1.parentNode;
+  if (el1 && el1.nodeName=="section") mySection=el1;
+  while (el1 && el1.nodeName!="body") el1=el1.parentNode;
+  if (el1 && el1.nodeName=="body") myBody=el1;
+  if (mySection && myBody) {
+    //aert("mySection: "+getOuterXML(mySection));
+    //alert("myBody: "+getOuterXML(myBody));
+    myClonedNode=mySection.cloneNode(true);
+    while (myBody.hasChildNodes)
+      myBody.removeChild(myBody.lastChild);
+    myBody.appendChild(myClonedNode);
+    var bodyTitle=myBody.selectSingleNode("./section/title");
+    if (bodyTitle) {
+      var titleNode=bodyTitle.parentNode.removeChild(bodyTitle);
+      myBody.insertBefore(titleNode,myBody.firstChild);
+    }
+    
+    var removesCnt=1;
+    while (removesCnt>0) {
+      removesCnt=0;
+      var linksObj={};
+      for (i in linksObj)
+        delete linksObj[i];
+      bodies=xmlDoc.documentElement.selectNodes("//body");
+      for (i=bodies.length-1; i>=0; i--) {
+        if (bodies[i]!=myBody && bodies[i].getAttribute("name")!="notes" && 
+          bodies[i].getAttribute("name")!="comments")
+          bodies[i].parentNode.removeChild(bodies[i]);
+      }
+      var links=xmlDoc.documentElement.selectNodes("//a");
+      for (j=0; j<links.length; j++) {
+        var address=links[j].getAttribute(ns+":href");
+        //alert("addreess: "+address);
+        if (address && address.lastIndexOf("#")!=-1 && address.lastIndexOf("#")!=address.length-1) {
+          //alert("Адрес ссылки: "+address.substr(address.lastIndexOf("#")+1).toLowerCase());
+          linksObj[address.substr(address.lastIndexOf("#")+1).toLowerCase()]=true;
+        }
+      }
+  
+      var removedCnt=0;
+      var removedStr="";
+      // удалим ненужные разделы в notes body
+      var sections=xmlDoc.documentElement.selectNodes('body[@name="notes"]//section');
+      //alert("Разделов в notes body: "+sections.length);
+      for (j=sections.length-1; j>=0; j--) {
+         subsections=sections[j].selectNodes("./section");
+         //alert("j: "+j+"\n\nsubsections.length: "+subsections.length);
+         if (subsections.length==0 && (sections[j].getAttribute("id")==null || 
+             (sections[j].getAttribute("id") &&
+              linksObj[sections[j].getAttribute("id").toLowerCase()]!=true))) {
+           //alert("Удаляем раздел в notes body.");
+           //removedStr+="\n\n===\n\n"+getOuterXML(sections[j]);
+           sections[j].parentNode.removeChild(sections[j]);
+           removesCnt++;
+           //removedCnt++;
+         }
+      }
+      //alert("removedCnt: "+removedCnt);
+      //window.clipboardData.setData("text",removedStr);
+      var notesBodies=xmlDoc.documentElement.selectNodes('body[@name="notes"]');
+      //alert("notes body в точке 1.\n\n"+getOuterXML(notesBodies[0]));
+      // если надо, удалим корневой раздел в notes body
+      sections=xmlDoc.documentElement.selectNodes('body[@name="notes"]//section');
+      if (sections.length!=0) {
+        sections2=xmlDoc.documentElement.selectNodes('body[@name="notes"]//section//section');
+        if (sections2.length==0)
+         if (sections[0].getAttribute("id")==null || 
+             (sections[0].getAttribute("id") &&
+              linksObj[sections[0].getAttribute("id").toLowerCase()]!=true)) {
+           //alert("Удаляем корневой раздел в notes body.");
+           sections[0].parentNode.removeChild(sections[0]);
+           removesCnt++;
+        }
+      }
+      // удалим ненужные notes body
+      var notesBodies=xmlDoc.documentElement.selectNodes('body[@name="notes"]');
+      for (j=notesBodies.length-1; j>=0; j--) {
+        if (xmlDoc.documentElement.selectNodes('body[@name="notes"]//section').length==0) {
+          //alert("Удаляем notes body.\n\n"+getOuterXML(notesBodies[j]));
+          notesBodies[j].parentNode.removeChild(notesBodies[j]);
+          removesCnt++;
+       }
+      }
+  
+      // удалим ненужные разделы в comments body
+      var sections=xmlDoc.documentElement.selectNodes('body[@name="comments"]//section');
+      //alert("Разделов в comments body: "+sections.length);
+      for (j=sections.length-1; j>=0; j--) {
+         subsections=sections[j].selectNodes("./section");
+         if (!subsections && sections[j].getAttribute("id")==null || 
+             (sections[j].getAttribute("id") &&
+              linksObj[sections[j].getAttribute("id").toLowerCase()]!=true)) {
+           //alert("Удаляем раздел в comments body.");
+           sections[j].parentNode.removeChild(sections[j]);
+           removesCnt++;
+         }
+      }
+      // если надо, удалим корневой раздел в comments body
+      sections=xmlDoc.documentElement.selectNodes('body[@name="comments"]//section');
+      if (sections.length!=0) {
+        sections2=xmlDoc.documentElement.selectNodes('body[@name="comments"]//section//section');
+        if (sections2.length==0)
+         if (sections[0].getAttribute("id")==null || 
+             (sections[0].getAttribute("id") &&
+              linksObj[sections[0].getAttribute("id").toLowerCase()]!=true)) {
+           //alert("Удаляем корневой раздел в comments body.\n\n"+getOuterXML(sections[0]));
+           sections[0].parentNode.removeChild(sections[0]);
+           removesCnt++;
+        }
+      }
+      // удалим ненужные comments body
+      var commentsBodies=xmlDoc.documentElement.selectNodes('body[@name="comments"]');
+      for (j=commentsBodies.length-1; j>=0; j--) {
+        if (xmlDoc.documentElement.selectNodes('body[@name="comments"]//section').length==0) {
+          //alert("Удаляем comments body.\n\n"+getOuterXML(commentsBodies[j]));
+          commentsBodies[j].parentNode.removeChild(commentsBodies[j]);
+          removesCnt++;
+       }
+      }
+    }
+
+    // удалим ненужные теги binary
+    // вначале соберем id используемых картинок
+    var imagesObj={};
+    for (i in imagesObj)
+      delete imagesObj[i];
+    var images=xmlDoc.documentElement.selectNodes("//image");
+    for (j=0; j<images.length; j++) {
+      var address=images[j].getAttribute(ns+":href");
+      //alert("addreess: "+address);
+      if (address && address.lastIndexOf("#")!=-1 && address.lastIndexOf("#")!=address.length-1) {
+        //alert("Адрес ссылки: "+address.substr(address.lastIndexOf("#")+1).toLowerCase());
+        imagesObj[address.substr(address.lastIndexOf("#")+1).toLowerCase()]=true;
+      }
+    }
+    // теперь удалим ненужные теги binary
+    var binaries=xmlDoc.documentElement.selectNodes("//binary");
+    for (j=binaries.length-1; j>=0; j--) {
+      if (binaries[j] && binaries[j].getAttribute("id") && imagesObj[binaries[j].getAttribute("id").toLowerCase()]!=true)
+        binaries[j].parentNode.removeChild(binaries[j]);
+    }
+ 
+    xmlDoc.save(filenameForSaving);
+  }
+}
+
+function addZeros(n) {
+  var n2=n.toString();
+  while (n2.length<5)
+   n2="0"+n2;
+  return n2;
+}
+
+function saveSectionsAsSeparateDocuments() {
+ sortElements();
+ var myElem5;
+ fileCnt=1;
+ var fso=new ActiveXObject("Scripting.FileSystemObject");
+ for (nPtr=0;nPtr<sortedElementArray.length;nPtr++) {
+  //запишем в myElem5 ссылку на заголовок раздела, который (раздел) нужно сохранить как отдельный документ
+  myElem5=myLinks[sortedElementArray[nPtr]];
+  while (fso.FileExists(openedFileName.replace(/[.]fb2$/i,"")+".section"+addZeros(fileCnt)+".fb2"))
+    fileCnt++;
+  saveOneSectionAsSeparateDocuments(myElem5,openedFileName.replace(/[.]fb2$/i,"")+".section"+addZeros(fileCnt)+".fb2");
+  //alert(makeHTMLTitle(myElem5));
+ }
+ //removeReformattedElementsFromList();
+ alert("Готово!");
+}
+
+function selectElements(selectionBegin,selectionEnd) {
+
+ var currN,evaledCurrN;
+
+ function selectAnElement(el) {
+  currN=el.id;
+  if (currN!=null && currN!="" && currN.indexOf("n_")==0)
+   evaledCurrN=eval(currN.substr(2));
+  if (selectedElements[evaledCurrN]!=evaledCurrN)
+   selectedElementsCnt++;
+  currElement.className="el_sel";
+  //добавил элемент в список выделенных элементов:
+  selectedElements[evaledCurrN]=evaledCurrN;
+ }
+
+ var el=selectionEnd;
+ if (selectionBegin && selectionBegin.id)
+  var selectionBeginN=eval(selectionBegin.id.substr(2));
+ else return;
+ var selectionEndN=eval(selectionEnd.id.substr(2));
+ var currElement=(selectionBeginN<selectionEndN)?selectionBegin:el;
+ var endElement=(selectionBeginN<selectionEndN)?el:selectionBegin;
+ while (currElement &&
+        (!currElement.previousSibling ||
+         (currElement.previousSibling && currElement.previousSibling!=endElement)
+        )
+       ) {
+  if (currElement.nodeName=="DIV" && currElement.className.indexOf("el_")==0)
+   selectAnElement(currElement);
+  currElement=currElement.nextSibling;
+ }
+}
+
+function removeActivityFromActiveElement() {
+ if (!activeElement) return;
+ if (activeElement.className=="el_active_sel")
+  activeElement.className="el_sel";
+ else if (activeElement.className=="el_active")
+  activeElement.className="el_";
+}
+
+function setActivityToElement(activeElement) {
+ if (!activeElement) return;
+ if (activeElement.className=="el_sel")
+  activeElement.className="el_active_sel";
+ else if (activeElement.className=="el_")
+  activeElement.className="el_active";
+}
+
+function getScrollBarWidthAndHeight() {
+ var inner = document.createElement('p');
+ inner.style.width = "100%";
+ inner.style.height = "200px";
+
+ var outer = document.createElement('div');
+ outer.style.position = "absolute";
+ outer.style.top = "0px";
+ outer.style.left = "0px";
+ outer.style.visibility = "hidden";
+ outer.style.width = "200px";
+ outer.style.height = "150px";
+ outer.style.overflow = "hidden";
+ outer.appendChild(inner);
+
+ document.getElementById("elementList").appendChild(outer);
+ var w1=inner.offsetWidth;
+ var h1=inner.offsetHeight;
+ outer.style.overflow = 'scroll';
+ var w2=inner.offsetWidth;
+ var h2=inner.offsetHeight;
+ if (w1==w2) w2 = outer.clientWidth;
+ if (h1==h2) h2 = outer.clientWidth;
+ outer.removeNode(true);
+
+ scrollbarWidth=w1-w2;
+ scrollbarHeight=h1-h2;
+};
+
+function myOnKeydown() {
+  // следует помнить, что нажатия клавиш могут ловиться другими фреймами
+ if (event.keyCode=="65" && event.ctrlKey && !event.altKey && !event.shiftKey) {
+  selectAllElements();
+  event.returnValue=false;
+  return false;
+ }
+ return true;
+}
+
+function myOnMouseDown() {
+ //alert("myOnMouseDown();");
+ if (event.button==1 &&
+     event.y>0 && event.y<document.getElementById("elementList").offsetHeight-scrollbarHeight &&
+     event.x>0 && event.x<document.getElementById("elementList").offsetWidth-scrollbarWidth) {
+  mouseDown=true;
+  myOnClick();
+  document.getElementById("mouseCaptureSpan").setCapture(true);
+  event.returnValue=false;
+  return false;
+ } else if (event.button==2) {
+  if (currentElementType.substr(0,6)=="titles") /*contextMenu()*/;
+ } else {
+  event.returnValue=true;
+  return true;
+ }
+}
+
+function myOnClick() {
+ var el=event.srcElement;
+ event.returnValue=false;
+ while (el && el.nodeName!="BODY" && el.nodeName!="DIV" || (el.nodeName=="DIV" && el.className!=null && el.className!="" &&
+        el.className.search("el_")!=0))
+  el=el.parentNode;
+ if (!el || el.nodeName!="DIV" || el.className.search("el_")!=0) { event.returnValue=true; return true; }
+  //теперь в el элемент, по которому кликнул пользователь
+
+ /* var rng=mainDoc.body.createTextRange(); */
+ var myN=el.id;
+ var evaledN=null;
+ if (myN==null || myN=="" || myN.indexOf("n_")!=0) return;
+ evaledN=eval(myN.substr(2));
+ /*if ((currentElementType.substr(0,6)=="titles" || currentElementType=="subtitles" ||
+      currentElementType=="emphasis" || currentElementType=="strong" ||
+      currentElementType=="sup" || currentElementType=="sub" ||
+      currentElementType=="strikethrough") && evaledN) {
+  try {
+   mainWin.scroll(0,0);
+   rng.moveToElementText(myLinks[evaledN]);
+   mainWin.scrollBy(0,rng.boundingTop-80);
+   rng.select();
+   var winHeight=document.documentElement.clientHeight;
+   /*alert("rng.boundingTop: "+rng.boundingTop+"    winHeight: "+winHeight);
+   if (rng.boundingHeight<=winHeight)
+    mainWin.scroll(0,Math.floor(rng.boundingTop-winHeight/2));
+   else
+    mainWin.scrollBy(0,rng.boundingTop);
+  }
+  catch(e) {
+   alert("При установке фокуса видимости на элемент произошла ошибка.");
+  } 
+ } */
+ //обработка выделения с незажатым шифтом и незажатым контролом
+ if (!event.ctrlKey && !event.shiftKey) {
+  //чистка списка выделенных элементов
+  for (k in selectedElements)
+   if (selectedElements[k]==k)
+    if (document.getElementById("n_"+k))
+     document.getElementById("n_"+k).className="el_";
+  selectedElements={};
+  selectedElementsCnt=0;
+ }
+ //если клик сделан с контролом, уберем стиль активности с активного элемента
+ if (event.ctrlKey)
+  removeActivityFromActiveElement();
+ if (event.shiftKey) {
+  //чистка списка выделенных элементов
+  if (!event.ctrlKey) {
+   for (k in selectedElements)
+    if (selectedElements[k]==k)
+     document.getElementById("n_"+k).className="el_";
+   selectedElements={};
+   selectedElementsCnt=0;
+  }
+ }
+ //обработка выделения с зажатым шифтом и незажатым контролом)
+ if (event.shiftKey && evaledN && selectionBegin) {
+  var oldN=selectionBegin.id;
+  if (oldN==null || oldN=="" || oldN.indexOf("n_")!=0) return;
+  evaledOldN=eval(oldN.substr(2));
+  if (!event.ctrlKey) {
+   //alert("добавляем в список n_"+evaledOldN);
+   selectedElements[evaledOldN]=evaledOldN;
+   selectionBegin.className="el_sel";
+   selectedElementsCnt=1;
+  }
+  if (evaledOldN!=evaledN) {
+   selectElements(selectionBegin,el);
+  }
+ }
+
+ //обработка выделения с зажатым контролом
+ if (event.ctrlKey) {
+  if (el.className=="el_") {
+   if (selectedElements[evaledN]!=evaledN) {
+    selectedElements[evaledN]=evaledN;
+    selectedElementsCnt++;
+   }
+   el.className="el_active_sel";
+  } else if (el.className=="el_sel" || el.className=="el_active_sel") {
+   selectedElements[evaledN]=undefined;
+   selectedElementsCnt--;
+   el.className="el_active";
+  }
+ }
+
+ if (!event.ctrlKey || (event.ctrlKey && event.shiftKey)) {
+  el.className="el_active_sel";
+  if (selectedElements[evaledN]!=evaledN) {
+   selectedElements[evaledN]=evaledN;
+   selectedElementsCnt++;
+  }
+ }
+
+ activeElement=el;
+ if (!event.shiftKey)
+  selectionBegin=el;
+ if (!event.ctrlKey && !event.shiftKey) {
+  //занесем в список выделенных элементов элемент, по которому был клик
+  if (evaledN) {
+   selectedElements[evaledN]=evaledN;
+   selectedElementsCnt=1;
+  }
+ }
+ document.getElementById("selectedInput").value=selectedElementsCnt.toString();
+ event.returnValue=false;
+ return false;
+}
+
+function isInNotesOrCommentsBody(el) {
+ while (el && el.nodeName!="body") el=el.parentNode;
+ if (el.nodeName=="body" && (el.getAttribute("name")=="notes" || el.getAttribute("name")=="comments"))
+  return true;
+ return false;
+}
+
+function capturedMouse() {
+ el=event.srcElement;
+ if (event.type=="mouseover") {
+  if (el.nodeName=="BODY") {
+   scrolling="no";
+   if (mouseTimer!=null) {
+    clearInterval(mouseTimer);
+    mouseTimer=null;
+   }
+  event.returnValue=false;
+  }
+  while (el && el.nodeName!="BODY" && el.nodeName!="DIV" || (el.nodeName=="DIV" && el.className!=null && el.className!="" &&
+         el.className.indexOf("el_")!=0))
+   el=el.parentNode;
+  if (!el || el.nodeName!="DIV" || el.className.indexOf("el_")!=0) return;
+  if (el && el.nodeName=="DIV" && el.className.indexOf("el_")==0) {
+   evaledN=eval(el.id.substr(2));
+   removeActivityFromActiveElement();
+   selectElements(activeElement,el);
+   activeElement=el;
+   setActivityToElement(activeElement);
+   document.getElementById("selectedInput").value=selectedElementsCnt.toString();
+  }
+  return true;
+ }
+ if (event.type=="mouseup") {
+  document.getElementById("mouseCaptureSpan").releaseCapture();
+  if (mouseTimer!=null) {
+   clearInterval(mouseTimer);
+   mouseTimer=null;
+  }
+  event.returnValue=false;
+  scrolling="no";
+  return false;
+ }
+ if (event.type=="mousemove") {
+  if (event.y<3) {
+   scrolling="up";
+   if (mouseTimer==null) mouseTimer=setInterval("scrollingTimer();",100);
+  }
+  else if (event.y>document.getElementById("elementList").offsetHeight-scrollbarHeight) {
+   scrolling="down";
+   if (mouseTimer==null) mouseTimer=setInterval("scrollingTimer();",100);
+  } else if (mouseTimer!=null) {
+   clearInterval(mouseTimer);
+   mouseTimer=null;
+  }
+  event.returnValue=false;
+ }
+ return true;
+}
+
+function getOuterXML(startEl) {
+  var myAttrs,i;
+  var xmlStr="<"+startEl.nodeName;
+  myAttrs=startEl.attributes;
+  for (i=0; i<myAttrs.length; i++)
+    xmlStr+=" "+myAttrs[i].name+'="'+startEl.getAttribute(myAttrs[i].name)+'"';
+  if (!startEl.hasChildNodes) xmlStr+="/";
+  xmlStr+=">";
+  return xmlStr+getInnerXML(startEl)+"</"+startEl.nodeName+">";
+}
+
+function getInnerXML(startEl) {
+ var xmlStr="";
+ var myAttrs,myAttr,i;
+ if (!startEl.hasChildNodes) return "";
+ el=startEl.firstChild;
+
+ while (el && el!=startEl) {
+//  alert("nodeType: "+el.nodeType+"\n\nnodeValue: "+el.nodeValue);
+  if (el.nodeType==1) {
+    xmlStr+="<"+el.nodeName;
+    myAttrs=el.attributes;
+    for (i=0; i<myAttrs.length; i++)
+      xmlStr+=" "+myAttrs[i].name+'="'+el.getAttribute(myAttrs[i].name)+'"';
+    if (!el.hasChildNodes) xmlStr+="/";
+    xmlStr+=">"; 
+  }
+  if (el.nodeType==3) { xmlStr+=el.nodeValue; }
+  if (el.hasChildNodes) {
+   el=el.firstChild;
+  }
+  else {
+   while (el && !el.nextSibling && el!=startEl) {
+    el=el.parentNode;
+    if (el.nodeType==1 && el!=startEl) { xmlStr+="</"+el.nodeName+">"; }
+   }
+   if (el && el!=startEl) el=el.nextSibling;
+  }
+ }
+ return xmlStr;
+}
+
+function xmlToHtml(s) {
+  return s.replace(/<(?!\/?P[> ])[^>]+>/gi,"");
+}
+
+function applySettings() {
+ var f1=document.getElementById("f1");
+ if (!f1) {alert("Ошибка!"); return}
+ f1=f1.value;
+ try {
+  var fso=new ActiveXObject("Scripting.FileSystemObject");
+  var s1=fso.GetBaseName(f1)+"."+fso.GetExtensionName(f1);
+  if (fso.GetExtensionName(f1)=="" || fso.GetExtensionName(f1).toLowerCase()!="fb2") {
+    alert("Ошибка: вы не выбрали файл, либо выбрали НЕ-fb2 файл.");
+    return;
+  }
+ }
+ catch(e) {
+  alert("Ошибка!");
+  return;
+ }
+// var xmlDoc=new ActiveXObject("Msxml2.DOMDocument.4.0");
+ xmlDoc=new ActiveXObject("Microsoft.XMLDOM");
+ xmlDoc.preserveWhiteSpace = true;
+ xmlDoc.load(f1);
+ if (xmlDoc.parseError.errorCode) return;
+ openedFileName=f1;
+ var titles=xmlDoc.documentElement.selectNodes("//section/title");
+ //alert("titles.length: \n\n"+titles.length);
+ var i;
+ //window.clipboardData.setData("text",getOuterXML(xmlDoc.documentElement));
+ //savedXmlDocCode=getOuterXML(xmlDoc.documentElement);
+ var fictionBook=xmlDoc.documentElement.selectSingleNode("//FictionBook");
+ savedFictionBook=fictionBook.cloneNode(true);
+ var myAttrs=fictionBook.attributes;
+ ns="l";
+ for (i=0; i<myAttrs.length; i++)
+   if (myAttrs[i].name.indexOf("xmlns:")==0)
+     ns=myAttrs[i].name.replace(/^xmlns:/i,"");
+ var htmlStr="";
+ var nCnt=0;
+ myLinks={};
+ var titleCode;
+ for (i=0; i<titles.length; i++) {
+   if (!isInNotesOrCommentsBody(titles[i])) {
+     titleCode=xmlToHtml(getInnerXML(titles[i]));
+     //alert("titleCode:\n\n"+titleCode);
+     nCnt++;
+     htmlStr+="<DIV class=el_ id=n_"+nCnt+">"+titleCode+"</DIV><DIV class=delim></DIV>";
+     myLinks[nCnt]=i;
+   }
+ }
+ selectedElementsCnt=0;
+ document.getElementById("elementList").innerHTML=htmlStr;
+ document.getElementById("inAllInput").value=nCnt;
+ document.getElementById("fieldset1").style.display="block";
+ document.getElementById("counters").style.display="block";
+ document.getElementById("buttonsDiv").style.display="block";
+// alert("Настройки успешно применены.\n\n"+f1);
+}
+
+</SCRIPT>
+</HEAD>
+<BODY style="font-family:tahoma; font-size:14px; padding:10px; margin:0; color:black; background-color:white;" onload="getScrollBarWidthAndHeight();" onkeydown="myOnKeydown();">
+<SPAN id=mouseCaptureSpan style="display:none;" onmousemove="capturedMouse();" onmouseout="capturedMouse();" onmouseup="capturedMouse();" onmouseover="capturedMouse();"></SPAN>
+Выберите fb2-файл:
+<br>
+<INPUT type=file style="width:500px;" id=f1>
+<DIV id="selectFileDiv">
+<P style="padding:0; margin:0; text-align:center;"><INPUT type=button value="Найти и показать заголовки разделов" onclick="applySettings();"><INPUT type=button value="Выйти" onclick="window.close();"></P>
+<BR>
+</DIV>
+<FIELDSET id=fieldset1 style="padding:0; white-space:nowrap; margin:1px; width:500px; display:none;">
+<DIV id=elementList style="width:500px; height:400px; padding:2px; overflow:scroll;" onmousedown="myOnMouseDown();" ondblclick="myOnClick();">
+</DIV>
+</FIELDSET>
+<DIV id=counters style="display:none;">
+Всего <input type=text readonly style="width:46px; text-align:center;" value="0" id=inAllInput> Выбрано <input type=text readonly style="width:46px; text-align:center;" value="0" id=selectedInput>
+</DIV>
+<DIV id=buttonsDiv style="display:none;">
+<INPUT type=button value="Сохранить выбранные разделы как отдельные документы" onclick="saveSectionsAsSeparateDocuments();">
+<INPUT type=button value="Код в буфер (отладочное)" onclick='window.clipboardData.setData("text",document.getElementById("elementList").innerHTML);'>
+</DIV>
+</BODY>
+</HTML>
