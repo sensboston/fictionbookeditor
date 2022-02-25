@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <HTML>
 <HEAD>
-<TITLE>Save Sections As Separate Documents v1.5</TITLE>
+<TITLE>Save Sections As Separate Documents v1.6</TITLE>
 <HTA:APPLICATION ID="oHTA"/>
 <META http-equiv="Content-Type" content="text/html; charset=utf-8">
 <STYLE>
@@ -537,7 +537,7 @@ function getInnerXML(startEl) {
     if (!el.hasChildNodes) xmlStr+="/";
     xmlStr+=">"; 
   }
-  if (el.nodeType==3) { xmlStr+=el.nodeValue; }
+  if (el.nodeType==3) { xmlStr+=el.nodeValue.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
   if (el.hasChildNodes) {
    el=el.firstChild;
   }
@@ -553,7 +553,7 @@ function getInnerXML(startEl) {
 }
 
 function xmlToHtml(s) {
-  return s.replace(/<(?!\/?P[> ])[^>]+>/gi,"");
+  return s.replace(/<empty-line\/>/g,"<P>&nbsp;</P>").replace(/<(?!\/?P[> ])[^>]+>/gi,"");
 }
 
 function applySettings() {
@@ -606,6 +606,7 @@ function applySettings() {
  selectedElementsCnt=0;
  document.getElementById("elementList").innerHTML=htmlStr;
  document.getElementById("inAllInput").value=nCnt;
+ document.getElementById("selectedInput").value=selectedElementsCnt;
  document.getElementById("fieldset1").style.display="block";
  document.getElementById("counters").style.display="block";
  document.getElementById("buttonsDiv").style.display="block";
