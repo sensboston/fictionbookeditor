@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <HTML>
 <HEAD>
-<TITLE>Save Sections As Separate Documents v1.6</TITLE>
+<TITLE>Save Sections As Separate Documents v1.8</TITLE>
 <HTA:APPLICATION ID="oHTA"/>
 <META http-equiv="Content-Type" content="text/html; charset=utf-8">
 <STYLE>
@@ -57,13 +57,13 @@ function sortElements() {
 
 function saveOneSectionAsSeparateDocuments(titleNum,filenameForSaving) {
   //xmlDoc.loadXML(savedXmlDocCode);
-  var i,j,sections,sections2;
+  var i,j,sections,sections2,innerSection,elemInBody,prevElemInBody;
   var fictionBook=xmlDoc.documentElement.selectSingleNode("//FictionBook");
   fictionBook.parentNode.replaceChild(savedFictionBook.cloneNode(true),fictionBook);
   var titles=xmlDoc.documentElement.selectNodes("//section/title");
   var myTitle=titles[titleNum];
   var el1=myTitle;
-  var mySection,myBody,myClonedNode,bodies,i,subsections;
+  var mySection,myBody,myClonedNode,bodies,i,subsections,myClonedNode2;
   while (el1 && el1.nodeName!="section") el1=el1.parentNode;
   if (el1 && el1.nodeName=="section") mySection=el1;
   while (el1 && el1.nodeName!="body") el1=el1.parentNode;
@@ -75,12 +75,36 @@ function saveOneSectionAsSeparateDocuments(titleNum,filenameForSaving) {
     while (myBody.hasChildNodes)
       myBody.removeChild(myBody.lastChild);
     myBody.appendChild(myClonedNode);
-    var bodyTitle=myBody.selectSingleNode("./section/title");
-    if (bodyTitle) {
-      var titleNode=bodyTitle.parentNode.removeChild(bodyTitle);
-      myBody.insertBefore(titleNode,myBody.firstChild);
+    var elemInBody=myBody.selectSingleNode("./section/section");
+    while (elemInBody && (elemInBody.nodeType!=1 || elemInBody.nodeName=="section"))
+      elemInBody=elemInBody.previousSibling;
+    //alert("elemInBody: "+getOuterXML(elemInBody));
+    while (elemInBody) {
+      prevElemInBody=elemInBody.previousSibling
+      myClonedNode2=elemInBody.parentNode.removeChild(elemInBody);
+      myBody.insertBefore(myClonedNode2,myBody.firstChild);
+      elemInBody=prevElemInBody;
     }
-    
+    //удалим наружный раздел, если нужно
+    //alert("myBody.firstChild: \n\n"+getOuterXML(myBody.firstChild));
+    var outerSection=myBody.firstChild;
+    while (outerSection.nodeName=="title")
+      outerSection=outerSection.nextSibling;
+    //alert("outerSection: \n\n"+getOuterXML(outerSection));
+    var innerSection=outerSection.selectSingleNode("./section");
+    if (innerSection) {
+      //alert("innerSection: "+getOuterXML(innerSection));
+      while (outerSection.hasChildNodes) {
+        //alert(2);
+        myClonedNode=outerSection.firstChild.cloneNode(true);
+        //alert("3. myClonedNode: \n\n"+getOuterXML(myClonedNode));
+        myBody.insertBefore(myClonedNode,outerSection);
+        //alert("4. myBody: \n\n"+getOuterXML(myBody));
+        outerSection.removeChild(outerSection.firstChild);
+      }
+      myBody.removeChild(outerSection);
+    }
+
     var removesCnt=1;
     while (removesCnt>0) {
       removesCnt=0;
@@ -514,8 +538,9 @@ function getOuterXML(startEl) {
   var myAttrs,i;
   var xmlStr="<"+startEl.nodeName;
   myAttrs=startEl.attributes;
-  for (i=0; i<myAttrs.length; i++)
-    xmlStr+=" "+myAttrs[i].name+'="'+startEl.getAttribute(myAttrs[i].name)+'"';
+  if (myAttrs)
+    for (i=0; i<myAttrs.length; i++)
+      xmlStr+=" "+myAttrs[i].name+'="'+startEl.getAttribute(myAttrs[i].name)+'"';
   if (!startEl.hasChildNodes) xmlStr+="/";
   xmlStr+=">";
   return xmlStr+getInnerXML(startEl)+"</"+startEl.nodeName+">";
