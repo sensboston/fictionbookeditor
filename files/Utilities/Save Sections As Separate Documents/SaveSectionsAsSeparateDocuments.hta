@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <HTML>
 <HEAD>
-<TITLE>Save Sections As Separate Documents v1.8</TITLE>
+<TITLE>Save Sections As Separate Documents v1.9</TITLE>
 <HTA:APPLICATION ID="oHTA"/>
 <META http-equiv="Content-Type" content="text/html; charset=utf-8">
 <STYLE>
@@ -75,10 +75,21 @@ function saveOneSectionAsSeparateDocuments(titleNum,filenameForSaving) {
     while (myBody.hasChildNodes)
       myBody.removeChild(myBody.lastChild);
     myBody.appendChild(myClonedNode);
+    var outerSection=myBody.firstChild;
+    while (outerSection.nodeName=="title")
+      outerSection=outerSection.nextSibling;
+    // перенесем в body заголовок, эпиграфы, картинки раздела и аннотации раздела
     var elemInBody=myBody.selectSingleNode("./section/section");
-    while (elemInBody && (elemInBody.nodeType!=1 || elemInBody.nodeName=="section"))
-      elemInBody=elemInBody.previousSibling;
-    //alert("elemInBody: "+getOuterXML(elemInBody));
+    elemInBody=myBody.selectSingleNode("./section").firstChild;
+    //alert("elemInBody: \n\n"+getOuterXML(elemInBody));
+    while (elemInBody && (elemInBody.nodeName=="title" || elemInBody.nodeName=="epigraph"
+           || elemInBody.nodeName=="image" || elemInBody.nodeName=="annotation"
+           || elemInBody.nodeType==3))
+      elemInBody=elemInBody.nextSibling;
+    if (elemInBody && (elemInBody.nodeName!="title" && elemInBody.nodeName!="epigraph"
+           && elemInBody.nodeName!="image" && elemInBody.nodeName!="annotation"))
+       elemInBody=elemInBody.previousSibling;
+    //alert("elemInBody 2: "+getOuterXML(elemInBody));
     while (elemInBody) {
       prevElemInBody=elemInBody.previousSibling
       myClonedNode2=elemInBody.parentNode.removeChild(elemInBody);
@@ -87,9 +98,6 @@ function saveOneSectionAsSeparateDocuments(titleNum,filenameForSaving) {
     }
     //удалим наружный раздел, если нужно
     //alert("myBody.firstChild: \n\n"+getOuterXML(myBody.firstChild));
-    var outerSection=myBody.firstChild;
-    while (outerSection.nodeName=="title")
-      outerSection=outerSection.nextSibling;
     //alert("outerSection: \n\n"+getOuterXML(outerSection));
     var innerSection=outerSection.selectSingleNode("./section");
     if (innerSection) {
