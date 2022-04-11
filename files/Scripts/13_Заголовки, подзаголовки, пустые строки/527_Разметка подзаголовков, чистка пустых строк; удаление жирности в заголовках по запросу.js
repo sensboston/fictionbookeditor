@@ -4,7 +4,7 @@
 function Run() {
  try { var nbspChar=window.external.GetNBSP(); var nbspEntity; if (nbspChar.charCodeAt(0)==160) nbspEntity="&nbsp;"; else nbspEntity=nbspChar;}
  catch(e) { var nbspChar=String.fromCharCode(160); var nbspEntity="&nbsp;";}
- var verStr="v4.2";
+ var verStr="v4.3";
  var DebugMode=0;
  var DestrongTitles=false; //делать ли удаление жирности в заголовках
  var DeitalicTitles=false; //удалять ли курсив в заголовках
@@ -29,27 +29,11 @@ function Run() {
  var re0=new RegExp("^( | |&nbsp;|"+nbspChar+")*?$","i");
 
  function destrongAndDeitalic(el,destrong,deitalic) {
-  var savedEl=el;
-  var savedEl2;
-  el=el.firstChild;
-  while (el) {
-   if (el.firstChild)
-    el=el.firstChild;
-   else {
-    while (el && el!=savedEl && el.nextSibling==null) el=el.parentNode;
-    if (el && el!=savedEl) el=el.nextSibling;
-    if (el==savedEl) return;
-   }
-   if (
-       (destrong && (el.nodeName=="STRONG" || el.nodeName=="B"))
-       ||
-       (deitalic && (el.nodeName=="EM" || el.nodeName=="I"))
-      ) {
-    savedEl2=el.firstChild ? el.firstChild : el.nextSibling;
-    el.removeNode(false);
-    el=savedEl2;
-   }
-  }
+  var elHtmlStr=el.innerHTML;
+  var savedHtmlStr=elHtmlStr;
+  if (destrong) elHtmlStr=elHtmlStr.replace(/<\/?(STRONG|B)( [>]*)?>/gi,"");
+  if (deitalic) elHtmlStr=elHtmlStr.replace(/<\/?(EM|I)( [>]*)?>/gi,"");
+  if (elHtmlStr!=savedHtmlStr) el.innerHTML=elHtmlStr;
  }
 
  function isLineEmpty(ptr) {
