@@ -1,22 +1,22 @@
 //скрипт «Нумерацию 'число пробел' в началах абзацев сделать надстрочным текстом»
 //автор Sclex
-//v1.1
+//v1.2
 
 function Run() {
 
  var s;
 
- function processP(p) {
-  s=p.innerHTML;
-  if (s.search(re0)<0) return;
-  p.innerHTML=p.innerHTML.replace(re0,"$1<SUP>$3</SUP>$4$6");
- }
- 
  //имя тэга, который будет использован для маркеров начала и конца выделения
  var MyTagName="B";
 
  try { var nbspChar=window.external.GetNBSP(); var nbspEntity; if (nbspChar.charCodeAt(0)==160) nbspEntity="&nbsp;"; else nbspEntity=nbspChar;}
  catch(e) { var nbspChar=String.fromCharCode(160); var nbspEntity="&nbsp;";}
+
+ function processP(p) {
+  s=p.innerHTML.replace(/&nbsp;/gi,nbspChar);
+  if (s.search(re0)<0) return;
+  p.innerHTML=p.innerHTML.replace(/&nbsp;/gi,nbspChar).replace(re0,"$1<SUP>$3</SUP>$4$6");
+ }
 
  var tr,el,prv,pm,saveNext,saveFirstEmpty,nextPtr;
  var wereReplaces=false;
