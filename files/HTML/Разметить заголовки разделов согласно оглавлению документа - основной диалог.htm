@@ -36,9 +36,14 @@
     while (elem.nodeName!="P" && elem.nodeName!="BODY") elem=elem.parentNode;
     if (elem.nodeName=="BODY") {
       elem=mainDocument.getElementById("mtbc_BlockStart");
-      while (!elem.nextSibling) elem=elem.parentNode;
-      elem=elem.nextSibling;
-      while (elem.nodeName!="P") elem=elem.firstChild;
+      while (elem && elem.nodeName!="P") {
+       if (elem.firstChild)
+         elem=elem.firstChild;
+       else {
+         while (!elem.nextSibling) elem=elem.parentNode;
+         elem=elem.nextSibling;
+       }
+      }
       // перенесем тег-маркер внутрь тега P, чтобы IE правильно
       // показывал границу блочного элемента (например, заголовка) перед этим тегом-маркером
       blockStartMarker=blockStartMarker.removeNode(true);
@@ -288,12 +293,17 @@
         }
        }
        regExp1=new RegExp("<P(\\s[^>]*?)?>Sclex_SplittingIntoSections_"+randomNum+"_"+"(\\d+)_begin</P>","g");
-       regExp1_="</DIV><DIV class=section><DIV class=title>";
+       regExp1_="</DIV ><DIV class=section><DIV class=title>";
        regExp2=new RegExp("<P(\\s[^>]*?)?>Sclex_SplittingIntoSections_"+randomNum+"_"+"(\\d+)_end</P>","g");
-       regExp2_="</DIV>";
+       regExp2_="</DIV >";
        regExp3=new RegExp("\\A\\s*?</DIV><DIV class=section>");
        regExp3_="";
-       sectionPtr.outerHTML=sectionPtr.outerHTML.replace(regExp1,regExp1_).replace(regExp2,regExp2_).replace(regExp3,regExp3_);
+       regExp4=new RegExp("</DIV >\\s*</DIV >\\s*<DIV class=section><DIV class=title>");
+       regExp4_="";
+       if (document.getElementById("checkbox2").checked)
+         sectionPtr.outerHTML=sectionPtr.outerHTML.replace(regExp1,regExp1_).replace(regExp2,regExp2_).replace(regExp3,regExp3_).replace(regExp4,regExp4_);
+       else
+         sectionPtr.outerHTML=sectionPtr.outerHTML.replace(regExp1,regExp1_).replace(regExp2,regExp2_).replace(regExp3,regExp3_);
        makeSelection();
     }
 
@@ -406,6 +416,9 @@
 <br>
 <input type="checkbox" id="checkbox1" checked>
 <label for="checkbox1">Регистр символов размечаемых заголовков делать такой же, как в оглавлении</label>
+<br>
+<input type="checkbox" id="checkbox2" checked>
+<label for="checkbox2">Примыкающие вплотную заголовки объединять в один заголовок</label>
 <br>
 <input type="button" value="Разметить заголовки разделов согласно списку" onclick="markupTitles();">
 <textarea style="width:100%; height:70%;" id="contentsTextArea">
