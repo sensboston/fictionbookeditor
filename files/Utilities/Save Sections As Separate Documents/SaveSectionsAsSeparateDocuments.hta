@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <HTML>
 <HEAD>
-<TITLE>Save Sections As Separate Documents v3.2</TITLE>
+<TITLE>Save Sections As Separate Documents v3.3 (автор Sclex)</TITLE>
 <HTA:APPLICATION ID="oHTA"/>
 <META http-equiv="Content-Type" content="text/html; charset=utf-8">
 <STYLE>
@@ -137,16 +137,78 @@ function makeBookTitleAndAuthor(sectionTitle,xmlDoc) {
   if (document.getElementById("radio3").checked) {
     bookTitle=titleParagraphs[0].xml.replace(/<\/?[^>]*>/g,"");
   }
-  var description=xmlDoc.selectSingleNode("//FictionBook/description");
+
+  var fictionBook=xmlDoc.selectSingleNode("//FictionBook");
+
+  var stylesheet=fictionBook.selectSingleNode("./stylesheet");
+
+  var description=fictionBook.selectSingleNode("./description");
+  if (!description) {
+    description=xmlDoc.createNode(1,"description",fictionBook.namespaceURI);
+    if (stylesheet)
+      fictionBook.insertBefore(description,stylesheet.nextSibling);
+    else
+      fictionBook.insertBefore(description,fictionBook.firstChild);
+    description=fictionBook.selectSingleNode("./description");
+  }
+
   var titleInfo=description.selectSingleNode("./title-info");
+  if (!titleInfo) {
+    titleInfo=xmlDoc.createNode(1,"title-info",fictionBook.namespaceURI);
+    description.insertBefore(titleInfo,description.firstChild);
+    titleInfo=description.selectSingleNode("./title-info");
+  }
+
   var author=titleInfo.selectSingleNode("./author");
+  if (!author) {
+    author=xmlDoc.createNode(1,"author",fictionBook.namespaceURI);
+    titleInfo.insertBefore(author,titleInfo.firstChild);
+    author=titleInfo.selectSingleNode("./author");
+  }
+
   var firstNameElement=author.selectSingleNode("./first-name");
+  // отсюда идет новый код
+  if (!firstNameElement) {
+    firstNameElement=xmlDoc.createNode(1,"first-name",fictionBook.namespaceURI);
+    author.insertBefore(firstNameElement,author.firstChild);
+    firstNameElement=author.selectSingleNode("./first-name");
+  }
   var middleNameElement=author.selectSingleNode("./middle-name");
+  if (!middleNameElement) {
+    middleNameElement=xmlDoc.createNode(1,"middle-name",fictionBook.namespaceURI);
+    author.insertBefore(middleNameElement,firstNameElement.nextSibling);
+    middleNameElement=author.selectSingleNode("./middle-name");
+  }
   var lastNameElement=author.selectSingleNode("./last-name");
+  if (!lastNameElement) {
+    lastNameElement=xmlDoc.createNode(1,"last-name",fictionBook.namespaceURI);
+    author.insertBefore(lastNameElement,middleNameElement.nextSibling);
+    lastNameElement=author.selectSingleNode("./last-name");
+  }
   var nicknameElement=author.selectSingleNode("./nickname");
+  if (!nicknameElement) {
+    nicknameElement=xmlDoc.createNode(1,"nickname",fictionBook.namespaceURI);
+    author.insertBefore(nicknameElement,lastNameElement.nextSibling);
+    nicknameElement=author.selectSingleNode("./nickname");
+  }
   var homepageElement=author.selectSingleNode("./home-page");
+  if (!homepageElement) {
+    homepageElement=xmlDoc.createNode(1,"home-page",fictionBook.namespaceURI);
+    author.insertBefore(homepageElement,nicknameElement.nextSibling);
+    homepageElement=author.selectSingleNode("./home-page");
+  }
   var emailElement=author.selectSingleNode("./email");
+  if (!emailElement) {
+    emailElement=xmlDoc.createNode(1,"email",fictionBook.namespaceURI);
+    author.insertBefore(emailElement,homepageElement.nextSibling);
+    emailElement=author.selectSingleNode("./email");
+  }
   var bookTitleElement=titleInfo.selectSingleNode("./book-title");
+  if (!bookTitleElement) {
+    bookTitleElement=xmlDoc.createNode(1,"book-title",fictionBook.namespaceURI);
+    titleInfo.insertBefore(bookTitleElement,author.nextSibling);
+    bookTitleElement=titleInfo.selectSingleNode("./book-title");
+  }
   while (firstNameElement.hasChildNodes)
     firstNameElement.removeChild(firstNameElement.firstChild);
   firstNameElement.appendChild(xmlDoc.createTextNode(authorFirstName));
