@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <HTML>
 <HEAD>
-<TITLE>Save Sections As Separate Documents v3.3 (XML6 version) (автор Sclex)</TITLE>
+<TITLE>Save Sections As Separate Documents v3.4 (XML6 version) (автор Sclex)</TITLE>
 <HTA:APPLICATION ID="oHTA"/>
 <META http-equiv="Content-Type" content="text/html; charset=utf-8">
 <STYLE>
@@ -209,18 +209,20 @@ function makeBookTitleAndAuthor(sectionTitle,xmlDoc) {
     titleInfo.insertBefore(bookTitleElement,author.nextSibling);
     bookTitleElement=titleInfo.selectSingleNode("./fb:book-title");
   }
-  while (firstNameElement.hasChildNodes)
-    firstNameElement.removeChild(firstNameElement.firstChild);
-  firstNameElement.appendChild(xmlDoc.createTextNode(authorFirstName));
-  while (middleNameElement.hasChildNodes)
-    middleNameElement.removeChild(middleNameElement.firstChild);
-  middleNameElement.appendChild(xmlDoc.createTextNode(authorMiddleName));
-  while (lastNameElement.hasChildNodes)
-    lastNameElement.removeChild(lastNameElement.firstChild);
-  lastNameElement.appendChild(xmlDoc.createTextNode(authorLastName));
-  if (nicknameElement) nicknameElement.parentNode.removeChild(nicknameElement);
-  if (homepageElement) homepageElement.parentNode.removeChild(homepageElement);
-  if (emailElement) emailElement.parentNode.removeChild(emailElement);
+  if (!document.getElementById("radio3").checked) {
+    while (firstNameElement.hasChildNodes)
+      firstNameElement.removeChild(firstNameElement.firstChild);
+    firstNameElement.appendChild(xmlDoc.createTextNode(authorFirstName));
+    while (middleNameElement.hasChildNodes)
+      middleNameElement.removeChild(middleNameElement.firstChild);
+    middleNameElement.appendChild(xmlDoc.createTextNode(authorMiddleName));
+    while (lastNameElement.hasChildNodes)
+      lastNameElement.removeChild(lastNameElement.firstChild);
+    lastNameElement.appendChild(xmlDoc.createTextNode(authorLastName));
+    if (nicknameElement) nicknameElement.parentNode.removeChild(nicknameElement);
+    if (homepageElement) homepageElement.parentNode.removeChild(homepageElement);
+    if (emailElement) emailElement.parentNode.removeChild(emailElement);
+  }
   while (bookTitleElement.hasChildNodes)
     bookTitleElement.removeChild(bookTitleElement.firstChild);
   bookTitleElement.appendChild(xmlDoc.createTextNode(bookTitle));
@@ -989,8 +991,7 @@ function applySettings() {
 <br>
 <label for=radio2><input type=radio id=radio2 name=radiogroup1 style="width:30px; height:30px;"> первый абзац заголовка – название произведения, второй – автор</label>
 <br>
-<label for=radio3><input type=radio id=radio3 name=radiogroup1 style="width:30px; height:30px;"> первый абзац заголовка – название произведения</label>
-<br>
+<label for=radio3><input type=radio id=radio3 name=radiogroup1 style="width:30px; height:30px;"> первый абзац заголовка – название произведения (оставить авторов из исходного документа)</label>
 <INPUT type=button value="Сохранить выбранные разделы как отдельные документы" onclick="saveSectionsAsSeparateDocuments();">
 <!-- <INPUT type=button value="Код в буфер (отладочное)" onclick='window.clipboardData.setData("text",document.getElementById("elementList").innerHTML);'> -->
 <!-- <INPUT type=button value="Лог в буфер" onclick='window.clipboardData.setData("text",logStr);'> -->
