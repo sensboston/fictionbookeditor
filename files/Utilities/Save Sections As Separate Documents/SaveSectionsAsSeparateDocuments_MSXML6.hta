@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <HTML>
 <HEAD>
-<TITLE>Save Sections As Separate Documents v3.1</TITLE>
+<TITLE>Save Sections As Separate Documents v3.2</TITLE>
 <HTA:APPLICATION ID="oHTA"/>
 <META http-equiv="Content-Type" content="text/html; charset=utf-8">
 <STYLE>
@@ -95,6 +95,75 @@ function randomSymbol() {
   return arrayOfSymbols[getRandomInRange(0,35)];
 }
 
+function makeBookTitleAndAuthor(sectionTitle,xmlDoc) {
+  var bookTitle="";
+  var authorFirstName="";
+  var authorMiddleName="";
+  var authorLastName="";
+  var authorParagraph="";
+  var bookTitleParagraph="";
+  var titleParagraphs=sectionTitle.selectNodes("./fb:p");
+  var arr1;
+  if (document.getElementById("radio1").checked) {
+    authorParagraph=titleParagraphs[0].xml.replace(/<\/?[^>]*>/g,"");
+    bookTitleParagraph=titleParagraphs[1].xml.replace(/<\/?[^>]*>/g,"");
+  }
+  if (document.getElementById("radio2").checked) {
+    authorParagraph=titleParagraphs[1].xml.replace(/<\/?[^>]*>/g,"");
+    bookTitleParagraph=titleParagraphs[0].xml.replace(/<\/?[^>]*>/g,"");
+  }
+  if (document.getElementById("radio1").checked || document.getElementById("radio2").checked) {
+    bookTitle=bookTitleParagraph;
+    arr1=authorParagraph.match(/([^\s.]+\.?)/g);
+    if (arr1.length==3 && arr1[2].slice(-1)!=".") {
+      authorFirstName=arr1[0];
+      authorMiddleName=arr1[1];
+      authorLastName=arr1[2];
+    }
+    if (arr1.length==3 && arr1[1].slice(-1)=="." && arr1[2].slice(-1)==".") {
+      authorFirstName=arr1[1];
+      authorMiddleName=arr1[2];
+      authorLastName=arr1[0];
+    }
+    if (arr1.length==2 && arr1[1].slice(-1)!=".") {
+      authorFirstName=arr1[0];
+      authorLastName=arr1[1];
+    }
+    if (arr1.length==2 && arr1[1].slice(-1)==".") {
+      authorFirstName=arr1[1];
+      authorLastName=arr1[0];
+    }
+  }
+  if (document.getElementById("radio3").checked) {
+    bookTitle=titleParagraphs[0].xml.replace(/<\/?[^>]*>/g,"");
+  }
+  var description=xmlDoc.selectSingleNode("//fb:FictionBook/fb:description");
+  var titleInfo=description.selectSingleNode("./fb:title-info");
+  var author=titleInfo.selectSingleNode("./fb:author");
+  var firstNameElement=author.selectSingleNode("./fb:first-name");
+  var middleNameElement=author.selectSingleNode("./fb:middle-name");
+  var lastNameElement=author.selectSingleNode("./fb:last-name");
+  var nicknameElement=author.selectSingleNode("./fb:nickname");
+  var homepageElement=author.selectSingleNode("./fb:home-page");
+  var emailElement=author.selectSingleNode("./fb:email");
+  var bookTitleElement=titleInfo.selectSingleNode("./fb:book-title");
+  while (firstNameElement.hasChildNodes)
+    firstNameElement.removeChild(firstNameElement.firstChild);
+  firstNameElement.appendChild(xmlDoc.createTextNode(authorFirstName));
+  while (middleNameElement.hasChildNodes)
+    middleNameElement.removeChild(middleNameElement.firstChild);
+  middleNameElement.appendChild(xmlDoc.createTextNode(authorMiddleName));
+  while (lastNameElement.hasChildNodes)
+    lastNameElement.removeChild(lastNameElement.firstChild);
+  lastNameElement.appendChild(xmlDoc.createTextNode(authorLastName));
+  if (nicknameElement) nicknameElement.parentNode.removeChild(nicknameElement);
+  if (homepageElement) homepageElement.parentNode.removeChild(homepageElement);
+  if (emailElement) emailElement.parentNode.removeChild(emailElement);
+  while (bookTitleElement.hasChildNodes)
+    bookTitleElement.removeChild(bookTitleElement.firstChild);
+  bookTitleElement.appendChild(xmlDoc.createTextNode(bookTitle));
+}
+
 function saveOneSectionAsSeparateDocuments(titleNum,filenameForSaving) {
   //xmlDoc.loadXML(savedXmlDocCode);
   var i,j,sections,sections2,innerSection,elemInBody,prevElemInBody;
@@ -102,6 +171,7 @@ function saveOneSectionAsSeparateDocuments(titleNum,filenameForSaving) {
   fictionBook.parentNode.replaceChild(savedFictionBook.cloneNode(true),fictionBook);
   var titles=xmlDoc.documentElement.selectNodes("//fb:section/fb:title");
   var myTitle=titles[titleNum];
+  makeBookTitleAndAuthor(myTitle,xmlDoc);
   var el1=myTitle;
   var mySection,myBody,myClonedNode,bodies,i,subsections,myClonedNode2;
   var savedBodyEpigraphs=[];
@@ -852,6 +922,12 @@ function applySettings() {
 </DIV>
 <DIV id=buttonsDiv style="display:none;">
 <label for="checkbox1"><input type=checkbox id="checkbox1" name=noteSign style="width:30px; height:30px;"> включать в сохраняемые файлы эпиграфы, в исходном документе относившиеся к body, а также разделы без заголовков, которые (разделы) находились в начале body</label>
+<br>
+<label for=radio1><input type=radio id=radio1 name=radiogroup1 checked style="width:30px; height:30px;"> первый абзац заголовка – автор, второй – название произведения</label>
+<br>
+<label for=radio2><input type=radio id=radio2 name=radiogroup1 style="width:30px; height:30px;"> первый абзац заголовка – название произведения, второй – автор</label>
+<br>
+<label for=radio3><input type=radio id=radio3 name=radiogroup1 style="width:30px; height:30px;"> первый абзац заголовка – название произведения</label>
 <br>
 <INPUT type=button value="Сохранить выбранные разделы как отдельные документы" onclick="saveSectionsAsSeparateDocuments();">
 <!-- <INPUT type=button value="Код в буфер (отладочное)" onclick='window.clipboardData.setData("text",document.getElementById("elementList").innerHTML);'> -->
