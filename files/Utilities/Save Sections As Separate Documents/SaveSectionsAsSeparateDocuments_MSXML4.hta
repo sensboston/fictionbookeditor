@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <HTML>
 <HEAD>
-<TITLE>Save Sections As Separate Documents v3.7 (XML4 version) (автор Sclex)</TITLE>
+<TITLE>Save Sections As Separate Documents v3.8 (XML4 version) (автор Sclex)</TITLE>
 <HTA:APPLICATION ID="oHTA"/>
 <META http-equiv="Content-Type" content="text/html; charset=utf-8">
 <STYLE>
@@ -45,10 +45,10 @@ function onWindowResize() {
 //        "initialWindowHeight: "+initialWindowHeight
 //  );
   document.getElementById("elementList").style.width=(650+newWidth-initialWindowWidth)+"px";
-  if (400+newHeight-initialWindowHeight>30)
-    document.getElementById("elementList").style.height=(400+newHeight-initialWindowHeight)+"px";
+  if (330+newHeight-initialWindowHeight>30)
+    document.getElementById("elementList").style.height=(330+newHeight-initialWindowHeight)+"px";
   else
-    document.getElementById("elementList").style.height="400px";
+    document.getElementById("elementList").style.height="330px";
   //logStr+="newHeight: "+newHeight+"; initialWindowHeight: "+initialWindowHeight+"\n";
   secondResizeCall=true;
 }
@@ -112,7 +112,7 @@ function fillInDescription(sectionTitle,xmlDoc) {
   var authorParagraph="";
   var bookTitleParagraph="";
   var titleParagraphs=sectionTitle.selectNodes("./fb:p");
-  var arr1;
+  var arr1,author;
   if (document.getElementById("radio1").checked) {
     authorParagraph=titleParagraphs[0].xml.replace(/<\/?[^>]*>/g,"");
     bookTitleParagraph=titleParagraphs[1].xml.replace(/<\/?[^>]*>/g,"");
@@ -227,10 +227,35 @@ function fillInDescription(sectionTitle,xmlDoc) {
     }
   }
 
+  authors=titleInfo.selectNodes("./fb:author");
+  if (authors.length==0) {
+    var genres=titleInfo.selectNodes("./genre");
+
+    author=xmlDoc.createNode(1,"author",fictionBook.namespaceURI);
+    if (!genres)
+      titleInfo.insertBefore(author,titleInfo.firstChild);
+    else
+      titleInfo.insertBefore(author,genres[genres.length-1]);
+    author=titleInfo.selectSingleNode("./fb:author");
+
+    var firstNameElement=author.selectSingleNode("./fb:first-name");
+    // отсюда идет новый код
+    if (!firstNameElement) {
+      firstNameElement=xmlDoc.createNode(1,"first-name",fictionBook.namespaceURI);
+      author.appendChild(firstNameElement);
+     }
+    var lastNameElement=author.selectSingleNode("./fb:last-name");
+    if (!lastNameElement) {
+      lastNameElement=xmlDoc.createNode(1,"last-name",fictionBook.namespaceURI);
+      author.appendChild(lastNameElement);
+    }
+  }
+
+  var authors=titleInfo.selectNodes("./fb:author");
   var bookTitleElement=titleInfo.selectSingleNode("./fb:book-title");
   if (!bookTitleElement) {
     bookTitleElement=xmlDoc.createNode(1,"book-title",fictionBook.namespaceURI);
-    titleInfo.insertBefore(bookTitleElement,author.nextSibling);
+    titleInfo.insertBefore(bookTitleElement,authors[authors.length-1].nextSibling);
     bookTitleElement=titleInfo.selectSingleNode("./fb:book-title");
   }
 
@@ -260,7 +285,10 @@ function fillInDescription(sectionTitle,xmlDoc) {
     if (documentInfoAuthor) elem1=documentInfoAuthor[documentInfoAuthor.length-1];
     if (programUsed) elem1=programUsed[programUsed.length-1];
     dateElement=xmlDoc.createNode(1,"date",fictionBook.namespaceURI);
-    documentInfo.insertBefore(dateElement,elem1.nextSibling);
+    if (!elem1)
+      documentInfo.insertBefore(dateElement,documentInfo.firstChild);
+    else
+      documentInfo.insertBefore(dateElement,elem1.nextSibling);
     dateElement=documentInfo.selectSingleNode("./fb:date");
   } else
     while (dateElement.hasChildNodes)
@@ -1019,7 +1047,7 @@ function applySettings() {
 <BR>
 </DIV>
 <FIELDSET id=fieldset1 style="padding:0; white-space:nowrap; margin:1px; width:650px; display:none;">
-<DIV id=elementList style="width:650px; height:400px; padding:2px; overflow:scroll;" onmousedown="myOnMouseDown();" ondblclick="myOnClick();">
+<DIV id=elementList style="width:650px; height:330px; padding:2px; overflow:scroll;" onmousedown="myOnMouseDown();" ondblclick="myOnClick();">
 </DIV>
 </FIELDSET>
 <DIV id=counters style="display:none;">
