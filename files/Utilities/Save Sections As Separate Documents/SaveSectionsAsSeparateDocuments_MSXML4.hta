@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <HTML>
 <HEAD>
-<TITLE>Save Sections As Separate Documents v3.5 (XML4 version) (автор Sclex)</TITLE>
+<TITLE>Save Sections As Separate Documents v3.6 (XML4 version) (автор Sclex)</TITLE>
 <HTA:APPLICATION ID="oHTA"/>
 <META http-equiv="Content-Type" content="text/html; charset=utf-8">
 <STYLE>
@@ -149,12 +149,14 @@ function fillInDescription(sectionTitle,xmlDoc) {
     titleInfo=description.selectSingleNode("./fb:title-info");
   }
 
-  var authors=titleInfo.selectNodes("./fb:author");
-  for (var i=authors.length-1;i>=0;i--)
-    authors[i].parentNode.removeChild(authors[i]);
+  if (document.getElementById("radio1").checked || document.getElementById("radio2").checked) {
+    var authors=titleInfo.selectNodes("./fb:author");
+    for (var i=authors.length-1;i>=0;i--)
+      authors[i].parentNode.removeChild(authors[i]);
+  }
 
-  for (var j=authorArr.length-1;j>=0;j--) {
-    if (authorArr && (document.getElementById("radio1").checked || document.getElementById("radio2").checked)) {
+  if (authorArr && (document.getElementById("radio1").checked || document.getElementById("radio2").checked)) {
+    for (var j=authorArr.length-1;j>=0;j--) {
       authorFirstName="";
       authorMiddleName="";
       authorLastName="";
@@ -220,6 +222,8 @@ function fillInDescription(sectionTitle,xmlDoc) {
       if (homepageElement) homepageElement.parentNode.removeChild(homepageElement);
       var emailElement=author.selectSingleNode("./fb:email");
       if (emailElement) emailElement.parentNode.removeChild(emailElement);
+      var authorId=author.selectSingleNode("./fb:id");
+      if (authorId) authorId.parentNode.removeChild(authorId);
     }
   }
 
