@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <HTML>
 <HEAD>
-<TITLE>Save Sections As Separate Documents v3.6 (XML4 version) (автор Sclex)</TITLE>
+<TITLE>Save Sections As Separate Documents v3.7 (XML4 version) (автор Sclex)</TITLE>
 <HTA:APPLICATION ID="oHTA"/>
 <META http-equiv="Content-Type" content="text/html; charset=utf-8">
 <STYLE>
@@ -181,49 +181,49 @@ function fillInDescription(sectionTitle,xmlDoc) {
         authorFirstName=arr1[1];
         authorLastName=arr1[0];
       }
-    }
-
-    if (authorFirstName!="" || authorMiddleName!="" || authorLastName!="") {
-      var author=xmlDoc.createNode(1,"author",fictionBook.namespaceURI);
-      titleInfo.insertBefore(author,titleInfo.firstChild);
-      author=titleInfo.selectSingleNode("./fb:author");
   
-      var firstNameElement=author.selectSingleNode("./fb:first-name");
-      // отсюда идет новый код
-      if (!firstNameElement) {
-        firstNameElement=xmlDoc.createNode(1,"first-name",fictionBook.namespaceURI);
-        author.insertBefore(firstNameElement,author.firstChild);
-        firstNameElement=author.selectSingleNode("./fb:first-name");
+      if (authorFirstName!="" || authorMiddleName!="" || authorLastName!="") {
+        var author=xmlDoc.createNode(1,"author",fictionBook.namespaceURI);
+        titleInfo.insertBefore(author,titleInfo.firstChild);
+        author=titleInfo.selectSingleNode("./fb:author");
+    
+        var firstNameElement=author.selectSingleNode("./fb:first-name");
+        // отсюда идет новый код
+        if (!firstNameElement) {
+          firstNameElement=xmlDoc.createNode(1,"first-name",fictionBook.namespaceURI);
+          author.insertBefore(firstNameElement,author.firstChild);
+          firstNameElement=author.selectSingleNode("./fb:first-name");
+        }
+        var middleNameElement=author.selectSingleNode("./fb:middle-name");
+        if (!middleNameElement) {
+          middleNameElement=xmlDoc.createNode(1,"middle-name",fictionBook.namespaceURI);
+          author.insertBefore(middleNameElement,firstNameElement.nextSibling);
+          middleNameElement=author.selectSingleNode("./fb:middle-name");
+        }
+        var lastNameElement=author.selectSingleNode("./fb:last-name");
+        if (!lastNameElement) {
+          lastNameElement=xmlDoc.createNode(1,"last-name",fictionBook.namespaceURI);
+          author.insertBefore(lastNameElement,middleNameElement.nextSibling);
+          lastNameElement=author.selectSingleNode("./fb:last-name");
+        }
+        while (firstNameElement.hasChildNodes)
+          firstNameElement.removeChild(firstNameElement.firstChild);
+        firstNameElement.appendChild(xmlDoc.createTextNode(authorFirstName));
+        while (middleNameElement.hasChildNodes)
+          middleNameElement.removeChild(middleNameElement.firstChild);
+        middleNameElement.appendChild(xmlDoc.createTextNode(authorMiddleName));
+        while (lastNameElement.hasChildNodes)
+          lastNameElement.removeChild(lastNameElement.firstChild);
+        lastNameElement.appendChild(xmlDoc.createTextNode(authorLastName));
+        var nicknameElement=author.selectSingleNode("./fb:nickname");
+        if (nicknameElement) nicknameElement.parentNode.removeChild(nicknameElement);
+        var homepageElement=author.selectSingleNode("./fb:home-page");
+        if (homepageElement) homepageElement.parentNode.removeChild(homepageElement);
+        var emailElement=author.selectSingleNode("./fb:email");
+        if (emailElement) emailElement.parentNode.removeChild(emailElement);
+        var authorId=author.selectSingleNode("./fb:id");
+        if (authorId) authorId.parentNode.removeChild(authorId);
       }
-      var middleNameElement=author.selectSingleNode("./fb:middle-name");
-      if (!middleNameElement) {
-        middleNameElement=xmlDoc.createNode(1,"middle-name",fictionBook.namespaceURI);
-        author.insertBefore(middleNameElement,firstNameElement.nextSibling);
-        middleNameElement=author.selectSingleNode("./fb:middle-name");
-      }
-      var lastNameElement=author.selectSingleNode("./fb:last-name");
-      if (!lastNameElement) {
-        lastNameElement=xmlDoc.createNode(1,"last-name",fictionBook.namespaceURI);
-        author.insertBefore(lastNameElement,middleNameElement.nextSibling);
-        lastNameElement=author.selectSingleNode("./fb:last-name");
-      }
-      while (firstNameElement.hasChildNodes)
-        firstNameElement.removeChild(firstNameElement.firstChild);
-      firstNameElement.appendChild(xmlDoc.createTextNode(authorFirstName));
-      while (middleNameElement.hasChildNodes)
-        middleNameElement.removeChild(middleNameElement.firstChild);
-      middleNameElement.appendChild(xmlDoc.createTextNode(authorMiddleName));
-      while (lastNameElement.hasChildNodes)
-        lastNameElement.removeChild(lastNameElement.firstChild);
-      lastNameElement.appendChild(xmlDoc.createTextNode(authorLastName));
-      var nicknameElement=author.selectSingleNode("./fb:nickname");
-      if (nicknameElement) nicknameElement.parentNode.removeChild(nicknameElement);
-      var homepageElement=author.selectSingleNode("./fb:home-page");
-      if (homepageElement) homepageElement.parentNode.removeChild(homepageElement);
-      var emailElement=author.selectSingleNode("./fb:email");
-      if (emailElement) emailElement.parentNode.removeChild(emailElement);
-      var authorId=author.selectSingleNode("./fb:id");
-      if (authorId) authorId.parentNode.removeChild(authorId);
     }
   }
 
@@ -1028,9 +1028,9 @@ function applySettings() {
 <DIV id=buttonsDiv style="display:none;">
 <label for="checkbox1"><input type=checkbox id="checkbox1" name=noteSign style="width:30px; height:30px;"> включать в сохраняемые файлы эпиграфы, в исходном документе относившиеся к body, а также разделы без заголовков, которые (разделы) находились в начале body</label>
 <br>
-<label for=radio1><input type=radio id=radio1 name=radiogroup1 checked style="width:30px; height:30px;"> первый абзац заголовка – автор, второй – название произведения</label>
+<label for=radio1><input type=radio id=radio1 name=radiogroup1 checked style="width:30px; height:30px;"> первый абзац заголовка – автор(ы), второй – название произведения</label>
 <br>
-<label for=radio2><input type=radio id=radio2 name=radiogroup1 style="width:30px; height:30px;"> первый абзац заголовка – название произведения, второй – автор</label>
+<label for=radio2><input type=radio id=radio2 name=radiogroup1 style="width:30px; height:30px;"> первый абзац заголовка – название произведения, второй – автор(ы)</label>
 <br>
 <label for=radio3><input type=radio id=radio3 name=radiogroup1 style="width:30px; height:30px;"> первый абзац заголовка – название произведения (оставить авторов из исходного документа)</label>
 <INPUT type=button value="Сохранить выбранные разделы как отдельные документы" onclick="saveSectionsAsSeparateDocuments();">
