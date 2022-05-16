@@ -46,10 +46,10 @@ function onWindowResize() {
 //        "initialWindowHeight: "+initialWindowHeight
 //  );
   document.getElementById("elementList").style.width=(650+newWidth-initialWindowWidth)+"px";
-  if (330+newHeight-initialWindowHeight>30)
-    document.getElementById("elementList").style.height=(330+newHeight-initialWindowHeight)+"px";
+  if (310+newHeight-initialWindowHeight>30)
+    document.getElementById("elementList").style.height=(310+newHeight-initialWindowHeight)+"px";
   else
-    document.getElementById("elementList").style.height="330px";
+    document.getElementById("elementList").style.height="310px";
   //logStr+="newHeight: "+newHeight+"; initialWindowHeight: "+initialWindowHeight+"\n";
   secondResizeCall=true;
 }
@@ -1045,7 +1045,7 @@ function applySettings() {
 <BR>
 </DIV>
 <FIELDSET id=fieldset1 style="padding:0; white-space:nowrap; margin:1px; width:650px; display:none;">
-<DIV id=elementList style="width:650px; height:330px; padding:2px; overflow:scroll;" onmousedown="myOnMouseDown();" ondblclick="myOnClick();">
+<DIV id=elementList style="width:650px; height:310px; padding:2px; overflow:scroll;" onmousedown="myOnMouseDown();" ondblclick="myOnClick();">
 </DIV>
 </FIELDSET>
 <DIV id=counters style="display:none;">
@@ -1060,7 +1060,7 @@ function applySettings() {
 <br>
 <label for=radio3><input type=radio id=radio3 name=radiogroup1 style="width:30px; height:30px;"> первый абзац заголовка – название произведения (оставить авторов из исходного документа)</label>
 <br>
-<INPUT type=button value="Сохранить выбранные разделы как отдельные документы" onclick="saveSectionsAsSeparateDocuments();" class=gray>
+<p style="text-align:center;"><INPUT type=button value="Сохранить выбранные разделы как отдельные документы" onclick="saveSectionsAsSeparateDocuments();" class=gray></p>
 <!-- <INPUT type=button value="Код в буфер (отладочное)" onclick='window.clipboardData.setData("text",document.getElementById("elementList").innerHTML);'> -->
 <!-- <INPUT type=button value="Лог в буфер" onclick='window.clipboardData.setData("text",logStr);'> -->
 </DIV>
