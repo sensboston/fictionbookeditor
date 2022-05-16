@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <HTML>
 <HEAD>
-<TITLE>Save Sections As Separate Documents v3.4 (XML6 version) (автор Sclex)</TITLE>
+<TITLE>Save Sections As Separate Documents v3.5 (XML6 version) (автор Sclex)</TITLE>
 <HTA:APPLICATION ID="oHTA"/>
 <META http-equiv="Content-Type" content="text/html; charset=utf-8">
 <STYLE>
@@ -95,8 +95,17 @@ function randomSymbol() {
   return arrayOfSymbols[getRandomInRange(0,35)];
 }
 
-function makeBookTitleAndAuthor(sectionTitle,xmlDoc) {
+function addZeros2(number1,howManyDigitsToMake) {
+  var rslt=number1.toString();
+  while (rslt.length<howManyDigitsToMake) rslt="0"+rslt;
+  return rslt;
+}
+
+function fillInDescription(sectionTitle,xmlDoc) {
   var bookTitle="";
+  var authorFirstName="";
+  var authorMiddleName="";
+  var authorLastName="";
   var authorFirstName="";
   var authorMiddleName="";
   var authorLastName="";
@@ -112,28 +121,9 @@ function makeBookTitleAndAuthor(sectionTitle,xmlDoc) {
     authorParagraph=titleParagraphs[1].xml.replace(/<\/?[^>]*>/g,"");
     bookTitleParagraph=titleParagraphs[0].xml.replace(/<\/?[^>]*>/g,"");
   }
-  if (document.getElementById("radio1").checked || document.getElementById("radio2").checked) {
-    bookTitle=bookTitleParagraph;
-    arr1=authorParagraph.match(/([^\s.]+\.?)/g);
-    if (arr1.length==3 && arr1[2].slice(-1)!=".") {
-      authorFirstName=arr1[0];
-      authorMiddleName=arr1[1];
-      authorLastName=arr1[2];
-    }
-    if (arr1.length==3 && arr1[1].slice(-1)=="." && arr1[2].slice(-1)==".") {
-      authorFirstName=arr1[1];
-      authorMiddleName=arr1[2];
-      authorLastName=arr1[0];
-    }
-    if (arr1.length==2 && arr1[1].slice(-1)!=".") {
-      authorFirstName=arr1[0];
-      authorLastName=arr1[1];
-    }
-    if (arr1.length==2 && arr1[1].slice(-1)==".") {
-      authorFirstName=arr1[1];
-      authorLastName=arr1[0];
-    }
-  }
+
+  var authorArr=authorParagraph.match(/[^,]+/g);
+
   if (document.getElementById("radio3").checked) {
     bookTitle=titleParagraphs[0].xml.replace(/<\/?[^>]*>/g,"");
   }
@@ -159,73 +149,120 @@ function makeBookTitleAndAuthor(sectionTitle,xmlDoc) {
     titleInfo=description.selectSingleNode("./fb:title-info");
   }
 
-  var author=titleInfo.selectSingleNode("./fb:author");
-  if (!author) {
-    author=xmlDoc.createNode(1,"author",fictionBook.namespaceURI);
-    titleInfo.insertBefore(author,titleInfo.firstChild);
-    author=titleInfo.selectSingleNode("./fb:author");
+  var authors=titleInfo.selectNodes("./fb:author");
+  for (var i=authors.length-1;i>=0;i--)
+    authors[i].parentNode.removeChild(authors[i]);
+
+  for (var j=authorArr.length-1;j>=0;j--) {
+    if (authorArr && (document.getElementById("radio1").checked || document.getElementById("radio2").checked)) {
+      authorFirstName="";
+      authorMiddleName="";
+      authorLastName="";
+      bookTitle=bookTitleParagraph;
+
+      arr1=authorArr[j].match(/([^\s.]+\.?)/g);
+      if (arr1.length==3 && arr1[2].slice(-1)!=".") {
+        authorFirstName=arr1[0];
+        authorMiddleName=arr1[1];
+        authorLastName=arr1[2];
+      }
+      if (arr1.length==3 && arr1[1].slice(-1)=="." && arr1[2].slice(-1)==".") {
+        authorFirstName=arr1[1];
+        authorMiddleName=arr1[2];
+        authorLastName=arr1[0];
+      }
+      if (arr1.length==2 && arr1[1].slice(-1)!=".") {
+        authorFirstName=arr1[0];
+        authorLastName=arr1[1];
+      }
+      if (arr1.length==2 && arr1[1].slice(-1)==".") {
+        authorFirstName=arr1[1];
+        authorLastName=arr1[0];
+      }
+    }
+
+    if (authorFirstName!="" || authorMiddleName!="" || authorLastName!="") {
+      var author=xmlDoc.createNode(1,"author",fictionBook.namespaceURI);
+      titleInfo.insertBefore(author,titleInfo.firstChild);
+      author=titleInfo.selectSingleNode("./fb:author");
+  
+      var firstNameElement=author.selectSingleNode("./fb:first-name");
+      // отсюда идет новый код
+      if (!firstNameElement) {
+        firstNameElement=xmlDoc.createNode(1,"first-name",fictionBook.namespaceURI);
+        author.insertBefore(firstNameElement,author.firstChild);
+        firstNameElement=author.selectSingleNode("./fb:first-name");
+      }
+      var middleNameElement=author.selectSingleNode("./fb:middle-name");
+      if (!middleNameElement) {
+        middleNameElement=xmlDoc.createNode(1,"middle-name",fictionBook.namespaceURI);
+        author.insertBefore(middleNameElement,firstNameElement.nextSibling);
+        middleNameElement=author.selectSingleNode("./fb:middle-name");
+      }
+      var lastNameElement=author.selectSingleNode("./fb:last-name");
+      if (!lastNameElement) {
+        lastNameElement=xmlDoc.createNode(1,"last-name",fictionBook.namespaceURI);
+        author.insertBefore(lastNameElement,middleNameElement.nextSibling);
+        lastNameElement=author.selectSingleNode("./fb:last-name");
+      }
+      while (firstNameElement.hasChildNodes)
+        firstNameElement.removeChild(firstNameElement.firstChild);
+      firstNameElement.appendChild(xmlDoc.createTextNode(authorFirstName));
+      while (middleNameElement.hasChildNodes)
+        middleNameElement.removeChild(middleNameElement.firstChild);
+      middleNameElement.appendChild(xmlDoc.createTextNode(authorMiddleName));
+      while (lastNameElement.hasChildNodes)
+        lastNameElement.removeChild(lastNameElement.firstChild);
+      lastNameElement.appendChild(xmlDoc.createTextNode(authorLastName));
+      var nicknameElement=author.selectSingleNode("./fb:nickname");
+      if (nicknameElement) nicknameElement.parentNode.removeChild(nicknameElement);
+      var homepageElement=author.selectSingleNode("./fb:home-page");
+      if (homepageElement) homepageElement.parentNode.removeChild(homepageElement);
+      var emailElement=author.selectSingleNode("./fb:email");
+      if (emailElement) emailElement.parentNode.removeChild(emailElement);
+    }
   }
 
-  var firstNameElement=author.selectSingleNode("./fb:first-name");
-  // отсюда идет новый код
-  if (!firstNameElement) {
-    firstNameElement=xmlDoc.createNode(1,"first-name",fictionBook.namespaceURI);
-    author.insertBefore(firstNameElement,author.firstChild);
-    firstNameElement=author.selectSingleNode("./fb:first-name");
-  }
-  var middleNameElement=author.selectSingleNode("./fb:middle-name");
-  if (!middleNameElement) {
-    middleNameElement=xmlDoc.createNode(1,"middle-name",fictionBook.namespaceURI);
-    author.insertBefore(middleNameElement,firstNameElement.nextSibling);
-    middleNameElement=author.selectSingleNode("./fb:middle-name");
-  }
-  var lastNameElement=author.selectSingleNode("./fb:last-name");
-  if (!lastNameElement) {
-    lastNameElement=xmlDoc.createNode(1,"last-name",fictionBook.namespaceURI);
-    author.insertBefore(lastNameElement,middleNameElement.nextSibling);
-    lastNameElement=author.selectSingleNode("./fb:last-name");
-  }
-  var nicknameElement=author.selectSingleNode("./fb:nickname");
-  if (!nicknameElement) {
-    nicknameElement=xmlDoc.createNode(1,"nickname",fictionBook.namespaceURI);
-    author.insertBefore(nicknameElement,lastNameElement.nextSibling);
-    nicknameElement=author.selectSingleNode("./fb:nickname");
-  }
-  var homepageElement=author.selectSingleNode("./fb:home-page");
-  if (!homepageElement) {
-    homepageElement=xmlDoc.createNode(1,"home-page",fictionBook.namespaceURI);
-    author.insertBefore(homepageElement,nicknameElement.nextSibling);
-    homepageElement=author.selectSingleNode("./fb:home-page");
-  }
-  var emailElement=author.selectSingleNode("./fb:email");
-  if (!emailElement) {
-    emailElement=xmlDoc.createNode(1,"email",fictionBook.namespaceURI);
-    author.insertBefore(emailElement,homepageElement.nextSibling);
-    emailElement=author.selectSingleNode("./fb:email");
-  }
   var bookTitleElement=titleInfo.selectSingleNode("./fb:book-title");
   if (!bookTitleElement) {
     bookTitleElement=xmlDoc.createNode(1,"book-title",fictionBook.namespaceURI);
     titleInfo.insertBefore(bookTitleElement,author.nextSibling);
     bookTitleElement=titleInfo.selectSingleNode("./fb:book-title");
   }
-  if (!document.getElementById("radio3").checked) {
-    while (firstNameElement.hasChildNodes)
-      firstNameElement.removeChild(firstNameElement.firstChild);
-    firstNameElement.appendChild(xmlDoc.createTextNode(authorFirstName));
-    while (middleNameElement.hasChildNodes)
-      middleNameElement.removeChild(middleNameElement.firstChild);
-    middleNameElement.appendChild(xmlDoc.createTextNode(authorMiddleName));
-    while (lastNameElement.hasChildNodes)
-      lastNameElement.removeChild(lastNameElement.firstChild);
-    lastNameElement.appendChild(xmlDoc.createTextNode(authorLastName));
-    if (nicknameElement) nicknameElement.parentNode.removeChild(nicknameElement);
-    if (homepageElement) homepageElement.parentNode.removeChild(homepageElement);
-    if (emailElement) emailElement.parentNode.removeChild(emailElement);
-  }
+
   while (bookTitleElement.hasChildNodes)
     bookTitleElement.removeChild(bookTitleElement.firstChild);
   bookTitleElement.appendChild(xmlDoc.createTextNode(bookTitle));
+
+  var currentDate=new Date();
+  var dateStr1=currentDate.getFullYear()+"-"+addZeros2(currentDate.getMonth()+1,2)+"-"+addZeros2(currentDate.getDate(),2);
+  var dateStr2=addZeros2(currentDate.getDate(),2)+"."+addZeros2(currentDate.getMonth()+1,2)+"."+currentDate.getFullYear();
+  //alert(dateStr1+"\n"+dateStr2);
+  var srcTitleInfo=description.selectSingleNode("./fb:src-title-info");
+  var documentInfo=description.selectSingleNode("./fb:document-info");
+  if (!documentInfo) {
+    documentInfo=xmlDoc.createNode(1,"document-info",fictionBook.namespaceURI);
+    if (srcTitleInfo)
+      description.insertBefore(documentInfo,srcTitleInfo.nextSibling);
+    else
+      description.insertBefore(documentInfo,titleInfo.nextSibling);
+    documentInfo=description.selectSingleNode("./fb:document-info");
+  }
+  var dateElement=documentInfo.selectSingleNode("./fb:date");
+  if (!dateElement) {
+    var documentInfoAuthor=documentInfo.selectNodes("./fb:author");
+    var programUsed=documentInfo.selectNodes("./fb:program-used");
+    var elem1=null;
+    if (documentInfoAuthor) elem1=documentInfoAuthor[documentInfoAuthor.length-1];
+    if (programUsed) elem1=programUsed[programUsed.length-1];
+    dateElement=xmlDoc.createNode(1,"date",fictionBook.namespaceURI);
+    documentInfo.insertBefore(dateElement,elem1.nextSibling);
+    dateElement=documentInfo.selectSingleNode("./fb:date");
+  } else
+    while (dateElement.hasChildNodes)
+      dateElement.removeChild(dateElement.firstChild);
+  dateElement.insertBefore(xmlDoc.createTextNode(dateStr2),null);
+  dateElement.setAttribute("value",dateStr1);
 }
 
 function saveOneSectionAsSeparateDocuments(titleNum,filenameForSaving) {
@@ -235,7 +272,7 @@ function saveOneSectionAsSeparateDocuments(titleNum,filenameForSaving) {
   fictionBook.parentNode.replaceChild(savedFictionBook.cloneNode(true),fictionBook);
   var titles=xmlDoc.documentElement.selectNodes("//fb:section/fb:title");
   var myTitle=titles[titleNum];
-  makeBookTitleAndAuthor(myTitle,xmlDoc);
+  fillInDescription(myTitle,xmlDoc);
   var el1=myTitle;
   var mySection,myBody,myClonedNode,bodies,i,subsections,myClonedNode2;
   var savedBodyEpigraphs=[];
