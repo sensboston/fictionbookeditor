@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <HTML>
 <HEAD>
-<TITLE>Save Sections As Separate Documents v4.1 (XML4 version) (автор Sclex)</TITLE>
+<TITLE>Save Sections As Separate Documents v4.2 (XML4 version) (автор Sclex)</TITLE>
 <HTA:APPLICATION ID="oHTA"/>
 <META http-equiv="Content-Type" content="text/html; charset=utf-8">
 <STYLE>
@@ -349,7 +349,7 @@ function fillInDescription(sectionTitle,xmlDoc) {
   dateElement.setAttribute("value",dateStr1);
 }
 
-function saveOneSectionAsSeparateDocuments(titleNum,filenameForSaving) {
+function saveOneSectionAsSeparateDocument(titleNum,filenameForSaving) {
   //xmlDoc.loadXML(savedXmlDocCode);
   var i,j,sections,sections2,innerSection,elemInBody,prevElemInBody;
   var fictionBook=xmlDoc.documentElement.selectSingleNode("//fb:FictionBook");
@@ -595,15 +595,32 @@ function addZeros(n) {
 
 function saveSectionsAsSeparateDocuments() {
  sortElements();
- var myElem5;
+ var myElem5,ps;
  fileCnt=1;
  var fso=new ActiveXObject("Scripting.FileSystemObject");
+ if (document.getElementById("radio1").checked || document.getElementById("radio2").checked) {
+   var tooShortTitlesCnt=0;
+   var titles=xmlDoc.documentElement.selectNodes("//fb:section/fb:title");
+   for (nPtr=0;nPtr<sortedElementArray.length;nPtr++) {
+     myTitle=titles[myLinks[sortedElementArray[nPtr]]];
+     ps=myTitle.selectNodes("./fb:p");
+     if (ps.length<2) tooShortTitlesCnt++;
+   }
+   if (tooShortTitlesCnt>0) {
+    alert("     Некоторые из выделенных вами заголовков содержат в себе менее двух абзацев, при "+
+          "том, что выбран режим обработки, предполагающий, что заголовки выбранных для "+
+          "сохранения разделов должны состоять как минимум из двух абзацев.\n\n"+
+          "     Количество выделенных заголовков, содержащих менее двух абзацев: "+tooShortTitlesCnt+".\n\n"+
+          "     Сохранение разделов как отдельные документы – не было произведено.");
+    return;
+   }
+ }
  for (nPtr=0;nPtr<sortedElementArray.length;nPtr++) {
   //запишем в myElem5 ссылку на заголовок раздела, который (раздел) нужно сохранить как отдельный документ
   myElem5=myLinks[sortedElementArray[nPtr]];
   while (fso.FileExists(openedFileName.replace(/[.]fb2$/i,"")+".section"+addZeros(fileCnt)+".fb2"))
     fileCnt++;
-  saveOneSectionAsSeparateDocuments(myElem5,openedFileName.replace(/[.]fb2$/i,"")+".section"+addZeros(fileCnt)+".fb2");
+  saveOneSectionAsSeparateDocument(myElem5,openedFileName.replace(/[.]fb2$/i,"")+".section"+addZeros(fileCnt)+".fb2");
   //alert(makeHTMLTitle(myElem5));
  }
  //removeReformattedElementsFromList();
