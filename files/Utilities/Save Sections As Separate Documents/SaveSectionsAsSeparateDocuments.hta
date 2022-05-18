@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <HTML>
 <HEAD>
-<TITLE>Save Sections As Separate Documents v4.2 (автор Sclex)</TITLE>
+<TITLE>Save Sections As Separate Documents v4.3 (автор Sclex)</TITLE>
 <HTA:APPLICATION ID="oHTA"/>
 <META http-equiv="Content-Type" content="text/html; charset=utf-8">
 <STYLE>
@@ -57,11 +57,11 @@ table {
 /* конец css-reset-а */
 
 #elementList P {padding:0; margin:0;}
-.delim {width:1200px; background-color:green; height:2px; overflow:hidden; margin:0; padding:0;}
-.el_ {width:1200px; margin:0; padding:2px 1px 2px 1px; border:1px solid white; color:black; background-color:white;}
-.el_sel {width:1200px; margin:0; padding:2px 1px 2px 1px; border:1px solid #3399FF; background-color:#3399FF; color:white;}
-.el_active {width:1200px; margin:0; padding:2px 1px 2px 1px; border:1px solid black; background-color:white; color:black;}
-.el_active_sel {width:1200px; margin:0; padding:2px 1px 2px 1px; border:1px solid black; background-color:#3399FF; color:white;}
+.delim {background-color:green; height:3px; overflow:hidden; margin:0; padding:0;}
+.el_ {margin:0; padding:2px 1px 2px 1px; border:1px solid white; color:black; background-color:white;}
+.el_sel {margin:0; padding:2px 1px 2px 1px; border:1px solid #3399FF; background-color:#3399FF; color:white;}
+.el_active {margin:0; padding:2px 1px 2px 1px; border:1px solid black; background-color:white; color:black;}
+.el_active_sel {margin:0; padding:2px 1px 2px 1px; border:1px solid black; background-color:#3399FF; color:white;}
 input {font-family: Tahoma; font-size:14px;}
 input.gray {background-color:#D4D0C8; color:black;}
 </STYLE>
@@ -76,19 +76,14 @@ var currentElementType="titles";
 var myLinks={};
 var sortedElementArray;
 var xmlDoc,savedXmlDocCode,savedFictionBook,openedFileName,selectedElementsCnt,ns;
-var initialWindowWidth,initialWindowHeight;
+var initialWindowWidth=null;
+var initialWindowHeight=null;
 var doResize=false;
 var secondResizeCall=false;
 
 document.onselectstart = function() { return false; }
 
-function onWindowResize() {
-  if (!doResize) return;
-  if (secondResizeCall) {
-    secondResizeCall=false;
-    return;
-  }
-  if (!document.getElementById("elementList")) return;
+function setListWidthAndHeight() {
   var newWidth=document.documentElement.clientWidth;
   var newHeight=document.documentElement.clientHeight;
 //  alert("newInnerWidth: "+newInnerWidth+"\n"+
@@ -96,28 +91,50 @@ function onWindowResize() {
 //        "initialWindowWidth: "+initialWindowWidth+"\n"+
 //        "initialWindowHeight: "+initialWindowHeight
 //  );
-  document.getElementById("elementList").style.width=(650+newWidth-initialWindowWidth)+"px";
-  if (310+newHeight-initialWindowHeight>30)
+  var tableWidth=document.getElementById("elementListTable").clientWidth;
+  var tableHeight=document.getElementById("elementListTable").clientHeight;
+  if (650+newWidth-initialWindowWidth<30)
+    document.getElementById("elementList").style.width="30px";
+  else if (650+newWidth-initialWindowWidth<tableWidth+scrollbarWidth)
+    document.getElementById("elementList").style.width=(650+newWidth-initialWindowWidth)+"px";
+  else
+    document.getElementById("elementList").style.width=(tableWidth+scrollbarWidth)+"px";
+// (650+newWidth-initialWindowWidth)+"px";
+  if (310+newHeight-initialWindowHeight>30 && 310+newHeight-initialWindowHeight<tableHeight)
     document.getElementById("elementList").style.height=(310+newHeight-initialWindowHeight)+"px";
   else
     document.getElementById("elementList").style.height="310px";
+}
+
+function onWindowResize() {
+  if (!doResize) return;
+  if (secondResizeCall) {
+    secondResizeCall=false;
+    return;
+  }
+  if (!document.getElementById("elementListTable")) return;
+  setListWidthAndHeight();
   //logStr+="newHeight: "+newHeight+"; initialWindowHeight: "+initialWindowHeight+"\n";
   secondResizeCall=true;
 }
 
 function selectAllElements() {
  var n;
- var pp=document.getElementById("elementList");
+ var pp=document.getElementById("elementListTable");
  if (!pp) {alert("Ошибка. Код ошибки ch26cb27db."); return;}
+ if (!pp.firstChild) {alert("Ошибка. Код ошибки cvefjef73j."); return;}
  pp=pp.firstChild;
+ if (pp.nodeName!="TBODY") {alert("Ошибка. Код ошибки j8dj38e3j3e."); return;}
+ pp=pp.firstChild;
+ if (pp.nodeName!="TR") {alert("Ошибка. Код ошибки v8rjf7fjdeu."); return;}
  if (!pp) return;
  while (pp) {
-  if (pp.nodeName=="DIV" && pp.className.indexOf("el_")==0 && pp.className.indexOf("sel")<0) {
-   n=eval(pp.id.substr(2));
+  if (pp.firstChild.nodeName=="TD" && pp.firstChild.className.indexOf("el_")==0 && pp.firstChild.className.indexOf("sel")<0) {
+   n=eval(pp.firstChild.id.substr(2));
    selectedElements[n]=n;
    selectedElementsCnt++;
-   if (pp.className=="el_") pp.className="el_sel";
-   else if (pp.className=="el_active") pp.className="el_active_sel";
+   if (pp.firstChild.className=="el_") pp.firstChild.className="el_sel";
+   else if (pp.firstChild.className=="el_active") pp.firstChild.className="el_active_sel";
   }
   pp=pp.nextSibling;
  }
@@ -540,7 +557,7 @@ function saveOneSectionAsSeparateDocument(titleNum,filenameForSaving) {
       var commentsBodies=xmlDoc.documentElement.selectNodes('body[@name="comments"]');
       for (j=commentsBodies.length-1; j>=0; j--) {
         if (xmlDoc.documentElement.selectNodes('body[@name="comments"]//section').length==0) {
-          //alert("Удаляем comments body.\n\n"+getOuterXML(commentsBodies[j]));
+          //alerft("Удаляем comments body.\n\n"+getOuterXML(commentsBodies[j]));
           commentsBodies[j].parentNode.removeChild(commentsBodies[j]);
           removesCnt++;
        }
@@ -569,7 +586,7 @@ function saveOneSectionAsSeparateDocument(titleNum,filenameForSaving) {
     }
  
     var idNode=xmlDoc.selectSingleNode("/FictionBook//description//document-info//id");
-    if (idNode && idNode.firstChild) {
+    if (idNode) {
       var newId=randomSymbol()+randomSymbol()+randomSymbol()+randomSymbol()+randomSymbol()+
                 randomSymbol()+randomSymbol()+randomSymbol()+"-"+
                 randomSymbol()+randomSymbol()+randomSymbol()+randomSymbol()+"-"+
@@ -595,14 +612,14 @@ function addZeros(n) {
 
 function saveSectionsAsSeparateDocuments() {
  sortElements();
- var myElem5;
+ var myElem5,ps;
  fileCnt=1;
  var fso=new ActiveXObject("Scripting.FileSystemObject");
  if (document.getElementById("radio1").checked || document.getElementById("radio2").checked) {
    var tooShortTitlesCnt=0;
    var titles=xmlDoc.documentElement.selectNodes("//section/title");
    for (nPtr=0;nPtr<sortedElementArray.length;nPtr++) {
-     myTitle=titles[myLinks[sortedElementArray[nPtr]]];
+     myTitle=titles[sortedElementArray[nPtr]-1];
      ps=myTitle.selectNodes("./p");
      if (ps.length<2) tooShortTitlesCnt++;
    }
@@ -622,6 +639,8 @@ function saveSectionsAsSeparateDocuments() {
     fileCnt++;
   saveOneSectionAsSeparateDocument(myElem5,openedFileName.replace(/[.]fb2$/i,"")+".section"+addZeros(fileCnt)+".fb2");
   //alert(makeHTMLTitle(myElem5));
+  var fictionBook=xmlDoc.documentElement.selectSingleNode("//FictionBook");
+  fictionBook.parentNode.replaceChild(savedFictionBook,fictionBook);
  }
  //removeReformattedElementsFromList();
  alert("Готово!");
@@ -654,7 +673,7 @@ function selectElements(selectionBegin,selectionEnd) {
          (currElement.previousSibling && currElement.previousSibling!=endElement)
         )
        ) {
-  if (currElement.nodeName=="DIV" && currElement.className.indexOf("el_")==0)
+  if (currElement.nodeName=="TD" && currElement.className.indexOf("el_")==0)
    selectAnElement(currElement);
   currElement=currElement.nextSibling;
  }
@@ -677,6 +696,8 @@ function setActivityToElement(activeElement) {
 }
 
 function getScrollBarWidthAndHeight() {
+
+ document.getElementById("elementList").style.display="inline-block";
  var inner = document.createElement('p');
  inner.style.width = "100%";
  inner.style.height = "200px";
@@ -703,6 +724,9 @@ function getScrollBarWidthAndHeight() {
 
  scrollbarWidth=w1-w2;
  scrollbarHeight=h1-h2;
+ //alert("scrollbarWidth: "+scrollbarWidth+"\n\n"+
+ //      "scrollbarHeight: "+scrollbarHeight);
+ document.getElementById("elementList").style.display="none";
 };
 
 function myOnKeydown() {
@@ -744,10 +768,10 @@ function myOnMouseDown() {
 function myOnClick() {
  var el=event.srcElement;
  event.returnValue=false;
- while (el && el.nodeName!="BODY" && el.nodeName!="DIV" || (el.nodeName=="DIV" && el.className!=null && el.className!="" &&
+ while (el && el.nodeName!="BODY" && el.nodeName!="TD" || (el.nodeName=="TD" && el.className!=null && el.className!="" &&
         el.className.search("el_")!=0))
   el=el.parentNode;
- if (!el || el.nodeName!="DIV" || el.className.search("el_")!=0) { event.returnValue=true; return true; }
+ if (!el || el.nodeName!="TD" || el.className.search("el_")!=0) { event.returnValue=true; return true; }
   //теперь в el элемент, по которому кликнул пользователь
 
  /* var rng=mainDoc.body.createTextRange(); */
@@ -933,14 +957,14 @@ function capturedMouse() {
    }
   event.returnValue=false;
   }
-  while (el && el.nodeName!="BODY" && el.nodeName!="DIV" || (el.nodeName=="DIV" && el.className!=null && el.className!="" &&
+  while (el && el.nodeName!="BODY" && el.nodeName!="TD" || (el.nodeName=="TD" && el.className!=null && el.className!="" &&
          el.className.indexOf("el_")!=0))
    el=el.parentNode;
-  if (!el || el.nodeName!="DIV" || el.className.indexOf("el_")!=0) {
+  if (!el || el.nodeName!="TD" || el.className.indexOf("el_")!=0) {
    //logStr+="Вышли из capturedMouse - 04.\n";
    return;
   }
-  if (el && el.nodeName=="DIV" && el.className.indexOf("el_")==0) {
+  if (el && el.nodeName=="TD" && el.className.indexOf("el_")==0) {
    evaledN=eval(el.id.substr(2));
    removeActivityFromActiveElement();
    selectElements(activeElement,el);
@@ -1038,6 +1062,12 @@ function parentSectionsCnt(titlesNode) {
   return cnt;
 }
 
+function getInitialWindowSize() {
+  initialWindowWidth=document.documentElement.clientWidth;
+  initialWindowHeight=document.documentElement.clientHeight;
+}
+
+
 function applySettings() {
  var f1=document.getElementById("f1");
  if (!f1) {alert("Ошибка!"); return}
@@ -1054,11 +1084,14 @@ function applySettings() {
   alert("Ошибка!");
   return;
  }
-// var xmlDoc=new ActiveXObject("Msxml2.DOMDocument.4.0");
  xmlDoc=new ActiveXObject("Microsoft.XMLDOM");
- xmlDoc.preserveWhiteSpace = true;
+ //xmlDoc=new ActiveXObject("Microsoft.XMLDOM");
  xmlDoc.async=false;
+ xmlDoc.preserveWhiteSpace = true;
+ var fbNS="http://www.gribuser.ru/xml/fictionbook/2.0";
+ var xlNS="http://www.w3.org/1999/xlink";
  xmlDoc.load(f1);
+ xmlDoc.setProperty("SelectionNamespaces", "xmlns:fb='"+fbNS+"' xmlns:xlink='"+xlNS+"'");
  if (xmlDoc.parseError.errorCode) return;
  openedFileName=f1;
  var titles=xmlDoc.documentElement.selectNodes("//section/title");
@@ -1073,7 +1106,7 @@ function applySettings() {
  for (i=0; i<myAttrs.length; i++)
    if (myAttrs[i].name.indexOf("xmlns:")==0)
      ns=myAttrs[i].name.replace(/^xmlns:/i,"");
- var htmlStr="";
+ var htmlStr="<TABLE style='margin: 0 auth;' id=elementListTable><TBODY>";
  var nCnt=0;
  myLinks={};
  var titleCode;
@@ -1082,40 +1115,45 @@ function applySettings() {
      titleCode=xmlToHtml(getInnerXML(titles[i]));
      //alert("titleCode:\n\n"+titleCode);
      nCnt++;
-     htmlStr+="<DIV style='padding-left:"+(parentSectionsCnt(titles[i])*20)+"px; width:"+(1200-parentSectionsCnt(titles[i])*20)+"px' class=el_ id=n_"+nCnt+">"+titleCode+"</DIV><DIV class=delim></DIV>";
+     htmlStr+="<TR><TD  style='padding-left:"+(parentSectionsCnt(titles[i])*20)+"px;' class=el_ id=n_"+nCnt+"><NOBR>"+titleCode+"</NOBR></TD></TR><TR><TD class=delim></TD></TR>";
      myLinks[nCnt]=i;
    }
  }
+ htmlStr+="</TBODY></TABLE>";
  selectedElementsCnt=0;
  document.getElementById("elementList").innerHTML=htmlStr;
- document.getElementById("elementList").style.display="block";
+ document.getElementById("elementList").style.display="inline-block";
  document.getElementById("inAllInput").value=nCnt;
  document.getElementById("selectedInput").value=selectedElementsCnt;
- document.getElementById("counters").style.display="block";
+ document.getElementById("counters").style.display="inline-block";
  document.getElementById("buttonsDiv").style.display="block";
  //window.resizeTo(800,670);
  getScrollBarWidthAndHeight();
- initialWindowWidth=document.documentElement.clientWidth;
- initialWindowHeight=document.documentElement.clientHeight;
+ document.getElementById("elementList").style.display="inline-block";
+ setListWidthAndHeight();
  doResize=true;
 // alert("Настройки успешно применены.\n\n"+f1);
 }
 
 </SCRIPT>
 </HEAD>
-<BODY style="font-family:tahoma; font-size:14px; padding:10px; margin:0; color:black; background-color:white;" onload="getScrollBarWidthAndHeight(); initialWindowWidth=document.documentElement.clientWidth; initialWindowHeight=document.documentElement.clientHeight; window.resizeTo(800,670);" onkeydown="myOnKeydown();" onresize="onWindowResize();">
+<BODY style="font-family:tahoma; font-size:14px; padding:10px; margin:0; color:black; background-color:white;" onload="window.resizeTo(800,670); getInitialWindowSize(); getScrollBarWidthAndHeight();" onkeydown="myOnKeydown();" onresize="onWindowResize();">
 <SPAN id=mouseCaptureSpan style="display:none;" onmousemove="capturedMouse();" onmouseout="capturedMouse();" onmouseup="capturedMouse();" onmouseover="capturedMouse();"></SPAN>
-Выберите fb2-файл:
+<P style="text-align:center">Выберите fb2-файл:
 <br>
-<INPUT type=file style="width:500px;" id=f1>
+<INPUT type=file style="width:500px;" id=f1></P>
 <DIV id="selectFileDiv">
 <P style="padding:0; margin:0; text-align:center;"><INPUT type=button value="Найти и показать заголовки разделов" onclick="applySettings();"><INPUT type=button value="Выйти" onclick="window.close();"></P>
 <BR>
 </DIV>
-<DIV id=elementList style="width:650px; height:310px; padding:2px; overflow:scroll; border:2px #808080 solid; display:none;" onmousedown="myOnMouseDown();" ondblclick="myOnClick();">
+<DIV id=outerDiv style="text-align:center;">
+<DIV id=elementList style="width:650px; height:310px; padding:2px; overflow:scroll; border:2px #808080 solid; text-align:left; display:none;" onmousedown="myOnMouseDown();" ondblclick="myOnClick();">
 </DIV>
-<DIV id=counters style="display:none;">
+</DIV>
+<DIV id=outerDiv2 style="text-align:center">
+<DIV id=counters style="display:none; margin:0 auto;">
 <p style="text-align: center; width:650px;">Всего элементов: <input type=text readonly style="width:46px; text-align:center;" value="0" id=inAllInput> &nbsp; &nbsp; Выбрано элементов: <input type=text readonly style="width:46px; text-align:center;" value="0" id=selectedInput></p>
+</DIV>
 </DIV>
 <DIV id=buttonsDiv style="display:none;">
 <div style="margin:0 auto; width:600px;">
