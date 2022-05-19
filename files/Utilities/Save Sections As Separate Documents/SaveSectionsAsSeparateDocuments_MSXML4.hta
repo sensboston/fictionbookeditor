@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <HTML>
 <HEAD>
-<TITLE>Save Sections As Separate Documents v4.7 (XML4 version) (автор Sclex)</TITLE>
+<TITLE>Save Sections As Separate Documents v4.8 (XML4 version) (автор Sclex)</TITLE>
 <HTA:APPLICATION ID="oHTA"/>
 <META http-equiv="Content-Type" content="text/html; charset=utf-8">
 <STYLE>
@@ -369,6 +369,8 @@ function fillInDescription(sectionTitle,xmlDoc) {
 }
 
 var t={};
+for (var k in t)
+  delete(t[k]);
 t["А"]="A";
 t["Б"]="B";
 t["В"]="V";
@@ -507,17 +509,17 @@ function makeFilenameForSaving(fileCnt,bookTitle) {
   while (i<bookTitle.length) {
     ch=bookTitle.charAt(i);
     transliteratedChar=t[ch];
-    if (transliteratedName.length+transliteratedChar>maxNameLength) break;
+    if (transliteratedChar && transliteratedName.length+transliteratedChar.length>maxNameLength) break;
     if (transliteratedChar)
       transliteratedName+=transliteratedChar;
     i++;
   }
-  var fullFileName=addZeros2(fileCnt,4)+"_"+transliteratedName+"_";
+  var fullFileName=addZeros2(fileCnt,4)+"_"+transliteratedName;
   var path=openedFileName.replace(/\\[^\\]+$/,"\\");
   var fso=new ActiveXObject("Scripting.FileSystemObject");
-  var i=1;
-  while (fso.FileExists(path+fullFileName+addZeros2(i,4)+"_SSASD.fb2")) i++;
-  return path+fullFileName+addZeros2(i,4)+"_SSASD.fb2";
+  i=0;
+  while (fso.FileExists(path+fullFileName+(i==0?"":"_"+addZeros2(i,4)+"_SSASD")+".fb2")) i++;
+  return path+fullFileName+(i==0?"":"_"+addZeros2(i,4)+"_SSASD")+".fb2";
 }
 
 function saveOneSectionAsSeparateDocument(titleNum,fileCnt) {
