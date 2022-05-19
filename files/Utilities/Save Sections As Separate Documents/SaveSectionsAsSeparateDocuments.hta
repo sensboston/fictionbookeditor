@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <HTML>
 <HEAD>
-<TITLE>Save Sections As Separate Documents v4.8 (Old XML version) (автор Sclex)</TITLE>
+<TITLE>Save Sections As Separate Documents v4.9 (Old XML version) (автор Sclex)</TITLE>
 <HTA:APPLICATION ID="oHTA"/>
 <META http-equiv="Content-Type" content="text/html; charset=utf-8">
 <STYLE>
@@ -254,7 +254,7 @@ function fillInDescription(sectionTitle,xmlDoc) {
   
       if (authorFirstName!="" || authorMiddleName!="" || authorLastName!="") {
         var author=xmlDoc.createNode(1,"author",fictionBook.namespaceURI);
-        titleInfo.insertBefore(author,titleInfo.firstChild);
+        titleInfo.insertBefore(author,titleInfo.firstChild.nextSibling);
         author=titleInfo.selectSingleNode("./fb:author");
     
         var firstNameElement=author.selectSingleNode("./fb:first-name");
@@ -296,16 +296,15 @@ function fillInDescription(sectionTitle,xmlDoc) {
       }
     }
   }
-
   authors=titleInfo.selectNodes("./fb:author");
   if (authors.length==0) {
     var genres=titleInfo.selectNodes("./genre");
 
     author=xmlDoc.createNode(1,"author",fictionBook.namespaceURI);
     if (!genres)
-      titleInfo.insertBefore(author,titleInfo.firstChild);
-    else
-      titleInfo.insertBefore(author,genres[genres.length-1]);
+      titleInfo.insertBefore(author,titleInfo.firstChild.nextSibling);
+    else 
+      titleInfo.insertBefore(author,genres[genres.length-1].nextSibling);
     author=titleInfo.selectSingleNode("./fb:author");
 
     var firstNameElement=author.selectSingleNode("./fb:first-name");
