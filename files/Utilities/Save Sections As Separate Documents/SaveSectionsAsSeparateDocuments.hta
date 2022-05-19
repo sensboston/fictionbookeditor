@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <HTML>
 <HEAD>
-<TITLE>Save Sections As Separate Documents v4.4 (автор Sclex)</TITLE>
+<TITLE>Save Sections As Separate Documents v4.5 (автор Sclex)</TITLE>
 <HTA:APPLICATION ID="oHTA"/>
 <META http-equiv="Content-Type" content="text/html; charset=utf-8">
 <STYLE>
@@ -75,7 +75,7 @@ var selectedElements={};
 var currentElementType="titles";
 var myLinks={};
 var sortedElementArray;
-var xmlDoc,savedXmlDocCode,savedFictionBook,openedFileName,selectedElementsCnt,ns;
+var xmlDoc,savedXmlDocCode,savedFictionBook,openedFileName,selectedElementsCnt,ns,Ts;
 var initialWindowWidth=null;
 var initialWindowHeight=null;
 var doResize=false;
@@ -612,6 +612,7 @@ function addZeros(n) {
 }
 
 function saveSectionsAsSeparateDocuments() {
+ Ts=new Date().getTime();
  sortElements();
  var myElem5,ps;
  fileCnt=1;
@@ -643,8 +644,14 @@ function saveSectionsAsSeparateDocuments() {
   var fictionBook=xmlDoc.documentElement.selectSingleNode("//FictionBook");
   fictionBook.parentNode.replaceChild(savedFictionBook,fictionBook);
  }
- //removeReformattedElementsFromList();
- alert("Готово!");
+
+ var Tf=new Date().getTime();
+ var Tmin = Math.floor((Tf-Ts)/60000);
+ var Tsek = Math.ceil(10*((Tf-Ts)/1000-Tmin*60))/10;
+ if (Tmin>0) {var TimeStr=Tmin+" мин. "+Tsek+" с"}
+ else {var TimeStr=Tsek+" с"}
+
+ alert("Готово!\n\nЗатраченное время: "+TimeStr+".");
 }
 
 function selectElements(selectionBegin,selectionEnd) {
