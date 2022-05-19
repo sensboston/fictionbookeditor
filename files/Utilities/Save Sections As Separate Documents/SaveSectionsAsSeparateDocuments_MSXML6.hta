@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <HTML>
 <HEAD>
-<TITLE>Save Sections As Separate Documents v4.5 (XML6 version) (автор Sclex)</TITLE>
+<TITLE>Save Sections As Separate Documents v4.6 (XML6 version) (автор Sclex)</TITLE>
 <HTA:APPLICATION ID="oHTA"/>
 <META http-equiv="Content-Type" content="text/html; charset=utf-8">
 <STYLE>
@@ -69,6 +69,7 @@ input.gray {background-color:#D4D0C8; color:black;}
 var logStr="";
 var scrollbarWidth=0,scrollbarHeight=0;
 var mouseTimer=null;
+var bookTitle="";
 var activeElement;
 var selectionBegin=null;
 var selectedElements={};
@@ -172,7 +173,6 @@ function addZeros2(number1,howManyDigitsToMake) {
 }
 
 function fillInDescription(sectionTitle,xmlDoc) {
-  var bookTitle="";
   var authorFirstName="";
   var authorMiddleName="";
   var authorLastName="";
@@ -331,7 +331,8 @@ function fillInDescription(sectionTitle,xmlDoc) {
 
   while (bookTitleElement.hasChildNodes)
     bookTitleElement.removeChild(bookTitleElement.firstChild);
-  bookTitleElement.appendChild(xmlDoc.createTextNode(bookTitle.replace(nbspRegExp," ")));
+  bookTitle=bookTitle.replace(nbspRegExp," ");
+  bookTitleElement.appendChild(xmlDoc.createTextNode(bookTitle));
 
   var currentDate=new Date();
   var dateStr1=currentDate.getFullYear()+"-"+addZeros2(currentDate.getMonth()+1,2)+"-"+addZeros2(currentDate.getDate(),2);
@@ -367,7 +368,107 @@ function fillInDescription(sectionTitle,xmlDoc) {
   dateElement.setAttribute("value",dateStr1);
 }
 
-function saveOneSectionAsSeparateDocument(titleNum,filenameForSaving) {
+var t={};
+t["А"]="A";
+t["Б"]="B";
+t["В"]="V";
+t["Г"]="G";
+t["Д"]="D";
+t["Е"]="E";
+t["Ё"]="E";
+t["Ж"]="ZH";
+t["З"]="Z";
+t["И"]="I";
+t["Й"]="I";
+t["К"]="K";
+t["Л"]="L";
+t["М"]="M";
+t["Н"]="N";
+t["О"]="O";
+t["П"]="P";
+t["Р"]="R";
+t["С"]="S";
+t["Т"]="T";
+t["У"]="U";
+t["Ф"]="F";
+t["Х"]="H";
+t["Ц"]="C";
+t["Ч"]="CH";
+t["Ш"]="SH";
+t["Щ"]="SH";
+t["Ъ"]="'";
+t["Ы"]="I";
+t["Э"]="E";
+t["Ю"]="YU";
+t["Я"]="YA";
+t["а"]="a";
+t["б"]="b";
+t["в"]="v";
+t["г"]="g";
+t["д"]="d";
+t["е"]="e";
+t["ё"]="e";
+t["ж"]="zh";
+t["з"]="z";
+t["и"]="i";
+t["й"]="i";
+t["к"]="k";
+t["л"]="l";
+t["м"]="m";
+t["н"]="n";
+t["о"]="o";
+t["п"]="p";
+t["р"]="r";
+t["с"]="s";
+t["т"]="t";
+t["у"]="u";
+t["ф"]="f";
+t["х"]="h";
+t["ц"]="c";
+t["ч"]="ch";
+t["ш"]="sh";
+t["щ"]="sh";
+t["ъ"]="'";
+t["ы"]="i";
+t["э"]="e";
+t["ю"]="yu";
+t["я"]="ya";
+t["0"]="0";
+t["1"]="1";
+t["2"]="2";
+t["3"]="3";
+t["4"]="4";
+t["5"]="5";
+t["6"]="6";
+t["7"]="7";
+t["8"]="8";
+t["9"]="9";
+t["-"]="-";
+t[" "]="_";
+
+function makeFilenameForSaving(fileCnt,bookTitle) {
+  var fileCnt2=1;
+  var transliteratedName="";
+  var maxNameLength=70;
+  var ch,transliteratedChar;
+  var i=0;
+  while (i<bookTitle.length) {
+    ch=bookTitle.charAt(i);
+    transliteratedChar=t[ch];
+    if (transliteratedName.length+transliteratedChar>maxNameLength) break;
+    if (transliteratedChar)
+      transliteratedName+=transliteratedChar;
+    i++;
+  }
+  var fullFileName=addZeros2(fileCnt,4)+"_"+transliteratedName+"_";
+  var path=openedFileName.replace(/\\[^\\]+$/,"\\");
+  var fso=new ActiveXObject("Scripting.FileSystemObject");
+  var i=1;
+  while (fso.FileExists(path+fullFileName+addZeros2(i,4)+"_SSASD.fb2")) i++;
+  return path+fullFileName+addZeros2(i,4)+"_SSASD.fb2";
+}
+
+function saveOneSectionAsSeparateDocument(titleNum,fileCnt) {
   //xmlDoc.loadXML(savedXmlDocCode);
   var i,j,sections,sections2,innerSection,elemInBody,prevElemInBody;
   var fictionBook=xmlDoc.documentElement.selectSingleNode("//fb:FictionBook");
@@ -600,6 +701,7 @@ function saveOneSectionAsSeparateDocument(titleNum,filenameForSaving) {
       idNode.replaceChild(newIdNode,idNode.firstChild);
     }
 
+    var filenameForSaving=makeFilenameForSaving(fileCnt,bookTitle);
     xmlDoc.save(filenameForSaving);
   }
 }
@@ -616,7 +718,6 @@ function saveSectionsAsSeparateDocuments() {
  sortElements();
  var myElem5,ps;
  fileCnt=1;
- var fso=new ActiveXObject("Scripting.FileSystemObject");
  if (document.getElementById("radio1").checked || document.getElementById("radio2").checked) {
    var tooShortTitlesCnt=0;
    var titles=xmlDoc.documentElement.selectNodes("//fb:section/fb:title");
@@ -637,9 +738,8 @@ function saveSectionsAsSeparateDocuments() {
  for (nPtr=0;nPtr<sortedElementArray.length;nPtr++) {
   //запишем в myElem5 ссылку на заголовок раздела, который (раздел) нужно сохранить как отдельный документ
   myElem5=myLinks[sortedElementArray[nPtr]];
-  while (fso.FileExists(openedFileName.replace(/[.]fb2$/i,"")+".section"+addZeros(fileCnt)+".fb2"))
-    fileCnt++;
-  saveOneSectionAsSeparateDocument(myElem5,openedFileName.replace(/[.]fb2$/i,"")+".section"+addZeros(fileCnt)+".fb2");
+  saveOneSectionAsSeparateDocument(myElem5,fileCnt);
+  fileCnt++;
   //alert(makeHTMLTitle(myElem5));
   var fictionBook=xmlDoc.documentElement.selectSingleNode("//fb:FictionBook");
   fictionBook.parentNode.replaceChild(savedFictionBook,fictionBook);

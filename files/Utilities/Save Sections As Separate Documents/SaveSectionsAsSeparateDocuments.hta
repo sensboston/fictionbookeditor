@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <HTML>
 <HEAD>
-<TITLE>Save Sections As Separate Documents v4.5 (автор Sclex)</TITLE>
+<TITLE>Save Sections As Separate Documents v4.6 (автор Sclex)</TITLE>
 <HTA:APPLICATION ID="oHTA"/>
 <META http-equiv="Content-Type" content="text/html; charset=utf-8">
 <STYLE>
@@ -69,6 +69,7 @@ input.gray {background-color:#D4D0C8; color:black;}
 var logStr="";
 var scrollbarWidth=0,scrollbarHeight=0;
 var mouseTimer=null;
+var bookTitle="";
 var activeElement;
 var selectionBegin=null;
 var selectedElements={};
@@ -172,7 +173,6 @@ function addZeros2(number1,howManyDigitsToMake) {
 }
 
 function fillInDescription(sectionTitle,xmlDoc) {
-  var bookTitle="";
   var authorFirstName="";
   var authorMiddleName="";
   var authorLastName="";
@@ -181,7 +181,7 @@ function fillInDescription(sectionTitle,xmlDoc) {
   var authorLastName="";
   var authorParagraph="";
   var bookTitleParagraph="";
-  var titleParagraphs=sectionTitle.selectNodes("./p");
+  var titleParagraphs=sectionTitle.selectNodes("./fb:p");
   var arr1,author;
   if (document.getElementById("radio1").checked) {
     authorParagraph=titleParagraphs[0].xml.replace(/<\/?[^>]*>/g,"");
@@ -198,29 +198,29 @@ function fillInDescription(sectionTitle,xmlDoc) {
     bookTitle=titleParagraphs[0].xml.replace(/<\/?[^>]*>/g,"");
   }
 
-  var fictionBook=xmlDoc.selectSingleNode("//FictionBook");
+  var fictionBook=xmlDoc.selectSingleNode("//fb:FictionBook");
 
-  var stylesheet=fictionBook.selectSingleNode("./stylesheet");
+  var stylesheet=fictionBook.selectSingleNode("./fb:stylesheet");
 
-  var description=fictionBook.selectSingleNode("./description");
+  var description=fictionBook.selectSingleNode("./fb:description");
   if (!description) {
     description=xmlDoc.createNode(1,"description",fictionBook.namespaceURI);
     if (stylesheet)
       fictionBook.insertBefore(description,stylesheet.nextSibling);
     else
       fictionBook.insertBefore(description,fictionBook.firstChild);
-    description=fictionBook.selectSingleNode("./description");
+    description=fictionBook.selectSingleNode("./fb:description");
   }
 
-  var titleInfo=description.selectSingleNode("./title-info");
+  var titleInfo=description.selectSingleNode("./fb:title-info");
   if (!titleInfo) {
     titleInfo=xmlDoc.createNode(1,"title-info",fictionBook.namespaceURI);
     description.insertBefore(titleInfo,description.firstChild);
-    titleInfo=description.selectSingleNode("./title-info");
+    titleInfo=description.selectSingleNode("./fb:title-info");
   }
 
   if (document.getElementById("radio1").checked || document.getElementById("radio2").checked) {
-    var authors=titleInfo.selectNodes("./author");
+    var authors=titleInfo.selectNodes("./fb:author");
     for (var i=authors.length-1;i>=0;i--)
       authors[i].parentNode.removeChild(authors[i]);
   }
@@ -255,26 +255,26 @@ function fillInDescription(sectionTitle,xmlDoc) {
       if (authorFirstName!="" || authorMiddleName!="" || authorLastName!="") {
         var author=xmlDoc.createNode(1,"author",fictionBook.namespaceURI);
         titleInfo.insertBefore(author,titleInfo.firstChild);
-        author=titleInfo.selectSingleNode("./author");
+        author=titleInfo.selectSingleNode("./fb:author");
     
-        var firstNameElement=author.selectSingleNode("./first-name");
+        var firstNameElement=author.selectSingleNode("./fb:first-name");
         // отсюда идет новый код
         if (!firstNameElement) {
           firstNameElement=xmlDoc.createNode(1,"first-name",fictionBook.namespaceURI);
           author.insertBefore(firstNameElement,author.firstChild);
-          firstNameElement=author.selectSingleNode("./first-name");
+          firstNameElement=author.selectSingleNode("./fb:first-name");
         }
-        var middleNameElement=author.selectSingleNode("./middle-name");
+        var middleNameElement=author.selectSingleNode("./fb:middle-name");
         if (!middleNameElement) {
           middleNameElement=xmlDoc.createNode(1,"middle-name",fictionBook.namespaceURI);
           author.insertBefore(middleNameElement,firstNameElement.nextSibling);
-          middleNameElement=author.selectSingleNode("./middle-name");
+          middleNameElement=author.selectSingleNode("./fb:middle-name");
         }
-        var lastNameElement=author.selectSingleNode("./last-name");
+        var lastNameElement=author.selectSingleNode("./fb:last-name");
         if (!lastNameElement) {
           lastNameElement=xmlDoc.createNode(1,"last-name",fictionBook.namespaceURI);
           author.insertBefore(lastNameElement,middleNameElement.nextSibling);
-          lastNameElement=author.selectSingleNode("./last-name");
+          lastNameElement=author.selectSingleNode("./fb:last-name");
         }
         while (firstNameElement.hasChildNodes)
           firstNameElement.removeChild(firstNameElement.firstChild);
@@ -285,19 +285,19 @@ function fillInDescription(sectionTitle,xmlDoc) {
         while (lastNameElement.hasChildNodes)
           lastNameElement.removeChild(lastNameElement.firstChild);
         lastNameElement.appendChild(xmlDoc.createTextNode(authorLastName));
-        var nicknameElement=author.selectSingleNode("./nickname");
+        var nicknameElement=author.selectSingleNode("./fb:nickname");
         if (nicknameElement) nicknameElement.parentNode.removeChild(nicknameElement);
-        var homepageElement=author.selectSingleNode("./home-page");
+        var homepageElement=author.selectSingleNode("./fb:home-page");
         if (homepageElement) homepageElement.parentNode.removeChild(homepageElement);
-        var emailElement=author.selectSingleNode("./email");
+        var emailElement=author.selectSingleNode("./fb:email");
         if (emailElement) emailElement.parentNode.removeChild(emailElement);
-        var authorId=author.selectSingleNode("./id");
+        var authorId=author.selectSingleNode("./fb:id");
         if (authorId) authorId.parentNode.removeChild(authorId);
       }
     }
   }
 
-  authors=titleInfo.selectNodes("./author");
+  authors=titleInfo.selectNodes("./fb:author");
   if (authors.length==0) {
     var genres=titleInfo.selectNodes("./genre");
 
@@ -306,51 +306,52 @@ function fillInDescription(sectionTitle,xmlDoc) {
       titleInfo.insertBefore(author,titleInfo.firstChild);
     else
       titleInfo.insertBefore(author,genres[genres.length-1]);
-    author=titleInfo.selectSingleNode("./author");
+    author=titleInfo.selectSingleNode("./fb:author");
 
-    var firstNameElement=author.selectSingleNode("./first-name");
+    var firstNameElement=author.selectSingleNode("./fb:first-name");
     // отсюда идет новый код
     if (!firstNameElement) {
       firstNameElement=xmlDoc.createNode(1,"first-name",fictionBook.namespaceURI);
       author.appendChild(firstNameElement);
      }
-    var lastNameElement=author.selectSingleNode("./last-name");
+    var lastNameElement=author.selectSingleNode("./fb:last-name");
     if (!lastNameElement) {
       lastNameElement=xmlDoc.createNode(1,"last-name",fictionBook.namespaceURI);
       author.appendChild(lastNameElement);
     }
   }
 
-  var authors=titleInfo.selectNodes("./author");
-  var bookTitleElement=titleInfo.selectSingleNode("./book-title");
+  var authors=titleInfo.selectNodes("./fb:author");
+  var bookTitleElement=titleInfo.selectSingleNode("./fb:book-title");
   if (!bookTitleElement) {
     bookTitleElement=xmlDoc.createNode(1,"book-title",fictionBook.namespaceURI);
     titleInfo.insertBefore(bookTitleElement,authors[authors.length-1].nextSibling);
-    bookTitleElement=titleInfo.selectSingleNode("./book-title");
+    bookTitleElement=titleInfo.selectSingleNode("./fb:book-title");
   }
 
   while (bookTitleElement.hasChildNodes)
     bookTitleElement.removeChild(bookTitleElement.firstChild);
-  bookTitleElement.appendChild(xmlDoc.createTextNode(bookTitle.replace(nbspRegExp," ")));
+  bookTitle=bookTitle.replace(nbspRegExp," ");
+  bookTitleElement.appendChild(xmlDoc.createTextNode(bookTitle));
 
   var currentDate=new Date();
   var dateStr1=currentDate.getFullYear()+"-"+addZeros2(currentDate.getMonth()+1,2)+"-"+addZeros2(currentDate.getDate(),2);
   var dateStr2=addZeros2(currentDate.getDate(),2)+"."+addZeros2(currentDate.getMonth()+1,2)+"."+currentDate.getFullYear();
   //alert(dateStr1+"\n"+dateStr2);
-  var srcTitleInfo=description.selectSingleNode("./src-title-info");
-  var documentInfo=description.selectSingleNode("./document-info");
+  var srcTitleInfo=description.selectSingleNode("./fb:src-title-info");
+  var documentInfo=description.selectSingleNode("./fb:document-info");
   if (!documentInfo) {
     documentInfo=xmlDoc.createNode(1,"document-info",fictionBook.namespaceURI);
     if (srcTitleInfo)
       description.insertBefore(documentInfo,srcTitleInfo.nextSibling);
     else
       description.insertBefore(documentInfo,titleInfo.nextSibling);
-    documentInfo=description.selectSingleNode("./document-info");
+    documentInfo=description.selectSingleNode("./fb:document-info");
   }
-  var dateElement=documentInfo.selectSingleNode("./date");
+  var dateElement=documentInfo.selectSingleNode("./fb:date");
   if (!dateElement) {
-    var documentInfoAuthor=documentInfo.selectNodes("./author");
-    var programUsed=documentInfo.selectNodes("./program-used");
+    var documentInfoAuthor=documentInfo.selectNodes("./fb:author");
+    var programUsed=documentInfo.selectNodes("./fb:program-used");
     var elem1=null;
     if (documentInfoAuthor) elem1=documentInfoAuthor[documentInfoAuthor.length-1];
     if (programUsed) elem1=programUsed[programUsed.length-1];
@@ -359,7 +360,7 @@ function fillInDescription(sectionTitle,xmlDoc) {
       documentInfo.insertBefore(dateElement,documentInfo.firstChild);
     else
       documentInfo.insertBefore(dateElement,elem1.nextSibling);
-    dateElement=documentInfo.selectSingleNode("./date");
+    dateElement=documentInfo.selectSingleNode("./fb:date");
   } else
     while (dateElement.hasChildNodes)
       dateElement.removeChild(dateElement.firstChild);
@@ -367,12 +368,112 @@ function fillInDescription(sectionTitle,xmlDoc) {
   dateElement.setAttribute("value",dateStr1);
 }
 
-function saveOneSectionAsSeparateDocument(titleNum,filenameForSaving) {
+var t={};
+t["А"]="A";
+t["Б"]="B";
+t["В"]="V";
+t["Г"]="G";
+t["Д"]="D";
+t["Е"]="E";
+t["Ё"]="E";
+t["Ж"]="ZH";
+t["З"]="Z";
+t["И"]="I";
+t["Й"]="I";
+t["К"]="K";
+t["Л"]="L";
+t["М"]="M";
+t["Н"]="N";
+t["О"]="O";
+t["П"]="P";
+t["Р"]="R";
+t["С"]="S";
+t["Т"]="T";
+t["У"]="U";
+t["Ф"]="F";
+t["Х"]="H";
+t["Ц"]="C";
+t["Ч"]="CH";
+t["Ш"]="SH";
+t["Щ"]="SH";
+t["Ъ"]="'";
+t["Ы"]="I";
+t["Э"]="E";
+t["Ю"]="YU";
+t["Я"]="YA";
+t["а"]="a";
+t["б"]="b";
+t["в"]="v";
+t["г"]="g";
+t["д"]="d";
+t["е"]="e";
+t["ё"]="e";
+t["ж"]="zh";
+t["з"]="z";
+t["и"]="i";
+t["й"]="i";
+t["к"]="k";
+t["л"]="l";
+t["м"]="m";
+t["н"]="n";
+t["о"]="o";
+t["п"]="p";
+t["р"]="r";
+t["с"]="s";
+t["т"]="t";
+t["у"]="u";
+t["ф"]="f";
+t["х"]="h";
+t["ц"]="c";
+t["ч"]="ch";
+t["ш"]="sh";
+t["щ"]="sh";
+t["ъ"]="'";
+t["ы"]="i";
+t["э"]="e";
+t["ю"]="yu";
+t["я"]="ya";
+t["0"]="0";
+t["1"]="1";
+t["2"]="2";
+t["3"]="3";
+t["4"]="4";
+t["5"]="5";
+t["6"]="6";
+t["7"]="7";
+t["8"]="8";
+t["9"]="9";
+t["-"]="-";
+t[" "]="_";
+
+function makeFilenameForSaving(fileCnt,bookTitle) {
+  var fileCnt2=1;
+  var transliteratedName="";
+  var maxNameLength=70;
+  var ch,transliteratedChar;
+  var i=0;
+  while (i<bookTitle.length) {
+    ch=bookTitle.charAt(i);
+    transliteratedChar=t[ch];
+    if (transliteratedName.length+transliteratedChar>maxNameLength) break;
+    if (transliteratedChar)
+      transliteratedName+=transliteratedChar;
+    i++;
+  }
+  var fullFileName=addZeros2(fileCnt,4)+"_"+transliteratedName+"_";
+  var path=openedFileName.replace(/\\[^\\]+$/,"\\");
+  var fso=new ActiveXObject("Scripting.FileSystemObject");
+  var i=1;
+  while (fso.FileExists(path+fullFileName+addZeros2(i,4)+"_SSASD.fb2")) i++;
+  return path+fullFileName+addZeros2(i,4)+"_SSASD.fb2";
+}
+
+function saveOneSectionAsSeparateDocument(titleNum,fileCnt) {
   //xmlDoc.loadXML(savedXmlDocCode);
   var i,j,sections,sections2,innerSection,elemInBody,prevElemInBody;
-  var fictionBook=xmlDoc.documentElement.selectSingleNode("//FictionBook");
+  var fictionBook=xmlDoc.documentElement.selectSingleNode("//fb:FictionBook");
   fictionBook.parentNode.replaceChild(savedFictionBook.cloneNode(true),fictionBook);
-  var titles=xmlDoc.documentElement.selectNodes("//section/title");
+  var titles=xmlDoc.documentElement.selectNodes("//fb:section/fb:title");
   var myTitle=titles[titleNum];
   fillInDescription(myTitle,xmlDoc);
   var el1=myTitle;
@@ -385,16 +486,16 @@ function saveOneSectionAsSeparateDocument(titleNum,filenameForSaving) {
   if (el1 && el1.nodeName=="body") myBody=el1;
   if (mySection && myBody) {
     if (document.getElementById("checkbox1").checked) {
-      var epigraphs=myBody.selectNodes("./epigraph");
+      var epigraphs=myBody.selectNodes("./fb:epigraph");
       if (epigraphs.length>0)
         for (i=0; i<epigraphs.length; i++)
           savedBodyEpigraphs.push(epigraphs[i].cloneNode(true));    
       //alert("epigraphs: "+epigraphs.length+"\n"+
       //      "savedBodyEpigraphs: "+savedBodyEpigraphs.length);
-      var sectionsInBody=myBody.selectNodes("./section");
+      var sectionsInBody=myBody.selectNodes("./fb:section");
       var kkk=0;
       if (sectionsInBody)
-        while (sectionsInBody[kkk] && !sectionsInBody[kkk].selectSingleNode("./title")) {
+        while (sectionsInBody[kkk] && !sectionsInBody[kkk].selectSingleNode("./fb:title")) {
           savedSectionsAtBodyBegin.push(sectionsInBody[kkk].cloneNode(true));
           kkk++;
         }
@@ -409,8 +510,8 @@ function saveOneSectionAsSeparateDocument(titleNum,filenameForSaving) {
     while (outerSection.nodeName=="title")
       outerSection=outerSection.nextSibling;
     // перенесем в body заголовок, эпиграфы, картинки раздела и аннотации раздела
-    var elemInBody=myBody.selectSingleNode("./section/section");
-    elemInBody=myBody.selectSingleNode("./section").firstChild;
+    var elemInBody=myBody.selectSingleNode("./fb:section/fb:section");
+    elemInBody=myBody.selectSingleNode("./fb:section").firstChild;
     //alert("elemInBody: \n\n"+getOuterXML(elemInBody));
     while (elemInBody && (elemInBody.nodeName=="title" || elemInBody.nodeName=="epigraph"
            || elemInBody.nodeName=="image" || elemInBody.nodeName=="annotation"
@@ -429,7 +530,7 @@ function saveOneSectionAsSeparateDocument(titleNum,filenameForSaving) {
     //удалим наружный раздел, если нужно
     //alert("myBody.firstChild: \n\n"+getOuterXML(myBody.firstChild));
     //alert("outerSection: \n\n"+getOuterXML(outerSection));
-    var innerSection=outerSection.selectSingleNode("./section");
+    var innerSection=outerSection.selectSingleNode("./fb:section");
     if (innerSection) {
       //alert("innerSection: "+getOuterXML(innerSection));
       while (outerSection.hasChildNodes) {
@@ -467,13 +568,13 @@ function saveOneSectionAsSeparateDocument(titleNum,filenameForSaving) {
       var linksObj={};
       for (i in linksObj)
         delete linksObj[i];
-      bodies=xmlDoc.documentElement.selectNodes("//body");
+      bodies=xmlDoc.documentElement.selectNodes("//fb:body");
       for (i=bodies.length-1; i>=0; i--) {
         if (bodies[i]!=myBody && bodies[i].getAttribute("name")!="notes" && 
           bodies[i].getAttribute("name")!="comments")
           bodies[i].parentNode.removeChild(bodies[i]);
       }
-      var links=xmlDoc.documentElement.selectNodes("//a");
+      var links=xmlDoc.documentElement.selectNodes("//fb:a");
       for (j=0; j<links.length; j++) {
         var address=links[j].getAttribute(ns+":href");
         //alert("addreess: "+address);
@@ -486,10 +587,10 @@ function saveOneSectionAsSeparateDocument(titleNum,filenameForSaving) {
       var removedCnt=0;
       var removedStr="";
       // удалим ненужные разделы в notes body
-      var sections=xmlDoc.documentElement.selectNodes('body[@name="notes"]//section');
+      var sections=xmlDoc.documentElement.selectNodes('fb:body[@name="notes"]//fb:section');
       //alert("Разделов в notes body: "+sections.length);
       for (j=sections.length-1; j>=0; j--) {
-         subsections=sections[j].selectNodes("./section");
+         subsections=sections[j].selectNodes("./fb:section");
          //alert("j: "+j+"\n\nsubsections.length: "+subsections.length);
          if (subsections.length==0 && (sections[j].getAttribute("id")==null || 
              (sections[j].getAttribute("id") &&
@@ -503,12 +604,12 @@ function saveOneSectionAsSeparateDocument(titleNum,filenameForSaving) {
       }
       //alert("removedCnt: "+removedCnt);
       //window.clipboardData.setData("text",removedStr);
-      var notesBodies=xmlDoc.documentElement.selectNodes('body[@name="notes"]');
+      var notesBodies=xmlDoc.documentElement.selectNodes('fb:body[@name="notes"]');
       //alert("notes body в точке 1.\n\n"+getOuterXML(notesBodies[0]));
       // если надо, удалим корневой раздел в notes body
-      sections=xmlDoc.documentElement.selectNodes('body[@name="notes"]//section');
+      sections=xmlDoc.documentElement.selectNodes('fb:body[@name="notes"]//fb:section');
       if (sections.length!=0) {
-        sections2=xmlDoc.documentElement.selectNodes('body[@name="notes"]//section//section');
+        sections2=xmlDoc.documentElement.selectNodes('fb:body[@name="notes"]//fb:section//fb:section');
         if (sections2.length==0)
          if (sections[0].getAttribute("id")==null || 
              (sections[0].getAttribute("id") &&
@@ -519,9 +620,9 @@ function saveOneSectionAsSeparateDocument(titleNum,filenameForSaving) {
         }
       }
       // удалим ненужные notes body
-      var notesBodies=xmlDoc.documentElement.selectNodes('body[@name="notes"]');
+      var notesBodies=xmlDoc.documentElement.selectNodes('fb:body[@name="notes"]');
       for (j=notesBodies.length-1; j>=0; j--) {
-        if (xmlDoc.documentElement.selectNodes('body[@name="notes"]//section').length==0) {
+        if (xmlDoc.documentElement.selectNodes('fb:body[@name="notes"]//fb:section').length==0) {
           //alert("Удаляем notes body.\n\n"+getOuterXML(notesBodies[j]));
           notesBodies[j].parentNode.removeChild(notesBodies[j]);
           removesCnt++;
@@ -529,10 +630,10 @@ function saveOneSectionAsSeparateDocument(titleNum,filenameForSaving) {
       }
   
       // удалим ненужные разделы в comments body
-      var sections=xmlDoc.documentElement.selectNodes('body[@name="comments"]//section');
+      var sections=xmlDoc.documentElement.selectNodes('fb:body[@name="comments"]//fb:section');
       //alert("Разделов в comments body: "+sections.length);
       for (j=sections.length-1; j>=0; j--) {
-         subsections=sections[j].selectNodes("./section");
+         subsections=sections[j].selectNodes("./fb:section");
          if (!subsections && sections[j].getAttribute("id")==null || 
              (sections[j].getAttribute("id") &&
               linksObj[sections[j].getAttribute("id").toLowerCase()]!=true)) {
@@ -542,9 +643,9 @@ function saveOneSectionAsSeparateDocument(titleNum,filenameForSaving) {
          }
       }
       // если надо, удалим корневой раздел в comments body
-      sections=xmlDoc.documentElement.selectNodes('body[@name="comments"]//section');
+      sections=xmlDoc.documentElement.selectNodes('fb:body[@name="comments"]//fb:section');
       if (sections.length!=0) {
-        sections2=xmlDoc.documentElement.selectNodes('body[@name="comments"]//section//section');
+        sections2=xmlDoc.documentElement.selectNodes('fb:body[@name="comments"]//fb:section//fb:section');
         if (sections2.length==0)
          if (sections[0].getAttribute("id")==null || 
              (sections[0].getAttribute("id") &&
@@ -555,9 +656,9 @@ function saveOneSectionAsSeparateDocument(titleNum,filenameForSaving) {
         }
       }
       // удалим ненужные comments body
-      var commentsBodies=xmlDoc.documentElement.selectNodes('body[@name="comments"]');
+      var commentsBodies=xmlDoc.documentElement.selectNodes('fb:body[@name="comments"]');
       for (j=commentsBodies.length-1; j>=0; j--) {
-        if (xmlDoc.documentElement.selectNodes('body[@name="comments"]//section').length==0) {
+        if (xmlDoc.documentElement.selectNodes('fb:body[@name="comments"]//fb:section').length==0) {
           //alerft("Удаляем comments body.\n\n"+getOuterXML(commentsBodies[j]));
           commentsBodies[j].parentNode.removeChild(commentsBodies[j]);
           removesCnt++;
@@ -570,7 +671,7 @@ function saveOneSectionAsSeparateDocument(titleNum,filenameForSaving) {
     var imagesObj={};
     for (i in imagesObj)
       delete imagesObj[i];
-    var images=xmlDoc.documentElement.selectNodes("//image");
+    var images=xmlDoc.documentElement.selectNodes("//fb:image");
     for (j=0; j<images.length; j++) {
       var address=images[j].getAttribute(ns+":href");
       //alert("addreess: "+address);
@@ -580,13 +681,13 @@ function saveOneSectionAsSeparateDocument(titleNum,filenameForSaving) {
       }
     }
     // теперь удалим ненужные теги binary
-    var binaries=xmlDoc.documentElement.selectNodes("//binary");
+    var binaries=xmlDoc.documentElement.selectNodes("//fb:binary");
     for (j=binaries.length-1; j>=0; j--) {
       if (binaries[j] && binaries[j].getAttribute("id") && imagesObj[binaries[j].getAttribute("id").toLowerCase()]!=true)
         binaries[j].parentNode.removeChild(binaries[j]);
     }
  
-    var idNode=xmlDoc.selectSingleNode("/FictionBook//description//document-info//id");
+    var idNode=xmlDoc.selectSingleNode("/fb:FictionBook//fb:description//fb:document-info//fb:id");
     if (idNode) {
       var newId=randomSymbol()+randomSymbol()+randomSymbol()+randomSymbol()+randomSymbol()+
                 randomSymbol()+randomSymbol()+randomSymbol()+"-"+
@@ -600,6 +701,7 @@ function saveOneSectionAsSeparateDocument(titleNum,filenameForSaving) {
       idNode.replaceChild(newIdNode,idNode.firstChild);
     }
 
+    var filenameForSaving=makeFilenameForSaving(fileCnt,bookTitle);
     xmlDoc.save(filenameForSaving);
   }
 }
@@ -616,13 +718,12 @@ function saveSectionsAsSeparateDocuments() {
  sortElements();
  var myElem5,ps;
  fileCnt=1;
- var fso=new ActiveXObject("Scripting.FileSystemObject");
  if (document.getElementById("radio1").checked || document.getElementById("radio2").checked) {
    var tooShortTitlesCnt=0;
-   var titles=xmlDoc.documentElement.selectNodes("//section/title");
+   var titles=xmlDoc.documentElement.selectNodes("//fb:section/fb:title");
    for (nPtr=0;nPtr<sortedElementArray.length;nPtr++) {
      myTitle=titles[sortedElementArray[nPtr]-1];
-     ps=myTitle.selectNodes("./p");
+     ps=myTitle.selectNodes("./fb:p");
      if (ps.length<2) tooShortTitlesCnt++;
    }
    if (tooShortTitlesCnt>0) {
@@ -637,11 +738,10 @@ function saveSectionsAsSeparateDocuments() {
  for (nPtr=0;nPtr<sortedElementArray.length;nPtr++) {
   //запишем в myElem5 ссылку на заголовок раздела, который (раздел) нужно сохранить как отдельный документ
   myElem5=myLinks[sortedElementArray[nPtr]];
-  while (fso.FileExists(openedFileName.replace(/[.]fb2$/i,"")+".section"+addZeros(fileCnt)+".fb2"))
-    fileCnt++;
-  saveOneSectionAsSeparateDocument(myElem5,openedFileName.replace(/[.]fb2$/i,"")+".section"+addZeros(fileCnt)+".fb2");
+  saveOneSectionAsSeparateDocument(myElem5,fileCnt);
+  fileCnt++;
   //alert(makeHTMLTitle(myElem5));
-  var fictionBook=xmlDoc.documentElement.selectSingleNode("//FictionBook");
+  var fictionBook=xmlDoc.documentElement.selectSingleNode("//fb:FictionBook");
   fictionBook.parentNode.replaceChild(savedFictionBook,fictionBook);
  }
 
@@ -1102,12 +1202,12 @@ function applySettings() {
  xmlDoc.setProperty("SelectionNamespaces", "xmlns:fb='"+fbNS+"' xmlns:xlink='"+xlNS+"'");
  if (xmlDoc.parseError.errorCode) return;
  openedFileName=f1;
- var titles=xmlDoc.documentElement.selectNodes("//section/title");
+ var titles=xmlDoc.documentElement.selectNodes("//fb:section/fb:title");
  //alert("titles.length: \n\n"+titles.length);
  var i;
  //window.clipboardData.setData("text",getOuterXML(xmlDoc.documentElement));
  //savedXmlDocCode=getOuterXML(xmlDoc.documentElement);
- var fictionBook=xmlDoc.documentElement.selectSingleNode("//FictionBook");
+ var fictionBook=xmlDoc.documentElement.selectSingleNode("//fb:FictionBook");
  savedFictionBook=fictionBook.cloneNode(true);
  var myAttrs=fictionBook.attributes;
  ns="l";
