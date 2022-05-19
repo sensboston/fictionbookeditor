@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <HTML>
 <HEAD>
-<TITLE>Save Sections As Separate Documents v4.9 (XML6 version) (автор Sclex)</TITLE>
+<TITLE>Save Sections As Separate Documents v5.0 (XML6 version) (автор Sclex)</TITLE>
 <HTA:APPLICATION ID="oHTA"/>
 <META http-equiv="Content-Type" content="text/html; charset=utf-8">
 <STYLE>
@@ -766,8 +766,21 @@ function addZeros(n) {
   return n2;
 }
 
-function saveSectionsAsSeparateDocuments() {
+function getTime1() {
  Ts=new Date().getTime();
+}
+
+function getTime2() {
+ var Tf=new Date().getTime();
+ var Tmin = Math.floor((Tf-Ts)/60000);
+ var Tsek = Math.ceil(10*((Tf-Ts)/1000-Tmin*60))/10;
+ if (Tmin>0) {var TimeStr=Tmin+" мин. "+Tsek+" с"}
+ else {var TimeStr=Tsek+" с"}
+ return TimeStr;
+}
+
+function saveSectionsAsSeparateDocuments() {
+ getTime1();
  sortElements();
  var myElem5,ps;
  fileCnt=1;
@@ -797,14 +810,53 @@ function saveSectionsAsSeparateDocuments() {
   var fictionBook=xmlDoc.documentElement.selectSingleNode("//fb:FictionBook");
   fictionBook.parentNode.replaceChild(savedFictionBook,fictionBook);
  }
+ alert("Готово!\n\nЗатраченное время: "+getTime2()+".");
+}
 
- var Tf=new Date().getTime();
- var Tmin = Math.floor((Tf-Ts)/60000);
- var Tsek = Math.ceil(10*((Tf-Ts)/1000-Tmin*60))/10;
- if (Tmin>0) {var TimeStr=Tmin+" мин. "+Tsek+" с"}
- else {var TimeStr=Tsek+" с"}
+function isItHighestLevelSection(title3) {
+  var sectionsCnt=0;
+  var ptr=title3;
+  while (ptr) {
+    if (ptr.nodeName=="section") sectionsCnt++;
+    ptr=ptr.parentNode;
+  }
+  if (sectionsCnt==1) return true;
+  else false;
+}
 
- alert("Готово!\n\nЗатраченное время: "+TimeStr+".");
+function saveOuterSectionsAsSeparateDocuments() {
+ getTime1();
+ var myElem5,ps;
+ fileCnt=1;
+ var titles=xmlDoc.documentElement.selectNodes("//fb:section/fb:title");
+ if (document.getElementById("radio1").checked || document.getElementById("radio2").checked) {
+   var tooShortTitlesCnt=0;
+   for (var i=0; i<titles.length; i++) {
+     myTitle=titles[i];
+     ps=myTitle.selectNodes("./fb:p");
+     if (ps.length<2) tooShortTitlesCnt++;
+   }
+   if (tooShortTitlesCnt>0) {
+    alert("     Некоторые из заголовков разделов верхнего уровня содержат в себе "+
+          "менее двух абзацев, при том, что выбран режим обработки, предполагающий, "+
+          "что заголовки подлежащих сохранению разделов должны состоять как минимум "+
+          "из двух абзацев.\n\n"+
+          "     Количество выделенных заголовков, содержащих менее двух абзацев: "+tooShortTitlesCnt+".\n\n"+
+          "     Сохранение разделов как отдельные документы – не было произведено.");
+    return;
+   }
+ }
+ for (var i=0; i<titles.length; i++) {
+  //запишем в myElem5 ссылку на заголовок раздела, который (раздел) нужно сохранить как отдельный документ
+  if (isItHighestLevelSection(titles[i])) {
+    saveOneSectionAsSeparateDocument(i,fileCnt);
+    fileCnt++;
+    //alert(makeHTMLTitle(myElem5));
+    var fictionBook=xmlDoc.documentElement.selectSingleNode("//fb:FictionBook");
+    fictionBook.parentNode.replaceChild(savedFictionBook,fictionBook);
+  }
+ }
+ alert("Готово!\n\nЗатраченное время: "+getTime2()+".");
 }
 
 function selectElements(selectionBegin,selectionEnd) {
@@ -1298,7 +1350,7 @@ function applySettings() {
 
 </SCRIPT>
 </HEAD>
-<BODY style="font-family:tahoma; font-size:14px; padding:10px; margin:0; color:black; background-color:white;" onload="window.resizeTo(800,670); getInitialWindowSize(); getScrollBarWidthAndHeight();" onkeydown="myOnKeydown();" onresize="onWindowResize();">
+<BODY style="font-family:tahoma; font-size:14px; padding:10px; margin:0; color:black; background-color:white;" onload="window.resizeTo(800,700); getInitialWindowSize(); getScrollBarWidthAndHeight();" onkeydown="myOnKeydown();" onresize="onWindowResize();">
 <SPAN id=mouseCaptureSpan style="display:none;" onmousemove="capturedMouse();" onmouseout="capturedMouse();" onmouseup="capturedMouse();" onmouseover="capturedMouse();"></SPAN>
 <P style="text-align:center">Выберите fb2-файл:
 <br>
@@ -1329,6 +1381,8 @@ function applySettings() {
 </div>
 <br>
 <p style="text-align:center;"><INPUT type=button value="Сохранить выбранные разделы как отдельные документы" onclick="saveSectionsAsSeparateDocuments();" class=gray></p>
+<br>
+<p style="text-align:center;"><INPUT type=button value="Сохранить как отдельные документы все разделы верхнего уровня" onclick="saveOuterSectionsAsSeparateDocuments();" class=gray></p>
 <!-- <INPUT type=button value="Код в буфер (отладочное)" onclick='window.clipboardData.setData("text",document.getElementById("elementList").innerHTML);'> -->
 <!-- <INPUT type=button value="Лог в буфер" onclick='window.clipboardData.setData("text",logStr);'> -->
 <!-- <INPUT type=button onclick="alert('XML6: '+xmlDoc);" value="MSXML"> -->
