@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <HTML>
 <HEAD>
-<TITLE>Save Sections As Separate Documents v5.1 (Old XML version) (автор Sclex)</TITLE>
+<TITLE>Save Sections As Separate Documents v5.2 (Old XML version) (автор Sclex)</TITLE>
 <HTA:APPLICATION ID="oHTA"/>
 <META http-equiv="Content-Type" content="text/html; charset=utf-8">
 <STYLE>
@@ -195,6 +195,7 @@ function fillInDescription(sectionTitle,xmlDoc) {
   var authorParagraph="";
   var bookTitleParagraph="";
   var firstNameElement=null;
+  //alert("sectionTitle: "+getOuterXML(sectionTitle));
   var titleParagraphs=sectionTitle.selectNodes("./fb:p");
   var arr1,author;
   if (document.getElementById("radio1").checked) {
@@ -272,17 +273,17 @@ function fillInDescription(sectionTitle,xmlDoc) {
         author=titleInfo.selectSingleNode("./fb:author");
     
         // отсюда идет новый код
+        firstNameElement=author.selectSingleNode("./fb:first-name");
         if (!firstNameElement) {
           firstNameElement=xmlDoc.createNode(1,"first-name",fictionBook.namespaceURI);
           author.insertBefore(firstNameElement,getFirstChildElement(author));
+          firstNameElement=author.selectSingleNode("./fb:first-name");
         }
-        firstNameElement=author.selectSingleNode("./fb:first-name");
         var middleNameElement=author.selectSingleNode("./fb:middle-name");
         if (!middleNameElement) {
           middleNameElement=xmlDoc.createNode(1,"middle-name",fictionBook.namespaceURI);
  //         alert(getOuterXML(firstNameElement));
           var bbb=getNextElement(firstNameElement); 
-          if (!bbb) alert(bbb);
           author.insertBefore(middleNameElement,bbb);
           middleNameElement=author.selectSingleNode("./fb:middle-name");
         }
@@ -837,7 +838,17 @@ function isItHighestLevelSection(title3) {
     ptr=ptr.parentNode;
   }
   if (sectionsCnt==1) return true;
-  else false;
+  return false;
+}
+
+function itIsInNotesOrCommentsBody(title4) {
+  var ptr=title4;
+  while (ptr) {
+    if (ptr.nodeName=="body" &&
+        (ptr.getAttribute("name")=="notes" || ptr.getAttribute("name")=="comments")) return true;
+   ptr=ptr.parentNode;
+  }
+  return false;
 }
 
 function saveOuterSectionsAsSeparateDocuments() {
@@ -849,7 +860,8 @@ function saveOuterSectionsAsSeparateDocuments() {
    var tooShortTitlesCnt=0;
    for (var i=0; i<titles.length; i++) {
      myTitle=titles[i];
-     if (isItHighestLevelSection(myTitle)) {
+     if (isItHighestLevelSection(myTitle) && !itIsInNotesOrCommentsBody(myTitle)) {
+       //alert("myTitle: "+getOuterXML(myTitle));
        ps=myTitle.selectNodes("./fb:p");
        if (ps.length<2) tooShortTitlesCnt++;
      }
@@ -866,7 +878,7 @@ function saveOuterSectionsAsSeparateDocuments() {
  }
  for (var i=0; i<titles.length; i++) {
   //запишем в myElem5 ссылку на заголовок раздела, который (раздел) нужно сохранить как отдельный документ
-  if (isItHighestLevelSection(titles[i])) {
+  if (isItHighestLevelSection(titles[i]) && !itIsInNotesOrCommentsBody(titles[i])) {
     saveOneSectionAsSeparateDocument(i,fileCnt);
     fileCnt++;
     //alert(makeHTMLTitle(myElem5));
