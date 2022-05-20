@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <HTML>
 <HEAD>
-<TITLE>Save Sections As Separate Documents v5.0 (XML6 version) (автор Sclex)</TITLE>
+<TITLE>Save Sections As Separate Documents v5.1 (XML6 version) (автор Sclex)</TITLE>
 <HTA:APPLICATION ID="oHTA"/>
 <META http-equiv="Content-Type" content="text/html; charset=utf-8">
 <STYLE>
@@ -172,6 +172,19 @@ function addZeros2(number1,howManyDigitsToMake) {
   return rslt;
 }
 
+function getFirstChildElement(ptr3) {
+  var ptr4=ptr3.firstChild;
+  while (ptr4 && ptr4.nodeType!=1) ptr4=ptr4.nextSibling;
+  return ptr4;
+}
+
+function getNextElement(ptr5) {
+  if (!ptr5) return;
+  var ptr6=ptr5.nextSibling;
+  while (ptr6 && ptr6.nodeType!=1) ptr6=ptr6.nextSibling;
+  return ptr6;
+}
+
 function fillInDescription(sectionTitle,xmlDoc) {
   var authorFirstName="";
   var authorMiddleName="";
@@ -181,6 +194,7 @@ function fillInDescription(sectionTitle,xmlDoc) {
   var authorLastName="";
   var authorParagraph="";
   var bookTitleParagraph="";
+  var firstNameElement=null;
   var titleParagraphs=sectionTitle.selectNodes("./fb:p");
   var arr1,author;
   if (document.getElementById("radio1").checked) {
@@ -206,16 +220,16 @@ function fillInDescription(sectionTitle,xmlDoc) {
   if (!description) {
     description=xmlDoc.createNode(1,"description",fictionBook.namespaceURI);
     if (stylesheet)
-      fictionBook.insertBefore(description,stylesheet.nextSibling);
+      fictionBook.insertBefore(description,getNextElement(stylesheet));
     else
-      fictionBook.insertBefore(description,fictionBook.firstChild);
+      fictionBook.insertBefore(description,getFirstChildElement(fictionBook));
     description=fictionBook.selectSingleNode("./fb:description");
   }
 
   var titleInfo=description.selectSingleNode("./fb:title-info");
   if (!titleInfo) {
     titleInfo=xmlDoc.createNode(1,"title-info",fictionBook.namespaceURI);
-    description.insertBefore(titleInfo,description.firstChild);
+    description.insertBefore(titleInfo,getFirstChildElement(description));
     titleInfo=description.selectSingleNode("./fb:title-info");
   }
 
@@ -254,26 +268,28 @@ function fillInDescription(sectionTitle,xmlDoc) {
   
       if (authorFirstName!="" || authorMiddleName!="" || authorLastName!="") {
         var author=xmlDoc.createNode(1,"author",fictionBook.namespaceURI);
-        titleInfo.insertBefore(author,titleInfo.firstChild.nextSibling);
+        titleInfo.insertBefore(author,getNextElement(getFirstChildElement(titleInfo)));
         author=titleInfo.selectSingleNode("./fb:author");
     
-        var firstNameElement=author.selectSingleNode("./fb:first-name");
         // отсюда идет новый код
         if (!firstNameElement) {
           firstNameElement=xmlDoc.createNode(1,"first-name",fictionBook.namespaceURI);
-          author.insertBefore(firstNameElement,author.firstChild);
-          firstNameElement=author.selectSingleNode("./fb:first-name");
+          author.insertBefore(firstNameElement,getFirstChildElement(author));
         }
+        firstNameElement=author.selectSingleNode("./fb:first-name");
         var middleNameElement=author.selectSingleNode("./fb:middle-name");
         if (!middleNameElement) {
           middleNameElement=xmlDoc.createNode(1,"middle-name",fictionBook.namespaceURI);
-          author.insertBefore(middleNameElement,firstNameElement.nextSibling);
+ //         alert(getOuterXML(firstNameElement));
+          var bbb=getNextElement(firstNameElement); 
+          if (!bbb) alert(bbb);
+          author.insertBefore(middleNameElement,bbb);
           middleNameElement=author.selectSingleNode("./fb:middle-name");
         }
         var lastNameElement=author.selectSingleNode("./fb:last-name");
         if (!lastNameElement) {
           lastNameElement=xmlDoc.createNode(1,"last-name",fictionBook.namespaceURI);
-          author.insertBefore(lastNameElement,middleNameElement.nextSibling);
+          author.insertBefore(lastNameElement,getNextElement(middleNameElement));
           lastNameElement=author.selectSingleNode("./fb:last-name");
         }
         while (firstNameElement.hasChildNodes)
@@ -302,9 +318,9 @@ function fillInDescription(sectionTitle,xmlDoc) {
 
     author=xmlDoc.createNode(1,"author",fictionBook.namespaceURI);
     if (!genres)
-      titleInfo.insertBefore(author,titleInfo.firstChild.nextSibling);
+      titleInfo.insertBefore(author,getNextElement(getFirstChildElement(titleInfo)));
     else 
-      titleInfo.insertBefore(author,genres[genres.length-1].nextSibling);
+      titleInfo.insertBefore(author,getNextElement(genres[genres.length-1]));
     author=titleInfo.selectSingleNode("./fb:author");
 
     var firstNameElement=author.selectSingleNode("./fb:first-name");
@@ -324,7 +340,7 @@ function fillInDescription(sectionTitle,xmlDoc) {
   var bookTitleElement=titleInfo.selectSingleNode("./fb:book-title");
   if (!bookTitleElement) {
     bookTitleElement=xmlDoc.createNode(1,"book-title",fictionBook.namespaceURI);
-    titleInfo.insertBefore(bookTitleElement,authors[authors.length-1].nextSibling);
+    titleInfo.insertBefore(bookTitleElement,getNextElement(authors[authors.length-1]));
     bookTitleElement=titleInfo.selectSingleNode("./fb:book-title");
   }
 
@@ -342,9 +358,9 @@ function fillInDescription(sectionTitle,xmlDoc) {
   if (!documentInfo) {
     documentInfo=xmlDoc.createNode(1,"document-info",fictionBook.namespaceURI);
     if (srcTitleInfo)
-      description.insertBefore(documentInfo,srcTitleInfo.nextSibling);
+      description.insertBefore(documentInfo,getNextElement(srcTitleInfo));
     else
-      description.insertBefore(documentInfo,titleInfo.nextSibling);
+      description.insertBefore(documentInfo,getNextElement(titleInfo));
     documentInfo=description.selectSingleNode("./fb:document-info");
   }
   var dateElement=documentInfo.selectSingleNode("./fb:date");
@@ -356,9 +372,9 @@ function fillInDescription(sectionTitle,xmlDoc) {
     if (programUsed) elem1=programUsed[programUsed.length-1];
     dateElement=xmlDoc.createNode(1,"date",fictionBook.namespaceURI);
     if (!elem1)
-      documentInfo.insertBefore(dateElement,documentInfo.firstChild);
+      documentInfo.insertBefore(dateElement,getFirstChildElement(documentInfo));
     else
-      documentInfo.insertBefore(dateElement,elem1.nextSibling);
+      documentInfo.insertBefore(dateElement,getNextElement(elem1));
     dateElement=documentInfo.selectSingleNode("./fb:date");
   } else
     while (dateElement.hasChildNodes)
@@ -577,7 +593,7 @@ function saveOneSectionAsSeparateDocument(titleNum,fileCnt) {
     while (elemInBody) {
       prevElemInBody=elemInBody.previousSibling
       myClonedNode2=elemInBody.parentNode.removeChild(elemInBody);
-      myBody.insertBefore(myClonedNode2,myBody.firstChild);
+      myBody.insertBefore(myClonedNode2,getFirstChildElement(myBody));
       elemInBody=prevElemInBody;
     }
     //удалим наружный раздел, если нужно
@@ -833,8 +849,10 @@ function saveOuterSectionsAsSeparateDocuments() {
    var tooShortTitlesCnt=0;
    for (var i=0; i<titles.length; i++) {
      myTitle=titles[i];
-     ps=myTitle.selectNodes("./fb:p");
-     if (ps.length<2) tooShortTitlesCnt++;
+     if (isItHighestLevelSection(myTitle)) {
+       ps=myTitle.selectNodes("./fb:p");
+       if (ps.length<2) tooShortTitlesCnt++;
+     }
    }
    if (tooShortTitlesCnt>0) {
     alert("     Некоторые из заголовков разделов верхнего уровня содержат в себе "+
