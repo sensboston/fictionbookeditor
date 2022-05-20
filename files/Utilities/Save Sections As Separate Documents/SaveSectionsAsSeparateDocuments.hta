@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <HTML>
 <HEAD>
-<TITLE>Save Sections As Separate Documents v5.2 (Old XML version) (автор Sclex)</TITLE>
+<TITLE>Save Sections As Separate Documents v5.3 (Old XML version) (автор Sclex)</TITLE>
 <HTA:APPLICATION ID="oHTA"/>
 <META http-equiv="Content-Type" content="text/html; charset=utf-8">
 <STYLE>
@@ -269,7 +269,11 @@ function fillInDescription(sectionTitle,xmlDoc) {
   
       if (authorFirstName!="" || authorMiddleName!="" || authorLastName!="") {
         var author=xmlDoc.createNode(1,"author",fictionBook.namespaceURI);
-        titleInfo.insertBefore(author,getNextElement(getFirstChildElement(titleInfo)));
+        var genres=titleInfo.selectNodes("./fb:genre");
+        if (!genres)
+          titleInfo.insertBefore(author,getNextElement(getFirstChildElement(titleInfo)));
+        else
+          titleInfo.insertBefore(author,getNextElement(genres[genres.length-1]));
         author=titleInfo.selectSingleNode("./fb:author");
     
         // отсюда идет новый код
@@ -282,9 +286,7 @@ function fillInDescription(sectionTitle,xmlDoc) {
         var middleNameElement=author.selectSingleNode("./fb:middle-name");
         if (!middleNameElement) {
           middleNameElement=xmlDoc.createNode(1,"middle-name",fictionBook.namespaceURI);
- //         alert(getOuterXML(firstNameElement));
-          var bbb=getNextElement(firstNameElement); 
-          author.insertBefore(middleNameElement,bbb);
+          author.insertBefore(middleNameElement,getNextElement(firstNameElement));
           middleNameElement=author.selectSingleNode("./fb:middle-name");
         }
         var lastNameElement=author.selectSingleNode("./fb:last-name");
@@ -315,12 +317,12 @@ function fillInDescription(sectionTitle,xmlDoc) {
   }
   authors=titleInfo.selectNodes("./fb:author");
   if (authors.length==0) {
-    var genres=titleInfo.selectNodes("./genre");
+    var genres=titleInfo.selectNodes("./fb:genre");
 
     author=xmlDoc.createNode(1,"author",fictionBook.namespaceURI);
     if (!genres)
       titleInfo.insertBefore(author,getNextElement(getFirstChildElement(titleInfo)));
-    else 
+    else
       titleInfo.insertBefore(author,getNextElement(genres[genres.length-1]));
     author=titleInfo.selectSingleNode("./fb:author");
 
