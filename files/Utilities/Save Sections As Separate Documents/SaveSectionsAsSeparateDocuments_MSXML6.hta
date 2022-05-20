@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <HTML>
 <HEAD>
-<TITLE>Save Sections As Separate Documents v5.3 (XML6 version) (автор Sclex)</TITLE>
+<TITLE>Save Sections As Separate Documents v5.4 (XML6 version) (автор Sclex)</TITLE>
 <HTA:APPLICATION ID="oHTA"/>
 <META http-equiv="Content-Type" content="text/html; charset=utf-8">
 <STYLE>
@@ -84,6 +84,10 @@ var secondResizeCall=false;
 var nbspRegExp=new RegExp("(&nbsp;| |"+String.fromCharCode(160)+")","g");
 
 document.onselectstart = function() { return false; }
+
+function removeNode(node1) {
+  return node1.parentNode.removeChild(node1);
+}
 
 function setListWidthAndHeight() {
   var newWidth=document.documentElement.clientWidth;
@@ -237,7 +241,7 @@ function fillInDescription(sectionTitle,xmlDoc) {
   if (document.getElementById("radio1").checked || document.getElementById("radio2").checked) {
     var authors=titleInfo.selectNodes("./fb:author");
     for (var i=authors.length-1;i>=0;i--)
-      authors[i].parentNode.removeChild(authors[i]);
+      removeNode(authors[i]);
   }
 
   if (authorArr && (document.getElementById("radio1").checked || document.getElementById("radio2").checked)) {
@@ -296,22 +300,22 @@ function fillInDescription(sectionTitle,xmlDoc) {
           lastNameElement=author.selectSingleNode("./fb:last-name");
         }
         while (firstNameElement.hasChildNodes)
-          firstNameElement.removeChild(firstNameElement.firstChild);
+          removeNode(firstNameElement.firstChild);
         firstNameElement.appendChild(xmlDoc.createTextNode(authorFirstName));
         while (middleNameElement.hasChildNodes)
-          middleNameElement.removeChild(middleNameElement.firstChild);
+          removeNode(middleNameElement.firstChild);
         middleNameElement.appendChild(xmlDoc.createTextNode(authorMiddleName));
         while (lastNameElement.hasChildNodes)
-          lastNameElement.removeChild(lastNameElement.firstChild);
+          removeNode(lastNameElement.firstChild);
         lastNameElement.appendChild(xmlDoc.createTextNode(authorLastName));
         var nicknameElement=author.selectSingleNode("./fb:nickname");
-        if (nicknameElement) nicknameElement.parentNode.removeChild(nicknameElement);
+        if (nicknameElement) removeNode(nicknameElement);
         var homepageElement=author.selectSingleNode("./fb:home-page");
-        if (homepageElement) homepageElement.parentNode.removeChild(homepageElement);
+        if (homepageElement) removeNode(homepageElement);
         var emailElement=author.selectSingleNode("./fb:email");
-        if (emailElement) emailElement.parentNode.removeChild(emailElement);
+        if (emailElement) removeNode(emailElement);
         var authorId=author.selectSingleNode("./fb:id");
-        if (authorId) authorId.parentNode.removeChild(authorId);
+        if (authorId) removeNode(authorId);
       }
     }
   }
@@ -348,7 +352,7 @@ function fillInDescription(sectionTitle,xmlDoc) {
   }
 
   while (bookTitleElement.hasChildNodes)
-    bookTitleElement.removeChild(bookTitleElement.firstChild);
+    removeNode(bookTitleElement.firstChild);
   bookTitle=bookTitle.replace(nbspRegExp," ");
   bookTitleElement.appendChild(xmlDoc.createTextNode(bookTitle));
 
@@ -381,7 +385,7 @@ function fillInDescription(sectionTitle,xmlDoc) {
     dateElement=documentInfo.selectSingleNode("./fb:date");
   } else
     while (dateElement.hasChildNodes)
-      dateElement.removeChild(dateElement.firstChild);
+      removeNode(dateElement.firstChild);
   dateElement.insertBefore(xmlDoc.createTextNode(dateStr2),null);
   dateElement.setAttribute("value",dateStr1);
 }
@@ -576,7 +580,7 @@ function saveOneSectionAsSeparateDocument(titleNum,fileCnt) {
     //alert("myBody: "+getOuterXML(myBody));
     myClonedNode=mySection.cloneNode(true);
     while (myBody.hasChildNodes)
-      myBody.removeChild(myBody.lastChild);
+      removeNode(myBody.lastChild);
     myBody.appendChild(myClonedNode);
     var outerSection=myBody.firstChild;
     while (outerSection.nodeName=="title")
@@ -595,7 +599,7 @@ function saveOneSectionAsSeparateDocument(titleNum,fileCnt) {
     //alert("elemInBody 2: "+getOuterXML(elemInBody));
     while (elemInBody) {
       prevElemInBody=elemInBody.previousSibling
-      myClonedNode2=elemInBody.parentNode.removeChild(elemInBody);
+      myClonedNode2=removeNode(elemInBody);
       myBody.insertBefore(myClonedNode2,getFirstChildElement(myBody));
       elemInBody=prevElemInBody;
     }
@@ -611,9 +615,9 @@ function saveOneSectionAsSeparateDocument(titleNum,fileCnt) {
         //alert("3. myClonedNode: \n\n"+getOuterXML(myClonedNode));
         myBody.insertBefore(myClonedNode,outerSection);
         //alert("4. myBody: \n\n"+getOuterXML(myBody));
-        outerSection.removeChild(outerSection.firstChild);
+        removeNode(outerSection.firstChild);
       }
-      myBody.removeChild(outerSection);
+      removeNode(outerSection);
     }
 
     var elemInBody2=myBody.firstChild;
@@ -644,7 +648,7 @@ function saveOneSectionAsSeparateDocument(titleNum,fileCnt) {
       for (i=bodies.length-1; i>=0; i--) {
         if (bodies[i]!=myBody && bodies[i].getAttribute("name")!="notes" && 
           bodies[i].getAttribute("name")!="comments")
-          bodies[i].parentNode.removeChild(bodies[i]);
+          removeNode(bodies[i]);
       }
       var links=xmlDoc.documentElement.selectNodes("//fb:a");
       for (j=0; j<links.length; j++) {
@@ -669,7 +673,7 @@ function saveOneSectionAsSeparateDocument(titleNum,fileCnt) {
               linksObj[sections[j].getAttribute("id").toLowerCase()]!=true))) {
            //alert("Удаляем раздел в notes body.");
            //removedStr+="\n\n===\n\n"+getOuterXML(sections[j]);
-           sections[j].parentNode.removeChild(sections[j]);
+           removeNode(sections[j]);
            removesCnt++;
            //removedCnt++;
          }
@@ -687,7 +691,7 @@ function saveOneSectionAsSeparateDocument(titleNum,fileCnt) {
              (sections[0].getAttribute("id") &&
               linksObj[sections[0].getAttribute("id").toLowerCase()]!=true)) {
            //alert("Удаляем корневой раздел в notes body.");
-           sections[0].parentNode.removeChild(sections[0]);
+           removeNode(sections[0]);
            removesCnt++;
         }
       }
@@ -696,7 +700,7 @@ function saveOneSectionAsSeparateDocument(titleNum,fileCnt) {
       for (j=notesBodies.length-1; j>=0; j--) {
         if (xmlDoc.documentElement.selectNodes('fb:body[@name="notes"]//fb:section').length==0) {
           //alert("Удаляем notes body.\n\n"+getOuterXML(notesBodies[j]));
-          notesBodies[j].parentNode.removeChild(notesBodies[j]);
+          removeNode(notesBodies[j]);
           removesCnt++;
        }
       }
@@ -710,7 +714,7 @@ function saveOneSectionAsSeparateDocument(titleNum,fileCnt) {
              (sections[j].getAttribute("id") &&
               linksObj[sections[j].getAttribute("id").toLowerCase()]!=true)) {
            //alert("Удаляем раздел в comments body.");
-           sections[j].parentNode.removeChild(sections[j]);
+           removeNode(sections[j]);
            removesCnt++;
          }
       }
@@ -723,7 +727,7 @@ function saveOneSectionAsSeparateDocument(titleNum,fileCnt) {
              (sections[0].getAttribute("id") &&
               linksObj[sections[0].getAttribute("id").toLowerCase()]!=true)) {
            //alert("Удаляем корневой раздел в comments body.\n\n"+getOuterXML(sections[0]));
-           sections[0].parentNode.removeChild(sections[0]);
+           removeNode(sections[0]);
            removesCnt++;
         }
       }
@@ -732,7 +736,7 @@ function saveOneSectionAsSeparateDocument(titleNum,fileCnt) {
       for (j=commentsBodies.length-1; j>=0; j--) {
         if (xmlDoc.documentElement.selectNodes('fb:body[@name="comments"]//fb:section').length==0) {
           //alerft("Удаляем comments body.\n\n"+getOuterXML(commentsBodies[j]));
-          commentsBodies[j].parentNode.removeChild(commentsBodies[j]);
+          removeNode(commentsBodies[j]);
           removesCnt++;
        }
       }
@@ -756,7 +760,7 @@ function saveOneSectionAsSeparateDocument(titleNum,fileCnt) {
     var binaries=xmlDoc.documentElement.selectNodes("//fb:binary");
     for (j=binaries.length-1; j>=0; j--) {
       if (binaries[j] && binaries[j].getAttribute("id") && imagesObj[binaries[j].getAttribute("id").toLowerCase()]!=true)
-        binaries[j].parentNode.removeChild(binaries[j]);
+        removeNode(binaries[j]);
     }
  
     var idNode=xmlDoc.selectSingleNode("/fb:FictionBook//fb:description//fb:document-info//fb:id");
