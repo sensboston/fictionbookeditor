@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <HTML>
 <HEAD>
-<TITLE>Save Sections As Separate Documents v5.4 (XML6 version) (автор Sclex)</TITLE>
+<TITLE>Save Sections As Separate Documents v5.5 (XML6 version) (автор Sclex)</TITLE>
 <HTA:APPLICATION ID="oHTA"/>
 <META http-equiv="Content-Type" content="text/html; charset=utf-8">
 <STYLE>
@@ -106,10 +106,10 @@ function setListWidthAndHeight() {
   else
     document.getElementById("elementList").style.width=(tableWidth+scrollbarWidth)+"px";
 // (650+newWidth-initialWindowWidth)+"px";
-  if (310+newHeight-initialWindowHeight>30 && 310+newHeight-initialWindowHeight<tableHeight)
-    document.getElementById("elementList").style.height=(310+newHeight-initialWindowHeight)+"px";
+  if (270+newHeight-initialWindowHeight>30 && 270+newHeight-initialWindowHeight<tableHeight)
+    document.getElementById("elementList").style.height=(270+newHeight-initialWindowHeight)+"px";
   else
-    document.getElementById("elementList").style.height="310px";
+    document.getElementById("elementList").style.height="270px";
 }
 
 function onWindowResize() {
@@ -215,6 +215,13 @@ function fillInDescription(sectionTitle,xmlDoc) {
 
   if (document.getElementById("radio3").checked) {
     bookTitle=titleParagraphs[0].xml.replace(/<\/?[^>]*>/g,"");
+  }
+
+  if (document.getElementById("radio4").checked) {
+    if (titleParagraphs.length>1)
+     bookTitle=titleParagraphs[1].xml.replace(/<\/?[^>]*>/g,"");
+   else
+     bookTitle=titleParagraphs[0].xml.replace(/<\/?[^>]*>/g,"");
   }
 
   var fictionBook=xmlDoc.selectSingleNode("//fb:FictionBook");
@@ -1376,7 +1383,6 @@ function applySettings() {
  document.getElementById("selectedInput").value=selectedElementsCnt;
  document.getElementById("counters").style.display="inline-block";
  document.getElementById("buttonsDiv").style.display="block";
- //window.resizeTo(800,670);
  getScrollBarWidthAndHeight();
  document.getElementById("elementList").style.display="inline-block";
  setListWidthAndHeight();
@@ -1386,7 +1392,7 @@ function applySettings() {
 
 </SCRIPT>
 </HEAD>
-<BODY style="font-family:tahoma; font-size:14px; padding:10px; margin:0; color:black; background-color:white;" onload="window.resizeTo(800,700); getInitialWindowSize(); getScrollBarWidthAndHeight();" onkeydown="myOnKeydown();" onresize="onWindowResize();">
+<BODY style="font-family:tahoma; font-size:14px; padding:10px; margin:0; color:black; background-color:white;" onload="window.resizeTo(800,710); getInitialWindowSize(); getScrollBarWidthAndHeight();" onkeydown="myOnKeydown();" onresize="onWindowResize();">
 <SPAN id=mouseCaptureSpan style="display:none;" onmousemove="capturedMouse();" onmouseout="capturedMouse();" onmouseup="capturedMouse();" onmouseover="capturedMouse();"></SPAN>
 <P style="text-align:center">Выберите fb2-файл:
 <br>
@@ -1396,7 +1402,7 @@ function applySettings() {
 <BR>
 </DIV>
 <DIV id=outerDiv style="text-align:center;">
-<DIV id=elementList style="width:650px; height:310px; padding:2px; overflow:scroll; border:2px #808080 solid; text-align:left; display:none;" onmousedown="myOnMouseDown();" ondblclick="myOnClick();">
+<DIV id=elementList style="width:650px; height:270px; padding:2px; overflow:scroll; border:2px #808080 solid; text-align:left; display:none;" onmousedown="myOnMouseDown();" ondblclick="myOnClick();">
 </DIV>
 </DIV>
 <DIV id=outerDiv2 style="text-align:center">
@@ -1414,6 +1420,8 @@ function applySettings() {
 <label for=radio2><input type=radio id=radio2 name=radiogroup1 style="width:30px; height:30px;"> первый абзац заголовка – название произведения, второй – автор(ы)</label>
 <br>
 <label for=radio3><input type=radio id=radio3 name=radiogroup1 style="width:30px; height:30px;"> первый абзац заголовка – название произведения (а авторов оставить из исходного документа)</label>
+<br>
+<label for=radio4><input type=radio id=radio4 name=radiogroup1 style="width:30px; height:30px;"> второй (либо единственный) абзац заголовка – название произведения (а авторов оставить из исходного документа)</label>
 </div>
 <br>
 <p style="text-align:center;"><INPUT type=button value="Сохранить выбранные разделы как отдельные документы" onclick="saveSectionsAsSeparateDocuments();" class=gray></p>
