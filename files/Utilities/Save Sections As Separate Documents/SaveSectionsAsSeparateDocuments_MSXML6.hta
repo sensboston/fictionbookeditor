@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <HTML>
 <HEAD>
-<TITLE>Save Sections As Separate Documents v5.6 (XML6 version) (автор Sclex)</TITLE>
+<TITLE>Save Sections As Separate Documents v5.7 (XML6 version) (автор Sclex)</TITLE>
 <HTA:APPLICATION ID="oHTA"/>
 <META http-equiv="Content-Type" content="text/html; charset=utf-8">
 <STYLE>
@@ -812,6 +812,10 @@ function getTime2() {
 function saveSectionsAsSeparateDocuments() {
  getTime1();
  sortElements();
+ if (sortedElementArray.length==0) {
+   alert("Ни один документ не был сохранен, так как в списке заголовков вы не выбрали ни один заголовок.");
+   return;
+ }
  var myElem5,ps;
  fileCnt=1;
  if (document.getElementById("radio1").checked || document.getElementById("radio2").checked) {
