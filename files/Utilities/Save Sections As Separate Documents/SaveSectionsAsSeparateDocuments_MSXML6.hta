@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <HTML>
 <HEAD>
-<TITLE>Save Sections As Separate Documents v5.5 (XML6 version) (автор Sclex)</TITLE>
+<TITLE>Save Sections As Separate Documents v5.6 (XML6 version) (автор Sclex)</TITLE>
 <HTA:APPLICATION ID="oHTA"/>
 <META http-equiv="Content-Type" content="text/html; charset=utf-8">
 <STYLE>
@@ -912,7 +912,7 @@ function selectElements(selectionBegin,selectionEnd) {
    evaledCurrN=eval(currN.substr(2));
   if (selectedElements[evaledCurrN]!=evaledCurrN)
    selectedElementsCnt++;
-  currElement.className="el_sel";
+  el.className="el_sel";
   //добавил элемент в список выделенных элементов:
   selectedElements[evaledCurrN]=evaledCurrN;
  }
@@ -924,13 +924,11 @@ function selectElements(selectionBegin,selectionEnd) {
  var selectionEndN=eval(selectionEnd.id.substr(2));
  var currElement=(selectionBeginN<selectionEndN)?selectionBegin:el;
  var endElement=(selectionBeginN<selectionEndN)?el:selectionBegin;
- while (currElement &&
-        (!currElement.previousSibling ||
-         (currElement.previousSibling && currElement.previousSibling!=endElement)
-        )
-       ) {
-  if (currElement.nodeName=="TD" && currElement.className.indexOf("el_")==0)
-   selectAnElement(currElement);
+ currElement=currElement.parentNode;
+ while (currElement && currElement.previousSibling!=endElement.parentNode) {
+  if (currElement.firstChild.className.indexOf("el_")==0) {
+   selectAnElement(currElement.firstChild);
+  }
   currElement=currElement.nextSibling;
  }
 }
@@ -1090,6 +1088,7 @@ function myOnClick() {
    selectedElementsCnt=1;
   }
   if (evaledOldN!=evaledN) {
+   //alert("selectionBegin: "+selectionBegin+"\n\n"+"el: "+el);
    selectElements(selectionBegin,el);
   }
  }
