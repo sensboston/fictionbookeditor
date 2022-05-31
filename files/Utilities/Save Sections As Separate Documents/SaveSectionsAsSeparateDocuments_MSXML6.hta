@@ -1,9 +1,10 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <HTML>
 <HEAD>
-<TITLE>Save Sections As Separate Documents v5.8 (XML6 version) (автор Sclex)</TITLE>
+<TITLE>Save Sections As Separate Documents v5.9 (XML6 version) (автор Sclex)</TITLE>
 <HTA:APPLICATION ID="oHTA"/>
 <META http-equiv="Content-Type" content="text/html; charset=utf-8">
+<META http-equiv="MSThemeCompatible" content="yes">
 <STYLE>
 /* css reset
 http://meyerweb.com/eric/tools/css/reset/ 
@@ -820,18 +821,27 @@ function saveSectionsAsSeparateDocuments() {
  fileCnt=1;
  if (document.getElementById("radio1").checked || document.getElementById("radio2").checked) {
    var tooShortTitlesCnt=0;
+   var htmlStr2="<TABLE><TBODY>";
    var titles=xmlDoc.documentElement.selectNodes("//fb:section/fb:title");
    for (nPtr=0;nPtr<sortedElementArray.length;nPtr++) {
      myTitle=titles[sortedElementArray[nPtr]-1];
      ps=myTitle.selectNodes("./fb:p");
-     if (ps.length<2) tooShortTitlesCnt++;
+     if (ps.length<2) {
+       tooShortTitlesCnt++;
+       htmlStr2+="<TR><TD><NOBR>"+getOuterXML(ps[0])+"</NOBR></TD></TR><TR><TD class=delim></TD></TR>";
+     }
    }
+   htmlStr2+="</TBODY></TABLE>";
    if (tooShortTitlesCnt>0) {
     alert("     Некоторые из выделенных вами заголовков содержат в себе менее двух абзацев, при "+
           "том, что выбран режим обработки, предполагающий, что заголовки выбранных для "+
           "сохранения разделов должны состоять как минимум из двух абзацев.\n\n"+
           "     Количество выделенных заголовков, содержащих менее двух абзацев: "+tooShortTitlesCnt+".\n\n"+
           "     Сохранение разделов как отдельные документы – не было произведено.");
+    var dialogWidth="700px";
+    var dialogHeight="640px";
+    var msgWindow = window.open("SSASD - show wrong titles.html",null,"height="+dialogHeight+",width="+dialogWidth+",status=no,toolbar=no,menubar=no,location=no,scrollbars=yes,resizable=yes");
+    msgWindow.document.body.innerHTML=htmlStr2;
     return;
    }
  }
