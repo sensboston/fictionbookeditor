@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <HTML>
 <HEAD>
-<TITLE>Save Sections As Separate Documents v5.9 (XML4 version) (автор Sclex)</TITLE>
+<TITLE>Save Sections As Separate Documents v6.0 (XML4 version) (автор Sclex)</TITLE>
 <HTA:APPLICATION ID="oHTA"/>
 <META http-equiv="Content-Type" content="text/html; charset=utf-8">
 <META http-equiv="MSThemeCompatible" content="yes">
@@ -821,17 +821,17 @@ function saveSectionsAsSeparateDocuments() {
  fileCnt=1;
  if (document.getElementById("radio1").checked || document.getElementById("radio2").checked) {
    var tooShortTitlesCnt=0;
-   var htmlStr2="<TABLE><TBODY>";
+   var htmlStr2="<DIV style='text-align:center;'><TABLE style='display:inline-block;'><TBODY>";
    var titles=xmlDoc.documentElement.selectNodes("//fb:section/fb:title");
    for (nPtr=0;nPtr<sortedElementArray.length;nPtr++) {
      myTitle=titles[sortedElementArray[nPtr]-1];
      ps=myTitle.selectNodes("./fb:p");
      if (ps.length<2) {
        tooShortTitlesCnt++;
-       htmlStr2+="<TR><TD><NOBR>"+getOuterXML(ps[0])+"</NOBR></TD></TR><TR><TD class=delim></TD></TR>";
+       htmlStr2+="<TR><TD><NOBR>"+xmlToHtml(getInnerXML(ps[0]))+"</NOBR></TD></TR><TR><TD class=delim></TD></TR>";
      }
    }
-   htmlStr2+="</TBODY></TABLE>";
+   htmlStr2+="</TBODY></TABLE></DIV>";
    if (tooShortTitlesCnt>0) {
     alert("     Некоторые из выделенных вами заголовков содержат в себе менее двух абзацев, при "+
           "том, что выбран режим обработки, предполагающий, что заголовки выбранных для "+
@@ -840,8 +840,9 @@ function saveSectionsAsSeparateDocuments() {
           "     Сохранение разделов как отдельные документы – не было произведено.");
     var dialogWidth="700px";
     var dialogHeight="640px";
-    var msgWindow = window.open("SSASD - show wrong titles.html",null,"height="+dialogHeight+",width="+dialogWidth+",status=no,toolbar=no,menubar=no,location=no,scrollbars=yes,resizable=yes");
+    var msgWindow = window.open("SSASD - Show Wrong Titles.html",null,"height="+dialogHeight+",width="+dialogWidth+",status=no,toolbar=no,menubar=no,location=no,scrollbars=yes,resizable=yes");
     msgWindow.document.body.innerHTML=htmlStr2;
+    msgWindow.focus();
     return;
    }
  }
@@ -1375,7 +1376,7 @@ function applySettings() {
  for (i=0; i<myAttrs.length; i++)
    if (myAttrs[i].name.indexOf("xmlns:")==0)
      ns=myAttrs[i].name.replace(/^xmlns:/i,"");
- var htmlStr="<TABLE style='margin: 0 auth;' id=elementListTable><TBODY>";
+ var htmlStr="<TABLE style='margin: 0 auto;' id=elementListTable><TBODY>";
  var nCnt=0;
  myLinks={};
  var titleCode;
