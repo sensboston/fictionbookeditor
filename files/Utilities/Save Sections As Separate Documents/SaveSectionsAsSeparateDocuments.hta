@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <HTML>
 <HEAD>
-<TITLE>Save Sections As Separate Documents v6.0 (Old XML version) (автор Sclex)</TITLE>
+<TITLE>Save Sections As Separate Documents v6.1 (Old XML version) (автор Sclex)</TITLE>
 <HTA:APPLICATION ID="oHTA"/>
 <META http-equiv="Content-Type" content="text/html; charset=utf-8">
 <META http-equiv="MSThemeCompatible" content="yes">
@@ -840,7 +840,7 @@ function saveSectionsAsSeparateDocuments() {
           "     Сохранение разделов как отдельные документы – не было произведено.");
     var dialogWidth="700px";
     var dialogHeight="640px";
-    var msgWindow = window.open("SSASD - Show Wrong Titles.html",null,"height="+dialogHeight+",width="+dialogWidth+",status=no,toolbar=no,menubar=no,location=no,scrollbars=yes,resizable=yes");
+    var msgWindow = window.open("SSASD - Show Wrong Titles.html","_blank","height="+dialogHeight+",width="+dialogWidth+",status=no,toolbar=no,menubar=no,location=no,scrollbars=yes,resizable=yes");
     msgWindow.document.body.innerHTML=htmlStr2;
     msgWindow.focus();
     return;
