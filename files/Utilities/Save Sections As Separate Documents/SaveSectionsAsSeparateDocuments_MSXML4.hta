@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <HTML>
 <HEAD>
-<TITLE>Save Sections As Separate Documents v6.1 (XML4 version) (автор Sclex)</TITLE>
+<TITLE>Save Sections As Separate Documents v6.2 (XML4 version) (автор Sclex)</TITLE>
 <HTA:APPLICATION ID="oHTA"/>
 <META http-equiv="Content-Type" content="text/html; charset=utf-8">
 <META http-equiv="MSThemeCompatible" content="yes">
@@ -821,23 +821,29 @@ function saveSectionsAsSeparateDocuments() {
  fileCnt=1;
  if (document.getElementById("radio1").checked || document.getElementById("radio2").checked) {
    var tooShortTitlesCnt=0;
-   var htmlStr2="<DIV style='text-align:center;'><TABLE style='display:inline-block;'><TBODY>";
+   var htmlStr2="<DIV style='text-align:center;'><TABLE style='display:inline-block; border:2px solid black;'><TBODY>";
    var titles=xmlDoc.documentElement.selectNodes("//fb:section/fb:title");
+   var itIsFirstTitle=true;
    for (nPtr=0;nPtr<sortedElementArray.length;nPtr++) {
      myTitle=titles[sortedElementArray[nPtr]-1];
      ps=myTitle.selectNodes("./fb:p");
      if (ps.length<2) {
        tooShortTitlesCnt++;
-       htmlStr2+="<TR><TD><NOBR>"+xmlToHtml(getInnerXML(ps[0]))+"</NOBR></TD></TR><TR><TD class=delim></TD></TR>";
+       if (itIsFirstTitle) itIsFirstTitle=false;
+       else htmlStr2+="<TR><TD class=delim></TD></TR>";
+       htmlStr2+="<TR><TD style='padding-left:3px; padding-right:3px;'><NOBR>"+xmlToHtml(getInnerXML(ps[0]))+"</NOBR></TD></TR>";
      }
    }
+   htmlStr2="<DIV style='width:670px; font-size:16px; text-align:center; margin:0 auto;'><H1>Одноабзацные заголовки, которые должны быть как минимум двухабзацными</H1><BR>"+
+             "<P style='font-size:16px;'>Нижеуказанные заголовки ("+tooShortTitlesCnt+" шт.) являются одноабзацными.</P><BR>"+
+            "<P style='font-size:16px;'>Для создания отдельных документов в режимах \"Автор+название\" или \"Название+автор\" их (заголовки) нужно предварительно сделать двухабзацными.</P><BR></DIV>"+htmlStr2;
    htmlStr2+="</TBODY></TABLE></DIV>";
    if (tooShortTitlesCnt>0) {
-    alert("     Некоторые из выделенных вами заголовков содержат в себе менее двух абзацев, при "+
-          "том, что выбран режим обработки, предполагающий, что заголовки выбранных для "+
-          "сохранения разделов должны состоять как минимум из двух абзацев.\n\n"+
-          "     Количество выделенных заголовков, содержащих менее двух абзацев: "+tooShortTitlesCnt+".\n\n"+
-          "     Сохранение разделов как отдельные документы – не было произведено.");
+//    alert("     Некоторые из выделенных вами заголовков содержат в себе менее двух абзацев, при "+
+//          "том, что выбран режим обработки, предполагающий, что заголовки выбранных для "+
+//          "сохранения разделов должны состоять как минимум из двух абзацев.\n\n"+
+//          "     Количество выделенных заголовков, содержащих менее двух абзацев: "+tooShortTitlesCnt+".\n\n"+
+//          "     Сохранение разделов как отдельные документы – не было произведено.");
     var dialogWidth="700px";
     var dialogHeight="640px";
     var msgWindow = window.open("SSASD - Show Wrong Titles.html","_blank","height="+dialogHeight+",width="+dialogWidth+",status=no,toolbar=no,menubar=no,location=no,scrollbars=yes,resizable=yes");
@@ -886,21 +892,37 @@ function saveOuterSectionsAsSeparateDocuments() {
  var titles=xmlDoc.documentElement.selectNodes("//fb:section/fb:title");
  if (document.getElementById("radio1").checked || document.getElementById("radio2").checked) {
    var tooShortTitlesCnt=0;
+   var htmlStr2="<DIV style='text-align:center;'><TABLE style='display:inline-block; border:2px solid black;'><TBODY>";
+   var itIsFirstTitle=true;
    for (var i=0; i<titles.length; i++) {
      myTitle=titles[i];
      if (isItHighestLevelSection(myTitle) && !itIsInNotesOrCommentsBody(myTitle)) {
        //alert("myTitle: "+getOuterXML(myTitle));
        ps=myTitle.selectNodes("./fb:p");
-       if (ps.length<2) tooShortTitlesCnt++;
+       if (ps.length<2) {
+         tooShortTitlesCnt++;
+         if (itIsFirstTitle) itIsFirstTitle=false;
+         else htmlStr2+="<TR><TD class=delim></TD></TR>";
+         htmlStr2+="<TR><TD style='padding-left:3px; padding-right:3px;'><NOBR>"+xmlToHtml(getInnerXML(ps[0]))+"</NOBR></TD></TR>";
+       }
      }
    }
+   htmlStr2="<DIV style='width:670px; font-size:16px; text-align:center; margin:0 auto;'><H1>Одноабзацные заголовки, которые должны быть как минимум двухабзацными</H1><BR>"+
+             "<P style='font-size:16px;'>Нижеуказанные заголовки ("+tooShortTitlesCnt+" шт.) являются одноабзацными.</P><BR>"+
+            "<P style='font-size:16px;'>Для создания отдельных документов в режимах \"Автор+название\" или \"Название+автор\" их (заголовки) нужно предварительно сделать двухабзацными.</P><BR></DIV>"+htmlStr2;
+   htmlStr2+="</TBODY></TABLE></DIV>";
    if (tooShortTitlesCnt>0) {
-    alert("     Некоторые из заголовков разделов верхнего уровня содержат в себе "+
-          "менее двух абзацев, при том, что выбран режим обработки, предполагающий, "+
-          "что заголовки подлежащих сохранению разделов должны состоять как минимум "+
-          "из двух абзацев.\n\n"+
-          "     Количество выделенных заголовков, содержащих менее двух абзацев: "+tooShortTitlesCnt+".\n\n"+
-          "     Сохранение разделов как отдельные документы – не было произведено.");
+//    alert("     Некоторые из заголовков разделов верхнего уровня содержат в себе "+
+//          "менее двух абзацев, при том, что выбран режим обработки, предполагающий, "+
+//          "что заголовки подлежащих сохранению разделов должны состоять как минимум "+
+//          "из двух абзацев.\n\n"+
+//          "     Количество выделенных заголовков, содержащих менее двух абзацев: "+tooShortTitlesCnt+".\n\n"+
+//          "     Сохранение разделов как отдельные документы – не было произведено.");
+    var dialogWidth="700px";
+    var dialogHeight="640px";
+    var msgWindow = window.open("SSASD - Show Wrong Titles.html","_blank","height="+dialogHeight+",width="+dialogWidth+",status=no,toolbar=no,menubar=no,location=no,scrollbars=yes,resizable=yes");
+    msgWindow.document.body.innerHTML=htmlStr2;
+    msgWindow.focus();
     return;
    }
  }
