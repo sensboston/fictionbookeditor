@@ -55,7 +55,7 @@
     '  return s.replace(/&/gi,"&amp;").replace(/</gi,"&lt;").replace(/>/gi,"&gt;");'+
     ' }');
    myWin.eval(
-    ' function contains1stPMarker(myInnerHTML) {'+
+    ' function containsRefMarker(myInnerHTML) {'+
     '  myIndex1=myInnerHTML.replace(removeAllTagsRegExp,"").indexOf(refMarkerStr);'+
 //    '  alert("myInnerHTML: "+myInnerHTML+"   myIndex1: "+myIndex1);'+
     '  if (myIndex1==-1) return false;'+
@@ -440,19 +440,22 @@
     '  removeAllTagsRegExp=new RegExp("<\\/?[a-z]+( [^>]+)?>","ig");'+
 //    '  alert("a: "+pInnerHTML.replace(removeAllTagsRegExp,""));'+
     '  if (interpretAsRegExp) refMarkerRegExp.lastIndex=0;'+
-    '  if (interpretAsRegExp && matchNotFromBeginning) refMarkerRegExp.exec(pInnerHTML.replace(removeAllTagsRegExp,""));'+
+    '  if (interpretAsRegExp && matchNotFromBeginning && pInnerHTML.replace(removeAllTagsRegExp,"").search(refMarkerRegExp)==0) refMarkerRegExp.exec(pInnerHTML.replace(removeAllTagsRegExp,""));'+
+    '  var firstRefMarker=true;'+
     '  while (interpretAsRegExp ? (p.innerText.indexOf("#")!=0 && refMarkerRegExp.test(pInnerHTML.replace(removeAllTagsRegExp,""))) : '+
-    '    contains1stPMarker(pInnerHTML)) {'+
+    '    containsRefMarker(pInnerHTML)) {'+
 //    '   alert("Внутри уайла получаем такой pInnerHTML:\\n\\n"+pInnerHTML);'+
     '   if (interpretAsRegExp) {'+
     '    refMarkerRegExp.lastIndex=0;'+
-    '    if (matchNotFromBeginning) refMarkerRegExp.exec(pInnerHTML.replace(removeAllTagsRegExp,""));'+
+    '    if (matchNotFromBeginning && pInnerHTML.replace(removeAllTagsRegExp,"").search(refMarkerRegExp)==0)  {'+           
+    '      refMarkerRegExp.lastIndex=0;'+
+    '      refMarkerRegExp.exec(pInnerHTML.replace(removeAllTagsRegExp,""));'+
+    '    }'+
 //    '    alert("Искать будем вот по чем:\\n\\n"+pInnerHTML.replace(removeAllTagsRegExp,""));'+
     '    srchResult=refMarkerRegExp.exec(pInnerHTML.replace(removeAllTagsRegExp,""));'+
     '    myPos=srchResult.index;'+
     '    matchLen=srchResult[0].length;'+
     '    refMarkerRegExp.lastIndex=0;'+
-    '    if (matchNotFromBeginning) refMarkerRegExp.exec(pInnerHTML.replace(removeAllTagsRegExp,""));'+
     '   }'+
     '   else {'+
     '    myPos=pInnerHTML.replace(removeAllTagsRegExp,"").indexOf(refMarkerStr);'+
@@ -470,7 +473,7 @@
     '   rndm3=Math.round(Math.random()*100000).toString();'+
     '   while(document.getElementById("tmpId_"+rndm3))'+
     '    rndm3=Math.round(Math.random()*100000).toString();'+
-    '   if (checkResult) {'+
+    '   if (checkResult || (matchNotFromBeginning && myPos==0)) {'+
     '    pInnerHTML=removeSymbolsBeyondTags(pInnerHTML,myPos+1,matchLen,"RReeffMMaarrkkeerrSSttrr");'+
     '    continue;'+
     '   }'+
@@ -550,7 +553,7 @@
     '   }'+ // конец else if (previousNote=="Нет предыдущей ссылки.")
 //    '   alert("previousNoteHref:\\n\\n"+previousNoteHref);'+
     '   if (interpretAsRegExp) refMarkerRegExp.lastIndex=0;'+
-    '   if (interpretAsRegExp && matchNotFromBeginning) refMarkerRegExp.exec(pInnerHTML.replace(removeAllTagsRegExp,""));'+
+    '   if (interpretAsRegExp && matchNotFromBeginning && pInnerHTML.replace(removeAllTagsRegExp,"").search(refMarkerRegExp)==0) refMarkerRegExp.exec(pInnerHTML.replace(removeAllTagsRegExp,""));'+
     '  }'+ // конец цикла while (pInnerHTML.replace(removeAllTagsRegExp,"").indexOf(refMarkerStr)>=0)
     '  p.innerHTML=pInnerHTML.replace(/RReeffMMaarrkkeerrSSttrr/g,refMarkerStr);'+
 //    '  alert("вышли из processp_2");'+
@@ -575,28 +578,31 @@
 //    '  refMarkerRegExp.lastIndex=0;'+
 //    '  alert("Вот мы перед ифом.\\n\\ninterpretAsRegExp: "+interpretAsRegExp+"\\n\\n"+refMarkerRegExp.test(pInnerHTML));'+
     '  if (interpretAsRegExp) refMarkerRegExp.lastIndex=0;'+
-    '  if (interpretAsRegExp && matchNotFromBeginning) refMarkerRegExp.exec(pInnerHTML.replace(removeAllTagsRegExp,""));'+
     '  if (interpretAsRegExp ? refMarkerRegExp.test(pInnerHTML) :'+
-    '      contains1stPMarker(pInnerHTML)) {'+
+    '      containsRefMarker(pInnerHTML)) {'+
     '   if (interpretAsRegExp) refMarkerRegExp.lastIndex=0;'+
-    '   if (interpretAsRegExp && matchNotFromBeginning) refMarkerRegExp.exec(pInnerHTML);'+
+//  '   alert("внутри ифа.");'+
+    '   if (interpretAsRegExp && matchNotFromBeginning && pInnerHTML.replace(removeAllTagsRegExp,"").search(refMarkerRegExp)==0) {'+
+    '     refMarkerRegExp.lastIndex=0;'+
+    '     refMarkerRegExp.exec(pInnerHTML);'+
+    '   }'+
     '   var firstRefMarker=true;'+
-//    '   alert("contains1stPMarker(pInnerHTML) 2: "+contains1stPMarker(pInnerHTML));'+
+//  '   alert("перед уайлом.");'+
+//    '   alert("containsRefMarker(pInnerHTML) 2: "+containsRefMarker(pInnerHTML));'+
     '   while (interpretAsRegExp ? refMarkerRegExp.test(pInnerHTML) :'+
-    '          contains1stPMarker(pInnerHTML)) {'+
+    '          containsRefMarker(pInnerHTML)) {'+
 //    '    alert("pInnerHTML2:\\n\\n"+pInnerHTML2+"\\n\\nsymbolsBefore+pInnerHTML.indexOf(refMarkerStr): "+(symbolsBefore+pInnerHTML.indexOf(refMarkerStr))+"\\n\\nrefMarkerStrLen: "+refMarkerStrLen+"\\n\\nCheck вот такой: "+checkIfTagsAreInFoundSubstr(pInnerHTML2,symbolsBefore+pInnerHTML.indexOf(refMarkerStr)+1,refMarkerStrLen));'+
-
     '    if (interpretAsRegExp) {'+
     '     refMarkerRegExp.lastIndex=0;'+
-    '     if (firstRefMarker && matchNotFromBeginning) {'+
-    '      refMarkerRegExp.exec(pInnerHTML);'+
-    '      firstRefMarker=false;'+
+    '     if (matchNotFromBeginning && pInnerHTML.replace(removeAllTagsRegExp,"").search(refMarkerRegExp)==0) {'+
+    '      refMarkerRegExp.lastIndex=0;'+
+    '      refMarkerRegExp.exec(pInnerHTML.replace(removeAllTagsRegExp,""));'+
     '     }'+
     '     srchResult=refMarkerRegExp.exec(pInnerHTML);'+
     '     myPos2=srchResult.index;'+
     '     matchLen=srchResult[0].length;'+
     '     refMarkerRegExp.lastIndex=0;'+
-    '     if (matchNotFromBeginning) refMarkerRegExp.exec(pInnerHTML);'+
+    '     if (matchNotFromBeginning && pInnerHTML.replace(removeAllTagsRegExp,"").search(refMarkerRegExp)==0) refMarkerRegExp.exec(pInnerHTML);'+
 //    '     alert("myPos2: "+myPos2+"\\n\\nНайдено: "+srchResult[0]);'+
     '    }'+
     '    else {'+
@@ -610,7 +616,8 @@
     '     }'+
     '     matchLen=refMarkerStrLen;'+
     '    }'+
-    '    if (!checkIfTagsAreInFoundSubstr(pInnerHTML2,symbolsBefore+myPos2+1,matchLen))'+
+    '    if (!checkIfTagsAreInFoundSubstr(pInnerHTML2,symbolsBefore+myPos2+1,matchLen) &&'+
+    '       !(matchNotFromBeginning && myPos2==0))'+
     '     refMarkersCnt++;'+
     '    symbolsBefore+=myPos2+matchLen;'+
     '    pInnerHTML=pInnerHTML.substr(myPos2+matchLen);'+
