@@ -55,6 +55,12 @@
     '  return s.replace(/&/gi,"&amp;").replace(/</gi,"&lt;").replace(/>/gi,"&gt;");'+
     ' }');
    myWin.eval(
+    ' function contains1stPMarker(myInnerHTML) {'+
+    '  if (matchNotFromBeginning) '+
+    '    return myInnerHTML.replace(removeAllTagsRegExp,"").indexOf(refMarkerStr)>0;'+
+    '  return myInnerHTML.replace(removeAllTagsRegExp,"").indexOf(refMarkerStr)>=0;'+
+    ' }');
+   myWin.eval(
     ' function removeSourceNodes() {'+
     '  for (var i=0; i<nodesToRemove.length; i++) {'+
     '   while (nodesToRemove[i].previousSibling && nodesToRemove[i].previousSibling.nodeName=="P" && '+
@@ -433,7 +439,7 @@
     '  if (interpretAsRegExp) refMarkerRegExp.lastIndex=0;'+
     '  if (interpretAsRegExp && matchNotFromBeginning) refMarkerRegExp.lastIndex=1;'+
     '  while (interpretAsRegExp ? (p.innerText.indexOf("#")!=0 && refMarkerRegExp.test(pInnerHTML.replace(removeAllTagsRegExp,""))) : '+
-    '    pInnerHTML.replace(removeAllTagsRegExp,"").indexOf(refMarkerStr)>=0) {'+
+    '    contains1stPMarker(pInnerHTML)) {'+
 //    '   alert("Внутри уайла получаем такой pInnerHTML:\\n\\n"+pInnerHTML);'+
     '   if (interpretAsRegExp) {'+
     '    refMarkerRegExp.lastIndex=0;'+
@@ -447,6 +453,8 @@
     '   }'+
     '   else {'+
     '    myPos=pInnerHTML.replace(removeAllTagsRegExp,"").indexOf(refMarkerStr);'+
+    '    if (matchNotFromBeginning) '+
+    '     myPos=refMarkerStr.length+pInnerHTML.replace(removeAllTagsRegExp,"").replace(new RegExp("^.{"+refMarkerStr.length+"}"),"").indexOf(refMarkerStr);'+
     '    matchLen=refMarkerStr.length;'+
     '   }'+
 //    '   alert("myPos: "+myPos+"\\n\\npInnerHTML:\\n\\n"+ pInnerHTML+ "\\n\\nrefMarkerStr:\\n\\n"+refMarkerStr+"\\n\\nrefMarkerStrLen: "+refMarkerStrLen+"\\n\\n"+'+
@@ -566,11 +574,11 @@
     '  if (interpretAsRegExp) refMarkerRegExp.lastIndex=0;'+
     '  if (interpretAsRegExp && matchNotFromBeginning) refMarkerRegExp.lastIndex=1;'+
     '  if (interpretAsRegExp ? refMarkerRegExp.test(pInnerHTML) :'+
-    '      pInnerHTML.indexOf(refMarkerStr)>=0) {'+
+    '      contains1stPMarker(pInnerHTML)) {'+
     '   if (interpretAsRegExp) refMarkerRegExp.lastIndex=0;'+
     '   if (interpretAsRegExp && matchNotFromBeginning) refMarkerRegExp.lastIndex=1;'+
     '   while (interpretAsRegExp ? refMarkerRegExp.test(pInnerHTML) :'+
-    '          pInnerHTML.indexOf(refMarkerStr)>0) {'+
+    '          contains1stPMarker(pInnerHTML)) {'+
 //    '    alert("pInnerHTML2:\\n\\n"+pInnerHTML2+"\\n\\nsymbolsBefore+pInnerHTML.indexOf(refMarkerStr): "+(symbolsBefore+pInnerHTML.indexOf(refMarkerStr))+"\\n\\nrefMarkerStrLen: "+refMarkerStrLen+"\\n\\nCheck вот такой: "+checkIfTagsAreInFoundSubstr(pInnerHTML2,symbolsBefore+pInnerHTML.indexOf(refMarkerStr)+1,refMarkerStrLen));'+
 
     '    if (interpretAsRegExp) {'+
