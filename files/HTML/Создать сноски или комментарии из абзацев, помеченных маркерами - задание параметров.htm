@@ -56,13 +56,12 @@
     ' }');
    myWin.eval(
     ' function contains1stPMarker(myInnerHTML) {'+
-    '  if (!matchNotFromBeginning) '+
-    '    return (myInnerHTML.replace(removeAllTagsRegExp,"").indexOf(refMarkerStr))>=0;'+
-    '  myIndex1=(myInnerHTML.replace(removeAllTagsRegExp,"").indexOf(refMarkerStr));'+
+    '  myIndex1=myInnerHTML.replace(removeAllTagsRegExp,"").indexOf(refMarkerStr);'+
+//    '  alert("myInnerHTML: "+myInnerHTML+"   myIndex1: "+myIndex1);'+
     '  if (myIndex1==-1) return false;'+
     '  if (myIndex1>0) return true;'+
 //    '  alert(myInnerHTML+"\n\nВозвращаем "+myInnerHTML.replace(removeAllTagsRegExp,"").substr(refMarkerStr).indexOf(refMarkerStr)>=0);'+
-    '  return myInnerHTML.replace(removeAllTagsRegExp,"").substr(refMarkerStr).indexOf(refMarkerStr)>=0;'+
+    '  return myInnerHTML.replace(removeAllTagsRegExp,"").substr(refMarkerStr.length).indexOf(refMarkerStr)>=0;'+
     ' }');
    myWin.eval(
     ' function removeSourceNodes() {'+
@@ -454,7 +453,7 @@
     '   }'+
     '   else {'+
     '    myPos=pInnerHTML.replace(removeAllTagsRegExp,"").indexOf(refMarkerStr);'+
-    '    if (matchNotFromBeginning) '+
+    '    if (matchNotFromBeginning && myPos==0) '+
     '     myPos=refMarkerStr.length+pInnerHTML.replace(removeAllTagsRegExp,"").substr(refMarkerStr.length).indexOf(refMarkerStr);'+
     '    matchLen=refMarkerStr.length;'+
     '   }'+
@@ -605,7 +604,6 @@
     '    pInnerHTML=pInnerHTML.substr(myPos2+matchLen);'+
 //    '    alert("В pInnerHTML теперь:\\n\\n"+pInnerHTML);'+
     '    if (interpretAsRegExp) refMarkerRegExp.lastIndex=0;'+
-    '      alert(pInnerHTML);'+
 //    '    alert("pInnerHTML в конце итерации:\n\n"+pInnerHTML);'+
     '   }'+
     '  }'+
