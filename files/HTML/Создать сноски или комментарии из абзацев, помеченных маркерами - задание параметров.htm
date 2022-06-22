@@ -26,7 +26,7 @@
     ' var notesTexts={};'+
     ' var targetBody=null;'+
     ' var nodesToRemove;'+
-    ' var refMarkersCnt;'+
+    ' var refMarkersCnt,myIndex1,myIndex2;'+
     ' var searchOnlyBeforeSelection=true;'+
     ' var blockStartParagraph=null;'+
     ' var fbwBody,refMarkerStr,BlockStartNode,BlockEndNode,starsAtBeginLen,matches1;'+
@@ -56,9 +56,13 @@
     ' }');
    myWin.eval(
     ' function contains1stPMarker(myInnerHTML) {'+
-    '  if (matchNotFromBeginning) '+
-    '    return myInnerHTML.replace(removeAllTagsRegExp,"").indexOf(refMarkerStr)>0;'+
-    '  return myInnerHTML.replace(removeAllTagsRegExp,"").indexOf(refMarkerStr)>=0;'+
+    '  if (!matchNotFromBeginning) '+
+    '    return (myInnerHTML.replace(removeAllTagsRegExp,"").indexOf(refMarkerStr))>=0;'+
+    '  myIndex1=(myInnerHTML.replace(removeAllTagsRegExp,"").indexOf(refMarkerStr));'+
+    '  if (myIndex1==-1) return false;'+
+    '  if (myIndex1>0) return true;'+
+//    '  alert(myInnerHTML+"\n\nВозвращаем "+myInnerHTML.replace(removeAllTagsRegExp,"").substr(refMarkerStr).indexOf(refMarkerStr)>=0);'+
+    '  return myInnerHTML.replace(removeAllTagsRegExp,"").substr(refMarkerStr).indexOf(refMarkerStr)>=0;'+
     ' }');
    myWin.eval(
     ' function removeSourceNodes() {'+
@@ -437,24 +441,21 @@
     '  removeAllTagsRegExp=new RegExp("<\\/?[a-z]+( [^>]+)?>","ig");'+
 //    '  alert("a: "+pInnerHTML.replace(removeAllTagsRegExp,""));'+
     '  if (interpretAsRegExp) refMarkerRegExp.lastIndex=0;'+
-    '  if (interpretAsRegExp && matchNotFromBeginning) refMarkerRegExp.lastIndex=1;'+
     '  while (interpretAsRegExp ? (p.innerText.indexOf("#")!=0 && refMarkerRegExp.test(pInnerHTML.replace(removeAllTagsRegExp,""))) : '+
     '    contains1stPMarker(pInnerHTML)) {'+
 //    '   alert("Внутри уайла получаем такой pInnerHTML:\\n\\n"+pInnerHTML);'+
     '   if (interpretAsRegExp) {'+
     '    refMarkerRegExp.lastIndex=0;'+
-    '    if (matchNotFromBeginning) refMarkerRegExp.lastIndex=1;'+
 //    '    alert("Искать будем вот по чем:\\n\\n"+pInnerHTML.replace(removeAllTagsRegExp,""));'+
     '    srchResult=refMarkerRegExp.exec(pInnerHTML.replace(removeAllTagsRegExp,""));'+
     '    myPos=srchResult.index;'+
     '    matchLen=srchResult[0].length;'+
     '    refMarkerRegExp.lastIndex=0;'+
-    '    if (matchNotFromBeginning) refMarkerRegExp.lastIndex=1;'+
     '   }'+
     '   else {'+
     '    myPos=pInnerHTML.replace(removeAllTagsRegExp,"").indexOf(refMarkerStr);'+
     '    if (matchNotFromBeginning) '+
-    '     myPos=refMarkerStr.length+pInnerHTML.replace(removeAllTagsRegExp,"").replace(new RegExp("^.{"+refMarkerStr.length+"}"),"").indexOf(refMarkerStr);'+
+    '     myPos=refMarkerStr.length+pInnerHTML.replace(removeAllTagsRegExp,"").substr(refMarkerStr.length).indexOf(refMarkerStr);'+
     '    matchLen=refMarkerStr.length;'+
     '   }'+
 //    '   alert("myPos: "+myPos+"\\n\\npInnerHTML:\\n\\n"+ pInnerHTML+ "\\n\\nrefMarkerStr:\\n\\n"+refMarkerStr+"\\n\\nrefMarkerStrLen: "+refMarkerStrLen+"\\n\\n"+'+
@@ -547,7 +548,6 @@
     '   }'+ // конец else if (previousNote=="Нет предыдущей ссылки.")
 //    '   alert("previousNoteHref:\\n\\n"+previousNoteHref);'+
     '   if (interpretAsRegExp) refMarkerRegExp.lastIndex=0;'+
-    '   if (interpretAsRegExp && matchNotFromBeginning) refMarkerRegExp.lastIndex=1;'+
     '  }'+ // конец цикла while (pInnerHTML.replace(removeAllTagsRegExp,"").indexOf(refMarkerStr)>=0)
     '  p.innerHTML=pInnerHTML.replace(/RReeffMMaarrkkeerrSSttrr/g,refMarkerStr);'+
 //    '  alert("вышли из processp_2");'+
@@ -572,27 +572,31 @@
 //    '  refMarkerRegExp.lastIndex=0;'+
 //    '  alert("Вот мы перед ифом.\\n\\ninterpretAsRegExp: "+interpretAsRegExp+"\\n\\n"+refMarkerRegExp.test(pInnerHTML));'+
     '  if (interpretAsRegExp) refMarkerRegExp.lastIndex=0;'+
-    '  if (interpretAsRegExp && matchNotFromBeginning) refMarkerRegExp.lastIndex=1;'+
     '  if (interpretAsRegExp ? refMarkerRegExp.test(pInnerHTML) :'+
     '      contains1stPMarker(pInnerHTML)) {'+
     '   if (interpretAsRegExp) refMarkerRegExp.lastIndex=0;'+
-    '   if (interpretAsRegExp && matchNotFromBeginning) refMarkerRegExp.lastIndex=1;'+
+//    '   alert("contains1stPMarker(pInnerHTML) 2: "+contains1stPMarker(pInnerHTML));'+
     '   while (interpretAsRegExp ? refMarkerRegExp.test(pInnerHTML) :'+
     '          contains1stPMarker(pInnerHTML)) {'+
 //    '    alert("pInnerHTML2:\\n\\n"+pInnerHTML2+"\\n\\nsymbolsBefore+pInnerHTML.indexOf(refMarkerStr): "+(symbolsBefore+pInnerHTML.indexOf(refMarkerStr))+"\\n\\nrefMarkerStrLen: "+refMarkerStrLen+"\\n\\nCheck вот такой: "+checkIfTagsAreInFoundSubstr(pInnerHTML2,symbolsBefore+pInnerHTML.indexOf(refMarkerStr)+1,refMarkerStrLen));'+
 
     '    if (interpretAsRegExp) {'+
     '     refMarkerRegExp.lastIndex=0;'+
-    '     if (matchNotFromBeginning) refMarkerRegExp.lastIndex=1;'+
     '     srchResult=refMarkerRegExp.exec(pInnerHTML);'+
     '     myPos2=srchResult.index;'+
     '     matchLen=srchResult[0].length;'+
     '     refMarkerRegExp.lastIndex=0;'+
-    '     if (matchNotFromBeginning) refMarkerRegExp.lastIndex=1;'+
 //    '     alert("myPos2: "+myPos2+"\\n\\nНайдено: "+srchResult[0]);'+
     '    }'+
     '    else {'+
     '     myPos2=pInnerHTML.indexOf(refMarkerStr);'+
+    '     if (matchNotFromBeginning) {'+
+    '        myIndex2=pInnerHTML.replace(removeAllTagsRegExp,"").indexOf(refMarkerStr);'+
+    '       if (myIndex2==0)'+
+    '         myPos2=refMarkerStr.length+pInnerHTML.replace(removeAllTagsRegExp,"").substr(refMarkerStr.length).indexOf(refMarkerStr);'+
+    '       else'+
+    '         myPos2=myIndex2;'+
+    '     }'+
     '     matchLen=refMarkerStrLen;'+
     '    }'+
     '    if (!checkIfTagsAreInFoundSubstr(pInnerHTML2,symbolsBefore+myPos2+1,matchLen))'+
@@ -601,7 +605,8 @@
     '    pInnerHTML=pInnerHTML.substr(myPos2+matchLen);'+
 //    '    alert("В pInnerHTML теперь:\\n\\n"+pInnerHTML);'+
     '    if (interpretAsRegExp) refMarkerRegExp.lastIndex=0;'+
-    '    if (interpretAsRegExp && matchNotFromBeginning) refMarkerRegExp.lastIndex=1;'+
+    '      alert(pInnerHTML);'+
+//    '    alert("pInnerHTML в конце итерации:\n\n"+pInnerHTML);'+
     '   }'+
     '  }'+
     ' }'); // конец функции processP_3
