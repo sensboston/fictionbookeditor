@@ -440,16 +440,19 @@
     '  removeAllTagsRegExp=new RegExp("<\\/?[a-z]+( [^>]+)?>","ig");'+
 //    '  alert("a: "+pInnerHTML.replace(removeAllTagsRegExp,""));'+
     '  if (interpretAsRegExp) refMarkerRegExp.lastIndex=0;'+
+    '  if (interpretAsRegExp && matchNotFromBeginning) refMarkerRegExp.exec(pInnerHTML.replace(removeAllTagsRegExp,""));'+
     '  while (interpretAsRegExp ? (p.innerText.indexOf("#")!=0 && refMarkerRegExp.test(pInnerHTML.replace(removeAllTagsRegExp,""))) : '+
     '    contains1stPMarker(pInnerHTML)) {'+
 //    '   alert("Внутри уайла получаем такой pInnerHTML:\\n\\n"+pInnerHTML);'+
     '   if (interpretAsRegExp) {'+
     '    refMarkerRegExp.lastIndex=0;'+
+    '    if (matchNotFromBeginning) refMarkerRegExp.exec(pInnerHTML.replace(removeAllTagsRegExp,""));'+
 //    '    alert("Искать будем вот по чем:\\n\\n"+pInnerHTML.replace(removeAllTagsRegExp,""));'+
     '    srchResult=refMarkerRegExp.exec(pInnerHTML.replace(removeAllTagsRegExp,""));'+
     '    myPos=srchResult.index;'+
     '    matchLen=srchResult[0].length;'+
     '    refMarkerRegExp.lastIndex=0;'+
+    '    if (matchNotFromBeginning) refMarkerRegExp.exec(pInnerHTML.replace(removeAllTagsRegExp,""));'+
     '   }'+
     '   else {'+
     '    myPos=pInnerHTML.replace(removeAllTagsRegExp,"").indexOf(refMarkerStr);'+
@@ -547,6 +550,7 @@
     '   }'+ // конец else if (previousNote=="Нет предыдущей ссылки.")
 //    '   alert("previousNoteHref:\\n\\n"+previousNoteHref);'+
     '   if (interpretAsRegExp) refMarkerRegExp.lastIndex=0;'+
+    '   if (interpretAsRegExp && matchNotFromBeginning) refMarkerRegExp.exec(pInnerHTML.replace(removeAllTagsRegExp,""));'+
     '  }'+ // конец цикла while (pInnerHTML.replace(removeAllTagsRegExp,"").indexOf(refMarkerStr)>=0)
     '  p.innerHTML=pInnerHTML.replace(/RReeffMMaarrkkeerrSSttrr/g,refMarkerStr);'+
 //    '  alert("вышли из processp_2");'+
@@ -571,9 +575,12 @@
 //    '  refMarkerRegExp.lastIndex=0;'+
 //    '  alert("Вот мы перед ифом.\\n\\ninterpretAsRegExp: "+interpretAsRegExp+"\\n\\n"+refMarkerRegExp.test(pInnerHTML));'+
     '  if (interpretAsRegExp) refMarkerRegExp.lastIndex=0;'+
+    '  if (interpretAsRegExp && matchNotFromBeginning) refMarkerRegExp.exec(pInnerHTML.replace(removeAllTagsRegExp,""));'+
     '  if (interpretAsRegExp ? refMarkerRegExp.test(pInnerHTML) :'+
     '      contains1stPMarker(pInnerHTML)) {'+
     '   if (interpretAsRegExp) refMarkerRegExp.lastIndex=0;'+
+    '   if (interpretAsRegExp && matchNotFromBeginning) refMarkerRegExp.exec(pInnerHTML);'+
+    '   var firstRefMarker=true;'+
 //    '   alert("contains1stPMarker(pInnerHTML) 2: "+contains1stPMarker(pInnerHTML));'+
     '   while (interpretAsRegExp ? refMarkerRegExp.test(pInnerHTML) :'+
     '          contains1stPMarker(pInnerHTML)) {'+
@@ -581,10 +588,15 @@
 
     '    if (interpretAsRegExp) {'+
     '     refMarkerRegExp.lastIndex=0;'+
+    '     if (firstRefMarker && matchNotFromBeginning) {'+
+    '      refMarkerRegExp.exec(pInnerHTML);'+
+    '      firstRefMarker=false;'+
+    '     }'+
     '     srchResult=refMarkerRegExp.exec(pInnerHTML);'+
     '     myPos2=srchResult.index;'+
     '     matchLen=srchResult[0].length;'+
     '     refMarkerRegExp.lastIndex=0;'+
+    '     if (matchNotFromBeginning) refMarkerRegExp.exec(pInnerHTML);'+
 //    '     alert("myPos2: "+myPos2+"\\n\\nНайдено: "+srchResult[0]);'+
     '    }'+
     '    else {'+
@@ -604,7 +616,9 @@
     '    pInnerHTML=pInnerHTML.substr(myPos2+matchLen);'+
 //    '    alert("В pInnerHTML теперь:\\n\\n"+pInnerHTML);'+
     '    if (interpretAsRegExp) refMarkerRegExp.lastIndex=0;'+
+//    '    if (interpretAsRegExp && matchNotFromBeginning) refMarkerRegExp.exec(pInnerHTML.replace(removeAllTagsRegExp,""));'+
 //    '    alert("pInnerHTML в конце итерации:\n\n"+pInnerHTML);'+
+//    '    alert("pInnerHTML в конце while-а: ="+pInnerHTML+"=  refMarkerRegExp.test(pInnerHTML): "+refMarkerRegExp.test(pInnerHTML));'+
     '   }'+
     '  }'+
     ' }'); // конец функции processP_3
@@ -1012,7 +1026,7 @@
  Выберите маркер для поиска знаков сноски:<br>
  <label for="radio1"><input type=radio id="radio1" name=noteSign> вида [1]</label>
  <label for="radio2"><input type=radio id="radio2" name=noteSign> вида {1}</label>
- <label for="radio3"><input type=radio id="radio3" name=noteSign"> вида [~1~]</label>
+ <label for="radio3"><input type=radio id="radio3" name=noteSign> вида [~1~]</label>
  <label for="radio4"><input type=radio id="radio4" name=noteSign> вида {~1~}</label>
  <label for="radio5"><input type=radio id="radio5" name=noteSign> # (один знак решетки)</label><br>
  <label for="radio20"><input type=radio id="radio20" name=noteSign checked>задать свой:</label>
@@ -1020,7 +1034,21 @@
   <input type=text style="width:600px;" id=refMarkerStr value="#+" onfocus="getElementById('radio20').checked=true;" checked><br>
   <label for=interpretAsRegExpCheckbox><input type=checkbox id=interpretAsRegExpCheckbox checked> трактовать как регулярное выражение</label>
  </div>
- <label for=matchNotFromBeginning><input type=checkbox id=matchNotFromBeginning checked> совпадение должно быть не от начала абзаца</label><hr>
+ <label for=matchNotFromBeginning><input type=checkbox id=matchNotFromBeginning checked> совпадение должно быть не от начала абзаца</label>
+ <hr>
+ Выберите маркер для первых абзацев текста сноски:<br>
+ <label for="radio30"><input type=radio id="radio30" name=firstNoteP> вида [1]</label>
+ <label for="radio31"><input type=radio id="radio31" name=firstNoteP> вида {1}</label>
+ <label for="radio32"><input type=radio id="radio32" name=firstNoteP> вида [~1~]</label>
+ <label for="radio33"><input type=radio id="radio33" name=firstNoteP> вида {~1~}</label>
+ <label for="radio34"><input type=radio id="radio34" name=firstNoteP> # (один знак решетки)</label><br>
+ <label for="radio35"><input type=radio id="radio35" name=firstNoteP checked>задать свой:</label>
+ <div style="padding-left:30px; padding-right:0; padding-top:0; padding-bottom:0;">
+   <input type=text style="width:600px;" id=firstNotePMarkerStr value="#+" onfocus="getElementById('radio20').checked=true;" checked><br>
+  <label for=interpretAsRegExpCheckbox2><input type=checkbox id=interpretAsRegExpCheckbox2 checked> трактовать как регулярное выражение</label>
+ </div>
+ <label for=matchFromBeginning><input type=checkbox id=matchFromBeginning checked> совпадение должно быть от начала абзаца</label>
+ <hr>
  Маркер 2-го, 3-го и т.д. абзацев текста сноски (не регэксп, а простой текст):<br>
  <input type=text style="width:600px;" id=notFirstParagraphStr value="~~"><br><br>
  
