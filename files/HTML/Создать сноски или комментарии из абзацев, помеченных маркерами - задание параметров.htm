@@ -40,7 +40,6 @@
     ' var notePrefix="'+notePrefix+'";'+
     ' var notePostfix="'+notePostfix+'";'+
     ' var pIsSubtitleRegExp=new RegExp("^[ "+nbspChar+"*]*$");'+
-    ' var starsAtBegin_RE=new RegExp("^[ "+nbspChar+"#]+","");'+
     ' var openingAndClosingTagRegExp=new RegExp("(<STRONG><\\/STRONG>)|(<EM><\\/EM>)|(<SUP><\\/SUP>)|(<SUB><\\/SUB>)|(<SPAN( [^>]*)?><\\/SPAN>)|(<B><\\/B>)|(<I><\\/I>)|(<STRIKE><\\/STRIKE>)|(<FONT( [^\>]+)?><\\/FONT>)", "ig");'+
     ' try { var nbspChar=window.external.GetNBSP(); var nbspEntity; if (nbspChar.charCodeAt(0)==160) nbspEntity="&nbsp;"; else nbspEntity=nbspChar; }'+
     ' catch(e) { var nbspChar=String.fromCharCode(160); var nbspEntity="&nbsp;";};'+
@@ -85,11 +84,12 @@
     '  return htmlStr2;'+
     ' }');
    myWin.eval(
-    ' function containsRefMarker(myInnerHTML) {'+
+    ' function containsRefMarker(myInnerHTML,thereAreSkippedSymbols) {'+
     '  myIndex1=myInnerHTML.replace(removeAllTagsRegExp,"").indexOf(refMarkerStr);'+
 //    '  alert("myInnerHTML: "+myInnerHTML+"   myIndex1: "+myIndex1);'+
     '  if (myIndex1==-1) return false;'+
     '  if (myIndex1>0) return true;'+
+    '  if (thereAreSkippedSymbols && myIndex1==0) return true;'+
 //    '  alert(myInnerHTML+"\n\nВозвращаем "+myInnerHTML.replace(removeAllTagsRegExp,"").substr(refMarkerStr).indexOf(refMarkerStr)>=0);'+
     '  return myInnerHTML.replace(removeAllTagsRegExp,"").substr(refMarkerStr.length).indexOf(refMarkerStr)>=0;'+
     ' }');
@@ -601,6 +601,7 @@
     ' function processP_3(p) {'+
 //   Эта функция считает маркеры знака сноски
     '  if (p.innerText.search(pIsSubtitleRegExp)==0) return;'+
+    '  if (containsFirstNotePMarker(p.innerHTML)) return;'+
     '  var myPos,pInnerHTML_2,myPos2,srchResult,matchLen;'+
     '  var pInnerHTMLSrc=p.innerHTML;'+
     '  var pInnerHTML2=null;'+
@@ -630,8 +631,8 @@
 //  '   alert("перед уайлом.");'+
 //    '   alert("containsRefMarker(pInnerHTML) 2: "+containsRefMarker(pInnerHTML));'+
     '   while (interpretAsRegExp ? refMarkerRegExp.test(pInnerHTML) :'+
-    '          containsRefMarker(pInnerHTML)) {'+
-//    '    alert("pInnerHTML2:\\n\\n"+pInnerHTML2+"\\n\\nsymbolsBefore+pInnerHTML.indexOf(refMarkerStr): "+(symbolsBefore+pInnerHTML.indexOf(refMarkerStr))+"\\n\\nrefMarkerStrLen: "+refMarkerStrLen+"\\n\\nCheck вот такой: "+checkIfTagsAreInFoundSubstr(pInnerHTML2,symbolsBefore+pInnerHTML.indexOf(refMarkerStr)+1,refMarkerStrLen));'+
+    '          containsRefMarker(pInnerHTML,symbolsBefore!=0)) {'+
+//    '    alert("While. pInnerHTML: "+pInnerHTML);'+
     '    if (interpretAsRegExp) {'+
     '     refMarkerRegExp.lastIndex=0;'+
     '     if (matchNotFromBeginning && pInnerHTML.replace(removeAllTagsRegExp,"").search(refMarkerRegExp)==0) {'+
@@ -647,7 +648,7 @@
     '    }'+
     '    else {'+
     '     myPos2=pInnerHTML.indexOf(refMarkerStr);'+
-    '     if (matchNotFromBeginning) {'+
+    '     if (matchNotFromBeginning && symbolsBefore==0) {'+
     '        myIndex2=pInnerHTML.replace(removeAllTagsRegExp,"").indexOf(refMarkerStr);'+
     '       if (myIndex2==0)'+
     '         myPos2=refMarkerStr.length+pInnerHTML.replace(removeAllTagsRegExp,"").substr(refMarkerStr.length).indexOf(refMarkerStr);'+
@@ -657,10 +658,11 @@
     '     matchLen=refMarkerStrLen;'+
     '    }'+
     '    if (!checkIfTagsAreInFoundSubstr(pInnerHTML2,symbolsBefore+myPos2+1,matchLen) &&'+
-    '       !(matchNotFromBeginning && myPos2==0))'+
+    '       !(matchNotFromBeginning && symbolsBefore==0 && myPos2==0))'+
     '     refMarkersCnt++;'+
+//    '    alert("myPos2: "+myPos2+"  |  matchLen: "+matchLen);'+
     '    symbolsBefore+=myPos2+matchLen;'+
-    '    pInnerHTML=pInnerHTML.substr(myPos2+matchLen-1);'+
+    '    pInnerHTML=pInnerHTML.substr(myPos2+matchLen);'+
 //    '    alert("В pInnerHTML теперь:\\n\\n"+pInnerHTML);'+
     '    if (interpretAsRegExp) refMarkerRegExp.lastIndex=0;'+
 //    '    if (interpretAsRegExp && matchNotFromBeginning) refMarkerRegExp.exec(pInnerHTML.replace(removeAllTagsRegExp,""));'+
@@ -967,7 +969,7 @@
      myWin.interpretAsRegExp=true;
     }
     if (document.getElementById("radio5").checked) {
-     myWin.refMarkerRegExp=/#/g;
+     myWin.refMarkerRegExp=/[*]+/g;
      myWin.interpretAsRegExp=true;
     }
     myWin.matchNotFromBeginning=document.getElementById("matchNotFromBeginning").checked;
@@ -1006,9 +1008,9 @@
      myWin.firstNotePMarkerREStr="\\{\\~\\d+\\~\\}";
     }
     if (document.getElementById("radio34").checked) {
-     myWin.firstNotePMarkerRegExp=/#/g;
+     myWin.firstNotePMarkerRegExp=/\*+/g;
      myWin.interpretAsRegExp2=true;
-     myWin.firstNotePMarkerREStr="#";
+     myWin.firstNotePMarkerREStr="[*]+";
     }
    }
    catch(e) {
@@ -1064,18 +1066,7 @@
 
   function showNotesTexts() {
    if (myWin.notesTextCnt==0) return;
-/*
-   var s=makeEntities('<DIV class=body xmlns:l="http://www.w3.org/1999/xlink" xmlns:f="http://www.gribuser.ru/xml/fictionbook/2.0" fbname="notes">')+"<BR>";
-   s+=makeEntities("<DIV class=title><P>Примечания, извлеченные из сгрупированных абзацев</P></DIV>")+"<BR>";
-   var i;
-   for (i=1; i<=myWin.notesTextCnt; i++) {
-    s+=makeEntities("<DIV class=section>")+"<BR>";
-     s+=makeEntities("<DIV class=title><P>"+i+"</P></DIV> ")+"<BR>";
-     s+=makeEntities(myWin.notesTexts[i.toString()])+"<BR>";
-    s+=makeEntities("</DIV>")+"<BR>"; // закрывающий тег от DIV class=section
-   }
-   s+=makeEntities("</DIV>")+"<BR>"; // закрывающий тег от DIV class=body
-*/
+
    var s="<DIV id='fbw_body'>";
    s+='<DIV class=body xmlns:l="http://www.w3.org/1999/xlink" xmlns:f="http://www.gribuser.ru/xml/fictionbook/2.0" fbname='+targetBodyName+'>';
    s+="<DIV class=title><P>Тексты сносок, извлеченные из абзацев, помеченных маркерами</P><P>Количество: "+myWin.notesTextCnt+"</P></DIV>";
@@ -1112,27 +1103,27 @@
  </script>
 <body onbeforeunload="myBeforeUnload();">
  Выберите маркер для поиска знаков сноски:<br>
- <label for="radio1"><input type=radio id="radio1" name=noteSign> вида [1]</label>
+ <label for="radio1"><input type=radio id="radio1" name=noteSign checked> вида [1]</label>
  <label for="radio2"><input type=radio id="radio2" name=noteSign> вида {1}</label>
  <label for="radio3"><input type=radio id="radio3" name=noteSign> вида [~1~]</label>
  <label for="radio4"><input type=radio id="radio4" name=noteSign> вида {~1~}</label>
- <label for="radio5"><input type=radio id="radio5" name=noteSign> # (один знак решетки)</label><br>
- <label for="radio20"><input type=radio id="radio20" name=noteSign checked>задать свой:</label>
+ <label for="radio5"><input type=radio id="radio5" name=noteSign> вида *</label><br>
+ <label for="radio20"><input type=radio id="radio20" name=noteSign>задать свой:</label>
  <div style="padding-left:30px; padding-right:0; padding-top:0; padding-bottom:0;">
-  <input type=text style="width:600px;" id=refMarkerStr value="#+" onfocus="getElementById('radio20').checked=true;" checked><br>
+  <input type=text style="width:600px;" id=refMarkerStr value="\*+" onfocus="getElementById('radio20').checked=true;" checked><br>
   <label for=interpretAsRegExpCheckbox><input type=checkbox id=interpretAsRegExpCheckbox checked> трактовать как регулярное выражение</label>
  </div>
  <label for=matchNotFromBeginning><input type=checkbox id=matchNotFromBeginning checked> совпадение должно быть не от начала абзаца</label>
  <hr>
  Выберите маркер для первых абзацев текста сноски:<br>
- <label for="radio30"><input type=radio id="radio30" name=firstNoteP> вида [1]</label>
+ <label for="radio30"><input type=radio id="radio30" name=firstNoteP checked> вида [1]</label>
  <label for="radio31"><input type=radio id="radio31" name=firstNoteP> вида {1}</label>
  <label for="radio32"><input type=radio id="radio32" name=firstNoteP> вида [~1~]</label>
  <label for="radio33"><input type=radio id="radio33" name=firstNoteP> вида {~1~}</label>
- <label for="radio34"><input type=radio id="radio34" name=firstNoteP> # (один знак решетки)</label><br>
- <label for="radio35"><input type=radio id="radio35" name=firstNoteP checked>задать свой:</label>
+ <label for="radio34"><input type=radio id="radio34" name=firstNoteP> вида *</label><br>
+ <label for="radio35"><input type=radio id="radio35" name=firstNoteP>задать свой:</label>
  <div style="padding-left:30px; padding-right:0; padding-top:0; padding-bottom:0;">
-   <input type=text style="width:600px;" id=firstNotePMarkerStr value="#+" onfocus="getElementById('radio35').checked=true;" checked><br>
+   <input type=text style="width:600px;" id=firstNotePMarkerStr value="\*+" onfocus="getElementById('radio35').checked=true;" checked><br>
   <label for=interpretAsRegExpCheckbox2><input type=checkbox id=interpretAsRegExpCheckbox2 checked> трактовать как регулярное выражение</label>
  </div>
  Совпадение должно быть от начала абзаца.</label>
