@@ -461,6 +461,7 @@
 //    '  alert("processP_2:\\n\\n"+p.outerHTML);'+
 //    '  alert("Вошли в processp_2");'+
     '  if (p.innerText.search(pIsSubtitleRegExp)==0) return;'+
+    '  if (containsFirstNotePMarker(p.innerHTML)) return;'+
     '  var i,myPos,newRef,previousNote,previousNoteHref,previousNoteSection,str3,rndm2,rndm3,el;'+
     '  var matchLen;'+
     '  var pInnerHTML=p.innerHTML;'+
@@ -659,7 +660,7 @@
     '       !(matchNotFromBeginning && myPos2==0))'+
     '     refMarkersCnt++;'+
     '    symbolsBefore+=myPos2+matchLen;'+
-    '    pInnerHTML=pInnerHTML.substr(myPos2+matchLen);'+
+    '    pInnerHTML=pInnerHTML.substr(myPos2+matchLen-1);'+
 //    '    alert("В pInnerHTML теперь:\\n\\n"+pInnerHTML);'+
     '    if (interpretAsRegExp) refMarkerRegExp.lastIndex=0;'+
 //    '    if (interpretAsRegExp && matchNotFromBeginning) refMarkerRegExp.exec(pInnerHTML.replace(removeAllTagsRegExp,""));'+
