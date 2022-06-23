@@ -77,7 +77,7 @@
     '  var htmlStr3=htmlStr2.replace(removeNotAllTagsRegExp,"");'+
     '  var htmlStr4=htmlStr3.replace(spacesAtBeginningRegExp,"");'+
     '  if (htmlStr4.indexOf(firstNotePMarkerStr)==0) {'+
-    '    var htmlStr5=removeSymbolsBeyondTags(htmlStr2,1,firstNotePMarkerStrLen+(htmlStr3.length-htmlStr4.length),"");'+
+    '    var htmlStr5=removeSymbolsBeyondTags(htmlStr2,1,firstNotePMarkerStr.length+(htmlStr3.length-htmlStr4.length),"");'+
     '    var htmlStr6=htmlStr5.replace(removeNotAllTagsRegExp,"");'+
     '    var htmlStr7=htmlStr6.replace(spacesAtBeginningRegExp,"");'+
     '    return removeSymbolsBeyondTags(htmlStr5,1,(htmlStr6.length-htmlStr7.length),"");'+
