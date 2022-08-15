@@ -3,7 +3,59 @@
  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
  <meta http-equiv="MSThemeCompatible" content="yes">
  <style>
+/* css reset
+http://meyerweb.com/eric/tools/css/reset/ 
+   v2.0 | 20110126
+   License: none (public domain)
+*/
+
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed, 
+figure, figcaption, footer, header, hgroup, 
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	font-size: 100%;
+	font: inherit;
+	vertical-align: baseline;
+}
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure, 
+footer, header, hgroup, menu, nav, section {
+	display: block;
+}
+body {
+	line-height: 1;
+}
+ol, ul {
+	list-style: none;
+}
+blockquote, q {
+	quotes: none;
+}
+blockquote:before, blockquote:after,
+q:before, q:after {
+	content: '';
+	content: none;
+}
+table {
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+/* конец css-reset-а */
+
   body{font-family:Tahoma; font-size:16px;margin:2px;}
+  select, input {font-size: 15px; font-family:Tahoma;}
  </style>
  <title>Разметить заголовки разделов либо подзаголовки, найденные по регэкспу</title>
  <script language=JavaScript type="text/javascript">
@@ -114,7 +166,6 @@
     ' var mainDocument=document;'+
     ' var regExpEdit=dialogDoc.getElementById("regExpId");'+
     ' if (!regExpEdit) {alert("Ошибка. Не найдено поле ввода регэкспа.");return}'+
-    ' if (regExpEdit.value=="") { alert("Вы не ввели никакой регэксп. Пожалуйста, введите регэксп для поиска подзаголовков в предназначенное для него (регэкспа) поле ввода."); return; }'+
     ' var caseSensitiveCheckbox=dialogDoc.getElementById("caseSensitiveId");'+
     ' if (!caseSensitiveCheckbox) {alert("Ошибка. Не найден чекбокс чувствительности к регэкспу.");return}'+
     ' var captureBeforeSelect=dialogDoc.getElementById("captureBeforeId");'+
@@ -276,6 +327,7 @@
 <body onbeforeunload="myBeforeUnload();">
  Регэксп для поиска абзацев, которые следует превратить в заголовки либо подзаголовки. Например: «^Глава \d+$».<br>
  <input type=text style="width:600px;" id=regExpId><br>
+ Предзаданные регэкспы: <select Id=regExpId1 onchange="document.getElementById('regExpId').value=document.getElementById('regExpId1').value; document.getElementById('regExpId1').value='';"><option selected value=""></option><option value="^Книга">Книга</option><option value="^Часть">Часть</option><option value="^Глава">Глава</option><option value="^\d">Арабские цифры в начале абзаца</option><option value="\d+$">Арабские цифры в конце абзаца</option><option value="^Пролог">Пролог</option><option value="^Эпилог">Эпилог</option></select><br>
  <input type=checkbox id=caseSensitiveId> учитывать регистр при поиске по регэкспу<br>
  <select id=captureBeforeId><option selected value=0>0<option value=1>1<option value=2>2<option value=3>3</option></select> сколько захватывать в заголовок либо подзаголовок абзацев, находящихся <b>перед</b> абзацем, найденным по регэкспу<br>
  <select id=captureAfterId><option selected value=0>0<option value=1>1<option value=2>2<option value=3>3</option></select> сколько захватывать в заголовок либо подзаголовок абзацев, находящихся <b>после</b> абзаца, найденного по регэкспу<br>

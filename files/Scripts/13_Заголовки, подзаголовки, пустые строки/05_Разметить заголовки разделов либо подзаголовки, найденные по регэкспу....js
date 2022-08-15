@@ -2,11 +2,11 @@
 //Автор Sclex
 //http://www.fictionbook.org/forum/viewtopic.php?t=4412
 
-var markupTitlesOrSubtitles_versionNum="2.0";
+var markupTitlesOrSubtitles_versionNum="2.1";
 
 function Run() {
  var dialogWidth="700px";
- var dialogHeight="270px";
+ var dialogHeight="295px";
  var fbwBody=document.getElementById("fbw_body");
  var coll=new Object();
  coll["fbwBody"]=fbwBody;
