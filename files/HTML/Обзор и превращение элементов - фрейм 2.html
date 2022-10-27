@@ -329,6 +329,7 @@ function myOnClick() {
    selectedElementsCnt=1;
   }
   if (evaledOldN!=evaledN) {
+   //alert("selectionBegin: "+selectionBegin+"\n\n"+"el: "+el);
    selectElements(selectionBegin,el);
   }
  }
@@ -395,7 +396,10 @@ function changeCaseInOneP(pToProcess,numberOfWordToProcess) {
    if (caseFlag=="allBig") s2=s1.toUpperCase();
    if (caseFlag=="onlyFirstBig") s2=s1.toLowerCase();
    if (caseFlag=="onlyFirstBig" && !alreadyMadeFirstLetterBig) {
-    s2=s1.charAt(0).toUpperCase()+s1.substring(1).toLowerCase();
+    if (s1.charAt(0)!="«" && s1.charAt(0)!='"')
+     s2=s1.charAt(0).toUpperCase()+s1.substring(1).toLowerCase();
+    else
+     s2=s1.substring(0,1)+s1.charAt(1).toUpperCase()+s1.substring(2).toLowerCase();
     //replace(letterRE,replaceWithUpperCase)
     alreadyMadeFirstLetterBig=true;
    }
@@ -403,8 +407,8 @@ function changeCaseInOneP(pToProcess,numberOfWordToProcess) {
    if (caseFlag=="firstBigAndAfterFirstDotBig") {
     s2=s1.toLowerCase();
     for (i=0; i<s1.length; i++) {
-     if (!alreadyMadeFirstLetterBig) {
-      s2=s2.charAt(0).toUpperCase()+s2.substring(1);
+     if (!alreadyMadeFirstLetterBig && s2.charAt(i)!="«" && s2.charAt(i)!='"') {
+      s2=s2.substring(0,i)+s2.charAt(i).toUpperCase()+s2.substring(i+1);
       alreadyMadeFirstLetterBig=true;
      }
      else {

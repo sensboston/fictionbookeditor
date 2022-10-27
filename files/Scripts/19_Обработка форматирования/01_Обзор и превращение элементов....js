@@ -3,7 +3,7 @@
 //сайт скриптов: http://scripts.fictionbook.org
 
 function Run() {
- var elementBrowser_versionNum="2.0";
+ var elementBrowser_versionNum="2.1";
  var dialogWidth="520px";
  var dialogHeight="540px";
  var fbwBody=document.getElementById("fbw_body");
