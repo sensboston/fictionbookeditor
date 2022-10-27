@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <HTML>
 <HEAD>
-<TITLE>Save Sections As Separate Documents v6.3 (MSXML4 version) (автор Sclex)</TITLE>
+<TITLE>Save Sections As Separate Documents v6.4 (MSXML4 version) (автор Sclex)</TITLE>
 <HTA:APPLICATION ID="oHTA"/>
 <META http-equiv="Content-Type" content="text/html; charset=utf-8">
 <META http-equiv="MSThemeCompatible" content="yes">
@@ -584,6 +584,22 @@ function saveOneSectionAsSeparateDocument(titleNum,fileCnt) {
           kkk++;
         }
     }
+
+    var sectionAnnotationElem=myBody.selectSingleNode("./fb:section/fb:annotation");
+    if (sectionAnnotationElem) {
+      var sectionAnnotationClone=sectionAnnotationElem.cloneNode(true);
+      var oldAnnotationElem=xmlDoc.selectSingleNode("/fb:FictionBook//fb:description//fb:title-info//fb:annotation");
+      if (oldAnnotationElem) {
+        oldAnnotationElem.parentNode.insertBefore(sectionAnnotationClone,oldAnnotationElem);
+        removeNode(oldAnnotationElem);
+      }
+      else {
+        var bookTitle2=xmlDoc.selectSingleNode("/fb:FictionBook//fb:description//fb:title-info//fb:book-title");
+        bookTitle2.parentNode.insertBefore(sectionAnnotationClone,bookTitle2.nextSibling);
+      }
+      removeNode(sectionAnnotationElem);
+    }
+
     //aert("mySection: "+getOuterXML(mySection));
     //alert("myBody: "+getOuterXML(myBody));
     myClonedNode=mySection.cloneNode(true);
@@ -644,21 +660,6 @@ function saveOneSectionAsSeparateDocument(titleNum,fileCnt) {
     if (savedSectionsAtBodyBegin.length>0) {
       for (i=0; i<savedSectionsAtBodyBegin.length; i++)
         myBody.insertBefore(savedSectionsAtBodyBegin[i],elemInBody2);
-    }
-
-    var newAnnotationElem=myBody.selectSingleNode("./fb:section/fb:annotation");
-    if (newAnnotationElem) {
-      newAnnotationClone=newAnnotationElem.cloneNode(true);
-      var oldAnnotationElem=xmlDoc.selectSingleNode("/fb:FictionBook//fb:description//fb:title-info//fb:annotation");
-      if (oldAnnotationElem) {
-        oldAnnotationElem.parentNode.insertBefore(newAnnotationClone,oldAnnotationElem);
-        removeNode(oldAnnotationElem);
-      }
-      else {
-        var bookTitle2=xmlDoc.selectSingleNode("/fb:FictionBook//fb:description//fb:title-info//fb:book-title");
-        bookTitle2.parentNode.insertBefore(newAnnotationClone,bookTitle2.nextSibling);
-      }
-      removeNode(newAnnotationElem);
     }
 
     var removesCnt=1;
@@ -1391,7 +1392,7 @@ function applySettings() {
   alert("Ошибка!");
   return;
  }
- xmlDoc=new ActiveXObject("Msxml2.DOMDocument.4.0");
+ xmlDoc=new ActiveXObject("Msxml2.DOMDocument.6.0");
  //xmlDoc=new ActiveXObject("Microsoft.XMLDOM");
  xmlDoc.async=false;
  xmlDoc.preserveWhiteSpace = true;
