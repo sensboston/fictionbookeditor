@@ -2,7 +2,7 @@
 //удаляем ссылки в боди нотесов, которые подходят под регэкспы
 //удаляем id абзацев, которые подходят под регэкспы
 
-var VersionNumber="1.2";
+var VersionNumber="1.3";
 
 //если true - преобразовывать возвратную ссылку в простой текст
 //false - удалять возвратные ссылки
@@ -159,12 +159,6 @@ function Run() {
  else { if (Tmin<1) var TimeStr=Tsek+ " сек"
  else if (Tmin>=1) var TimeStr=Tmin+ " мин " +Tsec+ " с" }}
 
- var st2="";
- if (BinsWithoutImg_list!="")   {st2+='\nВложения, на которые нет ссылки:'+BinsWithoutImg_list;}
- if (ImgsWithoutBin_list!="")   {st2+='\nРисунки, для которых нет вложения:'+ImgsWithoutBin_list;}
- if (NonLocalImgs_list!="")     {st2+='\nКартинки с нелокальными ссылками:'+NonLocalImgs_list;}
- if (NonJpegPngImgs_list!="") {st2+='\nВложения не image/jpg, не image/png:'+NonJpegPngImgs_list;}
- if (st2!="") st2="\n"+st2;
  MsgBox('           –= Sclex Script =– \n'+
     ' "Удаление возвратных ссылок"\n'+
     '                      v'+VersionNumber+'\n\n'+
@@ -173,7 +167,7 @@ function Run() {
     '         Возвратных ссылок: '+DeletedACnt+'\n'+
     '                     ID абзацев: '+DeletedIdCnt+'\n\n'+
 
-    'Время выполнения: '+TimeStr+'.'+st2);
+    'Время выполнения: '+TimeStr+'.'+TimeStr);
 }
 
 function GetLocalHref(name) {
