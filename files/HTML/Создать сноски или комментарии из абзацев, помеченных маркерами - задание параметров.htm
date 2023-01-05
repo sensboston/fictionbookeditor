@@ -39,7 +39,7 @@
     ' var noteAddressPrefix="'+noteAddressPrefix+'";'+
     ' var notePrefix="'+notePrefix+'";'+
     ' var notePostfix="'+notePostfix+'";'+
-    ' var pIsSubtitleRegExp=new RegExp("^[ "+nbspChar+"*]*$");'+
+    ' var pIsSubtitleRegExp=new RegExp("^[ "+nbspChar+"*]*[*][ "+nbspChar+"*]*$");'+
     ' var openingAndClosingTagRegExp=new RegExp("(<STRONG><\\/STRONG>)|(<EM><\\/EM>)|(<SUP><\\/SUP>)|(<SUB><\\/SUB>)|(<SPAN( [^>]*)?><\\/SPAN>)|(<B><\\/B>)|(<I><\\/I>)|(<STRIKE><\\/STRIKE>)|(<FONT( [^\>]+)?><\\/FONT>)", "ig");'+
     ' try { var nbspChar=window.external.GetNBSP(); var nbspEntity; if (nbspChar.charCodeAt(0)==160) nbspEntity="&nbsp;"; else nbspEntity=nbspChar; }'+
     ' catch(e) { var nbspChar=String.fromCharCode(160); var nbspEntity="&nbsp;";};'+
@@ -911,43 +911,7 @@
    {}
   }
 
-  function createNotes() {
-   try {
-    var test=myWin.document.body;
-   }
-   catch (e) {
-    if (e.name=="TypeError")
-     alert("Произошла ошибка. Предположительная причина –\nвы запускаете обработку после\nтого, как создали или открыли новый документ\nв основном окне FBE. В таком\nслучае перезапустите скрипт.\n\n"+
-          "Имя ошибки: "+e.name+"\n"+
-          "Сообщение об ошибке: "+e.message);
-    return;
-   }
-   try {
-    myWin.external.BeginUndoUnit(myWin.document,"создание сносок или комментариев из абзацев, помеченных маркерами");
-   }
-   catch (e) {
-    alert("Произошла ошибка при выполнении BeginUndoUnit().\n\n"+
-          "Имя ошибки: "+e.name+"\n"+
-          "Сообщение об ошибке: "+e.message);
-    return;
-   }
-   try {
-    evalMyCode();
-   }
-   catch (e) {
-    alert("Произошла ошибка при выполнении evalMyCode().\n\n"+
-          "Имя ошибки: "+e.name+"\n"+
-          "Сообщение об ошибке: "+e.message);
-    return;
-   }
-   try {
-    myWin.targetBody=myWin.findTargetBody();
-   }
-   catch(e) {
-    alert("Произошла ошибка при инициализации targetBody (код 1).\n\n"+
-          "Имя ошибки: "+e.name+"\n"+
-          "Сообщение об ошибке: "+e.message);
-   }
+  function adjustVars() {
    try {
     myWin.interpretAsRegExp=document.getElementById("interpretAsRegExpCheckbox").checked;
     if (document.getElementById("radio20").checked && myWin.interpretAsRegExp)
@@ -988,13 +952,13 @@
     }
     myWin.firstNotePMarkerStr=makeEntities(document.getElementById("firstNotePMarkerStr").value);
     if (document.getElementById("radio30").checked) {
-     myWin.firstNotePMarkerRegExp=/\[\d+\]/g;
      myWin.interpretAsRegExp2=true;
+     myWin.firstNotePMarkerRegExp=/\[\d+\]/g;
      myWin.firstNotePMarkerREStr="\\[\\d+\\]";
     }
     if (document.getElementById("radio31").checked) {
-     myWin.firstNotePMarkerRegExp=/\{\d+\}/g;
      myWin.interpretAsRegExp2=true;
+     myWin.firstNotePMarkerRegExp=/\{\d+\}/g;
      myWin.firstNotePMarkerREStr="\\{\\d+\\}";
     }
     if (document.getElementById("radio32").checked) {
@@ -1019,6 +983,46 @@
           "Сообщение об ошибке: "+e.message);
     return;
    }
+  }
+
+  function createNotes() {
+   try {
+    var test=myWin.document.body;
+   }
+   catch (e) {
+    if (e.name=="TypeError")
+     alert("Произошла ошибка. Предположительная причина –\nвы запускаете обработку после\nтого, как создали или открыли новый документ\nв основном окне FBE. В таком\nслучае перезапустите скрипт.\n\n"+
+          "Имя ошибки: "+e.name+"\n"+
+          "Сообщение об ошибке: "+e.message);
+    return;
+   }
+   try {
+    myWin.external.BeginUndoUnit(myWin.document,"создание сносок или комментариев из абзацев, помеченных маркерами");
+   }
+   catch (e) {
+    alert("Произошла ошибка при выполнении BeginUndoUnit().\n\n"+
+          "Имя ошибки: "+e.name+"\n"+
+          "Сообщение об ошибке: "+e.message);
+    return;
+   }
+   try {
+    evalMyCode();
+   }
+   catch (e) {
+    alert("Произошла ошибка при выполнении evalMyCode().\n\n"+
+          "Имя ошибки: "+e.name+"\n"+
+          "Сообщение об ошибке: "+e.message);
+    return;
+   }
+   try {
+    myWin.targetBody=myWin.findTargetBody();
+   }
+   catch(e) {
+    alert("Произошла ошибка при инициализации targetBody (код 1).\n\n"+
+          "Имя ошибки: "+e.name+"\n"+
+          "Сообщение об ошибке: "+e.message);
+   }
+   adjustVars();
    try {
     extractNotesTexts();
    }
@@ -1102,7 +1106,7 @@
 
  </script>
 <body onbeforeunload="myBeforeUnload();">
- Выберите маркер для поиска знаков сноски:<br>
+ Задайте маркер для поиска знаков сноски:<br>
  <label for="radio1"><input type=radio id="radio1" name=noteSign checked> вида [1]</label>
  <label for="radio2"><input type=radio id="radio2" name=noteSign> вида {1}</label>
  <label for="radio3"><input type=radio id="radio3" name=noteSign> вида [~1~]</label>
@@ -1115,7 +1119,7 @@
  </div>
  <label for=matchNotFromBeginning><input type=checkbox id=matchNotFromBeginning checked> совпадение должно быть не от начала абзаца</label>
  <hr>
- Выберите маркер для первых абзацев текста сноски:<br>
+ Задайте маркер для первых абзацев текста сноски:<br>
  <label for="radio30"><input type=radio id="radio30" name=firstNoteP checked> вида [1]</label>
  <label for="radio31"><input type=radio id="radio31" name=firstNoteP> вида {1}</label>
  <label for="radio32"><input type=radio id="radio32" name=firstNoteP> вида [~1~]</label>
@@ -1131,6 +1135,6 @@
  Маркер 2-го, 3-го и т.д. абзацев текста сноски (не регэксп, а простой текст):<br>
  <input type=text style="width:600px;" id=notFirstParagraphStr value="~~"><br><br>
  
- <input type=button value="Создать сноски" onclick="initVarsForNotes(); createNotes();" style="width:200px;"><input type=button value="Создать сноски и выйти" onclick="initVarsForNotes(); var rslt=createNotes(); if (rslt!='Ноль сносок' && rslt!='Числа не совпадают') window.close();" style="width:260px;"><input type=button onclick="window.close();" value="Выйти" style="width:120px;"><BR><input type=button style="width:550px;" value="Предпросмотр текстов сносок, помеченных маркерами" onclick="evalMyCode(); extractNotesTexts(); showNotesTexts();"><BR> <input type=button value="Создать комментарии" onclick="initVarsForComments(); createNotes();" style="width:200px;"><input type=button value="Создать комментарии и выйти" onclick="initVarsForComments(); var rslt=createNotes(); if (rslt!='Ноль сносок' && rslt!='Числа не совпадают') window.close();" style="width:260px;"><input type=button onclick="window.close();" value="Выйти" style="width:120px;">
+ <input type=button value="Создать сноски" onclick="initVarsForNotes(); createNotes();" style="width:200px;"><input type=button value="Создать сноски и выйти" onclick="initVarsForNotes(); var rslt=createNotes(); if (rslt!='Ноль сносок' && rslt!='Числа не совпадают') window.close();" style="width:260px;"><input type=button onclick="window.close();" value="Выйти" style="width:120px;"><BR><input type=button style="width:550px;" value="Предпросмотр текстов сносок, помеченных маркерами" onclick="evalMyCode(); adjustVars(); extractNotesTexts(); showNotesTexts();"><BR> <input type=button value="Создать комментарии" onclick="initVarsForComments(); createNotes();" style="width:200px;"><input type=button value="Создать комментарии и выйти" onclick="initVarsForComments(); var rslt=createNotes(); if (rslt!='Ноль сносок' && rslt!='Числа не совпадают') window.close();" style="width:260px;"><input type=button onclick="window.close();" value="Выйти" style="width:120px;">
  </body>
 </html>
