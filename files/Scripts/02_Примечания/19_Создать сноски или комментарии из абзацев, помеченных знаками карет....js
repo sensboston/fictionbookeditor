@@ -1,7 +1,7 @@
 //Скрипт «Создать сноски или комментарии из абзацев, помеченных знаками карет»
 //Автор Sclex
 
-var notesFromSelectedParagraphs_versionNum="2.0";
+var notesFromSelectedParagraphs_versionNum="2.1";
 
 function Run() {
  var dialogWidth="700px";

@@ -912,6 +912,10 @@
     }
     else {
      myWin.external.EndUndoUnit(myWin.document);
+     if (targetBodyName!="comments")
+       alert("В документе не нашлось ни одного абзаца-исходника текста сноски.");
+     else
+       alert("В документе не нашлось ни одного абзаца-исходника текста комментария.");
      return "Ноль сносок";
     }
    }
@@ -940,7 +944,13 @@
   }
 
   function showNotesTexts() {
-   if (myWin.notesTextCnt==0) return;
+   if (myWin.notesTextCnt==0) {
+     if (targetBodyName!="comments")
+       alert("В документе не нашлось ни одного абзаца-исходника текста сноски.");
+     else
+       alert("В документе не нашлось ни одного абзаца-исходника текста комментария.");
+     return;
+  }
 /*
    var s=makeEntities('<DIV class=body xmlns:l="http://www.w3.org/1999/xlink" xmlns:f="http://www.gribuser.ru/xml/fictionbook/2.0" fbname="notes">')+"<BR>";
    s+=makeEntities("<DIV class=title><P>Примечания, извлеченные из сгрупированных абзацев</P></DIV>")+"<BR>";
