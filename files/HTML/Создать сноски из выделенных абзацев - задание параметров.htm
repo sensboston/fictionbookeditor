@@ -784,11 +784,11 @@
       return "Числа не совпадают";
     }
     else
-     alert(units(myWin.refMarkersCnt, {nom: 'Найден', gen: 'Найдены', plu: 'Найдено'})+" "+
+     if (!confirm(units(myWin.refMarkersCnt, {nom: 'Найден', gen: 'Найдены', plu: 'Найдено'})+" "+
      myWin.refMarkersCnt+" "+units(myWin.refMarkersCnt, {nom: 'маркер знака сноски', gen: 'маркера знаков сноски', plu: 'маркеров знаков сноски'})+".\n\n"+
      units(myWin.notesTextCnt, {nom: 'Найден', gen: 'Найдены', plu: 'Найдено'})+" "+
      myWin.notesTextCnt+" "+units(myWin.notesTextCnt, wordForms)+".\n\n"+
-     "Ура! Эти числа совпали. А значит, "+noteName2+" будут созданы.");
+     "Ура! Эти числа совпали. А значит, "+noteName2+" можно создать.\n\nСоздать "+noteName2+"?")) return "Создание сносок отменено пользователем";
    }
    catch(e) {
     alert("Произошла ошибка (код 1). Возможная причина –\nвы запускаете обработку после\nтого, как создали новый документ\nв основном окне FBE. В таком\nслучае перезапустите скрипт\n\n"+
@@ -910,7 +910,8 @@
    }
    try {
     if (myWin.notesTextCnt!=0) {
-     if (addNotes()=="Числа не совпадают") {
+     var addNotesResult=addNotes();
+     if (addNotesResult=="Числа не совпадают" || addNotesResult=="Создание сносок отменено пользователем") {
       myWin.external.EndUndoUnit(myWin.document);
       return "Числа не совпадают";
      }
