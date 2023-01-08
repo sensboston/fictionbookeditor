@@ -1,8 +1,8 @@
-// Скрипт "Расформатировать все цитаты" v1.0
+// Скрипт "Расформатировать все цитаты" v1.1
 // Автор Sclex
 
 function Run() {
- var fbwBody, allDivs, i, removedCitesCnt, itsFirstRemoving;
+ var fbwBody, allDivs, i, j, removedCitesCnt, itsFirstRemoving, allPs;
  fbwBody=document.getElementById("fbw_body");
  if (!fbwBody) return;
  removedCitesCnt=0;
@@ -14,6 +14,12 @@ function Run() {
     window.external.BeginUndoUnit(document,"расформатирование всех цитат");
     itsFirstRemoving=false;
    }
+   allPs=allDivs[i].getElementsByTagName("P");
+   for (j=0; j<allPs.length; j++)
+     if (allPs[j].className="text-author") {
+      allPs[j].removeAttribute("class");
+      allPs[j].removeAttribute("className");
+     }
    allDivs[i].removeNode(false);
    removedCitesCnt++;
   }
