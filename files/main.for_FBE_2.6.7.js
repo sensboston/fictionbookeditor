@@ -2150,7 +2150,7 @@ function AddEpigraph(cp,check)
   InsBefore(cp, pp, ep);
   InflateIt(ep);
   rng.pasteHTML("");
-  if(pp && (!pp.innerText || pp.innerText == "" || pp.innerText == " "))
+  if(pp && (!pp.innerText || pp.innerText == "" || pp.innerText == " ") && pp.className!="image")
     pp.removeNode(true);
   window.external.EndUndoUnit(document);
   GoTo(ep);
