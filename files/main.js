@@ -1645,8 +1645,7 @@ function StyleCheck(cp,st)
  {
   case "":
       if(pp.className!="section" && pp.className!="title" && pp.className!="epigraph" &&
-	  pp.className!="stanza" && pp.className!="cite" && pp.className!="annotation" &&
-	  pp.className!="history")
+	  pp.className!="history" && pp.className!="cite" && pp.className!="annotation")
 	return false;
   break;
 
@@ -1656,7 +1655,12 @@ function StyleCheck(cp,st)
   break;
 
   case "text-author":
-    if(pp.className!="cite" && pp.className!="epigraph" && pp.className!="poem") return false;
+    if(pp.className!="cite" && pp.className!="epigraph" && 
+        (cp.nodeName!="P" || cp.parentNode.className!="stanza" ||
+          (cp.previousSibling && cp.previousSibling.className=="title") ||
+          (!cp.previousSibling && !cp.parentNode.previousSibling) ||
+          (!cp.previousSibling && cp.parentNode.previousSibling && cp.parentNode.previousSibling.className=="epigraph") ||
+          (cp.parentNode.nextSibling && cp.parentNode.nextSibling.className=="stanza"))) return false;
     if((cp.nextSibling && cp.nextSibling.className!="text-author")) return false;
   break;
 
@@ -1687,6 +1691,25 @@ function SetStyle(cp,check,name)
  window.external.BeginUndoUnit(document,name+" style");
  window.external.SetStyleEx(document, cp, name);
  //cp.className=name;
+ if (name=="text-author" && cp && cp.parentNode && cp.parentNode.className=="stanza") {
+   var stanza1=cp.parentNode;
+   var node1=cp.removeNode(true);
+   stanza1.parentNode.insertBefore(node1,stanza1.nextSibling);
+   if (!stanza1.firstChild && stanza1.previousSibling) {
+     var rng1=document.body.createTextRange();
+     rng1.moveToElementText(stanza1.previousSibling); 
+     rng1.collapse(false);
+     rng1.select();
+   }
+   if (!stanza1.firstChild) stanza1.removeNode(true);
+ }
+ /*if (name=="normal") {
+   var stanza1=cp.previousSibling;
+   if (stanza1.className=="stanza") {
+     var node1=cp.removeNode(true);
+     stanza1.appendChild(node1);
+   }
+ }*/
  window.external.EndUndoUnit(document);
 }
 //-----------------------------------------------
