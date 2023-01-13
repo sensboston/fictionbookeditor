@@ -1660,7 +1660,7 @@ function StyleCheck(cp,st)
         (cp.nodeName!="P" || cp.parentNode.className!="stanza" ||
           (cp.previousSibling && cp.previousSibling.className=="title") ||
           (!cp.previousSibling && !cp.parentNode.previousSibling) ||
-          (!cp.previousSibling && cp.parentNode.previousSibling && cp.parentNode.previousSibling.className=="epigraph") ||
+          (!cp.previousSibling && cp.parentNode.previousSibling && cp.parentNode.previousSibling.className!="stanza") ||
           (cp.parentNode.nextSibling && cp.parentNode.nextSibling.className=="stanza"))) return false;
     if((cp.nextSibling && cp.nextSibling.className!="text-author")) return false;
   break;
