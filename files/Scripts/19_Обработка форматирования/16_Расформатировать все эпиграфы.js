@@ -1,4 +1,4 @@
-// Скрипт "Расформатировать все эпиграфы" v1.1
+// Скрипт "Расформатировать все эпиграфы" v1.2
 // Автор Sclex
 
 function Run() {
@@ -16,7 +16,7 @@ function Run() {
    }
    allPs=allDivs[i].getElementsByTagName("P");
    for (j=0; j<allPs.length; j++)
-     if (allPs[j].className="text-author") {
+     if (allPs[j].className=="text-author" && allPs[j].parentNode.className=="epigraph") {
       allPs[j].removeAttribute("class");
       allPs[j].removeAttribute("className");
      }
