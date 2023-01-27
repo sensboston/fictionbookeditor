@@ -260,6 +260,8 @@
     '   markerPos=ps[i].innerHTML.replace(removeAllTagsRegExp,"").indexOf(notFirstParagraphMarker);'+
     '   if (markerPos>=0)'+
     '    ps[i].innerHTML=removeSymbolsBeyondTags(ps[i].innerHTML,1,notFirstParagraphMarker.length,"");'+
+    '   else'+
+    '    ps[i].innerHTML=removeMarkerAtBeginning(ps[i].innerHTML);'+
     '  }'+
 //    '  alert("notesTextCnt: "+notesTextCnt+"\\n\\nПрибавляем такой pNew.outerHTML:\\n\\n"+pNew.outerHTML);'+
     '  notesTexts[notesTextCnt.toString()]+=pNew.outerHTML;'+

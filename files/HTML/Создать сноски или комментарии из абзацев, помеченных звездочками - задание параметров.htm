@@ -55,6 +55,25 @@
     '  return s.replace(/&/gi,"&amp;").replace(/</gi,"&lt;").replace(/>/gi,"&gt;");'+
     ' }');
    myWin.eval(
+    ' function removeMarkerAtBeginning(htmlStr2) {'+
+    '  var firstNotePMarkerREStr="^[*]+";'+
+    '  var spacesAtBeginningRegExp=new RegExp("^( |"+nbspChar+"|"+nbspEntity+")+","m");'+
+    '  var removeNotAllTagsRegExp=new RegExp("<\\/?(?!(IMG|A))[a-z]+( [^>]+)?>","ig");'+
+    '  var htmlStr3=htmlStr2.replace(removeNotAllTagsRegExp,"");'+
+    '  var htmlStr4=htmlStr3.replace(spacesAtBeginningRegExp,"");'+
+    '  var firstNotePMarkerRegExp=new RegExp(firstNotePMarkerREStr,"g");'+
+    '  var matches2=htmlStr4.match(firstNotePMarkerRegExp);'+
+    '  if (matches2) {'+
+    '    var markerAtBeginLen=matches2[0].length;'+
+    '    if (markerAtBeginLen>0) {'+
+    '      var htmlStr5=removeSymbolsBeyondTags(htmlStr2,1,markerAtBeginLen+(htmlStr3.length-htmlStr4.length),"");'+
+    '      var htmlStr6=htmlStr5.replace(removeNotAllTagsRegExp,"");'+
+    '      var htmlStr7=htmlStr6.replace(spacesAtBeginningRegExp,"");'+
+    '      return removeSymbolsBeyondTags(htmlStr5,1,(htmlStr6.length-htmlStr7.length),"");'+
+    '    }'+
+    '  }'+
+    ' }');
+   myWin.eval(
     ' function removeSourceNodes() {'+
     '  for (var i=0; i<nodesToRemove.length; i++) {'+
     '   while (nodesToRemove[i].previousSibling && nodesToRemove[i].previousSibling.nodeName=="P" && '+
@@ -210,6 +229,8 @@
     '   markerPos=ps[i].innerHTML.replace(removeAllTagsRegExp,"").indexOf(notFirstParagraphMarker);'+
     '   if (markerPos>=0)'+
     '    ps[i].innerHTML=removeSymbolsBeyondTags(ps[i].innerHTML,1,notFirstParagraphMarker.length,"");'+
+    '   else'+
+    '    ps[i].innerHTML=removeMarkerAtBeginning(ps[i].innerHTML);'+
     '  }'+
 //    '  alert("notesTextCnt: "+notesTextCnt+"\\n\\nПрибавляем такой pNew.outerHTML:\\n\\n"+pNew.outerHTML);'+
     '  notesTexts[notesTextCnt.toString()]+=pNew.outerHTML;'+
