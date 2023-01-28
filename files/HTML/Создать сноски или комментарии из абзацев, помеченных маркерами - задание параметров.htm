@@ -19,6 +19,8 @@
 
   function evalMyCode() {
    myWin.eval(
+    ' try { var nbspChar=window.external.GetNBSP(); var nbspEntity; if (nbspChar.charCodeAt(0)==160) nbspEntity="&nbsp;"; else nbspEntity=nbspChar; }'+
+    ' catch(e) { var nbspChar=String.fromCharCode(160); var nbspEntity="&nbsp;";};'+
     ' var processHistory=true;'+
     ' var processAnnotation=true;'+
     ' var notesTextCnt=0;'+
@@ -41,8 +43,6 @@
     ' var notePostfix="'+notePostfix+'";'+
     ' var pIsSubtitleRegExp=new RegExp("^[ "+nbspChar+"*]*[*][ "+nbspChar+"*]*$");'+
     ' var openingAndClosingTagRegExp=new RegExp("(<STRONG><\\/STRONG>)|(<EM><\\/EM>)|(<SUP><\\/SUP>)|(<SUB><\\/SUB>)|(<SPAN( [^>]*)?><\\/SPAN>)|(<B><\\/B>)|(<I><\\/I>)|(<STRIKE><\\/STRIKE>)|(<FONT( [^\>]+)?><\\/FONT>)", "ig");'+
-    ' try { var nbspChar=window.external.GetNBSP(); var nbspEntity; if (nbspChar.charCodeAt(0)==160) nbspEntity="&nbsp;"; else nbspEntity=nbspChar; }'+
-    ' catch(e) { var nbspChar=String.fromCharCode(160); var nbspEntity="&nbsp;";};'+
     ' var spacesAtBeginningRegExp=new RegExp("^( |"+nbspChar+"|"+nbspEntity+")+","m");'+
     ' var removeNotAllTagsRegExp=new RegExp("<\\/?(?!(IMG|A))[a-z]+( [^>]+)?>","ig");'
     );
