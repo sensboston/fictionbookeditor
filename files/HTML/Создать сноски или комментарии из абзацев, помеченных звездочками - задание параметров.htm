@@ -1033,7 +1033,7 @@
   <input type=checkbox id=interpretAsRegExpCheckbox checked style="display:none;"> трактовать как регулярное выражение
  </div>
  Маркер 2-го, 3-го и т.д. абзацев текста сноски (не регэксп, а простой текст):<br>
- <input type=text style="width:600px;" id=notFirstParagraphStr value="~~"><br><br>
+ <input type=text style="width:600px;" id=notFirstParagraphStr value="++"><br><br>
  
  <input type=button value="Создать сноски" onclick="initVarsForNotes(); createNotes();" style="width:200px;"><input type=button value="Создать сноски и выйти" onclick="initVarsForNotes(); var rslt=createNotes(); if (rslt!='Ноль сносок' && rslt!='Числа не совпадают') window.close();" style="width:260px;"><input type=button onclick="window.close();" value="Выйти" style="width:120px;"><BR><input type=button style="width:550px;" value="Предпросмотр текстов сносок, помеченных звездочками" onclick="evalMyCode(); extractNotesTexts(); showNotesTexts();"><BR> <input type=button value="Создать комментарии" onclick="initVarsForComments(); createNotes();" style="width:200px;"><input type=button value="Создать комментарии и выйти" onclick="initVarsForComments(); var rslt=createNotes(); if (rslt!='Ноль сносок' && rslt!='Числа не совпадают') window.close();" style="width:260px;"><input type=button onclick="window.close();" value="Выйти" style="width:120px;">
  </body>
