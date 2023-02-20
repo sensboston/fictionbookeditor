@@ -1,7 +1,7 @@
 //Скрипт «Создать сноски из выделенных абзацев»
 //Автор Sclex
 
-var notesFromSelectedParagraphs_versionNum="2.2";
+var notesFromSelectedParagraphs_versionNum="2.3";
 
 function Run() {
  var dialogWidth="700px";
