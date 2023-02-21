@@ -39,7 +39,7 @@
     ' var notePrefix="'+notePrefix+'";'+
     ' var notePostfix="'+notePostfix+'";'+
     ' var pIsSubtitleRegExp=new RegExp("^[ "+nbspChar+"*]*$");'+
-    ' var starsAtBegin_RE=new RegExp("^[ "+nbspChar+"#]+","");'+
+    ' var starsAtBegin_RE=new RegExp("^[ "+nbspChar+"\\\\#]*\\\\#[ "+nbspChar+"\\\\#]*","");'+
     ' var openingAndClosingTagRegExp=new RegExp("(<STRONG><\\/STRONG>)|(<EM><\\/EM>)|(<SUP><\\/SUP>)|(<SUB><\\/SUB>)|(<SPAN( [^>]*)?><\\/SPAN>)|(<B><\\/B>)|(<I><\\/I>)|(<STRIKE><\\/STRIKE>)|(<FONT( [^\>]+)?><\\/FONT>)", "ig");'+
     ' try { var nbspChar=window.external.GetNBSP(); var nbspEntity; if (nbspChar.charCodeAt(0)==160) nbspEntity="&nbsp;"; else nbspEntity=nbspChar; }'+
     ' catch(e) { var nbspChar=String.fromCharCode(160); var nbspEntity="&nbsp;";};'
@@ -216,7 +216,7 @@
     '  pInnerHTML=firstP.innerHTML;'+
     '  markerPos=pInnerHTML.replace(removeAllTagsRegExp,"").indexOf(notFirstParagraphMarker);'+
     '  if (!previosPWasPartOfNote && markerPos==-1) return;'+
-    '  if (pInnerHTML.replace(removeAllTagsRegExp,"").indexOf("#")!=0 && markerPos==-1) return;'+
+    '  if (pInnerHTML.replace(removeAllTagsRegExp,"").search(starsAtBegin_RE)!=0 && markerPos==-1) return;'+
     '  if (notesTextCnt==0) notesTextCnt++;'+
     '  if (markerPos<0 && firstNoteFlag==false) {'+
     '   notesTextCnt++;'+
@@ -250,7 +250,7 @@
 //    '  alert("Not First Paragraph Str\\n\\n"+notFirstParagraphMarker);'+
 //    '  alert("pInnerHTML с удаленными тегами:\\n\\n"+pInnerHTML.replace(removeTagsRegExp,""));'+
     '  markerPos=pInnerHTML.replace(removeAllTagsRegExp,"").indexOf(notFirstParagraphMarker);'+
-    '  if (p.innerText.indexOf("#")!=0 && markerPos==-1) return;'+
+    '  if (p.innerText.search(starsAtBegin_RE)!=0 && markerPos==-1) return;'+
     '  if (!previosPWasPartOfNote && markerPos!=-1) {'+
     '    previosPWasPartOfNote=false;'+
     '    return;'+
@@ -453,7 +453,7 @@
     '  removeAllTagsRegExp=new RegExp("<\\/?[a-z]+( [^>]+)?>","ig");'+
 //    '  alert("a: "+pInnerHTML.replace(removeAllTagsRegExp,""));'+
     '  if (interpretAsRegExp) refMarkerRegExp.lastIndex=0;'+
-    '  while (interpretAsRegExp ? (p.innerText.indexOf("#")!=0 && refMarkerRegExp.test(pInnerHTML.replace(removeAllTagsRegExp,""))) : '+
+    '  while (interpretAsRegExp ? (p.innerText.search(starsAtBegin_RE)!=0 && refMarkerRegExp.test(pInnerHTML.replace(removeAllTagsRegExp,""))) : '+
     '    pInnerHTML.replace(removeAllTagsRegExp,"").indexOf(refMarkerStr)>=0) {'+
 //    '   alert("Внутри уайла получаем такой pInnerHTML:\\n\\n"+pInnerHTML);'+
     '   if (interpretAsRegExp) {'+
@@ -577,7 +577,7 @@
     '  var removeNotAllTagsRegExp=new RegExp("<\\/?(?!(IMG|A))[a-z]+( [^>]+)?>","ig");'+
     '  var symbolsBefore=0;'+
     '  pInnerHTML=pInnerHTMLSrc.replace(removeAllTagsRegExp,"");'+
-    '  if (p.innerText.indexOf("#")==0) return;'+
+    '  if (p.innerText.search(starsAtBegin_RE)==0) return;'+
     '  pInnerHTML2=pInnerHTMLSrc.replace(removeNotAllTagsRegExp,"");'+
 //    '  refMarkerRegExp.lastIndex=0;'+
 //    '  alert("Вот мы перед ифом.\\n\\ninterpretAsRegExp: "+interpretAsRegExp+"\\n\\n"+refMarkerRegExp.test(pInnerHTML));'+
