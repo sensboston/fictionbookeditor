@@ -41,7 +41,7 @@
     ' var notePrefix="'+notePrefix+'";'+
     ' var notePostfix="'+notePostfix+'";'+
     ' var pIsSubtitleRegExp=new RegExp("^[ "+nbspChar+"*]*[*][ "+nbspChar+"*]*$");'+
-    ' var starsAtBegin_RE=new RegExp("^[ "+nbspChar+"\\\\*]*\\\\*[ "+nbspChar+"\\\\*]*","");'+
+    ' var starsAtBegin_RE=new RegExp("^( |&nbsp;|"+nbspChar+"|\\\\*)*\\\\*( |&nbsp;|"+nbspChar+"|\\\\*)*","");'+
     ' var openingAndClosingTagRegExp=new RegExp("(<STRONG><\\/STRONG>)|(<EM><\\/EM>)|(<SUP><\\/SUP>)|(<SUB><\\/SUB>)|(<SPAN( [^>]*)?><\\/SPAN>)|(<B><\\/B>)|(<I><\\/I>)|(<STRIKE><\\/STRIKE>)|(<FONT( [^\>]+)?><\\/FONT>)", "ig");'
     );
    myWin.eval(
@@ -56,13 +56,11 @@
     ' }');
    myWin.eval(
     ' function removeMarkerAtBeginning(htmlStr2) {'+
-    '  var firstNotePMarkerREStr="^[*]+";'+
     '  var spacesAtBeginningRegExp=new RegExp("^( |"+nbspChar+"|"+nbspEntity+")+","m");'+
     '  var removeNotAllTagsRegExp=new RegExp("<\\/?(?!(IMG|A))[a-z]+( [^>]+)?>","ig");'+
     '  var htmlStr3=htmlStr2.replace(removeNotAllTagsRegExp,"");'+
     '  var htmlStr4=htmlStr3.replace(spacesAtBeginningRegExp,"");'+
-    '  var firstNotePMarkerRegExp=new RegExp(firstNotePMarkerREStr,"g");'+
-    '  var matches2=htmlStr4.match(firstNotePMarkerRegExp);'+
+    '  var matches2=htmlStr4.match(starsAtBegin_RE);'+
     '  if (matches2) {'+
     '    var markerAtBeginLen=matches2[0].length;'+
     '    if (markerAtBeginLen>0) {'+
