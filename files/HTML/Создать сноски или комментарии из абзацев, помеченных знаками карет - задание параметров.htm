@@ -214,7 +214,9 @@
     '  pInnerHTML=firstP.innerHTML;'+
     '  markerPos=pInnerHTML.replace(removeAllTagsRegExp,"").indexOf(notFirstParagraphMarker);'+
     '  if (!previosPWasPartOfNote && markerPos==-1) return;'+
-    '  if (pInnerHTML.replace(removeAllTagsRegExp,"").search(starsAtBegin_RE)!=0 && markerPos==-1) return;'+
+    '  if ((pInnerHTML.replace(removeAllTagsRegExp,"").search(starsAtBegin_RE)!=0 ||'+
+    '      pInnerHTML.replace(removeAllTagsRegExp,"").replace(starsAtBegin_RE,"").length==0) &&'+
+    '      markerPos==-1) return;'+
     '  if (notesTextCnt==0) notesTextCnt++;'+
     '  if (markerPos<0 && firstNoteFlag==false) {'+
     '   notesTextCnt++;'+
