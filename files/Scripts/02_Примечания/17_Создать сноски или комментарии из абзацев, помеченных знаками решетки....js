@@ -1,7 +1,7 @@
 //Скрипт «Создать сноски или комментарии из абзацев, помеченных знаками решетки»
 //Автор Sclex
 
-var notesFromSelectedParagraphs_versionNum="3.3";
+var notesFromSelectedParagraphs_versionNum="3.4";
 
 function Run() {
  var dialogWidth="700px";

@@ -194,15 +194,11 @@
     ' }'
    );
    myWin.eval(
-    'function findMarkerLen(innerTextStr,markerStr) {'+
+    'function findMarkerLen(innerTextStr,markerStrWithEntities) {'+
     ' var lengthAtBeginning=innerTextStr.length;'+
-    ' var lengthAddValue=0;'+
-    ' var matches2=markerStr.match(/&[lg]t;/g);'+
-    ' if (matches2) lengthAddValue+=matches2.length*3;'+
-    ' var matches2=markerStr.match(/&amp;/g);'+
-    ' if (matches2) lengthAddValue+=matches2.length*4;'+
-    ' markerStr=markerStr.replace(/&lt;/g,"<").replace(/&gt;/g,">").replace(/&amp;/g,"&");'+
-    ' innerTextStr=innerTextStr.replace(/nbsp;/g,nbspChar);'+
+    ' var markerStr=markerStrWithEntities.replace(/&lt;/g,"<").replace(/&gt;/g,">").replace(/&amp;/g,"&");'+
+    ' var lengthAddValue=markerStrWithEntities.length-markerStr.length;'+
+    ' var innerTextStr=innerTextStr.replace(/nbsp;/g,nbspChar);'+
     ' var spacesRegExp=new RegExp("^( |"+nbspChar+")*");'+
     ' innerTextStr=innerTextStr.replace(spacesRegExp,"");'+
     ' if (innerTextStr.indexOf(markerStr)!=0) return 0;'+
