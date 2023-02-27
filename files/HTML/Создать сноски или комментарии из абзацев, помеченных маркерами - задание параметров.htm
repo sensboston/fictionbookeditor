@@ -100,12 +100,12 @@
    myWin.eval(
     ' function containsFirstNotePMarker(myInnerHTML) {'+
     '  if (!interpretAsRegExp2) {'+
-    '    myIndex3=myInnerHTML.replace(removeAllTagsRegExp,"").replace(spacesAtBeginningRegExp,"").indexOf(firstNotePMarkerStr);'+
+    '    myIndex3=myInnerHTML.replace(/<[^>]*>/g,"").replace(spacesAtBeginningRegExp,"").indexOf(firstNotePMarkerStr);'+
     '    if (myIndex3==0) return true;'+
     '    else return false;'+
     '  }'+
     '  firstNotePMarkerRegExp=new RegExp(firstNotePMarkerREStr,"gm");'+
-    '  return myInnerHTML.replace(removeAllTagsRegExp,"").replace(spacesAtBeginningRegExp,"").search(firstNotePMarkerRegExp)==0;'+
+    '  return myInnerHTML.replace(/<[^>]*>/g,"").replace(spacesAtBeginningRegExp,"").search(firstNotePMarkerRegExp)==0;'+
     ' }');
 
    myWin.eval(
@@ -634,14 +634,15 @@
    myWin.eval(
     ' function processP_3(p) {'+
 //   Эта функция считает маркеры знака сноски
+    '  if (p.innerText.search(pIsSubtitleRegExp)==0) return;'+
+//    '  alert("p.innerHTML:\\n\\n"+p.innerHTML+"\\n\\ncontainsFirstNotePMarker(p.innerHTML): "+containsFirstNotePMarker(p.innerHTML));'+
+    '  if (containsFirstNotePMarker(p.innerHTML)) return;'+
     '  if (upperIndex) {'+
     '   var htmlStr=p.innerHTML.replace(leaveOnlySupsRegExp,"");'+
     '   var matches3=htmlStr.match(upperNumberRegExp);'+
     '   if (matches3) refMarkersCnt+=matches3.length;'+
     '   return;'+
     '  }'+
-    '  if (p.innerText.search(pIsSubtitleRegExp)==0) return;'+
-    '  if (containsFirstNotePMarker(p.innerHTML)) return;'+
     '  var myPos,pInnerHTML_2,myPos2,srchResult,matchLen;'+
     '  var pInnerHTMLSrc=p.innerHTML;'+
     '  var pInnerHTML2=null;'+
