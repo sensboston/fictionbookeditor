@@ -38,7 +38,7 @@
     ' var removeAllTagsRegExp,refMarkerRegExp,firstNotePMarkerRegExp;'+
     ' var whatDoWeDo=null;'+
     ' var upperIndex=false;'+
-    ' var upperNumberRegExp=new RegExp("[0-9¹²³]+(?=[^<]*</SUP>)","g");'+
+    ' var upperNumberRegExp=new RegExp("([¹²³]+)(<SUP>[0-9¹²³]*(?=[^<]*</SUP>)(</SUP>[¹²³]+)?)*|([¹²³]+<SUP>)?[0-9¹²³]+(?=[^<]*</SUP>)(</SUP>[¹²³]+(<SUP>[0-9¹²³]+(?=[^<]*</SUP>))?)*","g");'+
     ' var targetBodyName="'+targetBodyName+'";'+
     ' var targetBodyTitle="'+targetBodyTitle+'";'+
     ' var noteAddressPrefix="'+noteAddressPrefix+'";'+
@@ -59,6 +59,28 @@
     ' function makeEntities(s) {'+
     '  return s.replace(/&/gi,"&amp;").replace(/</gi,"&lt;").replace(/>/gi,"&gt;");'+
     ' }');
+  myWin.eval(
+    'function leaveOnlyFirstLevelSups(str) {'+
+    ''+
+    ' function replaceFunction1(match, p1) {'+
+    '   if (p1!="/") {'+
+    '    supLevel++;'+
+    '    return supLevel==1 ? match : "";'+
+    '   }'+
+    '   if (p1=="/") {'+
+    '    supLevel--;'+
+    '    return supLevel==0 ? match : "";'+
+    '   }'+
+    ' }'+
+    ' '+
+    ' var supLevel=0;'+
+    ' str=str.replace(/<(\\/?)SUP[^>]*>/g,replaceFunction1);'+
+    ' var re100=/<\\/SUP><SUP[^>]*>/g;'+
+    ' var re101=/<SUP[^>]*><\\/SUP>/g;'+
+    ' while (str.search(re100)!=-1 || str.search(re101)!=-1)'+
+    '  str=str.replace(re100,"").replace(re101,"");'+
+    ' return(str);'+
+    '}');
    myWin.eval(
     ' function removeMarkerAtBeginning(htmlStr2) {'+
     '  if (interpretAsRegExp2) {'+
@@ -498,14 +520,14 @@
 //    '  alert("a: "+pInnerHTML.replace(removeAllTagsRegExp,""));'+
     '  if (interpretAsRegExp) refMarkerRegExp.lastIndex=0;'+
     '  if (upperIndex) '+
-    '   var htmlStr10=pInnerHTML.replace(leaveOnlySupsRegExp,"");'+
+    '   var htmlStr10=leaveOnlyFirstLevelSups(pInnerHTML.replace(leaveOnlySupsRegExp,""));'+
     '  else'+
     '   var htmlStr10=pInnerHTML.replace(removeAllTagsRegExp,"");'+
     '  if (interpretAsRegExp && matchNotFromBeginning && htmlStr10.search(refMarkerRegExp)==0)'+
     '   if(!upperIndex)'+
     '    refMarkerRegExp.exec(pInnerHTML.replace(removeAllTagsRegExp,""));'+
     '   else'+
-    '    refMarkerRegExp.exec(pInnerHTML.replace(leaveOnlySupsRegExp,""));'+
+    '    refMarkerRegExp.exec(leaveOnlyFirstLevelSups(pInnerHTML.replace(leaveOnlySupsRegExp,"")));'+
     '  var firstRefMarker=true;'+
     '  while (interpretAsRegExp ? (!containsFirstNotePMarker(p.innerText) && refMarkerRegExp.test(htmlStr10)) : '+
     '    containsRefMarker(pInnerHTML)) {'+
@@ -524,7 +546,7 @@
     '     myPos=srchResult.index;'+
     '     var strBeginning=htmlStr10.substr(0,myPos).replace(removeAllTagsRegExp,"");'+
     '     myPos=strBeginning.length;'+
-    '     matchLen=srchResult[0].length;'+
+    '     matchLen=srchResult[0].replace(/<[^>]*>/g,"").length;'+
     '     checkResult=checkIfTagsAreInFoundSubstr(pInnerHTML,myPos+1,matchLen);'+
     '    }'+
     '    refMarkerRegExp.lastIndex=0;'+
@@ -555,7 +577,7 @@
     '   newRef=document.getElementById("tmpId_"+rndm2);'+
     '   newRef.removeAttribute("id");'+
     '   pInnerHTML=p.innerHTML;'+
-    '   htmlStr10=pInnerHTML.replace(leaveOnlySupsRegExp,"");'+
+    '   htmlStr10=leaveOnlyFirstLevelSups(pInnerHTML.replace(leaveOnlySupsRegExp,""));'+
 //    '   alert("Перед вызовом findPreviousNote.");'+
     '   previousNote=findPreviousNote(newRef);'+
 //    '   alert("После вызова findPreviousNote.\\n\\nРезультат:\\n\\n"+previousNote.outerHTML);'+
@@ -638,9 +660,10 @@
 //    '  alert("p.innerHTML:\\n\\n"+p.innerHTML+"\\n\\ncontainsFirstNotePMarker(p.innerHTML): "+containsFirstNotePMarker(p.innerHTML));'+
     '  if (containsFirstNotePMarker(p.innerHTML)) return;'+
     '  if (upperIndex) {'+
-    '   var htmlStr=p.innerHTML.replace(leaveOnlySupsRegExp,"");'+
+    '   var htmlStr=leaveOnlyFirstLevelSups(p.innerHTML.replace(leaveOnlySupsRegExp,""));'+
     '   var matches3=htmlStr.match(upperNumberRegExp);'+
     '   if (matches3) refMarkersCnt+=matches3.length;'+
+//    '   if (matches3) { alert("matches3[0]: "+matches3[0]+"\\n\\nmatches3[1]: "+matches3[1]); }'+
     '   return;'+
     '  }'+
     '  var myPos,pInnerHTML_2,myPos2,srchResult,matchLen;'+
@@ -967,7 +990,8 @@
     }
     myWin.upperIndex=false;
     if (document.getElementById("radio36").checked) {
-     myWin.refMarkerRegExp=/[0-9¹²³]+(?=[^<]*<\/SUP>)/g;
+     myWin.refMarkerRegExp=new RegExp("(([¹²³]+)(<SUP>[0-9¹²³]*(?=[^<]*</SUP>)(</SUP>[¹²³]+)?)*)|"+
+                                      "(([¹²³]+<SUP>)?[0-9¹²³]+(?=[^<]*</SUP>)(</SUP>[¹²³]+)?)","g");
      myWin.interpretAsRegExp=true;
      myWin.upperIndex=true;
     }
