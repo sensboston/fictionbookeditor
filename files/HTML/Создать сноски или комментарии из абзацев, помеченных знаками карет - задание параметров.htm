@@ -16,11 +16,13 @@
   var noteAddressPrefix="noteAddressPrefix не задано.";
   var notePrefix="notePrefix не задано.";
   var notePostfix="notePostfix не задано.";
+  var noteClass="noteClass не задано.";
 
   function evalMyCode() {
    myWin.eval(
     ' try { var nbspChar=window.external.GetNBSP(); var nbspEntity; if (nbspChar.charCodeAt(0)==160) nbspEntity="&nbsp;"; else nbspEntity=nbspChar; }'+
     ' catch(e) { var nbspChar=String.fromCharCode(160); var nbspEntity="&nbsp;";};'+
+    ' var refText="Œ±Ǥ";'+
     ' var processHistory=true;'+
     ' var processAnnotation=true;'+
     ' var notesTextCnt=0;'+
@@ -40,6 +42,7 @@
     ' var noteAddressPrefix="'+noteAddressPrefix+'";'+
     ' var notePrefix="'+notePrefix+'";'+
     ' var notePostfix="'+notePostfix+'";'+
+    ' var noteClass="'+noteClass+'";'+
     ' var pIsSubtitleRegExp=new RegExp("^[ "+nbspChar+"*]*$");'+
     ' var starsAtBegin_RE=new RegExp("^( |&nbsp;|"+nbspChar+"|\\\\x5E)*\\\\x5E( |&nbsp;|"+nbspChar+"|\\\\x5E)*","");'+
     ' var openingAndClosingTagRegExp=new RegExp("(<STRONG><\\/STRONG>)|(<EM><\\/EM>)|(<SUP><\\/SUP>)|(<SUB><\\/SUB>)|(<SPAN( [^>]*)?><\\/SPAN>)|(<B><\\/B>)|(<I><\\/I>)|(<STRIKE><\\/STRIKE>)|(<FONT( [^\>]+)?><\\/FONT>)", "ig");'
@@ -53,6 +56,106 @@
    myWin.eval(
     ' function makeEntities(s) {'+
     '  return s.replace(/&/gi,"&amp;").replace(/</gi,"&lt;").replace(/>/gi,"&gt;");'+
+    ' }');
+   myWin.eval(
+    ' function unsupReferences(p) {'+
+    '  '+
+    '  function replaceFunction2(myMatch) {'+
+    '   nodesArray.push(myMatch);'+
+    '  }'+
+    '  '+
+    '  var htmlStr=p.innerHTML;'+
+    '  if (htmlStr.indexOf(refText+"</A>")==-1) return;'+
+    '  if (htmlStr.indexOf("<SUP")==-1) return;'+
+    '  var nodesArray=[];'+
+    '  var elementStack=[];'+
+    '  var elementNumberStack=[];'+
+    '  var myTagName;'+
+    '  var itsOpeningTag;'+
+    '  var beforeRef={};'+
+    '  var afterRef={};'+
+    '  var openingTag={};'+
+    '  htmlStr.replace(/<[^>]*>|[^<>]+/g,replaceFunction2);'+
+    '  var j, htmlStr2,htmlStr3;'+
+    '  var i;'+
+    '  for (i=0;i<nodesArray.length;i++) {'+
+    '    if (nodesArray[i].indexOf("<")==0) {'+
+    '     myTagName=nodesArray[i].replace(/^<\\/?([a-z]+)( [^>]*)?>/i,"$1");'+
+    '     itsOpeningTag=nodesArray[i].replace(/^<(\\/)?[a-z]+( [^>]*)?>/i,"$1")!="/";'+
+    '     if (myTagName=="IMG") continue;'+
+    '     if (!itsOpeningTag && myTagName=="SPAN") {'+
+    '      openingTag[i.toString()]=elementStack[elementStack.length-1];'+
+    '      if (elementStack[elementStack.length-1]=="<SPAN class=code>") {'+
+    '       nodesArray[i]="</code>";'+
+    '       openingTag[i.toString()]="<code>";'+
+    '       nodesArray[elementNumberStack[elementNumberStack.length-1]]="<code>";'+
+    '       elementStack[elementStack.length-1]="<code>";'+
+    '      }'+
+    '     }'+
+    '     if (itsOpeningTag) {'+
+    '       elementStack.push(nodesArray[i]);'+
+    '       elementNumberStack.push(i);'+
+    '     } else {'+
+    '       elementStack.pop();'+
+    '       elementNumberStack.pop();'+
+    '     }'+
+    '    }'+
+    '    if (itsOpeningTag && myTagName=="A" && nodesArray[i+1] && nodesArray[i+1]==refText && nodesArray[i+2] && nodesArray[i+2]=="</A>") {'+
+    '     htmlStr2="";'+
+    '     for (j=elementStack.length-2;j>=0;j--)'+
+    '       htmlStr2+=elementStack[j].replace(/^</,"</");'+
+    '     htmlStr3="";'+
+    '     for (j=0;j<elementStack.length-1;j++)'+
+    '       htmlStr3+=elementStack[j];'+
+    '     htmlStr3=htmlStr3.replace(/<SUP( [^>]*)?>/ig,"");'+
+    '     beforeRef[i.toString()]=htmlStr2+htmlStr3;'+
+    '    }'+
+    '  }'+
+    '  elementStack=[];'+
+    '  i=nodesArray.length-1;'+
+    '  while (i>=0) {'+
+    '    if (nodesArray[i].indexOf("<")==0) {'+
+    '     myTagName=nodesArray[i].replace(/^<\\/?([a-z]+)( [^>]*)?>/i,"$1");'+
+    '     itsOpeningTag=nodesArray[i].replace(/^<(\\/)?[a-z]+( [^>]*)?>/i,"$1")!="/";'+
+    '     if (!itsOpeningTag) {'+
+    '       elementStack.push(nodesArray[i]);'+
+    '       elementNumberStack.push(i);'+
+    '     }'+
+    '     else {'+
+    '       elementStack.pop();'+
+    '       elementNumberStack.pop();'+
+    '     }'+
+    '    }'+
+    '    if (!itsOpeningTag && myTagName=="A" && nodesArray[i-1] && nodesArray[i-1]==refText && nodesArray[i-2] && nodesArray[i-2].search(/^<A( )?/i)!=-1) {'+
+    '     htmlStr2="";'+
+    '     for (j=elementStack.length-2;j>=0;j--) {'+
+    '      if (elementStack[j]=="</SPAN>" || elementStack[j]=="</code>")'+
+    '       htmlStr2=openingTag[elementNumberStack[j].toString()]+htmlStr2;'+
+    '      else'+
+    '       htmlStr2=elementStack[j.toString()].replace(/^<\\//,"<")+htmlStr2;'+
+    '     }'+
+    '     htmlStr3="";'+
+    '     for (j=0;j<elementStack.length-1;j++)'+
+    '       htmlStr3=elementStack[j]+htmlStr3;'+
+    '     htmlStr3=htmlStr3.replace(/<\\/SUP( [^>]*)?>/ig,"");'+
+    '     afterRef[i.toString()]=htmlStr3+htmlStr2;'+
+    '    }'+
+    '    i--;'+
+    '  }'+
+    '  var htmlStr4="";'+
+    '  for (i=0;i<nodesArray.length;i++) {'+
+    '    myTagName=nodesArray[i].replace(/^<\\/?([a-z]+)( [^>]*)?>/i,"$1");'+
+    '    itsOpeningTag=nodesArray[i].replace(/^<(\\/)?[a-z]+( [^>]*)?>/i,"$1")!="/";'+
+    '    if (itsOpeningTag && myTagName=="A" && nodesArray[i+1] && nodesArray[i+1]==refText && nodesArray[i+2] && nodesArray[i+2]=="</A>") {'+
+    '     htmlStr4+=beforeRef[i.toString()]+nodesArray[i];'+
+    '    }'+
+    '    else if (!itsOpeningTag && myTagName=="A" && nodesArray[i-1] && nodesArray[i-1]==refText && nodesArray[i-2] && nodesArray[i-2].search(/^<A( )?/i)!=-1)'+
+    '     htmlStr4+=nodesArray[i]+afterRef[i.toString()];'+
+    '    else htmlStr4+=nodesArray[i];'+
+    '  }'+
+    '  htmlStr4=htmlStr4.replace(/<(\\/?)SPAN class=code>/gi,"<$1code>").replace(/<\\/code><code>/g,"").replace(/<code>/g,"<SPAN class=code>").replace(/<\\/code>/g,"<\\/SPAN>");'+
+    '  while (htmlStr4.search(openingAndClosingTagRegExp)!=-1) htmlStr4=htmlStr4.replace(openingAndClosingTagRegExp,"");'+
+    '  p.innerHTML=htmlStr4;'+
     ' }');
    myWin.eval(
     ' function removeMarkerAtBeginning(htmlStr2) {'+
@@ -496,7 +599,7 @@
     '    pInnerHTML=removeSymbolsBeyondTags(pInnerHTML,myPos+1,matchLen,"RReeffMMaarrkkeerrSSttrr");'+
     '    continue;'+
     '   }'+
-    '   pInnerHTML=removeSymbolsBeyondTags(pInnerHTML,myPos+1,matchLen,"<A id=\'tmpId_"+rndm2+"\' class=note href=\'#tmpId_"+rndm3+"\'>[0]</A>");'+
+    '   pInnerHTML=removeSymbolsBeyondTags(pInnerHTML,myPos+1,matchLen,"<A id=\'tmpId_"+rndm2+"\'"+noteClass+" href=\'#tmpId_"+rndm3+"\'>"+refText+"</A>");'+
     '   pInnerHTML=pInnerHTML.replace(/&nbsp;/g,nbspChar);'+
     '   pInnerHTML=removeSpacesBeyondTags(pInnerHTML,myPos+1);'+
     '   p.innerHTML=pInnerHTML.replace(openingAndClosingTagRegExp,"");'+
@@ -652,8 +755,10 @@
     '   saveNext=saveNext.nextSibling;'+
     '  }'+
     '  if (ptr && ptr.nodeName && ptr.nodeName=="P") {'+
-    '   if (whatDoWeDo=="Делаем сноски")'+
+    '   if (whatDoWeDo=="Делаем сноски") {'+
     '    processP_2(ptr);'+
+    '    unsupReferences(ptr);'+
+    '   }'+
     '   if (whatDoWeDo=="Считаем маркеры знаков сноски")'+
     '    processP_3(ptr);'+
     '  }'+
@@ -759,6 +864,7 @@
     noteAddressPrefix="n_";
     notePrefix="[";
     notePostfix="]";
+    noteClass=" class='note'";
    }
    catch(e) {
     alert("Возникла ошибка при выполнении initVarsForNotes().\n\nИмя ошибки: "+e.name+"\n\n"+
@@ -773,6 +879,7 @@
     noteAddressPrefix="c_";
     notePrefix="<SUP>{";
     notePostfix="}</SUP>";
+    noteClass="";
    }
    catch(e) {
     alert("Возникла ошибка при выполнении initVarsForComments().\n\nИмя ошибки: "+e.name+"\n\n"+
