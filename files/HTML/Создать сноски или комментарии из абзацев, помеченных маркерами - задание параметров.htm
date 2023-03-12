@@ -39,7 +39,8 @@
     ' var currNewNoteNumber=1;'+
     ' var removeAllTagsRegExp,refMarkerRegExp,firstNotePMarkerRegExp;'+
     ' var whatDoWeDo=null;'+
-    ' var upperIndex=false;'+
+    ' var upperIndex1=false;'+
+    ' var upperIndex2=false;'+
     ' var upperNumberRegExp=new RegExp("([¹²³⁴⁵⁶⁷⁸⁹⁰]+)(<SUP>[0-9¹²³⁴⁵⁶⁷⁸⁹⁰]*(?=[^<]*</SUP>)(</SUP>[¹²³⁴⁵⁶⁷⁸⁹⁰]+)?)*|([¹²³⁴⁵⁶⁷⁸⁹⁰]+<SUP>)?[0-9¹²³⁴⁵⁶⁷⁸⁹⁰]+(?=[^<]*</SUP>)(</SUP>[¹²³⁴⁵⁶⁷⁸⁹⁰]+(<SUP>[0-9¹²³⁴⁵⁶⁷⁸⁹⁰]+(?=[^<]*</SUP>))?)*","g");'+
     ' var targetBodyName="'+targetBodyName+'";'+
     ' var targetBodyTitle="'+targetBodyTitle+'";'+
@@ -187,17 +188,35 @@
    myWin.eval(
     ' function removeMarkerAtBeginning(htmlStr2) {'+
     '  if (interpretAsRegExp2) {'+
+    '    while (htmlStr2.search(openingAndClosingTagRegExp)>=0)'+
+    '     htmlStr2=htmlStr2.replace(openingAndClosingTagRegExp,"");'+
     '    var htmlStr3=htmlStr2.replace(removeNotAllTagsRegExp,"");'+
+    '    if (upperIndex2) {'+
+    '     var textStr1=htmlStr2.replace(/<[^>]*>/g,"");'+
+    '     var textStr2=textStr1.replace(spacesAtBeginningRegExp,"");'+
+    '     var firstNotePMarkerRegExp=upperNumberRegExp;'+
+    '     var htmlStr4=leaveOnlyFirstLevelSups(htmlStr2.replace(leaveOnlySupsRegExp,""));'+
+    '     var firstNotePMarkerRegExp=upperNumberRegExp;'+
+    '     firstNotePMarkerRegExp.lastIndex=0;'+
+    '     var srchResult=firstNotePMarkerRegExp.exec(htmlStr4);'+
+    '     if (!srchResult) return htmlStr2;'+
+    '     var markerAtBeginLen=srchResult[0].replace(/<[^>]*>/g,"").length;'+
+    '     var htmlStr5=removeSymbolsBeyondTags(htmlStr2,1,markerAtBeginLen+(textStr1.length-textStr2.length),"");'+
+    '     var textStr3=htmlStr5.replace(/<[^>]*>/g,"");'+
+    '     var textStr4=textStr3.replace(spacesAtBeginningRegExp,"");'+
+    '     var htmlStr5=removeSymbolsBeyondTags(htmlStr5,1,textStr3.length-textStr4.length,"");'+
+    '     return htmlStr5;'+
+    '    }'+
     '    var htmlStr4=htmlStr3.replace(spacesAtBeginningRegExp,"");'+
     '    var firstNotePMarkerRegExp=new RegExp(firstNotePMarkerREStr,"gm");'+
     '    matches2=htmlStr4.match(firstNotePMarkerRegExp);'+
     '    if (matches2) {'+
     '      markerAtBeginLen=matches2[0].length;'+
     '      if (markerAtBeginLen>0) {'+
-    '        var htmlStr5=removeSymbolsBeyondTags(htmlStr2,1,markerAtBeginLen+(htmlStr3.length-htmlStr4.length),"");'+
+    '       var htmlStr5=removeSymbolsBeyondTags(htmlStr2,1,markerAtBeginLen+(htmlStr3.length-htmlStr4.length),"");'+
     '        var htmlStr6=htmlStr5.replace(removeNotAllTagsRegExp,"");'+
     '        var htmlStr7=htmlStr6.replace(spacesAtBeginningRegExp,"");'+
-    '        return removeSymbolsBeyondTags(htmlStr5,1,(htmlStr6.length-htmlStr7.length),"");'+
+    '        return removeSymbolsBeyondTags(htmlStr5,0,(htmlStr6.length-htmlStr7.length),"");'+
     '      }'+
     '    }'+
     '  }'+
@@ -228,6 +247,19 @@
     '    myIndex3=myInnerHTML.replace(/<[^>]*>/g,"").replace(spacesAtBeginningRegExp,"").indexOf(firstNotePMarkerStr);'+
     '    if (myIndex3==0) return true;'+
     '    else return false;'+
+    '  }'+
+    '  if (upperIndex2) {'+
+    '   var htmlStr11=leaveOnlyFirstLevelSups(myInnerHTML.replace(leaveOnlySupsRegExp,"")).replace(/&nbsp;/g,nbspChar);'+
+    '   var textStr=htmlStr11.replace(/<[^>]*>/g,"");'+
+    '   if (textStr.search(spacesAtBeginningRegExp)==0) {'+
+    '     spacesAtBeginningRegExp.lastIndex=-1;'+
+    '     var srchResult2=spacesAtBeginningRegExp.exec(textStr);'+
+    '     var matchLen2=srchResult2[0].replace(/<[^>]*>/g,"").length;'+
+    '     htmlStr11=removeSpacesBeyondTags(htmlStr11,matchLen2+1);'+
+    '   }'+
+    '   var mySearch=htmlStr11.search(upperNumberRegExp);'+
+    '   return (htmlStr11.substr(0,5)=="<SUP>" && mySearch==5) || mySearch==0;'+
+    '   '+
     '  }'+
     '  firstNotePMarkerRegExp=new RegExp(firstNotePMarkerREStr,"gm");'+
     '  return myInnerHTML.replace(/<[^>]*>/g,"").replace(spacesAtBeginningRegExp,"").search(firstNotePMarkerRegExp)==0;'+
@@ -397,13 +429,15 @@
     '  if (foundMarkerLen>0)'+
     '   pInnerHTML=removeSymbolsBeyondTags(pInnerHTML,1,notFirstParagraphMarker.length,"");'+
     '  var pNew=p.cloneNode(true);'+
-    '  ps=pNew.getElementsByTagName("P");'+
-    '  for (i=0; i<ps.length; i++) {'+
+    '  var ps=pNew.getElementsByTagName("P");'+
+    '  for (var i=0; i<ps.length; i++) {'+
     '   foundMarkerLen=findMarkerLen(ps[i].innerText,notFirstParagraphMarker);'+
     '   if (foundMarkerLen>0)'+
     '    ps[i].innerHTML=removeSymbolsBeyondTags(ps[i].innerHTML.replace(/&nbsp;(?=[^<]*($|<))/g,nbspChar),1,foundMarkerLen,"");'+
-    '   else'+
-    '    ps[i].innerHTML=removeMarkerAtBeginning(ps[i].innerHTML);'+
+    '   else {'+
+    '    var myInnerHTML20=ps[i].innerHTML;'+
+    '    ps[i].innerHTML=removeMarkerAtBeginning(myInnerHTML20);'+
+    '   }'+
     '  }'+
 //    '  alert("notesTextCnt: "+notesTextCnt+"\\n\\nПрибавляем такой pNew.outerHTML:\\n\\n"+pNew.outerHTML);'+
     '  notesTexts[notesTextCnt.toString()]+=pNew.outerHTML;'+
@@ -422,7 +456,7 @@
 //    '  alert("Not First Paragraph Str\\n\\n"+notFirstParagraphMarker);'+
 //    '  alert("pInnerHTML с удаленными тегами:\\n\\n"+pInnerHTML.replace(removeTagsRegExp,""));'+
     '  var foundMarkerLen=findMarkerLen(p.innerText,notFirstParagraphMarker);'+
-    '  if (!containsFirstNotePMarker(p.innerText) && foundMarkerLen==0) return;'+
+    '  if (!containsFirstNotePMarker(p.innerHTML) && foundMarkerLen==0) return;'+
     '  if (!previosPWasPartOfNote && foundMarkerLen==0) {'+
     '    previosPWasPartOfNote=false;'+
     '    return;'+
@@ -442,7 +476,7 @@
 //    '  alert("pInnerHTML перед прибавлением:\\n\\n"+pInnerHTML);'+
     '  while (openingAndClosingTagRegExp.test(pInnerHTML)) pInnerHTML=pInnerHTML.replace(openingAndClosingTagRegExp,"");'+
     '  if (notesTextCnt==0) notesTextCnt++;'+
-    '  pInnerHTML=removeMarkerAtBeginning(pInnerHTML);'+
+    '  pInnerHTML=removeMarkerAtBeginning(pInnerHTML).replace(openingAndClosingTagRegExp,"");'+
     '  notesTexts[notesTextCnt.toString()]+="\\r\\n<P"+(p.className && p.className=="subtitle"?" class=subtitle":"")+">"+pInnerHTML+"</P>";'+
     '  nodesToRemove.push(p);'+
     '  firstNoteFlag=false;'+
@@ -622,12 +656,12 @@
     '  removeAllTagsRegExp=new RegExp("<\\/?[a-z]+( [^>]+)?>","ig");'+
 //    '  alert("a: "+pInnerHTML.replace(removeAllTagsRegExp,""));'+
     '  if (interpretAsRegExp) refMarkerRegExp.lastIndex=0;'+
-    '  if (upperIndex) '+
+    '  if (upperIndex1) '+
     '   var htmlStr10=leaveOnlyFirstLevelSups(pInnerHTML.replace(leaveOnlySupsRegExp,""));'+
     '  else'+
     '   var htmlStr10=pInnerHTML.replace(removeAllTagsRegExp,"");'+
     '  if (interpretAsRegExp && matchNotFromBeginning && htmlStr10.search(refMarkerRegExp)==0)'+
-    '   if(!upperIndex)'+
+    '   if(!upperIndex1)'+
     '    refMarkerRegExp.exec(pInnerHTML.replace(removeAllTagsRegExp,""));'+
     '   else'+
     '    refMarkerRegExp.exec(leaveOnlyFirstLevelSups(pInnerHTML.replace(leaveOnlySupsRegExp,"")));'+
@@ -762,7 +796,7 @@
     '  if (p.innerText.search(pIsSubtitleRegExp)==0) return;'+
 //    '  alert("p.innerHTML:\\n\\n"+p.innerHTML+"\\n\\ncontainsFirstNotePMarker(p.innerHTML): "+containsFirstNotePMarker(p.innerHTML));'+
     '  if (containsFirstNotePMarker(p.innerHTML)) return;'+
-    '  if (upperIndex) {'+
+    '  if (upperIndex1) {'+
     '   var htmlStr=leaveOnlyFirstLevelSups(p.innerHTML.replace(leaveOnlySupsRegExp,""));'+
     '   var matches3=htmlStr.match(upperNumberRegExp);'+
     '   if (matches3) refMarkersCnt+=matches3.length;'+
@@ -1095,12 +1129,13 @@
      myWin.refMarkerRegExp=/[*]+/g;
      myWin.interpretAsRegExp=true;
     }
-    myWin.upperIndex=false;
+    myWin.upperIndex1=false;
     if (document.getElementById("radio36").checked) {
+     upperIndex1=true;
      myWin.refMarkerRegExp=new RegExp("(([¹²³⁴⁵⁶⁷⁸⁹⁰]+)(<SUP>[0-9¹²³⁴⁵⁶⁷⁸⁹⁰]*(?=[^<]*</SUP>)(</SUP>[¹²³⁴⁵⁶⁷⁸⁹⁰]+)?)*)|"+
                                       "(([¹²³⁴⁵⁶⁷⁸⁹⁰]+<SUP>)?[0-9¹²³⁴⁵⁶⁷⁸⁹⁰]+(?=[^<]*</SUP>)(</SUP>[¹²³⁴⁵⁶⁷⁸⁹⁰]+)?)","g");
      myWin.interpretAsRegExp=true;
-     myWin.upperIndex=true;
+     myWin.upperIndex1=true;
     }
     myWin.matchNotFromBeginning=document.getElementById("matchNotFromBeginning").checked;
    }
@@ -1119,28 +1154,30 @@
     myWin.firstNotePMarkerStr=makeEntities(document.getElementById("firstNotePMarkerStr").value);
     if (document.getElementById("radio30").checked) {
      myWin.interpretAsRegExp2=true;
-     myWin.firstNotePMarkerRegExp=/\[\d+\]/g;
      myWin.firstNotePMarkerREStr="\\[\\d+\\]";
     }
     if (document.getElementById("radio31").checked) {
      myWin.interpretAsRegExp2=true;
-     myWin.firstNotePMarkerRegExp=/\{\d+\}/g;
      myWin.firstNotePMarkerREStr="\\{\\d+\\}";
     }
     if (document.getElementById("radio32").checked) {
-     myWin.firstNotePMarkerRegExp=/\[\~\d+\~\]/g;
      myWin.interpretAsRegExp2=true;
      myWin.firstNotePMarkerREStr="\\[\\~\\d+\\~\\]";
     }
     if (document.getElementById("radio33").checked) {
-     myWin.firstNotePMarkerRegExp=/\{\~\d+\~\}/g;
      myWin.interpretAsRegExp2=true;
      myWin.firstNotePMarkerREStr="\\{\\~\\d+\\~\\}";
     }
     if (document.getElementById("radio34").checked) {
-     myWin.firstNotePMarkerRegExp=/\*+/g;
      myWin.interpretAsRegExp2=true;
      myWin.firstNotePMarkerREStr="[*]+";
+    }
+    myWin.upperIndex2=false;
+    if (document.getElementById("radio38").checked) {
+     myWin.upperIndex2=true;
+     myWin.interpretAsRegExp2=true;
+     myWin.firstNotePMarkerREStr="^(([¹²³⁴⁵⁶⁷⁸⁹⁰]+)(<SUP>[0-9¹²³⁴⁵⁶⁷⁸⁹⁰]*(?=[^<]*</SUP>)(</SUP>[¹²³⁴⁵⁶⁷⁸⁹⁰]+)?)*)|"+
+                                     "(([¹²³⁴⁵⁶⁷⁸⁹⁰]+<SUP>)?[0-9¹²³⁴⁵⁶⁷⁸⁹⁰]+(?=[^<]*</SUP>)(</SUP>[¹²³⁴⁵⁶⁷⁸⁹⁰]+)?)";
     }
    }
    catch(e) {
@@ -1303,6 +1340,7 @@
  <label for="radio32"><input type=radio id="radio32" name=firstNoteP> вида [~1~]</label>
  <label for="radio33"><input type=radio id="radio33" name=firstNoteP> вида {~1~}</label>
  <label for="radio34"><input type=radio id="radio34" name=firstNoteP> вида *</label><br>
+ <label for="radio38"><input type=radio id="radio38" name=firstNoteP> число надстрочным текстом</label><br>
  <label for="radio35"><input type=radio id="radio35" name=firstNoteP>задать свой:</label>
  <div style="padding-left:30px; padding-right:0; padding-top:0; padding-bottom:0;">
    <input type=text style="width:600px;" id=firstNotePMarkerStr value="\*+" onfocus="getElementById('radio35').checked=true;" checked><br>
