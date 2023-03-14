@@ -187,6 +187,7 @@
     '}');
    myWin.eval(
     ' function removeMarkerAtBeginning(htmlStr2) {'+
+    '  htmlStr2=htmlStr2.replace(/&nbsp;/g,nbspChar);'+
     '  if (interpretAsRegExp2) {'+
     '    while (htmlStr2.search(openingAndClosingTagRegExp)>=0)'+
     '     htmlStr2=htmlStr2.replace(openingAndClosingTagRegExp,"");'+
@@ -216,7 +217,7 @@
     '       var htmlStr5=removeSymbolsBeyondTags(htmlStr2,1,markerAtBeginLen+(htmlStr3.length-htmlStr4.length),"");'+
     '        var htmlStr6=htmlStr5.replace(removeNotAllTagsRegExp,"");'+
     '        var htmlStr7=htmlStr6.replace(spacesAtBeginningRegExp,"");'+
-    '        return removeSymbolsBeyondTags(htmlStr5,0,(htmlStr6.length-htmlStr7.length),"");'+
+    '        return removeSymbolsBeyondTags(htmlStr5,1,(htmlStr6.length-htmlStr7.length),"");'+
     '      }'+
     '    }'+
     '  }'+
