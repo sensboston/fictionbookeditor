@@ -1,5 +1,5 @@
 // Скрипт «62_Поиск (без замены) последовательностей 'буква пробел буква пробел...'» для редактора Fiction Book Editor (FBE).
-// Версия 3.4
+// Версия 3.5
 // Автор Sclex
 
 function Run() {
@@ -401,8 +401,10 @@ function Run() {
       else { //its tagRegExp[i]==true, т.е. в этой ветке ищем по теговым регэкспам
        flag1=true;
        rslt=regExps[i].exec(s_html);
-       regExps[i].lastIndex=s1_html_len+(ignoreNullPosition?1:0);
+       savedIndex=s1_html_len+(ignoreNullPosition?1:0)-1;
        while (flag1) {
+        savedIndex++;
+        regExps[i].lastIndex=savedIndex;
         rslt=regExps[i].exec(s_html);
         flag1=false;
         if (rslt) {
