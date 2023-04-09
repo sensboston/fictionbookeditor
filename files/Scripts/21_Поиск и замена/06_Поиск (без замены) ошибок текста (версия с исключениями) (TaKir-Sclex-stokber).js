@@ -1,5 +1,5 @@
 // Скрипт «Поиск по набору регэкспов» для редактора Fiction Book Editor (FBE).
-// Версия 3.5
+// Версия 3.9
 // Автор Sclex, набор RegExp-ов - TaKir, Sclex, 06.04.2023
 // 30 января 2023 года исправлены недочеты поисковых команд, на которые (недочеты) указал пользователь stokber
 // 06 апреля 2023 года исправлены недочеты поисковых команд, на которые (недочеты) указал пользователь stokber
@@ -380,10 +380,10 @@ function Run() {
   tagRegExp("[а-яёa-z]<strong>[а-яёa-z]+?</strong>|<strong>[а-яёa-z]+?</strong>[а-яёa-z]","i","Найдено: жирность в слове.");
   tagRegExp("[а-яёa-z]<sup>[а-яёa-z]+?</sup>|<sup>[а-яёa-z]+?</sup>[а-яёa-z]","i","Найдено: Найдено: верхний индекс.");
   tagRegExp("[а-яёa-z]<sub>[а-яёa-z]+?</sub>|<sub>[а-яёa-z]+?</sub>[а-яёa-z]","i","Найдено: нижний индекс.");
-  tagRegExp("(?<=<sup>((?!</sup>).)*)(?<=<strong>((?!</strong>).)*)[а-яё]+","i","Найдено: верхний или нижний индекс, сделанный жирностью и/или курсивом.","");
-  tagRegExp("(?<=<sub>((?!</sub>).)*)(?<=<strong>((?!</strong>).)*)[а-яё]+","i","Найдено: верхний или нижний индекс, сделанный жирностью и/или курсивом.","");
-  tagRegExp("(?<=<sup>((?!</sup>).)*)(?<=<emphasis>((?!</emphasis>).)*)[а-яё]+","i","Найдено: верхний или нижний индекс, сделанный жирностью и/или курсивом.","");
-  tagRegExp("(?<=<sub>((?!</sub>).)*)(?<=<emphasis>((?!</emphasis>).)*)[а-яё]+","i","Найдено: верхний или нижний индекс, сделанный жирностью и/или курсивом.","");
+  //tagRegExp("(?<=<sup>((?!</sup>).)*)(?<=<strong>((?!</strong>).)*)[а-яё]+","i","Найдено: верхний или нижний индекс, сделанный жирностью и/или курсивом.","");
+  //tagRegExp("(?<=<sub>((?!</sub>).)*)(?<=<strong>((?!</strong>).)*)[а-яё]+","i","Найдено: верхний или нижний индекс, сделанный жирностью и/или курсивом.","");
+  //tagRegExp("(?<=<sup>((?!</sup>).)*)(?<=<emphasis>((?!</emphasis>).)*)[а-яё]+","i","Найдено: верхний или нижний индекс, сделанный жирностью и/или курсивом.","");
+  //tagRegExp("(?<=<sub>((?!</sub>).)*)(?<=<emphasis>((?!</emphasis>).)*)[а-яё]+","i","Найдено: верхний или нижний индекс, сделанный жирностью и/или курсивом.","");
   tagRegExp("<emphasis><strong>[а-яёa-z]+?</strong></emphasis>[а-яёa-z]|[а-яёa-z]<emphasis><strong>[а-яёa-z]+?</strong></emphasis>","","Найдено: жирность и курсивность в слове.");
   tagRegExp("<strong><emphasis>[а-яёa-z]+?</emphasis></strong>[а-яёa-z]|[а-яёa-z]<strong><emphasis>[а-яёa-z]+?</emphasis></strong>","","Найдено: курсивность и жирность в слове.");
   tagRegExp("<strong>[A-Za-zА-яЁё]{1,2}</strong>","i","Найдено: жирность одной-двух букв (предлог, союз, местоимение).");
@@ -897,13 +897,13 @@ function Run() {
    lookBehinds[reNum][ff].lastIndex=0;
    rslt_=lookBehinds[reNum][ff].exec(s);
    while (rslt_ && rslt_.index+rslt_[0].length!=s_len) {
-  rslt_=lookBehinds[reNum][ff].exec(s);
+    rslt_=lookBehinds[reNum][ff].exec(s);
    }
    if (positive[reNum][ff]) {
-  if (!rslt_ || rslt_.index+rslt_[0].length!=s_len) return false;
+    if (!rslt_ || rslt_.index+rslt_[0].length!=s_len) return false;
    }
    else {
-  if (rslt_ && rslt_.index+rslt_[0].length==s_len) return false;
+    if (rslt_ && rslt_.index+rslt_[0].length==s_len) return false;
    }
   }
   return true;
@@ -964,11 +964,33 @@ function Run() {
  var nbspRE=new RegExp("&nbsp;","g");
  var nbspRE_=" ";
 
+ //var iterations2=0;
+ /*var arr=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+          0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+          0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+          0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+          0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+          0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+          0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+          0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+          0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+          0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+          0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+          0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+          0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+          0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+          0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+          0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+          0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+          0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+          0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+          0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];*/
 
  function searchNext() {
+   var savedIndex;
    fbwBody=document.getElementById("fbw_body");
    tr=sel.createRange();
-   ignoreNullPosition=tr.compareEndPoints("StartToEnd",tr)==0;
+   ignoreNullPosition=false; //tr.compareEndPoints("StartToEnd",tr)==0;
    tr.collapse(false);
    el=tr.parentElement();
    el2=el;
@@ -1006,9 +1028,17 @@ function Run() {
        if (itsTagRegExp[i]==false) {
        //rslt=regExps[i].exec(s);
        regExps[i].lastIndex=s1_len+(ignoreNullPosition?1:0);
+       savedIndex=s1_len+(ignoreNullPosition?1:0);
+       //alert("s1_len+(ignoreNullPosition?1:0): "+(s1_len+(ignoreNullPosition?1:0)));
        rslt=regExps[i].exec(s);
-       while (rslt && !checkLookBehs(i, s, rslt.index, false)) rslt=regExps[i].exec(s);
+       while (rslt && !checkLookBehs(i, s, rslt.index, false)) {
+        savedIndex++;
+        if (rslt.index>savedIndex) savedIndex=rslt.index;
+        regExps[i].lastIndex=savedIndex;
+        rslt=regExps[i].exec(s);
+       }
        if (rslt) {
+        //alert("rslt.index: "+rslt.index);
         founds[foundsCnt]={"pos":rslt.index, "len":rslt[0].length, "re":i};
         foundsCnt++;
        //if (ignoreNullPosition ? minPos==s1_len+1 : minPos==s1_len) break;
@@ -1017,8 +1047,11 @@ function Run() {
       else { //its tagRegExp[i]==true, т.е. в этой ветке ищем по теговым регэкспам
        flag1=true;
        rslt=regExps[i].exec(s_html);
-       regExps[i].lastIndex=s1_html_len+(ignoreNullPosition?1:0);
-       while (flag1) {
+       savedIndex=s1_html_len+(ignoreNullPosition?1:0);
+       while (rslt && flag1) {
+        if (rslt.index>savedIndex) savedIndex=rslt.index;
+        regExps[i].lastIndex=savedIndex;
+        savedIndex++;
         rslt=regExps[i].exec(s_html);
         flag1=false;
         if (rslt) {
@@ -1056,9 +1089,9 @@ function Run() {
         if (desc!=undefined && desc!="")
          try {
          window.external.SetStatusBarText(desc);
-        }
-        catch(e)
-        {}
+         }
+         catch(e)
+         {}
         tr.moveToElementText(el);
         tr.move("character",founds[currFound]["pos"]);
         tr2=tr.duplicate();
@@ -1103,7 +1136,10 @@ function Run() {
    MsgBox("От позиции курсора до конца документа ничего не найдено.");
  }
  
- var searchResult=true;
- while (searchResult)
-   searchResult=searchNext();
+ while (searchNext()) ;
+ 
+ //var s="";
+ //for (var i=0; i<arr.length; i++)
+   //s+=arr[i]+"."+regExps[i]+"\n";
+ //MsgBox(s);
 }
