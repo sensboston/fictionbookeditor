@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FBE>
 	<Name>FictionBook Editor Release 2.7</Name>
-	<Date>04-10-2023</Date>
-	<Version>2.8</Version>
+	<Date>Apr 10 2023</Date>
+	<Version>2.7.0</Version>
 	<Beta>false</Beta>
 	<DownloadUrl>https://senssoft.com/fbe/setup.exe</DownloadUrl>
 	<MD5>30db5467aaf254b2e88bcfa58581b7a2</MD5>
