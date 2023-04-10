@@ -1,0 +1,517 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+ "http://www.w3.org/TR/html4/loose.dtd">
+<html style="height:100%;">
+<head>
+<TITLE>.</TITLE>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+body {font-family:monospace; font-size:16px; padding:0; margin:0; height:100%;}
+.s, .s1 {background-color:bisque;} /*с единичкой - наружный SPAN*/
+.t, .t1 {background-color:palegreen; height:100%;}
+.delim {height:2px; width:100%; background-color:#B0B0B0; overflow:hidden; margin:0; padding:0;}
+.d1 {margin:0; padding:0;}
+.sup {vertical-align:75%;}
+.s_, .t_ {background-color:yellow;} /*выделенный элемент*/
+</style>
+<link rel="stylesheet" type="text/css" href="CSS/Регистр заголовков - фрейм 1.css">
+<script>
+var old=null;
+var bg_t="bisque";
+var bg_s="palegreen";
+var ptr2,ptr3,saveU,elementsInAll,elText,tagStr2,htmlStr,s1,s2,s3,i1,par,h1,h2;
+var nCnt=0;
+var myLinks=[];
+var params=window.dialogArguments;
+var fbwBody=params["fbwBody"];
+var mainDoc=params["document"];
+var mainWin=params["window"];
+var bodySectTitles,poemCiteTitles,noteCommentBodies,sectSubtitles,poemCiteSubtitles;
+var textRE=new RegExp("[^<>]+(?=$|<)","g");
+var buttonPressed=false;
+var clickTr=null, clickSpan=null, clickTrNode=null;
+var selBeginTr=null, selBeginSpan=null, selBeginTrNode=null;
+var selEndTr=null, selEndSpan=null, selEndTrNode=null;
+var menu=null;
+var menuFlag=false;
+
+function showMsg(s) {
+ document.getElementById("elems").innerHTML="<table style='width:100%; height:100%;'><tr><td style='vertical-align: middle; text-align:center;'>"+s+"</td></tr></table>";
+}
+
+function capturedMouse() {
+ if (event.type=="mouseup") {
+  document.getElementById("mouseCaptureSpan").releaseCapture();
+  var src=event.srcElement;
+  if (src.nodeName!="SPAN" || src.className.search(/\b[ts](?!1)_?/i)<0)
+   myMouseUp();
+  return true;
+ } 
+}
+
+function changeCaseOfSel(nn) {
+ if (nn=="allBig" || nn=="allSmall") { 
+  var func;
+  if (nn=="allBig") func=makeUpperCase;
+  if (nn=="allSmall") func=makeLowerCase;
+  if (selBeginTr<selEndTr || (selBeginTr==selEndTr && selBeginSpan<selEndSpan)) 
+   setSpanState(selBeginTrNode,selBeginSpan,selEndTrNode,selEndSpan,func);
+  else 
+   setSpanState(selEndTrNode,selEndSpan,selBeginTrNode,selBeginSpan,func);
+ }
+}
+
+function popupUnload() {
+ if (selBeginTr<selEndTr || (selBeginTr==selEndTr && selBeginSpan<selEndSpan))
+  setSpanState(selBeginTrNode,selBeginSpan,selEndTrNode,selEndSpan,makeUnactive);
+ else 
+  setSpanState(selEndTrNode,selEndSpan,selBeginTrNode,selBeginSpan,makeUnactive);
+ buttonPressed=false;
+ selBeginTr=null;
+ selBeginTrNode=null;
+ selBeginSpan=null;
+ selEndTr=null;
+ selEndTrNode=null;
+ selEndSpan=null;
+ menuFlag=false;
+}
+
+function contextMenu() {
+ menu=window.createPopup();
+ menu.document.body.style.height="100%";
+ menu.document.body.style.margin="0";
+ menu.document.body.style.padding="0";
+ menu.document.body.onunload=popupUnload;
+ menu.document.body.innerHTML=
+  "<div style='height:100%; border:1px inset black; background-color:white; font-family:tahoma; font-size:13px; margin:0;'>"+
+   "<div onmouseover='this.style.backgroundColor=\"yellow\";' onmouseout='this.style.backgroundColor=\"white\";' onclick='parent.changeCaseOfSel(\"allBig\"); if (parent.menu.hide) parent.menu.hide();' style='width:100%; padding:2px; margin:0;'>"+
+    "<p style='padding:0; margin:0;'>Большие буквы</p>"+
+   "</div>"+
+   "<div onmouseover='this.style.backgroundColor=\"yellow\";' onmouseout='this.style.backgroundColor=\"white\";' onclick='parent.changeCaseOfSel(\"allSmall\"); if (parent.menu.hide) parent.menu.hide();' style='width:100%; padding:2px; margin:0;'>"+
+    "<p style='padding:0; margin:0;'>Маленькие буквы</p>"+
+   "</div>"+
+  "</div>";
+ menuFlag=true;
+ menu.show(event.screenX, event.screenY, 150, 48);
+}
+
+function getClickPos() {
+ clickTr=null;
+ clickSpan=null;
+ var el=event.srcElement;
+ if (el.nodeName=="SPAN" && el.className.search(/^[ts](?!1)_?$/i)>=0) {
+  var ee=el;
+  var k=1;
+  while (ee.nodeName!="P") {
+   if (ee.lastChild) {
+    ee=ee.lastChild;
+    if (ee.nodeName=="SPAN" && el.className.search(/^[ts](?!1)_?$/i)>=0) k++;
+   }
+   else {
+    while (ee.previousSibling==null && ee.nodeName!="P") ee=ee.parentNode;
+    if (ee.nodeName!="P") ee=ee.previousSibling;
+    if (ee.nodeName=="SPAN" && el.className.search(/^[ts](?!1)_?$/i)>=0) k++;
+   } 
+  }
+  clickSpan=k;
+  ee=el;   
+  while (ee.nodeName!="BODY" && ee.nodeName!="TR") ee=ee.parentNode;  
+  if (ee.nodeName=="TR") {
+   var n=ee.getAttribute("n");
+   if (n) {
+    clickTr=eval(n);
+    clickTrNode=ee;
+   }
+  }  
+ }
+} 
+
+function makeActive(el) {
+ el.className=el.className.charAt(0)+"_";
+}
+
+function makeUnactive(el) {
+ el.className=el.className.charAt(0);
+}
+
+function makeUpperCase(el) {
+ var h=el.innerHTML;
+ if (h!="&nbsp;" && h!="&lt;" && h!="&gt;" && h!=" ")
+  el.innerHTML=h.toUpperCase();
+}
+
+function makeLowerCase(el) {
+ var h=el.innerHTML;
+ if (h!="&nbsp;" && h!="&lt;" && h!="&gt;" && h!=" ")
+  el.innerHTML=h.toLowerCase();
+}
+
+function setSpanState(beginNode, beginSpan, endNode, endSpan, action) {
+ var aa=beginNode;
+ var inside=false;
+ var spanCnt, dd;
+ while (aa) {
+  if (aa.getAttribute("n")) {
+   dd=aa.firstChild;  
+   spanCnt=0;   
+   while (dd.nodeName!="TR") {
+    if (dd.firstChild)
+     dd=dd.firstChild;
+    else {
+     while (dd.nextSibling==null && dd.nodeName!="TR") dd=dd.parentNode;
+     if (dd.nextSibling && dd.nodeName!="TR") {
+      dd=dd.nextSibling;
+     } 
+    } 
+    if (dd.nodeName=="SPAN" && dd.className.search(/^[ts](?!1)_?$/i)>=0) {
+     spanCnt++;
+     if (aa==beginNode && spanCnt==beginSpan) inside=true;
+     if (inside==true) action(dd);
+     if (aa==endNode && spanCnt==endSpan) inside="end";
+    }
+   }
+   if (inside=="end") break;
+  }
+  aa=aa.nextSibling;
+ }
+}
+
+function myMouseOver() {
+ if (!buttonPressed || menuFlag) return;
+ var e=event.srcElement;
+ if (!e) return;
+ if (e.nodeName!="SPAN" || e.className.search(/^\b[ts](?!1)_?$/i)<0) return;
+ getClickPos();
+ if (clickTr && clickSpan) {
+  if (selBeginTr<selEndTr || (selBeginTr==selEndTr && selBeginSpan<selEndSpan)) {
+   if (clickTr<selBeginTr || (clickTr==selBeginTr && clickSpan<selBeginSpan)) {
+    setSpanState(selBeginTrNode,selBeginSpan,selEndTrNode,selEndSpan,makeUnactive);
+    setSpanState(clickTrNode,clickSpan,selBeginTrNode,selBeginSpan,makeActive);
+   }
+   else if (clickTr>selEndTr || (clickTr==selEndTr && clickSpan>selEndSpan)) {
+    setSpanState(selEndTrNode,selEndSpan,clickTrNode,clickSpan,makeActive);
+   }
+   else {
+    setSpanState(clickTrNode,clickSpan,selEndTrNode,selEndSpan,makeUnactive);
+    setSpanState(clickTrNode,clickSpan,clickTrNode,clickSpan,makeActive);
+   }
+  }
+  else {
+   // конец выделения "левее" начала выделения
+   if (clickTr<selEndTr || (clickTr==selEndTr && clickSpan<selEndSpan)) {
+    setSpanState(clickTrNode,clickSpan,selEndTrNode,selEndSpan,makeActive);
+   }
+   else if (clickTr>selBeginTr || (clickTr==selBeginTr && clickSpan>selBeginSpan)) {
+    setSpanState(selEndTrNode,selEndSpan,selBeginTrNode,selBeginSpan,makeUnactive);
+    setSpanState(selBeginTrNode,selBeginSpan,clickTrNode,clickSpan,makeActive);
+   }
+   else {
+    setSpanState(selEndTrNode,selEndSpan,clickTrNode,clickSpan,makeUnactive);
+    setSpanState(clickTrNode,clickSpan,clickTrNode,clickSpan,makeActive);
+   }  
+  }
+  selEndTr=clickTr;
+  selEndSpan=clickSpan;
+  selEndTrNode=clickTrNode;
+ }
+}
+
+function a(b) {
+ if (buttonPressed || menuFlag) return;
+ if (old) old.className.replace(/\b([ts])_(?![\da-z_])/i,"$1");
+ b.className=b.className.replace(/\b([ts])\b/i,"$1_");
+ old=b;
+}
+
+function c(d) {
+ if (buttonPressed || menuFlag) return;
+ d.className=d.className.replace(/\b([ts])_(?![\da-z_])/i,"$1");
+ old=null;
+}
+
+function myMouseDown() {
+ if (menuFlag) return;
+ if (event.button==1) {
+  var e=event.srcElement;
+  if (e.nodeName!="SPAN" || e.className.search(/^\b[ts](?!1)_?$/i)<0) return; 
+  buttonPressed=true;
+  getClickPos();
+  if (clickTr && clickSpan) {
+   selBeginTr=clickTr;
+   selBeginSpan=clickSpan;
+   selBeginTrNode=clickTrNode;
+   selEndTr=clickTr;
+   selEndSpan=clickSpan;
+   selEndTrNode=clickTrNode;
+  }
+  document.getElementById("mouseCaptureSpan").setCapture(true);
+ }
+}
+
+function myMouseUp() {
+ if (selBeginTr && selEndTr && selBeginSpan && selEndSpan) {
+  if (selBeginTr!=selEndTr || (selBeginTr==selEndTr && selBeginSpan!=selEndSpan)) {
+   contextMenu();
+   return;
+  }
+ }
+ e=event.srcElement;
+ if (event.button==1 && e.className.search(/\b[ts](?!1)_?/i)>=0) {
+  var h=e.innerHTML;
+  if (h.charAt(0)!="&" && h!=" ") {
+   if (h.toLowerCase()==h)
+    e.innerHTML=h.toUpperCase();
+   else
+    e.innerHTML=h.toLowerCase();
+  }
+  buttonPressed=false;
+ }
+}
+
+function getOpening(k) {
+ tagStr2="<"+k.nodeName;
+ if (k.className!=undefined && k.className!="")
+  tagStr2+=" class="+k.className;
+ if (k.href!=undefined && k.href!="")
+  tagStr2+=" fbhref="+k.href+" href='javascript:void(0);'";
+ tagStr2+=">";
+ if (k.nodeName=="SPAN" && k.className=="image") tagStr2=k.outerHTML.replace(/>(.|\r|\n)*?$/,">");
+ return tagStr2;
+}
+
+function getClosing(k) {
+ if (k.nodeName!="IMG" && k.nodeName!="BR")
+  return "</"+k.nodeName+">";
+ else
+ return "";
+}
+
+function getElementText(k) {
+ saveU=k;
+ k=k.firstChild;
+ if (!k) return "";
+ elText="";
+ if (k.nodeType==1) elText+=getOpening(k);
+ while (k && k!=saveU) {
+  if (k.nodeType==3) elText+=k.nodeValue.replace(/&/g,"&amp;").replace(/ /g,"&nbsp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+  if (k.firstChild) {
+   k=k.firstChild;
+   if (k.nodeType==1) elText+=getOpening(k);
+  }
+  else {
+   while (k && k!=saveU && k.nextSibling==null) {
+    if (k.nodeType==1) elText+=getClosing(k);
+    k=k.parentNode;
+   }
+   if (k && k!=saveU) {
+    if (k.nodeType==1) elText+=getClosing(k);
+    k=k.nextSibling;
+    if (k.nodeType==1) elText+=getOpening(k);
+   }
+  }
+ }
+ return elText;
+}
+
+function replaceFunctionT(full_match, brackets1, offset_of_match,
+                          string_we_search_in) {
+ s2="";
+ var i1=0;
+ while (i1<full_match.length) {
+  while (i1<full_match.length && full_match.charAt(i1)=="&") {
+   s3="";
+   while (i1<full_match.length && full_match.charAt(i1)!=";") {
+    s3+=full_match.charAt(i1);
+    i1++; 
+   }
+   if (i1<full_match.length && full_match.charAt(i1)==";") i1++;
+   s2+="<SPAN class=t onmouseover='a(this);' onmouseout='c(this);'>"+s3+";</SPAN>";
+  }
+  if (i1>=full_match.length) break;
+  s2+="<SPAN class=t onmouseover='a(this);' onmouseout='c(this);'>"+full_match.charAt(i1)+"</SPAN>";
+  i1++;
+ }
+ return s2;
+}
+
+function replaceFunctionS(full_match, brackets1, offset_of_match,
+                          string_we_search_in) {
+ s2="";
+ for (i1=0; i1<full_match.length; i1++)
+  s2+="<SPAN class=s onmouseover='a(this);' onmouseout='c(this);'>"+full_match.charAt(i1)+"</SPAN>";
+ return s2;
+}
+
+function getParent(uuu) {
+ ptr3=uuu;
+ while (ptr3 && ptr3.nodeName!="BODY" &&
+        !(ptr3.nodeName=="DIV" &&
+          (ptr3.className=="poem" || ptr3.className=="section" || ptr3.className=="body" || ptr3.className=="cite" || ptr3.className=="stanza")
+         )
+        )
+  ptr3=ptr3.parentNode;
+ if (ptr3 && ptr3.nodeName!="BODY") return ptr3.className;
+ return false;
+}
+
+function needSuchTitles(ptr) {
+ par=getParent(ptr);
+ if ((par=="body" || par=="section") && bodySectTitles) return true;
+ if ((par=="poem" || par=="stanza") && poemCiteTitles) return true;
+ return false;
+}
+
+function needSuchSubtitles(ptr) {
+ par=getParent(ptr);
+ if ((par=="section") && sectSubtitles) return true;
+ if ((par=="cite" || par=="poem" || par=="stanza") && poemCiteSubtitles) return true;
+ return false;
+}
+
+function findElementsRec(ptr) {
+ if (ptr.nodeName=="DIV" && ptr.className=="body" &&
+     (ptr.getAttribute("fbname")=="notes" || ptr.getAttribute("fbname")=="comments") &&
+     !noteCommentBodies) return;
+ ptr=ptr.firstChild;
+ if (!ptr) return;
+ var needGoNext;
+ while (ptr!=null) {
+  needGoNext=true;
+  if (ptr.nodeType==1)
+   if (ptr.nodeName!="P") {
+    if (ptr.nodeName=="DIV" && ptr.className=="title" && needSuchTitles(ptr) &&
+        ptr.parentNode.firstChild==ptr) {
+     ptr2=ptr.firstChild;
+     while (ptr2!=null) {
+      if (ptr2.nodeName=="P") {
+       s1=getElementText(ptr2).replace(textRE,replaceFunctionT);
+       elementsInAll++;
+       nCnt++;       
+       myLinks[nCnt]=ptr2;
+       htmlStr+="<TR n="+nCnt+"><TD style='background-color:skyblue;'><INPUT type=checkbox id=a1></TD><TD><P><SPAN class=t1>"+s1+"</SPAN></P></TD></TR>";
+      }
+      ptr2=ptr2.nextSibling;
+     }
+     htmlStr+="<TR><TD colspan=2 class=d1><DIV class=delim></DIV></TD></TR>";
+    } else findElementsRec(ptr);
+   } else if (ptr.className=="subtitle" && needSuchSubtitles(ptr)) {
+    while (ptr!=null && ptr.className=="subtitle") {
+     s1=getElementText(ptr).replace(textRE,replaceFunctionS);
+     elementsInAll++;
+     nCnt++;     
+     myLinks[nCnt]=ptr;
+     htmlStr+="<TR n="+nCnt+"><TD style='background-color:skyblue;'><INPUT type=checkbox id=a1></TD><TD><P><SPAN class=s1>"+s1+"</SPAN></P></TD></TR>";
+     ptr=ptr.nextSibling;
+     needGoNext=false;
+   }
+   htmlStr+="<TR><TD colspan=2 class=d1><DIV class=delim></DIV></TD></TR>";
+  }
+  if (needGoNext) ptr=ptr.nextSibling;
+ }
+}
+
+function findElements(t1,t2,t3,t4,t5) {
+ bodySectTitles=t1;
+ poemCiteTitles=t2;
+ noteCommentBodies=t3;
+ sectSubtitles=t4;
+ poemCiteSubtitles=t5;
+ showMsg("Ищем...");
+ setTimeout("findElements2()",0);
+}
+
+function findElements2() {
+ elementsInAll=0;
+ htmlStr="";
+ nCnt=0;
+ findElementsRec(fbwBody);
+ //alert(htmlStr);
+ if (htmlStr!="")
+  document.getElementById("elems").innerHTML="<table style='margin:0 auto;'>"+htmlStr+"</table>";
+ else
+  showMsg("Ничего не найдено.");
+ document.getElementById("elems").scrollTop=0;
+ //alert(document.getElementById("elems").innerHTML);
+ htmlStr="";
+}
+
+function OK() {
+ //showMsg("Сохраняются заголовки...");
+ setTimeout("OK_2();",0);
+}
+
+function getOpening2(k) {
+ k.className.search(/(\b[st]\b|\b[st][_\d](?![a-z_\d]))/)
+ if (k.nodeName=="SPAN" && k.className.search(/(\b[st]\b|\b[st][_\d](?![a-z_\d]))/)>=0) return "";
+ tagStr2="<"+k.nodeName;
+ if (k.className!=undefined && k.className!="")
+  tagStr2+=" class="+k.className;
+ var g=k.getAttribute("fbhref");
+ if (g!=undefined && g!="")
+  tagStr2+=" href="+g;
+ tagStr2+=">";
+ if (k.nodeName=="SPAN" && k.className=="image") tagStr2=k.outerHTML.replace(/>(.|\r|\n)*?$/,">");
+ return tagStr2;
+}
+
+function getClosing2(k) {
+ if (k.nodeName=="SPAN" && k.className.search(/(\b[st]\b|\b[st](_|1)(?![a-z_\d]))/)>=0) return "";
+ if (k.nodeName!="IMG" && k.nodeName!="BR")
+  return "</"+k.nodeName+">";
+ else
+ return "";
+}
+
+function saveOneP(n,p) {
+ h1=myLinks[n].innerHTML;
+ h2="";
+ var k=p.firstChild;
+ while (k && k!=p) {
+  if (k.nodeType==1) h2+=getOpening2(k);
+  if (k.nodeType==3) h2+=k.nodeValue.replace(/&/g,"&amp;").replace(/ /g,"&nbsp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+  if (k.firstChild) {
+   k=k.firstChild;
+  }
+  else {
+   while (k && k!=p && k.nextSibling==null) {
+    if (k.nodeType==1) h2+=getClosing2(k);
+    k=k.parentNode;
+   }
+   if (k && k!=p) {
+    if (k.nodeType==1) h2+=getClosing2(k);
+    k=k.nextSibling;
+   }
+  }
+ }
+ h2=h2.replace(/<\/?P\b[^>]*?>/g,"");
+ if (h1!=h2) myLinks[n].innerHTML=h2;
+}
+
+function OK_2() {
+ if (nCnt!=0) {
+  var p=document.getElementById("elems");
+  if (!p) return;
+  var n,td_2;
+  p=p.firstChild;
+  if (p.nodeName!="TABLE") return;
+  mainWin.external.BeginUndoUnit(mainDoc,"изменение регистра заголовков");
+  var row=p.firstChild.firstChild; // TBODY TR
+  while (row) {
+   if (row.firstChild && row.firstChild.getAttribute("colspan")!="2") {
+    n=eval(row.getAttribute("n"));
+    td_2=row.firstChild.nextSibling;
+    saveOneP(n,td_2);
+   }
+   row=row.nextSibling;
+  }
+ mainWin.external.EndUndoUnit(mainDoc);
+ }
+ window.close();
+}
+</script>
+</head>
+<body onmousedown="myMouseDown();" onmouseup="myMouseUp();" onload="showMsg('Пусто.');" onmouseover="myMouseOver();">
+<div id=elems style="overflow:scroll; position:relative; width:100%; height:100%;">
+</div>
+<span id=mouseCaptureSpan style="display:none;" onmouseup="capturedMouse();"></SPAN>
+</body>
+</html>

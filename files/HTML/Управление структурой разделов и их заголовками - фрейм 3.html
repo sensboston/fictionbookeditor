@@ -1,0 +1,48 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+ "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+ <head>
+   <meta http-equiv="X-UA-Compatible" content="IE=6">
+   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+   <link rel=stylesheet type="text/css" href="css/frame3.css">
+   <script language=JavaScript type="text/javascript">
+    function closeButton() {
+     window.close();
+    }
+    function htmlToClipboard() {
+     window.clipboardData.setData("text",parent.frame1.document.body.outerHTML);
+    }
+    function showHideTextNodes(show) {
+     if (show) parent.frame1.showTextNodes();
+     else parent.frame1.hideTextNodes();
+    }
+    function showInfo() {
+      var scrollBarHeight=parent.frame1.document.body.clientHeight-parent.frame1.scrollButtonUpHeight-parent.frame1.scrollButtonDownHeight;
+      var runnerHeight=Math.round(parent.frame1.document.body.clientHeight/parent.frame1.document.getElementById("empty_div").offsetHeight*scrollBarHeight)-2-2;
+      alert("document.body.clientHeight:"+parent.frame1.document.body.clientHeight+"\n"+
+        "document.body.offsetHeight:"+parent.frame1.document.body.offsetHeight+"\n"+
+        "document.getElementById('empty_div').offsetHeight:"+parent.frame1.document.getElementById('empty_div').offsetHeight+"\n"+
+        "scrollBarHeight:"+scrollBarHeight+"\n"+
+        "runnerHeight:"+runnerHeight);
+    }
+    function restoreFocus() {
+     var a=parent.frame1.document.getElementById("empty_div");
+     if (a) a.focus();
+    }
+   </script>
+ </head>
+ <body onclick="restoreFocus();" onmousedown="restoreFocus();" ondblclick="restoreFocus();">
+  <div style="text-align:right">
+   <center>
+   <form>
+    <input type="checkbox" id=textNodesCheckbox value="text nodes" onClick="showHideTextNodes(document.all.textNodesCheckbox.checked); parent.frame1.calculateAndPaintScrollbar();"><SPAN class=menu_text>Текстовые узлы</SPAN> |
+    <a class="menu_href" onClick="parent.frame1.treeObj.expandAll();" style="color:blue" onmouseover="javascript:this.style.color='red'" onmouseout="javascript:this.style.color='blue'">Раскрыть все</a> |
+    <a class="menu_href" onClick="parent.frame1.treeObj.collapseAll();" style="color:blue" onmouseover="javascript:this.style.color='red'" onmouseout="javascript:this.style.color='blue'">Закрыть все</a> |
+    <a class="menu_href" onClick="htmlToClipboard();" style="color:blue" onmouseover="javascript:this.style.color='red'" onmouseout="javascript:this.style.color='blue'">HTML в буфер</a> |
+    <a class="menu_href" onClick="parent.frame1.preSave();" style="color:blue" onmouseover="javascript:this.style.color='red'" onmouseout="javascript:this.style.color='blue'">Сохранить</a> |
+    <a class="menu_href" onClick="closeButton();" style="color:blue" onmouseover="javascript:this.style.color='red'" onmouseout="javascript:this.style.color='blue'">Закрыть</a>&nbsp;
+   </form>
+   </center>
+  </div>
+ </body>
+<html>

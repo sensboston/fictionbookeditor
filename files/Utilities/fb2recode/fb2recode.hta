@@ -1,0 +1,56 @@
+<html>
+<head>
+ <meta http-equiv="Content-Type" content="text/html; charset=windows-1251">
+ <meta http-equiv="MSThemeCompatible" content="yes">
+</head> 
+<script>
+/*function getFolder(){
+  return showModalDialog("folderDialog.html","","width:400px;height:400px;resizeable:yes;");
+}*/
+function getFolder() {
+ var shell = new ActiveXObject("Shell.Application");
+ return shell.BrowseForFolder(0, "Выберите папку с файлами для перекодирования", 16, 0);
+}
+
+function process() {
+ var fso=new ActiveXObject("Scripting.FileSystemObject");
+ var files=new Enumerator(fso.GetFolder(document.getElementById("dirPath").value).files);
+ var xmlDoc=new ActiveXObject("Msxml2.DOMDocument.4.0");
+ convertedCnt=0;
+ desired_encoding=document.getElementById("desired_encoding").value;
+ for (var i=0, file=""; !files.atEnd(); files.moveNext()) {
+  file = files.item() + "";
+  if (fso.GetExtensionName(file).toLowerCase() == "fb2") {
+   xmlDoc.preserveWhiteSpace = true;
+   xmlDoc.load(files.item().Path);
+   if (xmlDoc.parseError.errorCode) break;
+   var pi = xmlDoc.firstChild;
+   var encoding;
+   if (pi)
+   {
+    attr = pi.attributes;
+    if (attr) {
+     enc = attr.getNamedItem("encoding");
+     if (enc) {
+      if (enc.value==desired_encoding) break;
+      enc.value=desired_encoding;
+     }
+    }
+   }
+   xmlDoc.save(files.item().Path);
+   if (xmlDoc.parseError.errorCode) break;
+   convertedCnt++;
+  }
+ } 
+ alert("Сконвертировано "+convertedCnt+" файлов.");
+}
+</script>
+<form>
+ Папка: <input type="text" name="yourFieldName" id=dirPath><!--<input type="button" value="Browse..." onclick="this.form.yourFieldName.value=getFolder()">--><br>
+ Желаемая кодировка: <select id=desired_encoding>
+  <option value="UTF-8" selected>UTF-8</option>
+  <option value="windows-1251">windows-1251</option>
+ </select><br>
+ <input type=button onclick="process();" value="Перекодировать">
+</form>
+</html>
