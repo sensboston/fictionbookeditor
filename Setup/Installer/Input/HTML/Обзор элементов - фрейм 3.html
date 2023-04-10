@@ -1,0 +1,39 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+ "http://www.w3.org/TR/html4/loose.dtd">
+<HTML>
+<HEAD>
+ <TITLE>заголовок, который должен быть не виден</TITLE>
+ <META http-equiv="X-UA-Compatible" content="IE=6">
+ <META http-equiv="Content-Type" content="text/html; charset=utf-8">
+ <STYLE>
+  body,input{font-family:Tahoma; font-size:12px;margin:2px;}
+  fieldset{padding:2px;}
+ </STYLE>
+ <SCRIPT>
+function myOnKeydown() { 
+ if (event.keyCode=="65" && event.ctrlKey) {
+  parent.frame2.selectAllElements();
+  return false;
+ }
+ return true;
+}
+ </SCRIPT>
+</HEAD>
+<BODY onkeydown="myOnKeydown();">
+
+<FIELDSET style="margin:1px; padding:1px;">
+ <LEGEND>Переформатировать выбранные элементы как</legend>
+ <SELECT id=reformatTo_select>
+  <OPTION value=titles>titles</OPTION>
+  <OPTION value=subtitles selected>subtitles</OPTION>
+  <OPTION value=text>text</OPTION>
+ </SELECT>
+ <INPUT type=button value="Выполнить" onclick="parent.frame2.reformat(document.getElementById('reformatTo_select').value);">
+ <INPUT type=button value="Откат" onclick="parent.frame2.undo();">
+ <INPUT type=button value="Накат" onclick="parent.frame2.redo();">
+</FIELDSET>
+<FIELDSET style="margin:1px; padding:1px;">
+Всего <input type=text readonly style="width:46px; text-align:center;" value="0" id=inAllInput> Выбрано <input type=text readonly style="width:46px; text-align:center;" value="0" id=selectedInput>
+</FIELDSET>
+</body>
+</html>

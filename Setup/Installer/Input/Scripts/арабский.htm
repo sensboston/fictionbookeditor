@@ -1,0 +1,106 @@
+<head>
+ <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+ <meta http-equiv="MSThemeCompatible" content="yes">
+ <title>Арабский  </title>
+ <style>
+  td {font-family: Arial Unicode MS; font-size:16px; text-align: center; border-bottom: 1px dashed; }
+ </style>
+</head>
+<body>
+<div id=divForTable></div>
+<script>
+function myMain() {
+
+ function onClick() {
+  var rng;
+  if (event.srcElement.nodeName=="TD" && fbw_body.contains(fb2doc.selection.createRange().parentElement())) {
+   var rng=fb2doc.selection.createRange();
+   var ht=event.srcElement.innerHTML;
+   if (ht=="́ ́") rng.pasteHTML(rng.htmlText+"&#769;");
+   else rng.pasteHTML(rng.htmlText+ht);
+   rng.collapse(false);
+   rng.select();
+  }
+ }
+ 
+var tableX=1;                                                //количество столбцов в таблице символов
+var tableY=45;                                              //количество строк в таблице символов
+
+//символы для таблицы 
+    var charStr="&#1569;&#1570;&#1571;&#1572;&#1573;&#1574;&#1575;&#1576;&#1577;&#1578;&#1579;&#1580;&#1581;&#1582;&#1583;&#1584;&#1585;&#1586;&#1587;&#1588;&#1589;&#1590;&#1591;&#1592;&#1593;&#1594;&#1600;&#1601;&#1602;&#1603;&#1604;&#1605;&#1606;&#1607;&#1608;&#1609;&#1610;&#1611;&#1612;&#1613;&#1614;&#1615;&#1616;&#1617;&#1618;";
+ //всплывающие подсказки для символов, разделенные символов разделителя
+   var titleStr="|||||||Алиф|Ба||Та|Са|Жим|Ха|Хо|Дал|Зал|Ро|За|Син|Шин|Сод|Зод|Итки|Изги|Айн|Гоин||Фа|Коф|Каф|Лам|Мим|Нун|Ха|Вав|Йа|||||||||";
+ //символ разделителя для строки всплывающих подсказок
+   var dividerChar="|";
+
+ var params=window.dialogArguments;
+ var fbw_body=params["fbw_body"];
+ var fb2doc=params["document"];
+ var fb2window=params["window"];
+ var nbspRegExp=new RegExp("&nbsp;","gi");
+ var nbspRegExp_=" ";
+ var ltRegExp=new RegExp("&lt;","gi");
+ var ltRegExp_="<"; 
+ var gtRegExp=new RegExp("&gt;","gi");
+ var gtRegExp_=">"; 
+ var digitRegExp=new RegExp("[0-9]","");
+ charStr=charStr.replace(nbspRegExp,nbspRegExp_).replace(ltRegExp,ltRegExp_).replace(gtRegExp,gtRegExp_);
+var htmlStr="<TABLE cellspacing=0 cellpadding=1 width=100%>";
+ var len=charStr.length;
+ var indexOfCharInTitleStr=0;
+ var indexOfCharInCharStr=0;
+ var title,myChar;
+ var lengthOfCharStr=charStr.length;
+ var lengthOfTitleStr=titleStr.length;
+ for (var y=0;y<tableY;y++) {
+  htmlStr+="<TR>";
+  for (var x=0;x<tableX;x++) {
+   title="";
+   if (indexOfCharInTitleStr<lengthOfTitleStr) {
+    title=" title='";
+    while (indexOfCharInTitleStr<lengthOfTitleStr && titleStr.charAt(indexOfCharInTitleStr)!=dividerChar) {
+     title+=titleStr.charAt(indexOfCharInTitleStr);
+     indexOfCharInTitleStr++;
+    }
+    if (indexOfCharInTitleStr<lengthOfTitleStr)
+     if (titleStr.charAt(indexOfCharInTitleStr)==dividerChar) 
+      indexOfCharInTitleStr++;
+    title+="'";  
+   } 
+   myChar="";
+   if (indexOfCharInCharStr<lengthOfCharStr) {
+    myChar=charStr.charAt(indexOfCharInCharStr);
+    indexOfCharInCharStr++;    
+    if (myChar=="&") {
+     myChar=charStr.charAt(indexOfCharInCharStr);
+     indexOfCharInCharStr++;    
+     if (myChar!="#") {
+      alert("Ошибка настройки скрипта.\nПосле символа амперсанда в charStr идет не символ решетки.");
+      return;
+     }
+     myChar="";
+     while (indexOfCharInCharStr<lengthOfCharStr && charStr.charAt(indexOfCharInCharStr).search(digitRegExp)>=0) {
+      myChar+=charStr.charAt(indexOfCharInCharStr);
+      indexOfCharInCharStr++;
+     }
+     if (myChar=="" || indexOfCharInCharStr>=lengthOfCharStr || charStr.charAt(indexOfCharInCharStr)!=";") {
+      alert("Ошибка в charStr при записи числа через код.");
+      return;
+     }
+     indexOfCharInCharStr++;
+     myChar=String.fromCharCode(eval(myChar));
+    }
+   }
+  htmlStr+="<TD"+title+" onmouseover='this.style.fontWeight=\"bold\"; style.backgroundColor=\"#baecb6\";' onmouseout='this.style.fontWeight=\"normal\"; style.backgroundColor=\"white\";'>"+(myChar!="" ? (myChar!=769 ? myChar : "&#160;&#769;") : " ")+"</TD>";
+  }
+  htmlStr+="</TR>";
+ }
+ htmlStr+="</TABLE>";
+ document.getElementById("divForTable").innerHTML=htmlStr;
+ document.body.onclick=function() {onClick();}
+//fb2window.focus();
+}
+
+myMain();
+</script>
+</body>

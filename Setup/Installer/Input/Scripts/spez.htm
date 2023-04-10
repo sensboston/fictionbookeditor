@@ -1,0 +1,139 @@
+<head>
+ <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+ <meta http-equiv="MSThemeCompatible" content="yes">
+ <title>:: Специальные символы ::   </title>
+ <style>
+  td {font-family: Arial Unicode MS; font-size:16px; text-align: center; border-bottom: 1px dashed; border-right: 1px dashed; width: 20%;}
+ </style>
+</head>
+<body>      
+<div id=divForTable></div>
+<script>
+function myMain() {
+
+ function onClick() {
+  var rng;
+  if (event.srcElement.nodeName=="TD" && fbw_body.contains(fb2doc.selection.createRange().parentElement())) {
+   var rng=fb2doc.selection.createRange();
+   var ht=event.srcElement.innerHTML;
+   if (ht=="́ ́") rng.pasteHTML(rng.htmlText+"&#769;");
+   else rng.pasteHTML(rng.htmlText+ht);
+   rng.collapse(false);
+   rng.select();
+  }
+ }
+
+var tableX=5; //количество столбцов в таблице символов
+var tableY=12; //количество строк в таблице символов
+
+//символы для таблицы 
+var charStr="&#161;&#191;&#166;&#167;&#169;&#170;&#186;&#171;&#187;&#172;&#173;&#174;&#175;&#176;&#177;&#185;&#178;&#179;&#180;&#181;&#182;&#183;&#186;&#188;&#189;&#190;&#215;&#247;†&#1147;&#168;&#184;&#700;&#701;&#711;&#728;&#729;&#731;&#733;&#900;&#901;&#903;&#8213;&#8254;&#402;&#8592;&#8593;&#8594;&#8595;&#8596;&#9824;&#9827;&#9829;&#9830;&#8482;&#8226;&#710;&#8242;&#8243;‰";
+
+/*
+&#161;&#191;&#166;&#167;&#169;
+&#170;&#186;&#171;&#187;&#172;
+&#173;&#174;&#175;&#176;&#177;
+&#185;&#178;&#179;&#180;&#181;
+&#182;&#183;&#186;&#188;&#189;
+&#190;&#215;&#247;&#134;&#1147;
+&#168;&#184;&#700;&#701;&#711;
+&#728;&#729;&#731;&#733;&#900;
+&#901;&#903;&#8213;&#8254;&#402;
+&#8592;&#8593;&#8594;&#8595;&#8596;
+&#9824;&#9827;&#9829;&#9830;&#8482;
+&#8226;&#710;&#8242;&#8243;‰
+";
+*/
+
+ //всплывающие подсказки для символов, разделенные символов разделителя
+   var titleStr="Перевернутый восклицательный знак iexl|Перевернутый вопросительный знак iquest|Вертикальная черта с разрывом brvbar. brkbar|Параграф sect|Авторское право copy|Принадлежность к женскому роду ordf|Принадлежность к мужскому роду ordm|Левые угловые кавычки laquo|Правые угловые кавычки  raquo|Знак отрицания not|Мягкий перенос (т.е. при необходимости) shy|Зарегистрированная торговая марка reg|Надчеркивание  macr, hibar|Градус deg|Плюс-минус plusmn|Надстрочная 1  sup1|Вторая степень /надстрочная 2  sup2|Третья степень /надстрочная 3  sup3|Знак ударения  akute|Знак «микро» micro|Знак «секция»  para|Точка посредине  middot|Принадлежность к мужскому роду|Одна четвертая  frac14|Одна вторая  frac12|Три четвертых  frac34|Знак умножения  times|Знак деления  divide|Знак «Dagger»|Славянское обозначение тысячи|Умляут / двойное ударение  uml, die|Седиль  cedil|модификация апострофа||Корона|Знак краткости|||двойное ударение|||знак смягчения (палатализации)|горизонтальная черта|макрон (знак долготы гласного звука)|знак функции fnof|стрелка влево|стрелка вверх|стрелка вправо|стрелка вниз|стрелка влево-вправо|знак масти «пики»|знак масти «трефы»|знак масти «червы»|знак масти «бубны»|знак торговой марки|маленький черный кружок|диакритический знак над гласной|одиночный штрих - минуты|двойной штрих - секунды|знак «промилле»|";
+/*
+Перевернутый восклицательный знак iexl|Перевернутый вопросительный знак iquest|Вертикальная черта с разрывом brvbar. brkbar|Параграф sect|Авторское право copy|
+Принадлежность к женскому роду ordf|Принадлежность к мужскому роду ordm|Левые угловые кавычки laquo|Правые угловые кавычки  raquo|Знак отрицания not|
+Мягкий перенос (т.е. при необходимости) shy|Зарегистрированная торговая марка reg|Надчеркивание  macr, hibar|Градус deg|Плюс-минус plusmn|
+Надстрочная 1  sup1|Вторая степень /надстрочная 2  sup2|Третья степень /надстрочная 3  sup3|Знак ударения  akute|Знак «микро» micro|
+Знак «секция»  para|Точка посредине  middot|Принадлежность к мужскому роду|Одна четвертая  frac14|Одна вторая  frac12|
+Три четвертых  frac34|Знак умножения  times|Знак деления  divide|Знак «Dagger»|Славянское обозначение тысячи|
+Умляут / двойное ударение  uml, die|Седиль  cedil|модификация апострофа||Корона|
+Знак краткости|||двойное ударение||
+|знак смягчения (палатализации)|горизонтальная черта|макрон (знак долготы гласного звука)|знак функции fnof|
+стрелка влево|стрелка вверх|стрелка вправо|стрелка вниз|стрелка влево-вправо|
+знак масти «пики»|знак масти «трефы»|знак масти «червы»|знак масти «бубны»|знак торговой марки|
+маленький черный кружок|диакритический знак над гласной|одиночный штрих - минуты|двойной штрих - секунды|знак «промилле»|
+";
+   */
+
+ //символ разделителя для строки всплывающих подсказок
+   var dividerChar="|";
+
+ var params=window.dialogArguments;
+ var fbw_body=params["fbw_body"];
+ var fb2doc=params["document"];
+ var fb2window=params["window"];
+ var nbspRegExp=new RegExp("&nbsp;","gi");
+ var nbspRegExp_=" ";
+ var ltRegExp=new RegExp("&lt;","gi");
+ var ltRegExp_="<"; 
+ var gtRegExp=new RegExp("&gt;","gi");
+ var gtRegExp_=">"; 
+ var digitRegExp=new RegExp("[0-9]","");
+ charStr=charStr.replace(nbspRegExp,nbspRegExp_).replace(ltRegExp,ltRegExp_).replace(gtRegExp,gtRegExp_);
+var htmlStr="<TABLE cellspacing=0 cellpadding=1 width=100%>";
+ var len=charStr.length;
+ var indexOfCharInTitleStr=0;
+ var indexOfCharInCharStr=0;
+ var title,myChar;
+ var lengthOfCharStr=charStr.length;
+ var lengthOfTitleStr=titleStr.length;
+ for (var y=0;y<tableY;y++) {
+  htmlStr+="<TR>";
+  for (var x=0;x<tableX;x++) {
+   title="";
+   if (indexOfCharInTitleStr<lengthOfTitleStr) {
+    title=" title='";
+    while (indexOfCharInTitleStr<lengthOfTitleStr && titleStr.charAt(indexOfCharInTitleStr)!=dividerChar) {
+     title+=titleStr.charAt(indexOfCharInTitleStr);
+     indexOfCharInTitleStr++;
+    }
+    if (indexOfCharInTitleStr<lengthOfTitleStr)
+     if (titleStr.charAt(indexOfCharInTitleStr)==dividerChar) 
+      indexOfCharInTitleStr++;
+    title+="'";  
+   } 
+   myChar="";
+   if (indexOfCharInCharStr<lengthOfCharStr) {
+    myChar=charStr.charAt(indexOfCharInCharStr);
+    indexOfCharInCharStr++;    
+    if (myChar=="&") {
+     myChar=charStr.charAt(indexOfCharInCharStr);
+     indexOfCharInCharStr++;    
+     if (myChar!="#") {
+      alert("Ошибка настройки скрипта.\nПосле символа амперсанда в charStr идет не символ решетки.");
+      return;
+     }
+     myChar="";
+     while (indexOfCharInCharStr<lengthOfCharStr && charStr.charAt(indexOfCharInCharStr).search(digitRegExp)>=0) {
+      myChar+=charStr.charAt(indexOfCharInCharStr);
+      indexOfCharInCharStr++;
+     }
+     if (myChar=="" || indexOfCharInCharStr>=lengthOfCharStr || charStr.charAt(indexOfCharInCharStr)!=";") {
+      alert("Ошибка в charStr при записи числа через код.");
+      return;
+     }
+     indexOfCharInCharStr++;
+     myChar=String.fromCharCode(eval(myChar));
+    }
+   }
+  htmlStr+="<TD"+title+" onmouseover='this.style.fontWeight=\"bold\"; style.backgroundColor=\"cyan\";' onmouseout='this.style.fontWeight=\"normal\"; style.backgroundColor=\"white\";'>"+(myChar!="" ? (myChar!=769 ? myChar : "&#160;&#769;") : " ")+"</TD>";
+  }
+  htmlStr+="</TR>";
+ }
+ htmlStr+="</TABLE>";
+ document.getElementById("divForTable").innerHTML=htmlStr;
+ document.body.onclick=function() {onClick();}
+//fb2window.focus();
+}
+
+myMain();
+</script>
+</body>

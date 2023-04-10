@@ -1,0 +1,400 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+ "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<title>заголовок, который должен быть не виден</title>
+<meta http-equiv="X-UA-Compatible" content="IE=6">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link rel=stylesheet href="css/Точка, тире, буква - main.css"></link>
+<link rel=stylesheet href="css/Точка, тире, буква - add.css"></link>
+<style type="text/css">
+</style>
+<!--
+<script language=JavaScript type="text/javascript">
+ function myOnResize() {
+  var savedDiv=document.getElementById("fbw_body").innerHTML;
+  document.getElementById("fbw_body").innerHTML="";
+  windowHeight=document.body.clientHeight;
+  document.getElementById("fbw_body").innerHTML=savedDiv;
+  var coll=document.getElementById("ddl_mark").getClientRects();
+  document.documentElement.scrollTop=Math.floor((coll[0].top+coll[0].bottom)/2)-Math.floor(windowHeight/2);
+  alert(1);
+ }
+</script>
+-->
+</head>
+<body style="height:100%;">
+<div style="width:95%;" id=fbw_body></div>
+<script language=JavaScript type="text/javascript">
+var params, fbwBody, randomNum, beginMarkerId, endMarkerId, range;
+var range1, range2, el, ptr, myDoc, searchPos, ptr2, currentPos;
+var stage, sfpWhileFlag, s2, len2, whatSymbol, foundAt, dotNode;
+var letterNode, letterOffset, myWin, firstTimeDoAll, firstTimeInNodeType3;
+var insideNoteNow;
+var otstupSverhu=100;
+var nbspChar=window.dialogArguments["nbspChar"];
+var nbspEntity=window.dialogArguments["nbspEntity"];
+var spaceRegExp=new RegExp("[ "+nbspChar+"]");
+var dashRegExp=new RegExp("[-–—]");
+var bigLetterRegExp=new RegExp("[A-ZА-ЯЁÀÁÂÃÄÅÇÈÉÊËÌÍÏÐÑÒÓÔÕÖÙÚÛÜÝĀĄĆĈĊČĎĐĒĔĖĘĚĜĞĠĢĤĦĨĪĬĮİĴĶĹĻĽĿŁŃŅŇŊŌŎŐŔŖŘŚŜŞŠŢŤŦŨŪŬŮŰŲŴŶŸŹŻŽǺǼȘȚ]");
+var smallLetterRegExp=new RegExp("[a-zа-яёàáâãäåçèéêëìíïðñòóôõöùúûüýāąćĉċčďđēĕėęěĝğġģĥħĩīĭįiĵķĺļľŀłńņňŋōŏőŕŗřśŝşšţťŧũūŭůűųŵŷÿźżžǻǽșț]");
+var ltRegExp=new RegExp("<","g");
+var ltRegExp_="&lt;";
+var gtRegExp=new RegExp(">","g");
+var gtRegExp_="&gt;";
+var windowHeight=document.body.clientHeight;
+firstTimeDoAll=true;
+
+function setCursorIntoTextNode(noteNode,offset) {
+ if (offset!=0) {
+  var s1=noteNode.nodeValue;
+  var s2=s1.substr(offset);
+  var s1=s1.substr(0,offset);
+  var node2=myDoc.createTextNode(s2);
+  node2=noteNode.parentNode.insertBefore(node2,noteNode.nextSibling);
+  noteNode.nodeValue=s1;
+  noteNode=node2;
+ }
+ var tmpLabelNode=noteNode.parentNode.insertBefore(myDoc.createElement("B"),noteNode);
+ tmpLabelNode.scrollIntoView(true);
+ myWin.scrollBy(0,-otstupSverhu);
+ var range=myDoc.body.createTextRange();
+ range.moveToElementText(tmpLabelNode);
+ range.select();
+ tmpLabelNode.removeNode();
+}
+
+function getNext(element_to_get_next) {
+ if (element_to_get_next.firstChild) {
+  return element_to_get_next.firstChild;
+ } else {
+  var elem=element_to_get_next;
+  while (elem!=fbwBody && elem.nextSibling==null) elem=elem.parentNode;
+  if (elem!=fbwBody) elem=elem.nextSibling;
+  return elem;
+ }
+}
+
+function lookAheadFromPosition() {
+ ptr2=ptr;
+ s2=ptr2.nodeValue;
+ len2=s2.length;
+ currentPos=foundAt;
+ stage=1;
+ sfpWhileFlag=true;
+ insideNoteNow=false;
+ while (sfpWhileFlag) {
+  if (ptr2.nodeType==3) {
+   //alert("currentPos:"+currentPos);
+   if (currentPos==-1) {
+    currentPos=0;
+    s2=ptr2.nodeValue;
+    len2=s2.length;
+   }
+   else {
+    currentPos++;
+    if (currentPos>=len2) currentPos=-1;
+   }
+   if (currentPos!=-1) {
+    if (insideNoteNow==false)
+     while (currentPos<len2) {
+      //alert("s2: "+s2+"\ncurrentPos:"+currentPos+"\ns2.charAt(currentPos):"+s2.charAt(currentPos));
+      switch(stage) {
+        case 1: //ищем пробелы или дефис или тире
+         if (s2.charAt(currentPos).search(dashRegExp)>=0) stage=2;
+         else if (s2.charAt(currentPos).search(spaceRegExp)<0) return false;
+         break;
+        case 2: //ищем букву
+         if (((whatSymbol=="точка" || whatSymbol=="многоточие") && s2.charAt(currentPos).search(smallLetterRegExp)>=0) ||
+             ((whatSymbol=="запятая") && s2.charAt(currentPos).search(bigLetterRegExp)>=0)) {
+          letterOffset=currentPos;
+          letterNode=ptr2;
+          return true;
+         }
+         else
+          if (s2.charAt(currentPos).search(spaceRegExp)<0) return false;
+         break;
+      }
+      currentPos++;
+     }
+    currentPos=-1;
+   }
+  }
+  if (ptr2.firstChild) {
+   if (ptr2.nodeName=="A" && ptr2.className=="note") insideNoteNow=true;
+   ptr2=ptr2.firstChild;
+  } else {
+   while (ptr2!=fbwBody && ptr2.nextSibling==null) {
+    if (ptr2.nodeName=="P") return false;
+    if (ptr2.nodeName=="A" && ptr2.className=="note") insideNoteNow=false;
+    ptr2=ptr2.parentNode;
+   }
+   if (ptr2.nodeName=="P") return false;
+   if (ptr2.nodeName=="A" && ptr2.className=="note") insideNoteNow=false;
+   if (ptr2!=fbwBody) ptr2=ptr2.nextSibling;
+   else sfpWhileFlag=false;
+  }
+ }
+ return false;
+}
+
+function lookBackwardFromPosition() {
+ //возвращает true, если слева от найденной точки находится не точка
+ //alert("lookBackwardFromPosition");
+ ptr2=ptr;
+ s2=ptr2.nodeValue;
+ len2=s2.length;
+ currentPos=foundAt;
+ stage=1;
+ sfpWhileFlag=true;
+ while (sfpWhileFlag) {
+  if (ptr2.nodeType==3) {
+   if (currentPos==-2) {
+    s2=ptr2.nodeValue;
+    len2=s2.length;   
+    currentPos=len2-1;
+   }
+   else {
+    currentPos--;
+    if (currentPos==-1) currentPos=-2;
+   }
+   //alert("код2\nptr2.nodeValue:"+ptr2.nodeValue+"\ncurrentPos:"+currentPos);   
+   if (currentPos!=-2) {
+    while (currentPos>=0) {
+     //при stage==1 анализируем первый символ слева от найденной точки, при stage==2 - второй и т.д.
+     switch(stage) {
+       case 1: //ищем пробелы или дефис или тире
+        if (s2.charAt(currentPos)==".") stage++;
+        else return true;
+        break;
+       case 2:
+        if (s2.charAt(currentPos)==".") {
+         dotNode=ptr2;
+         dotOffset=currentPos;
+         whatSymbol="многоточие";
+         return true;
+        } 
+        else return false;
+        break;
+       /*case 3:
+        if (s2.charAt(currentPos)==".") return false;
+        else return true;
+        break;*/
+     }
+     currentPos--;
+    }
+    currentPos=-2;
+   }
+  }
+  if (ptr2.lastChild) {
+   ptr2=ptr2.lastChild;
+  } else {
+   while (ptr2!=fbwBody && ptr2.previousSibling==null) {
+    if (ptr2.nodeName=="P") return true;
+    ptr2=ptr2.parentNode;
+   }
+   if (ptr2.nodeName=="P") return true;
+   if (ptr2!=fbwBody) ptr2=ptr2.previousSibling;
+   else sfpWhileFlag=false;
+  }
+ }
+ return true;
+}
+
+function onTimerEnableOrDisableChangePunctuationButton(makeEnabled) {
+ if (parent.frame2 && parent.frame2.document &&
+     parent.frame2.document.getElementById("changePunctuation_Button")) {
+  parent.frame2.document.getElementById("changePunctuation_Button").disabled=!makeEnabled;
+ } else setTimeout("onTimerEnableOrDisableChangePunctuationButton("+makeEnabled+");",50);
+}
+
+function prepareScreen() {
+ var letterCnt, inOneTag, dotNodeSavedValue, letterNodeSavedValue, signat1, signat2, a1, a2, ii;
+ var savedTargetP, draft, ltPos, gtPos, rightTagEdge, tagEdge_, tagEdge2, jj, tt, firstTimeDdlMark;
+ var changedP, tagStr2;
+
+ targetP=dotNode;
+ while (targetP.nodeName!="P" && targetP.nodeName!="DIV" && targetP.nodeName!="BODY")
+  targetP=targetP.parentNode;
+ if (targetP.nodeName!="P") {
+  alert("Печальная ошибка.\n\nИскомая комбинация символов встретилась вне абзаца.\nСообщите автору скрипта.");
+  return;
+ }
+ draft=targetP.innerHTML;
+
+ signat2="sclexDotDashLetter_2_" + randomNum;
+ signat1="sclexDotDashLetter_1_" + randomNum;
+
+ myWin.external.BeginUndoUnit(myDoc,"Точка, тире, буква (холостой ход)");
+
+ letterNodeSavedValue=letterNode.nodeValue;
+ letterNode.nodeValue=letterNodeSavedValue.substr(0,letterOffset+1) +
+  signat2 + letterNodeSavedValue.substr(letterOffset+1);
+
+ dotNodeSavedValue=dotNode.nodeValue;
+ dotNode.nodeValue=dotNodeSavedValue.substr(0,dotOffset) +
+  signat1 + dotNodeSavedValue.substr(dotOffset);
+
+ changedP=targetP.innerHTML;
+
+ dotNode.nodeValue=dotNodeSavedValue;
+ letterNode.nodeValue=letterNodeSavedValue;
+ 
+ myWin.external.EndUndoUnit(myDoc);
+
+ //подсветим важные символы стилем ddl_marked
+ a1=changedP.indexOf(signat1); //смещение точки или запятой в абзаце
+ a2=changedP.indexOf(signat2)-signat1.length-1; //смещение буквы в абзаце
+ ii=a1;
+ htmlStr=draft.substring(0,a1);
+ firstTimeDdlMark=true;
+ while (ii<=a2) {
+  jj=ii;
+  while (jj<=a2 && draft.charAt(jj)!="<") jj++;
+  //alert("1\nii:"+ii+"\njj:"+jj);
+  htmlStr+="<SPAN class=ddl_marked";
+  if (firstTimeDdlMark) {
+   htmlStr+=" id=ddl_mark ";
+   firstTimeDdlMark=false;
+  }
+  htmlStr+=">"+draft.substring(ii,jj)+"</SPAN>";
+  if (jj<=a2) {
+   ii=jj;
+   while (ii<=a2 && draft.charAt(ii)=="<") {
+    ii++;
+    while (draft.charAt(ii)!=">" && ii<=a2) ii++;
+    ii++;
+   }
+   htmlStr+=draft.substring(jj,ii);
+  } else ii=jj+1;
+ }
+ htmlStr="<P>"+htmlStr+draft.substring(a2+1)+"</P>";
+  
+ tt=targetP;
+ while (tt!=null && tt.id!="fbw_body") {
+  tt=tt.parentNode;
+  if (tt.id!="fbw_body")
+   htmlStr="<" + tt.nodeName + 
+           (tt.nodeName=="DIV" && tt.className!="" && tt.className!=null?" class="+tt.className:"") + ">" +
+           htmlStr +
+           "</"+tt.nodeName+">";
+ }
+ document.getElementById("fbw_body").innerHTML="";
+ windowHeight=document.body.clientHeight;
+ document.getElementById("fbw_body").innerHTML=htmlStr;
+ coll=document.getElementById("ddl_mark").getClientRects();
+ document.documentElement.scrollTop=Math.floor((coll[0].top+coll[0].bottom)/2)-Math.floor(windowHeight/2);
+}
+
+function doAll() {
+ var len,s,foundAt2,foundAt3;
+ firstTimeInNodeType3=true;
+ while (ptr!=fbwBody) {
+  if (ptr.nodeType==3) {
+   if (!firstTimeInNodeType3 || searchPos==undefined) searchPos=0;
+   else firstTimeInNodeType3=false;
+   //alert("ptr.nodeValue:"+ptr.nodeValue+"\nsearchPos:"+searchPos);
+   s=ptr.nodeValue;
+   len=s.length;
+   while (searchPos<len) {
+    foundAt=s.indexOf(",",searchPos);
+    foundAt2=s.indexOf(".",searchPos);
+    foundAt3=s.indexOf("…",searchPos);
+    if ((foundAt<0 && foundAt2>=0) || (foundAt>=0 && foundAt2>=0 && foundAt2<foundAt)) foundAt=foundAt2;
+    if ((foundAt<0 && foundAt3>=0) || (foundAt>=0 && foundAt3>=0 && foundAt3<foundAt)) foundAt=foundAt3;
+    if (foundAt>=0) {
+     dotNode=ptr;
+     dotOffset=foundAt;
+     if (s.charAt(dotOffset)==".") whatSymbol="точка";
+     if (s.charAt(dotOffset)==",") whatSymbol="запятая";
+     if (s.charAt(dotOffset)=="…") whatSymbol="многоточие";
+     if (lookAheadFromPosition() && (whatSymbol!="точка" || lookBackwardFromPosition())) {
+      prepareScreen();
+      if (whatSymbol=="многоточие") onTimerEnableOrDisableChangePunctuationButton(false);
+      firstTimeDoAll=false;
+      searchPos=foundAt+1;
+      return;
+     }
+     searchPos=foundAt+1;
+    } else searchPos=len;
+   }
+  }
+  //if (ptr.nodeType==1) alert("1:\n"+ptr.outerHTML);
+  //переходим дальше
+  if (ptr.firstChild) {
+   ptr=ptr.firstChild;
+  } else {
+   while (ptr!=fbwBody && ptr.nextSibling==null) {
+    if (ptr.nodeName=="P") searchPos=0;
+    ptr=ptr.parentNode;
+   }
+   if (ptr.nodeName=="P") searchPos=0;
+   if (ptr!=fbwBody) ptr=ptr.nextSibling;
+   else sfpWhileFlag=false;
+  }
+  //if (ptr.nodeType==1) alert("2:\n"+ptr.outerHTML);
+ }
+ if (ptr==fbwBody) {
+  if (firstTimeDoAll) alert("Искомых комбинаций символов в документе от позиции курсора нет."); 
+  else alert("Обработка закончена.\n\nВ документе больше нет искомых комбинаций символов от позиции курсора.");
+  window.close();
+ }
+}
+
+function changePunctuation(dotNode,dotOffset) {
+ myWin.external.BeginUndoUnit(myDoc,"Точка, тире, буква");
+ var s=dotNode.nodeValue;
+ dotNode.nodeValue=s.substring(0,dotOffset)+(whatSymbol=="точка"?",":"")+(whatSymbol=="запятая"?".":"")+s.substring(dotOffset+1);
+ myWin.external.EndUndoUnit(myDoc);
+}
+
+function changeLetter(letterNode,letterOffset) {
+ myWin.external.BeginUndoUnit(myDoc,"Точка, тире, буква");
+ var s=letterNode.nodeValue;
+ letterNode.nodeValue=s.substring(0,letterOffset) + 
+                      (whatSymbol=="точка"||whatSymbol=="многоточие"?s.charAt(letterOffset).toUpperCase():"") +
+                      (whatSymbol=="запятая"?s.charAt(letterOffset).toLowerCase():"") +
+                      s.substring(letterOffset+1);
+ myWin.external.EndUndoUnit(myDoc);
+}
+
+//начало основного кода
+returnValue=null;
+params=window.dialogArguments;
+fbwBody=params["fbwBody"];
+myDoc=params["myDoc"];
+myWin=params["myWin"];
+if (!fbwBody) {
+ alert("fbwBody==null");
+ window.close();
+}
+randomNum=Math.floor((Math.random()*9)).toString()+Math.floor((Math.random()*9)).toString()+Math.floor((Math.random()*9)).toString()+Math.floor((Math.random()*9)).toString()+Math.floor((Math.random()*9)).toString()+Math.floor((Math.random()*9)).toString();
+beginMarkerId="sclexDotDashLetterBeginMarker"+randomNum;
+endMarkerId="sclexDotDashLetterEndMarker"+randomNum;
+range=myDoc.selection.createRange();
+range1=range.duplicate();
+range1.collapse(true);
+range1.pasteHTML("<B id="+beginMarkerId+"></B>");
+//alert(fbwBody.innerHTML);
+beginMarkerEl=myDoc.getElementById(beginMarkerId);
+if (!beginMarkerEl) {
+ alert("beginMarkerEl==null");
+ window.close();
+}
+range2=range.duplicate();
+range2.collapse(false);
+range2.pasteHTML("<B id="+endMarkerId+"></B>");
+endMarkerEl=myDoc.getElementById(endMarkerId);
+if (!endMarkerEl) {
+ alert("endMarkerEl==null");
+ window.close();
+}
+
+ptr=getNext(endMarkerEl);
+beginMarkerEl.removeNode(true);
+endMarkerEl.removeNode(true);
+doAll();
+
+</script>
+</body>
+</html>
