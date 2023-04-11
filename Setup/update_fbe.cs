@@ -11,14 +11,15 @@ class Program
         const int ts_offset = 0x139200;
         const int ver_offset = 0x139237;
 
-        if (args.Length > 0 && Version.TryParse(args[0], out Version ver) && File.Exists(fbeName))
+	Version ver;
+        if (args.Length > 0 && Version.TryParse(args[0], out ver) && File.Exists(fbeName))
         {
             try
             {
                 var date = DateTime.Now.ToString("MMM dd yyyy");
                 var time = DateTime.Now.ToString("HH:mm:ss");
-                var timestamp = Encoding.ASCII.GetBytes($"{date} {time}");
-                var version = Encoding.ASCII.GetBytes($"{ver.Major}.{ver.Minor}.{ver.Build}");
+                var timestamp = Encoding.ASCII.GetBytes(string.Format("{0} {1}", date, time));
+                var version = Encoding.ASCII.GetBytes(string.Format("{0}.{1}.{2}", ver.Major, ver.Minor, ver.Build));
                 using (var fileStream = new FileStream(fbeName, FileMode.Open, FileAccess.ReadWrite))
                 {
                     fileStream.Seek(ts_offset, SeekOrigin.Begin);
@@ -30,7 +31,7 @@ class Program
             }
             catch (IOException ex)
             {
-                Console.WriteLine($"Exception: {ex.Message}");
+                Console.WriteLine("Exception: "+ ex.Message);
             }
         }
         else Console.WriteLine("Use: update_fbe.exe [release_number]");
