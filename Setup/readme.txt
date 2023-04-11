@@ -1,6 +1,6 @@
-Инструкция созданию новых setup-ов FBE
+# Инструкция созданию новых setup-ов FBE
 
-Начальная настройка:
+## Начальная настройка:
 
 1. Установите систему инсталляции NSIS: \NSIS\nsis-2.46.5-Unicode-setup.exe 
 2. Скопируйте файлы:
@@ -8,7 +8,7 @@
    \NSIS\UAC.nsh -> C:\Program Files (x86)\NSIS\Unicode\Include 
 
 
-Создание новой инсталляции:
+## Создание новой инсталляции:
 
 1. Все обновленные файлы FBE (читай - обновлённые скрипты) должны быть скопированы в \Installer\Input, в сответствующие папки
 2. Измените (при желании) timestamp и версию билда FBE.exe, для этого нужно запустить утилиту update_fbe.exe 1.2.3 
@@ -24,5 +24,5 @@ https://github.com/sensboston/fictionbookeditor/edit/master/update.xml
 т.е. изменения станут видны на https://raw.githubusercontent.com/sensboston/fictionbookeditor/master/update.xml 
 
 Примечание: программку update_fbe.cs можно скомпилировать в исполняемый файл командой:
-C:\Windows\Microsoft.NET\Framework\v4.0.30319\csc.exe update_fbe.cs
+** C:\Windows\Microsoft.NET\Framework\v4.0.30319\csc.exe update_fbe.cs **
 Visual Studio для этого не нужна 
