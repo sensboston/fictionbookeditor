@@ -1,0 +1,53 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+ "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<title>Точка, тире, буква</title>
+<meta http-equiv="X-UA-Compatible" content="IE=6">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<style type="text/css">
+body,input {font-family:Tahoma; font-size:13px;}
+body {margin:0;padding:1px;}
+input {padding:0;}
+</style>
+</head>
+<body>
+<script>
+function myChangePunctuation() {
+ parent.frame1.changePunctuation(parent.frame1.dotNode,parent.frame1.dotOffset);
+ document.getElementById("changePunctuation_Button").disabled=false;
+ if (document.getElementById("goAfterChange").checked) {
+  parent.frame1.setCursorIntoTextNode(parent.frame1.dotNode,parent.frame1.dotOffset);
+  window.close();
+ } 
+ parent.frame1.doAll();
+}
+
+function myChangeLetter() {
+ parent.frame1.changeLetter(parent.frame1.letterNode,parent.frame1.letterOffset,parent.frame1.dotFlag);
+ document.getElementById("changePunctuation_Button").disabled=false;
+ if (document.getElementById("goAfterChange").checked) {
+  parent.frame1.setCursorIntoTextNode(parent.frame1.dotNode,parent.frame1.dotOffset); 
+  window.close();
+ } 
+ parent.frame1.doAll();
+}
+
+function skipClicked() {
+ document.getElementById("changePunctuation_Button").disabled=false;
+ parent.frame1.doAll();
+}
+
+function onlyGo() {
+ parent.frame1.setCursorIntoTextNode(parent.frame1.dotNode,parent.frame1.dotOffset); 
+ window.close();
+}
+</script>
+<center>
+<input type=checkbox id=goAfterChange> После замены перейти к этому месту
+<input type=button value="Перейти без замены" onclick="onlyGo();">
+<br>
+<input type=button value="Пропуск" onclick="skipClicked();">   <input type=button id=changePunctuation_Button value="Заменить знак пунктуации" onclick="myChangePunctuation();"><input type=button value="Изменить регистр буквы" onclick="myChangeLetter();">   <input type=button value="Выход" onclick="window.close();">
+</center>
+</body>
+</html>

@@ -17,7 +17,7 @@ var fbwBody=window.dialogArguments["fbwBody"];
 var mainDoc=window.dialogArguments["mainDocument"];
 var mainWin=window.dialogArguments["window"];
 var nbspChar=window.dialogArguments["nbspChar"];
-document.title=document.title+" v"+window.dialogArguments["versionNum"];
+document.title+=" v"+window.dialogArguments["versionNum"];
 var ptr="nothing";
 var buttonsChanged=false;
 var oldLength=100;
@@ -26,13 +26,28 @@ function byId(ID) {
  return document.getElementById(ID);
 }
 
+function preventFromError() {
+ try {
+  mainWin.prkk_variableForCheck=true;
+ }
+ catch (e) {
+  window.close();
+ }
+}
+
 function closePopup() {
  p.hide();
 }
 
 function startFromBegin() {
- mainWin.prkk_ptr=fbwBody.firstChild;
- mainWin.prkk_doSearch(document,window,getMarkupType());
+ try {
+  mainWin.prkk_ptr=fbwBody.firstChild;
+  mainWin.prkk_doSearch(document,window,getMarkupType());
+ }
+ catch (e) {
+  alert("Произошла ошибка. Возможной причиной является то, что вы создали новый документ после того, как был открыт диалог скрипта.");
+  window.close();
+ }
 }
 
 function keys() {
@@ -42,17 +57,19 @@ function keys() {
  if (String.fromCharCode(event.keyCode)=="L" && buttonsChanged)
   mainWin.prkk_markupImageTitleAndGoFurther(document,window,getMarkupType());
  if (String.fromCharCode(event.keyCode)=="A")
-  mainWin.processAll(document,window,getMarkupType());;
+  mainWin.processAll(document,window,getMarkupType());
 }
 
 function showHelp(a,width,height) {
  p=createPopup();
+ var prefix="<TABLE style='width:100%; height:100%; padding:0; margin:0;' border=0 cellpadding=0 cellspacing=0><TR style='padding:0; margin:0;'><TD style='vertical-align:middle; font-face: Tahoma; font-size:13px; margin:0; padding:0;'>";
+ var postfix="</TD></TR></TABLE>";
  if (a==1)
-  p.document.body.innerHTML="<P style='padding:0; margin:0;'>Абзацы, длина которых меньше или равна заданного пользователем значения и которые не оканчиваются точкой, многоточием, восклицательным или вопросительным знаком, будут размечены как подписи автоматически, без запроса подтверждения. (Но не сразу, а по мере того, как позиция обработки будет миновать эти абзацы.)</P>";
+  p.document.body.innerHTML=prefix+"Абзацы после картинок, длина которых (абзацев) меньше или равна заданного пользователем значения и которые не оканчиваются точкой, многоточием, восклицательным или вопросительным знаком, будут размечены как подписи автоматически, без запроса подтверждения. (Но не сразу, а по мере того, как позиция обработки будет миновать эти абзацы.)"+postfix;
  else if (a==2) 
-  p.document.body.innerHTML="<P style='padding:0; margin:0;'>Можно использовать горячие клавиши:<BR>&nbsp;&nbsp;&nbsp;Старт от курсора – K<BR>&nbsp;&nbsp;&nbsp;Старт от начала – L<BR>&nbsp;&nbsp;&nbsp;Закрыть – Esc</P>";
+  p.document.body.innerHTML=prefix+"<P style='padding:0; margin:0;'>Можно использовать горячие клавиши:<BR>&nbsp;&nbsp;&nbsp;Стартовать от курсора – K<BR>&nbsp;&nbsp;&nbsp;Стартовать от начала – L<BR>&nbsp;&nbsp;&nbsp;Закрыть – Esc</P>"+postfix;
  else if (a==3) 
-  p.document.body.innerHTML="<P style='padding:0; margin:0;'>Можно использовать горячие клавиши:<BR>&nbsp;&nbsp;&nbsp;Искать дальше – K<BR>&nbsp;&nbsp;&nbsp;Это подпись – L<BR>&nbsp;&nbsp;&nbsp;Заменить все – A<BR>&nbsp;&nbsp;&nbsp;Закрыть – Esc</P>";  
+  p.document.body.innerHTML=prefix+"<P style='padding:0; margin:0;'>Можно использовать горячие клавиши:<BR>&nbsp;&nbsp;&nbsp;Искать дальше – K<BR>&nbsp;&nbsp;&nbsp;Это подпись – L<BR>&nbsp;&nbsp;&nbsp;Заменить все – A<BR>&nbsp;&nbsp;&nbsp;Закрыть – Esc"+postfix;  
  p.document.body.style.margin="0";
  p.document.body.style.padding="6px 10px 6px 10px";
  p.document.body.style.fontFamily="Tahoma";
@@ -114,7 +131,14 @@ function checkLength() {
 
 function startFromCursor() {
  if (mainDoc.selection.type=="None" || mainDoc.selection.type=="Text") {
-  var tr=mainDoc.selection.createRange();
+  try {
+   var tr=mainDoc.selection.createRange();
+  }
+  catch (e) {
+   alert("Произошла ошибка. Возможной причиной является то, что вы создали новый документ после того, как был открыт диалог скрипта.");
+   window.close();
+   return;
+  }
   if (!tr) {
    alert("Нет курсора.");
    return;
@@ -124,10 +148,6 @@ function startFromCursor() {
   tr2.moveToElementText(tr.parentElement());
   tr2.setEndPoint("EndToEnd",tr);*/
   mainWin.prkk_ptr=tr.parentElement();
-  /*if (tr2.text.replace(/[ \\n\\r]+/," ").replace(/<\/?P\b[^>]*?>/i,"")==tr.parentElement().innerText.replace(/[ \\n\\r]+/," ")) {
-   while (ptr!=fbwBody && ptr.nextSibling==null) ptr=ptr.parentNode;
-   if (ptr!=fbwBody) ptr=ptr.nextSibling;
-  }*/
  } else if (mainDoc.selection.type=="Control") {
   ptr=mainDoc.selection.createRange()(0);
   while (ptr!=fbwBody && ptr.nextSibling==null) ptr=ptr.parentNode;
@@ -139,16 +159,17 @@ function startFromCursor() {
 </SCRIPT>
 </HEAD>
 <BODY onkeydown="keys();" style="height:100%;">
-<TABLE border=0 style="width:100%; height:100%;" cellpadding=0 cellspacing=0>
+<TABLE style="width:100%; height:100%;" border=0 cellpadding=0 cellspacing=0>
 <TR>
 <TD valign=middle>
-<P style="text-align:center;">
+<P style="text-align:center;">Как форматировать подпись:
  <INPUT type=checkbox id=inp_1 onclick="cbClick();"><b>b</b>
  <INPUT type=checkbox id=inp_2 onclick="cbClick();"><i>i</i>
  <INPUT type=checkbox id=inp_3 onclick="cbClick();">x<sup>2</sup>
  <INPUT type=checkbox id=inp_4 onclick="cbClick();">x<sub>2</sub>
  <INPUT type=checkbox id=inp_5 onclick="cbClick();" checked>subtitle
- &nbsp;Ограничение длины: <INPUT type=text maxlength=6 style="width:50px;" value=200 id=LenInp><SPAN onclick="showHelp(1,300,145);" style="color: blue;">[?]</SPAN>
+</P>
+<P style="text-align:center;">Не размечать автоматически абзац как подпись, если число символов в нем больше <INPUT type=text maxlength=6 style="width:50px; text-align:center;" value=200 id=LenInp> <SPAN onclick="showHelp(1,300,180);" style="color: blue;">[?]</SPAN>
 </P>
 <SCRIPT type="text/javascript">
  byId("inp_1").hideFocus=true;
@@ -171,12 +192,13 @@ function startFromCursor() {
   byId("inp_5").checked = aa.charAt(4)=="1";
  }
  setInterval("checkLength();",100);
+ setInterval("preventFromError()",50);
 </SCRIPT>
 </TD>
 </TR>
 <TR>
 <TD valign=middle>
-<P style="text-align:center;" id=ButtonsP><INPUT type=button value="Старт от курсора" onclick="startFromCursor();" style="height:30px; width:120px;"> <INPUT type=button value="Старт от начала" onclick="startFromBegin();" style="height:30px; width:120px;"> <INPUT type=button value="Закрыть" style="height:30px; width:70px;" onclick="window.close();"><SPAN onclick="showHelp(2,270,80);" style="color: blue;">[?]</SPAN></P>
+<P style="text-align:center;" id=ButtonsP><INPUT type=button value="Стартовать от курсора - K" onclick="startFromCursor();" style="height:30px; width:180px;"> <INPUT type=button value="Стартовать от начала документа - L" onclick="startFromBegin();" style="height:30px; width:230px;"> <INPUT type=button value="Закрыть диалог - Esc" style="height:30px; width:150px;" onclick="window.close();"></P>
 </TD>
 </TR>
 </TABLE>

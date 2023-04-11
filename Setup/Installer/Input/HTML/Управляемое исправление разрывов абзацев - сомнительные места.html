@@ -1,14 +1,17 @@
 <html>
 <head>
- <meta http-equiv="Content-Type" content="text/html; charset=windows-1251">
+ <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
  <meta http-equiv="MSThemeCompatible" content="yes">
- <title>Интерактивное удаление разрывов абзацев</title>
- <link rel=stylesheet href="css/удаление разрывов_main.css">
- <link rel=stylesheet href="css/удаление разрывов_add.css">
+ <title>РЈРїСЂР°РІР»СЏРµРјРѕРµ РёСЃРїСЂР°РІР»РµРЅРёРµ СЂР°Р·СЂС‹РІРѕРІ Р°Р±Р·Р°С†РµРІ</title>
+ <link rel=stylesheet href="css/СѓРґР°Р»РµРЅРёРµ СЂР°Р·СЂС‹РІРѕРІ_main.css">
+ <link rel=stylesheet href="css/СѓРґР°Р»РµРЅРёРµ СЂР°Р·СЂС‹РІРѕРІ_add.css">
  <script language=JavaScript type="text/javascript">
   window.returnValue=0;
   var nbspChar=window.dialogArguments["nbspChar"];
-  var nbspEntity=window.dialogArguments["nbspEntity"];  
+  var nbspEntity=window.dialogArguments["nbspEntity"];
+  var smallLettersStr=window.dialogArguments["smallLettersStr"];
+  var bigLettersStr=window.dialogArguments["bigLettersStr"];
+  var emptyLineRE=new RegExp("^( |В |&nbsp;|"+nbspChar+")*?$","i");
 
   var resultColl=new Array();
   var n,i,myDoc;
@@ -65,7 +68,7 @@
    }
   }
 
- var re0=new RegExp("^( | |&nbsp;|"+nbspChar+")*?$","i"); 
+ var re0=new RegExp("^( |В |&nbsp;|"+nbspChar+")*?$","i"); 
 
  function isLineEmpty(ptr) {
   return re0.test(ptr.innerHTML.replace(/<(?!img)[^>]*?>/gi,""));
@@ -81,6 +84,23 @@
    if (tmpPtr.nodeName=="P" && isLineEmpty(tmpPtr)) tagStr2+="&nbsp;";
    return tagStr2;
  } 
+
+ function addSymbolToP(ptr,symb) {
+  var myPtr=ptr.lastChild;
+  while (myPtr!=ptr) {
+   if (myPtr.nodeType==3) break;
+   if (myPtr.lastChild!=null) {
+    myPtr=myPtr.lastChild;
+   } else {
+    while (myPtr.previousSibling==null) {
+     myPtr=myPtr.parentNode;
+     if (myPtr==ptr) break;
+    }
+    myPtr=myPtr.previousSibling;
+   }
+  }
+  myPtr.nodeValue+=symb;
+ }
 
  function addPointToP(ptr) {
   var myPtr=ptr.lastChild;
@@ -122,7 +142,7 @@
  }
 
  var hyphenOntoShortDashRegExp=new RegExp("-$","");
- var hyphenOntoShortDashRegExp_="–";
+ var hyphenOntoShortDashRegExp_="вЂ“";
 
  function changeHyphenOntoShortDash(ptr) {
   var myPtr=ptr.lastChild;
@@ -146,7 +166,7 @@
  }
 
  var hyphenOntoLongDashRegExp=new RegExp("-$","");
- var hyphenOntoLongDashRegExp_="—";
+ var hyphenOntoLongDashRegExp_="вЂ”";
 
  function changeHyphenOntoLongDash(ptr) {
   var myPtr=ptr.lastChild;
@@ -169,7 +189,7 @@
   }
  }
 
- var dashOntoHyphenRegExp=new RegExp("(–|—|-)$","");
+ var dashOntoHyphenRegExp=new RegExp("(вЂ“|вЂ”|-)$","");
  var dashOntoHyphenRegExp_="-";
 
  function changeDashOntoHyphenLongDash(ptr) {
@@ -193,7 +213,7 @@
   }
  }
 
- var killHyphenRegExp=new RegExp("(-|–|—)$","");
+ var killHyphenRegExp=new RegExp("(-|вЂ“|вЂ”)$","");
  var killHyphenRegExp_="";
 
  function killHyphen(ptr) {
@@ -217,6 +237,27 @@
   }
  }
 
+ var makeFirstLetterSmallRegExp=new RegExp("^[^"+bigLettersStr+"]*?["+bigLettersStr+"]","g");
+ 
+ function makeFirstLetterSmall(ptr) {
+  var myPtr=ptr.firstChild;
+  while (myPtr!=ptr) {
+   if (myPtr.nodeType==3) {
+    myPtr.nodeValue=myPtr.nodeValue.replace(makeFirstLetterSmallRegExp, function myFunction(x) { return x.toLowerCase(); } );
+    break;
+   }
+   if (myPtr.firstChild!=null) {
+    myPtr=myPtr.firstChild;
+   } else {
+    while (myPtr.nextSibling==null) {
+     myPtr=myPtr.parentNode;
+     if (myPtr==ptr) break;
+    }
+    myPtr=myPtr.nextSibling;
+   }
+  }
+ }
+ 
  function trimRight(ptr) {
   var SavePtr=ptr;
   ptr=ptr;
@@ -295,24 +336,25 @@
   }
   MoveTree(PrevP,ptr);
   var i;
-  if (delP!=undefined && delP!=null) {
+  while (delP!=undefined && delP!=null && delP!=ptr) {
    saveNext=delP;
-   if (saveNext.firstChild!=null && saveNext.nodeName!="P" &&
+   if (saveNext.firstChild && saveNext.nodeName!="P" &&
        !(saveNext.nodeName=="DIV" &&
          (saveNext.className=="title" || saveNext.className=="table" ||
          saveNext.className=="history" || saveNext.className=="annotation" ||
-         saveNext.className=="poem"))) {
-     saveNext=saveNext.firstChild; // либо углубляемся...
+         saveNext.className=="poem" || saveNext.className=="image"))) {
+     saveNext=saveNext.firstChild; // Р»РёР±Рѕ СѓРіР»СѓР±Р»СЏРµРјСЃСЏ...
    } else {
-     while (saveNext.nextSibling==null) {
-      saveNext=saveNext.parentNode; // ...либо поднимаемся (если уже сходили вглубь)
-     }
-    saveNext=saveNext.nextSibling; //и переходим на соседний элемент
+     while (saveNext && saveNext.nextSibling==null)
+      saveNext=saveNext.parentNode; // ...Р»РёР±Рѕ РїРѕРґРЅРёРјР°РµРјСЃСЏ (РµСЃР»Рё СѓР¶Рµ СЃС…РѕРґРёР»Рё РІРіР»СѓР±СЊ)
+     if (saveNext) saveNext=saveNext.nextSibling; //Рё РїРµСЂРµС…РѕРґРёРј РЅР° СЃРѕСЃРµРґРЅРёР№ СЌР»РµРјРµРЅС‚
    }
-   delP.removeNode(true);
+   //alert("#1. Р‘СѓРґРµРј СѓРґР°Р»СЏС‚СЊ РІРѕС‚ С‡С‚Рѕ:\n\n"+delP.outerHTML);
+   if (delP.nodeName!="DIV" || delP.className!="image") 
+     delP.removeNode(true);
    delP=saveNext;
   }  
-  ptr.parentNode.removeChild(ptr);
+  ptr.removeNode(true);
  }
   
   function applyChanges() {
@@ -323,7 +365,7 @@
    for (i=1;i<=collCnt;i++) {
     k=resultColl[i];
     if (k==1) {
-      //соединяем абзацы через пробел
+      //СЃРѕРµРґРёРЅСЏРµРј Р°Р±Р·Р°С†С‹ С‡РµСЂРµР· РїСЂРѕР±РµР»
       prevP=params[i+"_2"];
       if (prevP==lastPtr) prevP=lastPrevP;
       lastPtr=params[i+"_3"];
@@ -331,22 +373,22 @@
       trimLeft(lastPtr);
       if (elementToGo==lastPtr) elementToGo=prevP;
       if (elementToView==lastPtr) elementToView=prevP;     
-      JustAddP(prevP,lastPtr,params[i+"_4"]);
+      JustAddP(prevP,lastPtr,params[i+"_4"],true);
       lastPrevP=prevP;
     } else if (k==2) { 
-      //добавляем точку
+      // РґРѕР±Р°РІРёС‚СЊ С‚РѕС‡РєСѓ
       prevP=params[i+"_2"];    
       if (prevP==lastPtr) prevP=lastPrevP;         
       trimRight(prevP);
       addPointToP(prevP);
     } else if (k==3) { 
-      //точка вместо запятой
+      // Р·Р°РјРµРЅРёС‚СЊ Р·Р°РїСЏС‚СѓСЋ РЅР° С‚РѕС‡РєСѓ
       prevP=params[i+"_2"];    
       if (prevP==lastPtr) prevP=lastPrevP;
       trimRight(prevP);
       changeCommaOntoPoint(prevP);
     } else if (k==4) { 
-      //короткое тире вместо дефиса и соединить
+      // РєРѕСЂРѕС‚РєРѕРµ С‚РёСЂРµ РІРјРµСЃС‚Рѕ РґРµС„РёСЃР° Рё СЃРѕРµРґРёРЅРёС‚СЊ
       prevP=params[i+"_2"];    
       if (prevP==lastPtr) prevP=lastPrevP;     
       lastPtr=params[i+"_3"];
@@ -358,7 +400,7 @@
       JustAddP(prevP,lastPtr,params[i+"_4"]);
       lastPrevP=prevP;
     } else if (k==5) { 
-      //длинное тире вместо дефиса и соединить
+      //РґР»РёРЅРЅРѕРµ С‚РёСЂРµ РІРјРµСЃС‚Рѕ РґРµС„РёСЃР° Рё СЃРѕРµРґРёРЅРёС‚СЊ
       prevP=params[i+"_2"];    
       if (prevP==lastPtr) prevP=lastPrevP;     
       lastPtr=params[i+"_3"];
@@ -370,7 +412,7 @@
       JustAddP(prevP,lastPtr,params[i+"_4"]);
       lastPrevP=prevP;
     } else if (k==6) { 
-      //соединить, удалив тире или дефис
+      // СѓРґР°Р»РёС‚СЊ С‚РёСЂРµ/РґРµС„РёСЃ, СЃРѕРµРґРёРЅРёС‚СЊ Р°Р±Р·Р°С†С‹ С‡РµСЂРµР· РїСЂРѕР±РµР»
       prevP=params[i+"_2"];    
       if (prevP==lastPtr) prevP=lastPrevP;     
       lastPtr=params[i+"_3"];
@@ -380,30 +422,72 @@
       trimLeft(lastPtr);
       if (elementToGo==lastPtr) elementToGo=prevP;
       if (elementToView==lastPtr) elementToView=prevP;          
-      JustAddP(prevP,lastPtr,params[i+"_4"],false);
+      JustAddP(prevP,lastPtr,params[i+"_4"],true);
       lastPrevP=prevP;
     } else if (k==7) { 
-      //соединить через дефис, или заменив тире на дефис
-      prevP=params[i+"_2"];    
-      if (prevP==lastPtr) prevP=lastPrevP;     
+      // СЃРѕРµРґРёРЅРёС‚СЊ С‡РµСЂРµР· РґРµС„РёСЃ, РёР»Рё Р·Р°РјРµРЅРёРІ С‚РёСЂРµ РЅР° РґРµС„РёСЃ
+      prevP=params[i+"_2"];
+      if (prevP==lastPtr) prevP=lastPrevP;
       lastPtr=params[i+"_3"];
       trimRight(prevP);
       changeDashOntoHyphenLongDash(prevP);
       trimLeft(lastPtr);
       if (elementToGo==lastPtr) elementToGo=prevP;
-      if (elementToView==lastPtr) elementToView=prevP;          
+      if (elementToView==lastPtr) elementToView=prevP;
       JustAddP(prevP,lastPtr,params[i+"_4"],false);
       lastPrevP=prevP;
-    } else if (k==8) { 
-      prevP=params[i+"_2"];    
-      if (prevP==lastPtr) prevP=lastPrevP;     
-      lastPtr=params[i+"_3"];    
+    } else if (k==8) {
+      // СѓРґР°Р»РёС‚СЊ РґРµС„РёСЃ, СЃРѕРµРґРёРЅРёС‚СЊ Р°Р±Р·Р°С†С‹ Р±РµР· РїСЂРѕР±РµР»РѕРІ РјРµР¶РґСѓ РЅРёРјРё
+      prevP=params[i+"_2"];
+      if (prevP==lastPtr) prevP=lastPrevP;
+      lastPtr=params[i+"_3"];
+      trimRight(prevP);
+      killHyphen(prevP);
       trimRight(prevP);
       trimLeft(lastPtr);
       if (elementToGo==lastPtr) elementToGo=prevP;
-      if (elementToView==lastPtr) elementToView=prevP;          
+      if (elementToView==lastPtr) elementToView=prevP;
       JustAddP(prevP,lastPtr,params[i+"_4"],false);
-      lastPrevP=prevP;     
+      lastPrevP=prevP;
+    } else if (k==9) {
+     // СЃРѕРµРґРёРЅРёС‚СЊ С‡РµСЂРµР· РїСЂРѕР±РµР», РїРµСЂРІСѓСЋ Р±СѓРєРІСѓ 2-РіРѕ Р°Р±Р·Р°С†Р° СЃРґРµР»Р°С‚СЊ РјР°Р»РµРЅСЊРєРѕР№
+      prevP=params[i+"_2"];
+      if (prevP==lastPtr) prevP=lastPrevP;
+      lastPtr=params[i+"_3"];
+      trimRight(prevP);
+      trimLeft(lastPtr);
+      makeFirstLetterSmall(lastPtr);
+      if (elementToGo==lastPtr) elementToGo=prevP;
+      if (elementToView==lastPtr) elementToView=prevP;
+      JustAddP(prevP,lastPtr,params[i+"_4"]);
+      lastPrevP=prevP;
+   } else if (k==10) {
+      //СЃРѕРµРґРёРЅРёС‚СЊ С‡РµСЂРµР· ":" Рё РїСЂРѕР±РµР»
+      prevP=params[i+"_2"];
+      if (prevP==lastPtr) prevP=lastPrevP;
+      lastPtr=params[i+"_3"];
+      trimRight(prevP);
+      trimLeft(lastPtr);
+      addSymbolToP(prevP,":");
+      JustAddP(prevP,lastPtr,params[i+"_4"]);
+      lastPrevP=prevP;
+    } else if (k==11) {
+      //РґРѕР±Р°РІРёС‚СЊ ":"
+      prevP=params[i+"_2"];
+      if (prevP==lastPtr) prevP=lastPrevP;
+      trimRight(prevP);
+      addSymbolToP(prevP,":");
+    } if (k==12) {
+      // СЃРѕРµРґРёРЅРёС‚СЊ Р°Р±Р·Р°С†С‹ Р±РµР· РїСЂРѕР±РµР»РѕРІ РјРµР¶РґСѓ РЅРёРјРё
+      prevP=params[i+"_2"];
+      if (prevP==lastPtr) prevP=lastPrevP;
+      lastPtr=params[i+"_3"];
+      trimRight(prevP);
+      trimLeft(lastPtr);
+      if (elementToGo==lastPtr) elementToGo=prevP;
+      if (elementToView==lastPtr) elementToView=prevP;     
+      JustAddP(prevP,lastPtr,params[i+"_4"],false);
+      lastPrevP=prevP;
     }
     if (k!=0) changesCnt++;
    }
@@ -411,7 +495,7 @@
   }
   
   function myOnClose() {
-   if (changesApplied==false) if (confirm('Произвести выбранные правки?')) applyChanges();
+   if (changesApplied==false) if (confirm('РџСЂРѕРёР·РІРµСЃС‚Рё РІС‹Р±СЂР°РЅРЅС‹Рµ РїСЂР°РІРєРё?')) applyChanges();
   }
  </script>
 </head>
@@ -421,11 +505,11 @@
 <script language=JavaScript type="text/javascript">
  var tmpPtr,inOneTag;
  var numberOfSymbolsToShow=80;
- var re1=new RegExp("([а-яёa-z0-9])(((<a( +[a-z0-9]+=([\"\'][^\"\']*[\"\']|[^ >]*))* +class=[\"\']?note[\"\']?( +[a-z0-9]+=([\"\'][^\"\']*[\"\']|[^ >]*))* *>.*?</a>)*(</?[a-z0-9]+( [^>]*)?>| |"+nbspChar+")?)*)(([^а-яёa-z0-9>< "+nbspChar+"])(((<a( +[a-z0-9]+=([\"\'][^\"\']*[\"\']|[^ >]*))* +class=[\"\']?note[\"\']?( +[a-z0-9]+=([\"\'][^\"\']*[\"\']|[^ >]*))* *>.*?</a>)*(</?[a-z0-9]+( [^>]*)?>| |"+nbspChar+")?)*))?$","i");
+ var re1=new RegExp("(["+smallLettersStr+"0-9])(((<a( +[a-z0-9]+=([\"\'][^\"\']*[\"\']|[^ >]*))* +class=[\"\']?note[\"\']?( +[a-z0-9]+=([\"\'][^\"\']*[\"\']|[^ >]*))* *>.*?</a>)*(</?[a-z0-9]+( [^>]*)?>| |"+nbspChar+")?)*)(([^"+smallLettersStr+"0-9>< "+nbspChar+"])(((<a( +[a-z0-9]+=([\"\'][^\"\']*[\"\']|[^ >]*))* +class=[\"\']?note[\"\']?( +[a-z0-9]+=([\"\'][^\"\']*[\"\']|[^ >]*))* *>.*?</a>)*(</?[a-z0-9]+( [^>]*)?>| |"+nbspChar+")?)*))?$","i");
  var re1_="<SPAN class=hgl>$1</SPAN>$2<SPAN class=hgl>$12</SPAN>$13";
  var re1_red="<SPAN class=hgl_red>$1</SPAN>$2<SPAN class=hgl_red>$12</SPAN>$13";
  var re1_green="<SPAN class=hgl_green>$1</SPAN>$2<SPAN class=hgl_green>$12</SPAN>$13";
- var re2=new RegExp("^((((<a( +[a-z0-9]+=([\"\'][^\"\']*[\"\']|[^ >]*))* +class=[\"\']?note[\"\']?( +[a-z0-9]+=([\"\'][^\"\']*[\"\']|[^ >]*))* *>.*?</a>)*(</?[a-z0-9]+( [^>]*)?>| |"+nbspChar+")?)*)([^а-яёa-z0-9< "+nbspChar+"]))?(((<a( +[a-z0-9]+=([\"\'][^\"\']*[\"\']|[^ >]*))* +class=[\"\']?note[\"\']?( +[a-z0-9]+=([\"\'][^\"\']*[\"\']|[^ >]*))* *>.*?</a>)*(</?[a-z0-9]+( [^>]*)?>| |"+nbspChar+")?)*)([а-яёa-z0-9])","i");
+ var re2=new RegExp("^((((<a( +[a-z0-9]+=([\"\'][^\"\']*[\"\']|[^ >]*))* +class=[\"\']?note[\"\']?( +[a-z0-9]+=([\"\'][^\"\']*[\"\']|[^ >]*))* *>.*?</a>)*(</?[a-z0-9]+( [^>]*)?>| |"+nbspChar+")?)*)([^"+smallLettersStr+"0-9< "+nbspChar+"]))?(((<a( +[a-z0-9]+=([\"\'][^\"\']*[\"\']|[^ >]*))* +class=[\"\']?note[\"\']?( +[a-z0-9]+=([\"\'][^\"\']*[\"\']|[^ >]*))* *>.*?</a>)*(</?[a-z0-9]+( [^>]*)?>| |"+nbspChar+")?)*)(["+smallLettersStr+"0-9])","i");
  var re2_="$2<SPAN class=hgl>$11</SPAN>$12<SPAN class=hgl>$21</SPAN>";
  var re2_red="$2<SPAN class=hgl_red>$11</SPAN>$12<SPAN class=hgl_red>$21</SPAN>";
  var re2_green="$2<SPAN class=hgl_green>$11</SPAN>$12<SPAN class=hgl_green>$21</SPAN>";
@@ -442,7 +526,7 @@
  var htmlStr="";
  var tmpStr,tagStr,letterCnt,myNodeValue,len;
  var collCnt=params["collCnt"];
- document.title="Случаев: "+collCnt+". Интерактивное удаление разрывов абзацев "+params["versionStr"];
+ document.title="РџСЂРµРґРїРѕР»РѕР¶РёС‚РµР»СЊРЅС‹С… СЂР°Р·СЂС‹РІРѕРІ: "+collCnt+". РЈРїСЂР°РІР»СЏРµРјРѕРµ РёСЃРїСЂР°РІР»РµРЅРёРµ СЂР°Р·СЂС‹РІРѕРІ Р°Р±Р·Р°С†РµРІ "+params["versionStr"];
  myDoc=params["document"];
  var my_fbw_body=myDoc.getElementById("fbw_body");
  var range1, range2, prevP, ptr, cnt;
@@ -451,31 +535,59 @@
   htmlStr+="<DIV style='float:right; width:200px; margin:0 0 0 8px; padding:0 3px 0 3px; border-left:1px dotted gray; border-right:0; border-top:0; border-bottom:0;'>";
   switch(params[i+"_1"]) {
    case "1":
-    htmlStr+="<INPUT"+(modes["1_"]==0?" checked":"")+" type=radio name=r"+i+" value=0>Не трогать</INPUT><BR><INPUT"+(modes["1_"]==1?" checked":"")+" type=radio name=r"+i+" value=1>Соединить через пробел</INPUT><BR><INPUT"+(modes["1_"]==8?" checked":"")+" type=radio name=r"+i+" value=8>Соединить без пробела</INPUT>";
+    htmlStr+="<INPUT"+(modes["1_"]==0?" checked":"")+" type=radio name=r"+i+" value=0>РќРµ С‚СЂРѕРіР°С‚СЊ</INPUT><BR>"+
+             "<INPUT"+(modes["1_"]==11?" checked":"")+" type=radio name=r"+i+' value=11>Р”РѕР±Р°РІРёС‚СЊ ":"</INPUT><BR>'+
+             "<INPUT"+(modes["1_"]==8?" checked":"")+" type=radio name=r"+i+" value=8>РЎРѕРµРґРёРЅРёС‚СЊ Р±РµР· РїСЂРѕР±РµР»Р°</INPUT><BR>"+
+             "<INPUT"+(modes["1_"]==1?" checked":"")+" type=radio name=r"+i+" value=1>РЎРѕРµРґРёРЅРёС‚СЊ С‡РµСЂРµР· РїСЂРѕР±РµР»</INPUT><BR>"+
+             "<INPUT"+(modes["1_"]==10?" checked":"")+" type=radio name=r"+i+" value=10>РЎРѕРµРґРёРЅРёС‚СЊ С‡РµСЂРµР· &quot;:&quot; Рё РїСЂРѕР±РµР»</INPUT>";
     resultColl[i]=modes["1_"];
     break;
    case "2":
-    htmlStr+="<INPUT"+(modes["2_"]==0?" checked":"")+" type=radio name=r"+i+" value=0>Не трогать</INPUT><BR><INPUT"+(modes["2_"]==1?" checked":"")+" type=radio name=r"+i+" value=1>Соединить через пробел</INPUT><BR><INPUT"+(modes["2_"]==2?" checked":"")+" type=radio name=r"+i+" value=2>Добавить точку</INPUT>";   
+    htmlStr+="<INPUT"+(modes["2_"]==0?" checked":"")+" type=radio name=r"+i+" value=0>РќРµ С‚СЂРѕРіР°С‚СЊ</INPUT><BR>"+
+             "<INPUT"+(modes["2_"]==2?" checked":"")+" type=radio name=r"+i+" value=2>Р”РѕР±Р°РІРёС‚СЊ С‚РѕС‡РєСѓ</INPUT><BR>"+
+             "<INPUT"+(modes["2_"]==11?" checked":"")+" type=radio name=r"+i+' value=11>Р”РѕР±Р°РІРёС‚СЊ ":"</INPUT><BR>'+
+             "<INPUT"+(modes["2_"]==1?" checked":"")+" type=radio name=r"+i+" value=1>РЎРѕРµРґРёРЅРёС‚СЊ С‡РµСЂРµР· РїСЂРѕР±РµР»</INPUT><BR>"+
+             "<INPUT"+(modes["2_"]==10?" checked":"")+" type=radio name=r"+i+' value=10>РЎРѕРµРґРёРЅРёС‚СЊ С‡РµСЂРµР· ":" Рё РїСЂРѕР±РµР»</INPUT><BR>'+
+             "<INPUT"+(modes["2_"]==9?" checked":"")+" type=radio name=r"+i+" value=9>РЎРѕРµРґРёРЅРёС‚СЊ С‡РµСЂРµР· РїСЂРѕР±РµР», РїРµСЂРІСѓСЋ Р±СѓРєРІСѓ 2-РіРѕ Р°Р±Р·Р°С†Р° СЃРґРµР»Р°С‚СЊ РјР°Р»РµРЅСЊРєРѕР№</INPUT>";
     resultColl[i]=modes["2_"];
     break;
    case "3":
-    htmlStr+="<INPUT"+(modes["3_"]==0?" checked":"")+" type=radio name=r"+i+" value=0>Не трогать</INPUT><BR><INPUT"+(modes["3_"]==1?" checked":"")+" type=radio name=r"+i+" value=1>Соединить через пробел</INPUT><BR><INPUT"+(modes["3_"]==3?" checked":"")+" type=radio name=r"+i+" value=3>Точку вместо запятой</INPUT>";   
+    htmlStr+="<INPUT"+(modes["3_"]==0?" checked":"")+" type=radio name=r"+i+" value=0>РќРµ С‚СЂРѕРіР°С‚СЊ</INPUT><BR>"+
+             "<INPUT"+(modes["3_"]==1?" checked":"")+" type=radio name=r"+i+" value=1>РЎРѕС…СЂР°РЅРёС‚СЊ Р·Р°РїСЏС‚СѓСЋ, СЃРѕРµРґРёРЅРёС‚СЊ Р°Р±Р·Р°С†С‹ С‡РµСЂРµР· РїСЂРѕР±РµР»</INPUT><BR>"+
+             "<INPUT"+(modes["3_"]==3?" checked":"")+" type=radio name=r"+i+' value=3>РЎРґРµР»Р°С‚СЊ С‚РѕС‡РєСѓ РІРјРµСЃС‚Рѕ Р·Р°РїСЏС‚РѕР№</INPUT><BR>'+
+             "<INPUT"+(modes["3_"]==9?" checked":"")+" type=radio name=r"+i+" value=9>РЎРѕС…СЂР°РЅРёС‚СЊ Р·Р°РїСЏС‚СѓСЋ, СЃРѕРµРґРёРЅРёС‚СЊ Р°Р±Р·Р°С†С‹ С‡РµСЂРµР· РїСЂРѕР±РµР». РџРµСЂРІСѓСЋ Р±СѓРєРІСѓ 2-РіРѕ Р°Р±Р·Р°С†Р° СЃРґРµР»Р°С‚СЊ РјР°Р»РµРЅСЊРєРѕР№ (РµСЃР»Рё РЅР°РґРѕ)</INPUT>";
     resultColl[i]=modes["3_"];
     break;
    case "4":
-    htmlStr+="<INPUT"+(modes["4_"]==0?" checked":"")+" type=radio name=r"+i+" value=0>Не трогать</INPUT><BR><INPUT"+(modes["4_"]==4?" checked":"")+" type=radio name=r"+i+" value=4>Соединить через короткое тире и пробел</INPUT><BR><INPUT"+(modes["4_"]==5?" checked":"")+" type=radio name=r"+i+" value=5>Соединить через длинное тире и пробел</INPUT><BR><INPUT"+(modes["4_"]==8?" checked":"")+" type=radio name=r"+i+" value=6>Соединить, удалив дефис</INPUT>";   
+    htmlStr+="<INPUT"+(modes["4_"]==0?" checked":"")+" type=radio name=r"+i+" value=0>РќРµ С‚СЂРѕРіР°С‚СЊ</INPUT><BR>"+
+             "<INPUT"+(modes["4_"]==4?" checked":"")+" type=radio name=r"+i+" value=4>РЎРѕРµРґРёРЅРёС‚СЊ С‡РµСЂРµР· РєРѕСЂРѕС‚РєРѕРµ С‚РёСЂРµ Рё РїСЂРѕР±РµР»</INPUT><BR>"+
+             "<INPUT"+(modes["4_"]==5?" checked":"")+" type=radio name=r"+i+" value=5>РЎРѕРµРґРёРЅРёС‚СЊ С‡РµСЂРµР· РґР»РёРЅРЅРѕРµ С‚РёСЂРµ Рё РїСЂРѕР±РµР»</INPUT><BR>"+
+             "<INPUT"+(modes["4_"]==8?" checked":"")+" type=radio name=r"+i+" value=8>РЈРґР°Р»РёС‚СЊ РґРµС„РёСЃ, СЃРѕРµРґРёРЅРёС‚СЊ Р°Р±Р·Р°С†С‹ Р±РµР· РїСЂРѕР±РµР»Р° РјРµР¶РґСѓ РЅРёРјРё</INPUT><BR>"+
+             "<INPUT"+(modes["4_"]==6?" checked":"")+" type=radio name=r"+i+" value=6>РЈРґР°Р»РёС‚СЊ РґРµС„РёСЃ, СЃРѕРµРґРёРЅРёС‚СЊ Р°Р±Р·Р°С†С‹ С‡РµСЂРµР· РїСЂРѕР±РµР»</INPUT>";
     resultColl[i]=modes["4_"];
     break;
    case "5":
-    htmlStr+="<INPUT"+(modes["5_"]==0?" checked":"")+" type=radio name=r"+i+" value=0>Не трогать</INPUT><BR><INPUT"+(modes["5_"]==6?" checked":"")+" type=radio name=r"+i+" value=6>Соединить, удалив дефис</INPUT><BR><INPUT"+(modes["5_"]==7?" checked":"")+" type=radio name=r"+i+" value=7>Соединить через дефис без пробела</INPUT><BR><INPUT"+(modes["5_"]==8?" checked":"")+" type=radio name=r"+i+" value=8>Соединить без пробела, сохранив тире/дефис</INPUT>";
+    htmlStr+="<INPUT"+(modes["5_"]==0?" checked":"")+" type=radio name=r"+i+" value=0>РќРµ С‚СЂРѕРіР°С‚СЊ</INPUT><BR>"+
+             "<INPUT"+(modes["5_"]==12?" checked":"")+" type=radio name=r"+i+" value=12>РЎРѕС…СЂР°РЅРёС‚СЊ С‚РёСЂРµ/РґРµС„РёСЃ, СЃРѕРµРґРёРЅРёС‚СЊ Р°Р±Р·Р°С†С‹ (Р±РµР· РїСЂРѕР±РµР»РѕРІ РјРµР¶РґСѓ РЅРёРјРё)</INPUT><BR>"+
+             "<INPUT"+(modes["5_"]==7?" checked":"")+" type=radio name=r"+i+" value=7>РЎРѕРµРґРёРЅРёС‚СЊ Р°Р±Р·Р°С†С‹ С‡РµСЂРµР· РґРµС„РёСЃ (Р±РµР· РїСЂРѕР±РµР»РѕРІ)</INPUT><BR>"+
+             "<INPUT"+(modes["5_"]==6?" checked":"")+" type=radio name=r"+i+" value=6>РЈРґР°Р»РёС‚СЊ РґРµС„РёСЃ/С‚РёСЂРµ, СЃРѕРµРґРёРЅРёС‚СЊ Р°Р±Р·Р°С†С‹ С‡РµСЂРµР· РїСЂРѕР±РµР»</INPUT><BR>"+
+             "<INPUT"+(modes["5_"]==8?" checked":"")+" type=radio name=r"+i+" value=8>РЈРґР°Р»РёС‚СЊ РґРµС„РёСЃ/С‚РёСЂРµ, СЃРѕРµРґРёРЅРёС‚СЊ Р°Р±Р·Р°С†С‹ Р±РµР· РїСЂРѕР±РµР»Р° РјРµР¶РґСѓ РЅРёРјРё</INPUT><BR>";
     resultColl[i]=modes["5_"];
     break;
    case "6":
-    htmlStr+="<INPUT"+(modes["6_"]==0?" checked":"")+" type=radio name=r"+i+" value=0>Не трогать</INPUT><BR><INPUT"+(modes["6_"]==1?" checked":"")+" type=radio name=r"+i+" value=1>Соединить через пробел</INPUT><BR><INPUT"+(modes["6_"]==8?" checked":"")+" type=radio name=r"+i+" value=8>Соединить без пробела</INPUT>";
+    htmlStr+="<INPUT"+(modes["6_"]==0?" checked":"")+" type=radio name=r"+i+" value=0>РќРµ С‚СЂРѕРіР°С‚СЊ</INPUT><BR>"+
+             "<INPUT"+(modes["6_"]==1?" checked":"")+" type=radio name=r"+i+" value=1>РЎРѕС…СЂР°РЅРёС‚СЊ С‚РёСЂРµ, РїСЂРёСЃРѕРµРґРёРЅРёС‚СЊ Р°Р±Р·Р°С† С‡РµСЂРµР· РїСЂРѕР±РµР»</INPUT><BR>"+
+             "<INPUT"+(modes["6_"]==8?" checked":"")+" type=radio name=r"+i+" value=8>РЈРґР°Р»РёС‚СЊ С‚РёСЂРµ, СЃРѕРµРґРёРЅРёС‚СЊ Р°Р±Р·Р°С†С‹ Р±РµР· РїСЂРѕР±РµР»РѕРІ РјРµР¶РґСѓ РЅРёРјРё</INPUT>";
     resultColl[i]=modes["6_"];
     break;
+   case "7":
+    htmlStr+="<INPUT"+(modes["7_"]==0?" checked":"")+" type=radio name=r"+i+" value=0>РќРµ С‚СЂРѕРіР°С‚СЊ</INPUT><BR>"+
+             "<INPUT"+(modes["7_"]==1?" checked":"")+" type=radio name=r"+i+" value=1>РЎРѕРµРґРёРЅРёС‚СЊ С‡РµСЂРµР· РїСЂРѕР±РµР»</INPUT><BR>"+
+             "<INPUT"+(modes["7_"]==8?" checked":"")+" type=radio name=r"+i+" value=8>РЎРѕРµРґРёРЅРёС‚СЊ Р±РµР· РїСЂРѕР±РµР»Р°</INPUT>";
+    resultColl[i]=modes["7_"];
+    break;
   }
-  htmlStr+="<BR><A name=go>ОК и перейти</A> <A name=show>Показать</a>";  
+  htmlStr+="<BR><A name=go>РћРљ Рё РїРµСЂРµР№С‚Рё</A> <A name=show>РџРѕРєР°Р·Р°С‚СЊ</a>";  
   htmlStr+="</DIV>";
   htmlStr+="<DIV style='float:left; border:0; padding:0; margin:0;'>";
   prevP=params[i+"_2"];
@@ -488,7 +600,7 @@
    if (tmpPtr.nodeType==1) tmpStr+="</"+tmpPtr.nodeName+">"; 
    tmpPtr=tmpPtr.parentNode;
   }*/
-  //соберем то, что между первым абзацем и вторым
+  //СЃРѕР±РµСЂРµРј С‚Рѕ, С‡С‚Рѕ РјРµР¶РґСѓ РїРµСЂРІС‹Рј Р°Р±Р·Р°С†РµРј Рё РІС‚РѕСЂС‹Рј
   while (tmpPtr && tmpPtr!=ptr) {
    if (tmpPtr.firstChild) {
     tmpPtr=tmpPtr.firstChild;
@@ -506,7 +618,7 @@
     } 
    }
   }
-  //соберем часть первого абзаца  
+  //СЃРѕР±РµСЂРµРј С‡Р°СЃС‚СЊ РїРµСЂРІРѕРіРѕ Р°Р±Р·Р°С†Р°  
   var tmpPtr=prevP;
   tmpStr="";
   var letterCnt=0;
@@ -523,7 +635,7 @@
      letterCnt+=len;
     }
    }
-   //переход на следующий узел
+   //РїРµСЂРµС…РѕРґ РЅР° СЃР»РµРґСѓСЋС‰РёР№ СѓР·РµР»
    if (tmpPtr.lastChild) {
     tmpPtr=tmpPtr.lastChild;
     if (tmpPtr.nodeType==1) tmpStr="</"+tmpPtr.nodeName+">"+tmpStr;     
@@ -540,14 +652,14 @@
    }
   }
   while (tmpPtr!=my_fbw_body) {
-   //alert("tmpPtr при подъеме:\n"+tmpPtr.outerHTML);
+   //alert("tmpPtr РїСЂРё РїРѕРґСЉРµРјРµ:\n"+tmpPtr.outerHTML);
    if (tmpPtr.nodeType==1) tmpStr=getStrOfOpeningTag(tmpPtr)+tmpStr;
    tmpPtr=tmpPtr.parentNode;
   }
-  //alert("tmpStr для первого абзаца:\n"+tmpStr);
+  //alert("tmpStr РґР»СЏ РїРµСЂРІРѕРіРѕ Р°Р±Р·Р°С†Р°:\n"+tmpStr);
   if (params[i+"_1"]=="3") htmlStr+=tmpStr.replace(re3,modes[params[i+"_1"]+"_"]==0?re3_green:re3_red).replace(re4,re4_)+tmpStr2;
   else htmlStr+=tmpStr.replace(re1,modes[params[i+"_1"]+"_"]==0?re1_green:re1_red).replace(re4,re4_)+tmpStr2;
-  //соберем часть второго абзаца
+  //СЃРѕР±РµСЂРµРј С‡Р°СЃС‚СЊ РІС‚РѕСЂРѕРіРѕ Р°Р±Р·Р°С†Р°
   tmpPtr=ptr;
   tmpStr="";
   /*while (tmpPtr!=my_fbw_body && !(inOneTag && tmpPtr==ptr.parentNode)) {
@@ -569,7 +681,7 @@
      letterCnt+=len;
     }
    }
-   //переход на следующий узел
+   //РїРµСЂРµС…РѕРґ РЅР° СЃР»РµРґСѓСЋС‰РёР№ СѓР·РµР»
    if (tmpPtr.firstChild) {
     tmpPtr=tmpPtr.firstChild;
     if (tmpPtr.nodeType==1) tmpStr+=getStrOfOpeningTag(tmpPtr);     
@@ -587,21 +699,24 @@
    }
   }
   while (tmpPtr!=my_fbw_body) {
-   //alert("tmpPtr при подъеме:\n"+tmpPtr.outerHTML);
+   //alert("tmpPtr РїСЂРё РїРѕРґСЉРµРјРµ:\n"+tmpPtr.outerHTML);
    if (tmpPtr.nodeType==1) tmpStr+="</"+tmpPtr.nodeName+">";
    tmpPtr=tmpPtr.parentNode;
   }  
-  //alert("tmpStr для второго абзаца:\n"+tmpStr);
+  //alert("tmpStr РґР»СЏ РІС‚РѕСЂРѕРіРѕ Р°Р±Р·Р°С†Р°:\n"+tmpStr);
   htmlStr+=tmpStr.replace(re2,modes[params[i+"_1"]+"_"]==0?re2_green:re2_red).replace(re4,re4_);
   htmlStr+="</DIV>";
   htmlStr+="</DIV><HR style='clear:both;'>";
  }
- htmlStr="Всего найдено сомнительных мест: "+collCnt+"<HR>"+htmlStr;
- //alert("htmlStr после всего:\n"+htmlStr);
+ htmlStr="Р’СЃРµРіРѕ РЅР°Р№РґРµРЅРѕ РїСЂРµРґРїРѕР»РѕР¶РёС‚РµР»СЊРЅС‹С… СЂР°Р·СЂС‹РІРѕРІ: "+collCnt+"<HR>"+htmlStr;
+ //alert("htmlStr РїРѕСЃР»Рµ РІСЃРµРіРѕ:\n"+htmlStr);
  //window.clipboardData.setData("text",htmlStr);
  fbw_body.innerHTML=htmlStr;
- //alert("htmlStr после обработки браузером:\n"+fbw_body.innerHTML); 
+ //alert("htmlStr РїРѕСЃР»Рµ РѕР±СЂР°Р±РѕС‚РєРё Р±СЂР°СѓР·РµСЂРѕРј:\n"+fbw_body.innerHTML); 
 </script>  
-<DIV style="text-align:center;"><input type=button value="Отмена" onclick="window.close();"><input type=button value=OK onclick="applyChanges(); window.close();"></DIV>
+  <DIV style="text-align:center;">
+   <input type=button value=OK onclick="applyChanges(); window.close();" style="width:200px; height:40px;">
+   <input type=button value="РћС‚РјРµРЅР°" onclick="window.close();" style="height:40px;">
+  </DIV>
  </body>
 </html>

@@ -11,8 +11,21 @@
  </STYLE>
  <SCRIPT>
 function myOnKeydown() { 
- if (event.keyCode=="65" && event.ctrlKey) {
+ if (event.keyCode=="65" && event.ctrlKey && !event.shiftKey && !event.altKey) {
+  // Ctrl-A
   parent.frame2.selectAllElements();
+  return false;
+ }
+ if (event.keyCode==38) {
+ // Up
+  return false;
+ }
+ if (event.keyCode==40) {
+ // Up
+  return false;
+ }
+ if (event.keyCode==45) {
+ // Insert
   return false;
  }
  return true;
@@ -24,10 +37,11 @@ function myOnKeydown() {
 <FIELDSET style="margin:1px; padding:1px;">
  <LEGEND>Переформатировать выбранные элементы как</legend>
  <SELECT id=reformatTo_select>
-  <OPTION value=titles>titles</OPTION>
-  <OPTION value=subtitles selected>subtitles</OPTION>
-  <OPTION value=text>text</OPTION>
+  <OPTION value=subtitles>Подзаголовки</OPTION>
+  <OPTION value="subtitles with empty lines before and after" selected>Подзаголовки, обрамленные пустыми строками</OPTION>
+  <OPTION value=text>Текст</OPTION>
  </SELECT>
+ <BR>
  <INPUT type=button value="Выполнить" onclick="parent.frame2.reformat(document.getElementById('reformatTo_select').value);">
  <INPUT type=button value="Откат" onclick="parent.frame2.undo();">
  <INPUT type=button value="Накат" onclick="parent.frame2.redo();">

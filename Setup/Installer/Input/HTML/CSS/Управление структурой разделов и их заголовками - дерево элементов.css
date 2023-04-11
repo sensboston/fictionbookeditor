@@ -1,37 +1,37 @@
-/* Тело фрейма с деревом */
+/* РўРµР»Рѕ С„СЂРµР№РјР° СЃ РґРµСЂРµРІРѕРј */
 body { font-size:12pt; font-family: Tahoma; padding:0; margin:0; border: none;}
-/* Текстовая часть элемента дерева */
+/* РўРµРєСЃС‚РѕРІР°СЏ С‡Р°СЃС‚СЊ СЌР»РµРјРµРЅС‚Р° РґРµСЂРµРІР° */
 div.item { line-height:normal; font-family: "tahoma"; font-size: 13px; border: none; border-color: #dddddd; margin:1px; padding-top:1px; padding-bottom:1px; text-indent:5px; padding-right:3px;}
-/* Текстовая часть выделенного элемента дерева */
+/* РўРµРєСЃС‚РѕРІР°СЏ С‡Р°СЃС‚СЊ РІС‹РґРµР»РµРЅРЅРѕРіРѕ СЌР»РµРјРµРЅС‚Р° РґРµСЂРµРІР° */
 div.item_highlighted { text-indent:5px; font-size: 13px; border: none; border-color: #dddddd; background: yellow; margin:1px; padding-top:1px; padding-bottom:1px; padding-right:3px;}
-/* Текстовая часть выделенного и активного элемента дерева */
+/* РўРµРєСЃС‚РѕРІР°СЏ С‡Р°СЃС‚СЊ РІС‹РґРµР»РµРЅРЅРѕРіРѕ Рё Р°РєС‚РёРІРЅРѕРіРѕ СЌР»РµРјРµРЅС‚Р° РґРµСЂРµРІР° */
 div.item_highlighted_and_active { text-indent:5px; font-size: 13px; border: 1px; border-color: black; background: yellow; margin:0px; border-style:dashed; padding-top:1px; padding-bottom:1px; padding-right:3px;}
-/* Абзац заголовка (выводится для элементов, соответствующих секции или боди */
+/* РђР±Р·Р°С† Р·Р°РіРѕР»РѕРІРєР° (РІС‹РІРѕРґРёС‚СЃСЏ РґР»СЏ СЌР»РµРјРµРЅС‚РѕРІ, СЃРѕРѕС‚РІРµС‚СЃС‚РІСѓСЋС‰РёС… СЃРµРєС†РёРё РёР»Рё Р±РѕРґРё */
 div.title p { line-height:normal;}
 div.drag {position:absolute;}
 p {margin-bottom:0; margin-top:0; padding-bottom:0; padding-top:0;}
-/* Элемент списка */
+/* Р­Р»РµРјРµРЅС‚ СЃРїРёСЃРєР° */
 li {list-style-type:none;}
-/* Тэг, описывающий дополнительный уровень вложенния дерева */
+/* РўСЌРі, РѕРїРёСЃС‹РІР°СЋС‰РёР№ РґРѕРїРѕР»РЅРёС‚РµР»СЊРЅС‹Р№ СѓСЂРѕРІРµРЅСЊ РІР»РѕР¶РµРЅРЅРёСЏ РґРµСЂРµРІР° */
 UL { padding-right:0; margin-right:0; margin-left:20;}
 p.outside_loading {text-align:right;}
-/* DIV для сообщений о загрузке/сохранении структуры документа */
+/* DIV РґР»СЏ СЃРѕРѕР±С‰РµРЅРёР№ Рѕ Р·Р°РіСЂСѓР·РєРµ/СЃРѕС…СЂР°РЅРµРЅРёРё СЃС‚СЂСѓРєС‚СѓСЂС‹ РґРѕРєСѓРјРµРЅС‚Р° */
 message {padding:0; margin:0; text-align:right;}
-/* слой для сообщений о загрузке/сохранении структуры документа */
+/* СЃР»РѕР№ РґР»СЏ СЃРѕРѕР±С‰РµРЅРёР№ Рѕ Р·Р°РіСЂСѓР·РєРµ/СЃРѕС…СЂР°РЅРµРЅРёРё СЃС‚СЂСѓРєС‚СѓСЂС‹ РґРѕРєСѓРјРµРЅС‚Р° */
 #for_messages {position:absolute; top:0; z-index:1; text-align:right;}
-/* Надпись, что загружается оглавление */
+/* РќР°РґРїРёСЃСЊ, С‡С‚Рѕ Р·Р°РіСЂСѓР¶Р°РµС‚СЃСЏ РѕРіР»Р°РІР»РµРЅРёРµ */
 span.loading { background-color:red; color:white; }
-/* слой дерева */
+/* СЃР»РѕР№ РґРµСЂРµРІР° */
 #empty_div {position:absolute; top:0; z-index:0; padding:0; margin: 0;}
-/* Абзац заголовка */
+/* РђР±Р·Р°С† Р·Р°РіРѕР»РѕРІРєР° */
 div.title p { line-height:normal; font-family: "tahoma";}
-/*ссылка*/
+/*СЃСЃС‹Р»РєР°*/
 a {color:blue; border:0; font-size:13px}
 a:hover {color:blue; border:0}
 a:active {color:blue; border:0}
 a.note {vertical-align:super}
 
-/* Форматирование для любого элемента дерева */
+/* Р¤РѕСЂРјР°С‚РёСЂРѕРІР°РЅРёРµ РґР»СЏ Р»СЋР±РѕРіРѕ СЌР»РµРјРµРЅС‚Р° РґРµСЂРµРІР° */
         p{
                 font-family:arial;
 

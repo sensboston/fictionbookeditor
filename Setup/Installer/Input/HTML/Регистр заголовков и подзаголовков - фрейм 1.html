@@ -18,7 +18,8 @@ body {font-family:monospace; font-size:16px; padding:0; margin:0; height:100%;}
 var old=null;
 var bg_t="bisque";
 var bg_s="palegreen";
-var ptr2,ptr3,saveU,elementsInAll,elText,tagStr2,htmlStr,nCnt,s1,s2,s3,i1,par,h1,h2;
+var ptr2,ptr3,saveU,elementsInAll,elText,tagStr2,htmlStr,s1,s2,s3,i1,par,h1,h2;
+var nCnt=0;
 var myLinks=[];
 var params=window.dialogArguments;
 var fbwBody=params["fbwBody"];
@@ -486,22 +487,24 @@ function saveOneP(n,p) {
 }
 
 function OK_2() {
- var p=document.getElementById("elems");
- if (!p) return;
- var n,td_2;
- p=p.firstChild;
- if (p.nodeName!="TABLE") return;
- mainWin.external.BeginUndoUnit(mainDoc,"изменение регистра заголовков");
- var row=p.firstChild.firstChild; // TBODY TR
- while (row) {
-  if (row.firstChild && row.firstChild.getAttribute("colspan")!="2") {
-   n=eval(row.getAttribute("n"));
-   td_2=row.firstChild.nextSibling;
-   saveOneP(n,td_2);
+ if (nCnt!=0) {
+  var p=document.getElementById("elems");
+  if (!p) return;
+  var n,td_2;
+  p=p.firstChild;
+  if (p.nodeName!="TABLE") return;
+  mainWin.external.BeginUndoUnit(mainDoc,"изменение регистра заголовков");
+  var row=p.firstChild.firstChild; // TBODY TR
+  while (row) {
+   if (row.firstChild && row.firstChild.getAttribute("colspan")!="2") {
+    n=eval(row.getAttribute("n"));
+    td_2=row.firstChild.nextSibling;
+    saveOneP(n,td_2);
+   }
+   row=row.nextSibling;
   }
-  row=row.nextSibling;
- }
  mainWin.external.EndUndoUnit(mainDoc);
+ }
  window.close();
 }
 </script>

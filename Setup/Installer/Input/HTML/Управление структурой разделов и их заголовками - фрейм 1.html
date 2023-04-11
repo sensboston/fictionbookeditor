@@ -1,11 +1,11 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
  "http://www.w3.org/TR/html4/loose.dtd">
 <html>
-<title>заголовок</title>
+<title>Р·Р°РіРѕР»РѕРІРѕРє</title>
 <meta http-equiv="X-UA-Compatible" content="IE=6">
-<meta http-equiv="Content-Type" content="text/html; charset=windows-1251">
-<link rel="stylesheet" href="css/tree.css" type="text/css"></link>
-<link rel="stylesheet" href="css/context-menu.css" type="text/css"></link>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" href="css/РЈРїСЂР°РІР»РµРЅРёРµ СЃС‚СЂСѓРєС‚СѓСЂРѕР№ СЂР°Р·РґРµР»РѕРІ Рё РёС… Р·Р°РіРѕР»РѕРІРєР°РјРё - РґРµСЂРµРІРѕ СЌР»РµРјРµРЅС‚РѕРІ.css" type="text/css"></link>
+<link rel="stylesheet" href="css/РЈРїСЂР°РІР»РµРЅРёРµ СЃС‚СЂСѓРєС‚СѓСЂРѕР№ СЂР°Р·РґРµР»РѕРІ Рё РёС… Р·Р°РіРѕР»РѕРІРєР°РјРё - РєРѕРЅС‚РµРєСЃС‚РЅРѕРµ РјРµРЅСЋ.css" type="text/css"></link>
 <style type="text/css">
  body {margin:0; padding:0; height:100%; width:100%;}
  #empty_div {float:left; overflow:hidden; width:620px; padding: 0px; margin: 0px;}
@@ -44,14 +44,14 @@ Owner of DHTMLgoodies.com
  var nodeId=1;
  var howToScroll=0;
  
- //шаг, на который происходит скроллинг при одном вызове скроллирующей функции
+ //С€Р°Рі, РЅР° РєРѕС‚РѕСЂС‹Р№ РїСЂРѕРёСЃС…РѕРґРёС‚ СЃРєСЂРѕР»Р»РёРЅРі РїСЂРё РѕРґРЅРѕРј РІС‹Р·РѕРІРµ СЃРєСЂРѕР»Р»РёСЂСѓСЋС‰РµР№ С„СѓРЅРєС†РёРё
  var scrollStep=30;
 
- //промежуток в миллисекундах между вызовами скроллирующей функции
+ //РїСЂРѕРјРµР¶СѓС‚РѕРє РІ РјРёР»Р»РёСЃРµРєСѓРЅРґР°С… РјРµР¶РґСѓ РІС‹Р·РѕРІР°РјРё СЃРєСЂРѕР»Р»РёСЂСѓСЋС‰РµР№ С„СѓРЅРєС†РёРё
  var scrollingInterval=100;
 
- //размер границ сверху и снизу фрейма с деревом, при наведении на которые
- //происходит скроллинг дерева
+ //СЂР°Р·РјРµСЂ РіСЂР°РЅРёС† СЃРІРµСЂС…Сѓ Рё СЃРЅРёР·Сѓ С„СЂРµР№РјР° СЃ РґРµСЂРµРІРѕРј, РїСЂРё РЅР°РІРµРґРµРЅРёРё РЅР° РєРѕС‚РѕСЂС‹Рµ
+ //РїСЂРѕРёСЃС…РѕРґРёС‚ СЃРєСЂРѕР»Р»РёРЅРі РґРµСЂРµРІР°
  var scrollIndent=20;
 
  var scrollFlag=false;
@@ -77,7 +77,7 @@ Owner of DHTMLgoodies.com
  var menuModel,menuModelRenameOnly,menuModelDeleteOnly;
 
  function calculateAndPaintScrollbar() {
-  //alert("calculateAndPaintScrollbar вход");
+  //alert("calculateAndPaintScrollbar РІС…РѕРґ");
   if (document.body.clientHeight>=document.getElementById("empty_div").offsetHeight) {
    document.getElementById("empty_div").width=document.body.clientWidth+"px";
    document.getElementById("vscrollbar").style.display="none";
@@ -114,7 +114,7 @@ Owner of DHTMLgoodies.com
   //alert("document.body.clientWidth:"+document.body.clientWidth);
   //alert("document.body.clientWidth-scrollBarWidth:"+(document.body.clientWidth-scrollBarWidth));
   document.getElementById("empty_div").style.width=(document.body.clientWidth-scrollBarWidth)+"px";
-  //alert("calculateAndPaintScrollbar выход");
+  //alert("calculateAndPaintScrollbar РІС‹С…РѕРґ");
  }
 
  function sclexScrollTo(toWhichPixelLineToScroll) {
@@ -179,7 +179,7 @@ Owner of DHTMLgoodies.com
                 this.plusImage='plus.png';
                 this.minusImage='minus.png';
                 this.maximumDepth=6;
-                var messageMaximumDepthReached="Достигнута максимальная глубина дерева. Больше нельзя.";
+                var messageMaximumDepthReached="Р”РѕСЃС‚РёРіРЅСѓС‚Р° РјР°РєСЃРёРјР°Р»СЊРЅР°СЏ РіР»СѓР±РёРЅР° РґРµСЂРµРІР°. Р‘РѕР»СЊС€Рµ РЅРµР»СЊР·СЏ.";
                 var filePathRenameItem;
                 var filePathDeleteItem;
                 var additionalRenameRequestParameters={};
@@ -478,7 +478,7 @@ Owner of DHTMLgoodies.com
                      //alert("SelectedItemsChain[tg]:\n\n"+SelectedItemsChain[tg].outerHTML);
                                   // LI       TABLE       TBODY      TR                 TD[2]                item
                      SelectedItemsChain[tg].firstChild.firstChild.firstChild.getElementsByTagName("TD")[2].firstChild.className="item";
-                     //закомментил из-за сообщения об ошибке
+                     //Р·Р°РєРѕРјРјРµРЅС‚РёР» РёР·-Р·Р° СЃРѕРѕР±С‰РµРЅРёСЏ РѕР± РѕС€РёР±РєРµ
                      SelectedItemsChain[tg]=undefined;
                      tg=tg2;
                     }
@@ -498,7 +498,7 @@ Owner of DHTMLgoodies.com
                     // LI       TABLE       TBODY      TR                 TD[2]                item
                     sclexNode.firstChild.firstChild.firstChild.getElementsByTagName("TD")[2].firstChild.className="item_highlighted_and_active";
                    } /*else {
-                    // сюда попадаем if (event.ctrlKey==true)
+                    // СЃСЋРґР° РїРѕРїР°РґР°РµРј if (event.ctrlKey==true)
                     if (SelectedItemsIndex[sclexNode]==null || SelectedItemsIndex[sclexNode]==undefined) {
                      alert("SelectedItemsIndex[sclexNode]==null || SelectedItemsIndex[sclexNode]==undefined");
                      activeNode.firstChild.firstChild.firstChild.getElementsByTagName("TD")[2].firstChild.className="item_highlighted";
@@ -513,8 +513,8 @@ Owner of DHTMLgoodies.com
                      if (firstSic==-1) { firstSic=sic; }
                     } else {
                      alert("!(SelectedItemsIndex[sclexNode]==null || SelectedItemsIndex[sclexNode]==undefined)");
-                     //удаляем элемент a2, т.к. он был выделен, а мы на него кликаем
-                     //с нажатым Ctrl
+                     //СѓРґР°Р»СЏРµРј СЌР»РµРјРµРЅС‚ a2, С‚.Рє. РѕРЅ Р±С‹Р» РІС‹РґРµР»РµРЅ, Р° РјС‹ РЅР° РЅРµРіРѕ РєР»РёРєР°РµРј
+                     //СЃ РЅР°Р¶Р°С‚С‹Рј Ctrl
                      var a2=SelectedItemsIndex[sclexNode];
                      var a1=SelectedItemsChain[a2+"_prev"];
                      var a3=SelectedItemsChain[a2+"_next"];
@@ -612,8 +612,8 @@ Owner of DHTMLgoodies.com
                  var thisObj=this;
                  if (thisObj.tagName=="P" || thisObj.tagName=="IMG" || thisObj.tagName=="TD" || thisObj.tagName=="DIV")
                   while (thisObj.nodeName!="LI") thisObj=thisObj.parentNode;
-                 //в thisObj будет элемент LI, на который перетянули в текущий момент перетягиваемый элемент 
-                 //в this будет точно тот элемент, на который перетянули
+                 //РІ thisObj Р±СѓРґРµС‚ СЌР»РµРјРµРЅС‚ LI, РЅР° РєРѕС‚РѕСЂС‹Р№ РїРµСЂРµС‚СЏРЅСѓР»Рё РІ С‚РµРєСѓС‰РёР№ РјРѕРјРµРЅС‚ РїРµСЂРµС‚СЏРіРёРІР°РµРјС‹Р№ СЌР»РµРјРµРЅС‚ 
+                 //РІ this Р±СѓРґРµС‚ С‚РѕС‡РЅРѕ С‚РѕС‚ СЌР»РµРјРµРЅС‚, РЅР° РєРѕС‚РѕСЂС‹Р№ РїРµСЂРµС‚СЏРЅСѓР»Рё
                  JSTreeObj.dragNode_noSiblings=false;
                  var tmpVar=thisObj.getAttribute('noSiblings');
                  if (tmpVar==false) tmpVar=thisObj.noSiblings;
@@ -621,8 +621,8 @@ Owner of DHTMLgoodies.com
                  var floatingContainer=document.getElementById("floatingContainer");
                  //alert('thisObj.getAttribute("sclexType"):\n\n'+thisObj.getAttribute("sclexType"));
                  if (thisObj && thisObj.id &&
-                     !(floatingContainer && floatingContainer.firstChild //перетягиваемый элемент существует?
-                       && floatingContainer.firstChild.getAttribute("sclexType")=="body" //тип перетягиваемого элемента
+                     !(floatingContainer && floatingContainer.firstChild //РїРµСЂРµС‚СЏРіРёРІР°РµРјС‹Р№ СЌР»РµРјРµРЅС‚ СЃСѓС‰РµСЃС‚РІСѓРµС‚?
+                       && floatingContainer.firstChild.getAttribute("sclexType")=="body" //С‚РёРї РїРµСЂРµС‚СЏРіРёРІР°РµРјРѕРіРѕ СЌР»РµРјРµРЅС‚Р°
                        && ((thisObj.getAttribute("sclexType")!="body" || (this.tagName=="P" ||
                             (this.nodeName=="TD" && this==this.parentNode.children[2]) || this.nodeName=="DIV"))
                             && thisObj.getAttribute("sclexType")!="root"
@@ -699,7 +699,7 @@ Owner of DHTMLgoodies.com
                         if (JSTreeObj.dragNode_destination) {
                                 //alert("dropDragableNodes: 2nd if.");
                                 if (JSTreeObj.insertAsSub) {
-                                // сюда попадаем, если надо вставить ВНУТРЬ destination-узла
+                                // СЃСЋРґР° РїРѕРїР°РґР°РµРј, РµСЃР»Рё РЅР°РґРѕ РІСЃС‚Р°РІРёС‚СЊ Р’РќРЈРўР Р¬ destination-СѓР·Р»Р°
                                         var uls=JSTreeObj.dragNode_destination.getElementsByTagName('UL');
                                         //alert("uls.length:"+uls.length);
                                         if (uls.length>0) {
@@ -724,7 +724,7 @@ Owner of DHTMLgoodies.com
                                         //alert("img.parentNode.parentNode.parentNode:\n\n"+img.parentNode.parentNode.parentNode.outerHTML);
                                         img.style.visibility='visible';
                                         img.src=img.src.replace(JSTreeObj.plusImage,JSTreeObj.minusImage);
-                                } else { // попадаем сюда, если JSTreeObj.insertAsSub==false
+                                } else { // РїРѕРїР°РґР°РµРј СЃСЋРґР°, РµСЃР»Рё JSTreeObj.insertAsSub==false
                                         if (JSTreeObj.dragNode_destination.nextSibling) {
                                                 var nextSib=JSTreeObj.dragNode_destination.nextSibling;
                                                 //alert("nextSib:"+nextSib.outerHTML);
@@ -852,7 +852,7 @@ Owner of DHTMLgoodies.com
                 ,
                 removeHighlight : function()
                 {
-                 /*код Sclex’а: начало*/
+                 /*РєРѕРґ SclexвЂ™Р°: РЅР°С‡Р°Р»Рѕ*/
                  //alert("remove highlight");
                  if (elementUnderEditing) {
                   var r=document.body.createTextRange();
@@ -863,7 +863,7 @@ Owner of DHTMLgoodies.com
                   elementUnderEditing.firstChild.removeAttribute("contentEditable");
                   elementUnderEditing=undefined;
                  }
-                 /*код Sclex’а: конец*/
+                 /*РєРѕРґ SclexвЂ™Р°: РєРѕРЅРµС†*/
                  if (JSTreeObj.currentlyActiveItem)JSTreeObj.currentlyActiveItem.className="item";
                  JSTreeObj.currentlyActiveItem=false;
                  activeNode=undefined;
@@ -892,9 +892,9 @@ Owner of DHTMLgoodies.com
                  }
                  if (l.nodeName=="DIV" && l.className.substr(0,4)=="item") {
                   var l2=l.parentNode.parentNode.parentNode.parentNode.parentNode;
-                  var message='Нажмите ОК, чтобы удалить элемент';
+                  var message='РќР°Р¶РјРёС‚Рµ РћРљ, С‡С‚РѕР±С‹ СѓРґР°Р»РёС‚СЊ СЌР»РµРјРµРЅС‚';
                   //                   item    TD          TR        TBODY     TABLE        LI
-                  if (this.hasSubNodes(l2)) message=message + ' и его подэлементы';
+                  if (this.hasSubNodes(l2)) message=message + ' Рё РµРіРѕ РїРѕРґСЌР»РµРјРµРЅС‚С‹';
                   if (confirm(message)) {
                    this.__deleteItem_step2(l2);       // Sending <LI> tag to the __deleteItem_step2 method
                   }
@@ -1006,7 +1006,7 @@ Owner of DHTMLgoodies.com
                  }
                 }
                 ,
-                frameBySection : function (obj1,obj2) //обрамить элемент text тегом section
+                frameBySection : function (obj1,obj2) //РѕР±СЂР°РјРёС‚СЊ СЌР»РµРјРµРЅС‚ text С‚РµРіРѕРј section
                 {
                  //             TD           TR      TBODY      TABLE       LI
                  var el=obj2.parentNode.parentNode.parentNode.parentNode.parentNode;
@@ -1074,18 +1074,18 @@ Owner of DHTMLgoodies.com
                                 try{
                                         /* Creating menu model for the context menu, i.e. the datasource */
                                         menuModel=new DHTMLGoodies_menuModel();
-                                        if (this.deleteAllowed) menuModel.addItem(1,'Удалить','','',false,'JSTreeObj.deleteItem');
-                                        if (this.renameAllowed) menuModel.addItem(2,'Переименовать','','',false,'JSTreeObj.renameItem');
-                                        menuModel.addItem(6,'Обрамить section-ом','','',false,'JSTreeObj.frameBySection');
+                                        if (this.deleteAllowed) menuModel.addItem(1,'РЈРґР°Р»РёС‚СЊ','','',false,'JSTreeObj.deleteItem');
+                                        if (this.renameAllowed) menuModel.addItem(2,'РџРµСЂРµРёРјРµРЅРѕРІР°С‚СЊ','','',false,'JSTreeObj.renameItem');
+                                        menuModel.addItem(6,'РћР±СЂР°РјРёС‚СЊ section-РѕРј','','',false,'JSTreeObj.frameBySection');
                                         menuModel.init();
 
                                         menuModelRenameOnly=new DHTMLGoodies_menuModel();
-                                        if (this.renameAllowed)menuModelRenameOnly.addItem(3,'Переименовать','','',false,'JSTreeObj.renameItem');
+                                        if (this.renameAllowed)menuModelRenameOnly.addItem(3,'РџРµСЂРµРёРјРµРЅРѕРІР°С‚СЊ','','',false,'JSTreeObj.renameItem');
                                         menuModelRenameOnly.init();
 
                                         menuModelDeleteOnly=new DHTMLGoodies_menuModel();
-                                        if (this.deleteAllowed)menuModelDeleteOnly.addItem(4,'Удалить','','',false,'JSTreeObj.deleteItem');
-                                        menuModelDeleteOnly.addItem(5,'Обрамить section-ом','','',false,'JSTreeObj.frameBySection');
+                                        if (this.deleteAllowed)menuModelDeleteOnly.addItem(4,'РЈРґР°Р»РёС‚СЊ','','',false,'JSTreeObj.deleteItem');
+                                        menuModelDeleteOnly.addItem(5,'РћР±СЂР°РјРёС‚СЊ section-РѕРј','','',false,'JSTreeObj.frameBySection');
                                         menuModelDeleteOnly.init();
 
                                         window.refToDragDropTree=this;
@@ -1122,7 +1122,7 @@ Owner of DHTMLgoodies.com
                                  img.onclick=JSTreeObj.showHideNode;
                                  img.ondblclick=JSTreeObj.showHideNode;
                                  if (subItems.length==0)img.style.visibility='hidden';
-                                 //блок закомменчен недавно
+                                 //Р±Р»РѕРє Р·Р°РєРѕРјРјРµРЅС‡РµРЅ РЅРµРґР°РІРЅРѕ
                                  /*else {
 
                                          subItems[0].id='tree_ul_' + treeUlCounter;
@@ -1131,7 +1131,7 @@ Owner of DHTMLgoodies.com
                                  menuItems[no].getElementsByTagName("TD")[0].insertBefore(img,null);
                                 }
                                 aTag=menuItems[no].getElementsByTagName('TABLE')[0].getElementsByTagName('DIV')[0];
-                                //следующая строка (не две) закомменчены недавно by Sclex
+                                //СЃР»РµРґСѓСЋС‰Р°СЏ СЃС‚СЂРѕРєР° (РЅРµ РґРІРµ) Р·Р°РєРѕРјРјРµРЅС‡РµРЅС‹ РЅРµРґР°РІРЅРѕ by Sclex
                                 aTag.id='nodeATag' + menuItems[no].id.replace(/^a2_/gi,'');
                                 if (!noDrag) aTag.onmousedown=JSTreeObj.initDrag;
                                 if (!noChildren) aTag.onmousemove=JSTreeObj.moveDragableNodes;
@@ -1193,7 +1193,7 @@ function initStructure() {
     ul=node.appendChild(ul);
    }
   }
-//  MsgBox("Вошли в Rec\nsavePtr.outerHTML="+savePtr.outerHTML+"\ncreateTbl="+createTbl);
+//  MsgBox("Р’РѕС€Р»Рё РІ Rec\nsavePtr.outerHTML="+savePtr.outerHTML+"\ncreateTbl="+createTbl);
   function makeTextNode(b1,b2) {
    var nodeA;
    nodeA=document.createElement("LI");
@@ -1233,7 +1233,7 @@ function initStructure() {
 //  node1.setAttribute("width","100%");
   node2=document.createElement("TR");
   node2=node1.appendChild(node2);
-  node3=document.createElement("TD"); //первая ячейка
+  node3=document.createElement("TD"); //РїРµСЂРІР°СЏ СЏС‡РµР№РєР°
   node3.setAttribute("valign","top");
   node3.setAttribute("width","20");
   node3=node2.appendChild(node3);
@@ -1241,7 +1241,7 @@ function initStructure() {
   node4.setAttribute("valign","top");
   node4.setAttribute("width","20");
   node4=node2.appendChild(node4);
-  node7=document.createElement("TD"); //третья ячейка
+  node7=document.createElement("TD"); //С‚СЂРµС‚СЊСЏ СЏС‡РµР№РєР°
   node7=node2.appendChild(node7);
   node5=document.createElement("DIV"); //DIV class=item
   node5.className="item";
@@ -1262,7 +1262,7 @@ function initStructure() {
     var myptr=ptr;
     Rec(ptr.firstChild,nodeA,ptr,true);
     ptr=myptr;
-//    MsgBox("Вышли из Rec.\n");
+//    MsgBox("Р’С‹С€Р»Рё РёР· Rec.\n");
 //    MsgBox("ptr="+ptr.outerHTML);
     createUlIfNeed(!(savePtr.parentNode.nodeName=="DIV" &&
                     (savePtr.parentNode.className=="body" ||
@@ -1275,10 +1275,10 @@ function initStructure() {
     node5.innerHTML=node6.outerHTML;
    }
    if (ptr.nodeName=="P" ||
-       (ptr.nodeName=="DIV" && (ptr.className=="poem" || ptr.className=="cite" || ptr.className=="image"))) {
+       (ptr.nodeName=="DIV" && (ptr.className=="poem" || ptr.className=="cite" || ptr.className=="image" || ptr.className=="table"))) {
     textBeginPtr=ptr;
     while (ptr && (ptr.nodeName=="P" ||
-       (ptr.nodeName=="DIV" && (ptr.className=="poem" || ptr.className=="cite" || ptr.className=="image")))) {
+       (ptr.nodeName=="DIV" && (ptr.className=="poem" || ptr.className=="cite" || ptr.className=="image" || ptr.className=="table")))) {
      textEndPtr=ptr;
      ptr=ptr.nextSibling;
     }
@@ -1290,7 +1290,7 @@ function initStructure() {
    if (prnt.className=="section") {node6.innerHTML="&lt;section&gt;";}
    else if (prnt.className=="body") {node6.innerHTML="&lt;body&gt;";}
       else if (prnt.className=="body") {node6.innerHTML="&lt;body&gt;";}
-    else if (prnt.getAttribute("id")=="fbw_body") {node6.innerHTML="Книга";}
+    else if (prnt.getAttribute("id")=="fbw_body") {node6.innerHTML="РљРЅРёРіР°";}
    node5.appendChild(node6);
   }
   if (wasBodyOrSection)
@@ -1339,7 +1339,7 @@ function initStructure() {
 
  function preInit () {
    document.all.for_messages.style.display="block";
-   document.all.for_messages.innerHTML="<P class='outside_loading'><SPAN class='loading'>&nbsp;Загружается оглавление...&nbsp;</SPAN></P>";
+   document.all.for_messages.innerHTML="<P class='outside_loading'><SPAN class='loading'>&nbsp;Р—Р°РіСЂСѓР¶Р°РµС‚СЃСЏ РѕРіР»Р°РІР»РµРЅРёРµ...&nbsp;</SPAN></P>";
    setTimeout("Init();",1);
   }
 
@@ -1355,12 +1355,12 @@ function initStructure() {
   document.all.for_messages.innerHTML="";
   document.all.for_messages.style.display="none";
   document.all.empty_div.innerHTML=node1.outerHTML;
-  //не забыть удалить следующую строку
+  //РЅРµ Р·Р°Р±С‹С‚СЊ СѓРґР°Р»РёС‚СЊ СЃР»РµРґСѓСЋС‰СѓСЋ СЃС‚СЂРѕРєСѓ
   //window.clipboardData.setData("text",node1.outerHTML);
   treeObj=new JSDragDropTree();
   treeObj.setTreeId('dhtmlgoodies_tree2');
   treeObj.setMaximumDepth(20);
-  treeObj.setMessageMaximumDepthReached('Слишком большой уровень вложенности'); // If you want to show a message when maximum depth is reached, i.e. on drop.
+  treeObj.setMessageMaximumDepthReached('РЎР»РёС€РєРѕРј Р±РѕР»СЊС€РѕР№ СѓСЂРѕРІРµРЅСЊ РІР»РѕР¶РµРЅРЅРѕСЃС‚Рё'); // If you want to show a message when maximum depth is reached, i.e. on drop.
   treeObj.initTree();
   //document.getElementById("vscrollbar").style.display="block";
   //document.getElementById("scrolling_div").style.width="670px";
@@ -1442,7 +1442,7 @@ function initStructure() {
      while (flag) {
       if (poi) {
         if (poi.nodeName=="P" || (poi.nodeName=="DIV" && (poi.className=="poem" ||
-           poi.className=="cite" || poi.className=="image" || poi.className=="section"))) {
+           poi.className=="cite" || poi.className=="image" || poi.className=="section" || poi.className=="table"))) {
           flag=false;
          } else {
           if (!(poi.nodeName=="DIV" && poi.className=="title")) htmlStr+=poi.outerHTML;
@@ -1463,7 +1463,7 @@ function initStructure() {
      while (flag) {
       if (poi) {
         if (poi.nodeName=="P" || (poi.nodeName=="DIV" && (poi.className=="poem" ||
-            poi.className=="cite" || poi.className=="image" || poi.className=="section"))) {
+            poi.className=="cite" || poi.className=="image" || poi.className=="section" || poi.className=="table"))) {
           flag=false;
          } else {
           if (!(poi.nodeName=="DIV" && poi.className=="title")) htmlStr+=poi.outerHTML;
@@ -1520,7 +1520,7 @@ function initStructure() {
 
  function preSave() {
   document.all.for_messages.style.display="block";
-  document.all.for_messages.innerHTML="<P class='outside_loading'><SPAN class='loading'>&nbsp;Сохраняется новая структура документа...&nbsp;</SPAN></P>";
+  document.all.for_messages.innerHTML="<P class='outside_loading'><SPAN class='loading'>&nbsp;РЎРѕС…СЂР°РЅСЏРµС‚СЃСЏ РЅРѕРІР°СЏ СЃС‚СЂСѓРєС‚СѓСЂР° РґРѕРєСѓРјРµРЅС‚Р°...&nbsp;</SPAN></P>";
   setTimeout("save();",1);
  }
 
@@ -1696,12 +1696,12 @@ function initStructure() {
    else goOneLevelUp();
    return;
   }
-  //36 - Home - к началу дерева
+  //36 - Home - Рє РЅР°С‡Р°Р»Сѓ РґРµСЂРµРІР°
   if (event.keyCode==36 && !elementUnderEditing) {
    sclexScrollBy(10000000);
    return;
   }
-  //35 - End - к концу дерева
+  //35 - End - Рє РєРѕРЅС†Сѓ РґРµСЂРµРІР°
   if (event.keyCode==35 && !elementUnderEditing) {
    sclexScrollBy(-10000000);
    return;
@@ -1710,7 +1710,7 @@ function initStructure() {
    event.returnValue=false;
    return false;
   }
-  //Escape - закончить переименование
+  //Escape - Р·Р°РєРѕРЅС‡РёС‚СЊ РїРµСЂРµРёРјРµРЅРѕРІР°РЅРёРµ
   if (event.keyCode==27 || (event.keyCode==13 && event.ctrlKey && !event.altKey && !event.shiftKey)) {
    if (elementUnderEditing) {
     var r=document.body.createTextRange();
@@ -1723,18 +1723,18 @@ function initStructure() {
    }
    calculateAndPaintScrollbar();
   }
-  //113 - F2 - переименовать
+  //113 - F2 - РїРµСЂРµРёРјРµРЅРѕРІР°С‚СЊ
   if (event.keyCode==113) {
                                                     //LI        TABLE     TBODY       TR                TD[2]                 item
    if (activeNode) JSTreeObj.renameItem(undefined,activeNode.firstChild.firstChild.firstChild.getElementsByTagName("TD")[2].firstChild);
    return;
   }
-  //33 - Page up - на экран вверх
+  //33 - Page up - РЅР° СЌРєСЂР°РЅ РІРІРµСЂС…
   if (event.keyCode==33) {
    sclexScrollBy(document.body.clientHeight);
    return;
   }
-  //34 - Page down - на экран вниз
+  //34 - Page down - РЅР° СЌРєСЂР°РЅ РІРЅРёР·
   if (event.keyCode==34) {
    sclexScrollBy(-document.body.clientHeight);
    return;
