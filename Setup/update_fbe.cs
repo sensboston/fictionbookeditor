@@ -11,7 +11,7 @@ class Program
         const int ts_offset = 0x139200;
         const int ver_offset = 0x139237;
 
-	Version ver;
+        Version ver;
         if (args.Length > 0 && Version.TryParse(args[0], out ver) && File.Exists(fbeName))
         {
             try
