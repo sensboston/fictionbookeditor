@@ -24,5 +24,6 @@ https://github.com/sensboston/fictionbookeditor/edit/master/update.xml
 т.е. изменения станут видны на https://raw.githubusercontent.com/sensboston/fictionbookeditor/master/update.xml 
 
 Примечание: программку update_fbe.cs можно скомпилировать в исполняемый файл командой:
-** C:\Windows\Microsoft.NET\Framework\v4.0.30319\csc.exe update_fbe.cs **
-Visual Studio для этого не нужна 
+```C:\Windows\Microsoft.NET\Framework\v4.0.30319\csc.exe update_fbe.cs```
+
+Visual Studio для этого не нужна
