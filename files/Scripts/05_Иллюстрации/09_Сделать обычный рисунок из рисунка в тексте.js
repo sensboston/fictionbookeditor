@@ -1,5 +1,5 @@
-//Скрипт «Сделать обычный рисунок из рисунка в тексте.js»
-//Версия 1.0
+//Скрипт «Сделать обычный рисунок из рисунка в тексте»
+//Версия 1.1
 
 function Run() {
  var sel=document.selection;
@@ -30,7 +30,7 @@ function Run() {
     } 
    }
    if (span.firstChild && span.firstChild.nodeName=="IMG") {
-    window.external.BeginUndoUnit(document,"uninline image");
+    window.external.BeginUndoUnit(document,"превращение рисунка в тексте в обычный рисунок");
     var myHref=span.getAttribute("href");
     p.insertAdjacentHTML("afterEnd",strstr+span.firstChild.outerHTML+"</DIV>");
     var div=p.nextSibling;
@@ -40,4 +40,4 @@ function Run() {
    } 
   } 
  }
-} 
+}
