@@ -2,13 +2,13 @@
 // Автор скрипта: Sclex
 // Сайт скриптов FBE Sclex’а: http://scripts.fictionbook.org
 
-var versionStr="4.4";
+var versionStr="4.5";
 var CutLength=100;
 
 function Run() {
 
  var Ts=new Date().getTime();
- var dialogWidth="900px";
+ var dialogWidth="980px";
  var dialogHeight="600px";
 
  window.external.BeginUndoUnit(document,"abruption killing");
