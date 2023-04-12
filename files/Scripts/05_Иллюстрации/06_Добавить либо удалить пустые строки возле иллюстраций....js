@@ -1,9 +1,9 @@
-//Скрипт "Пустые строки вокруг картинок"
+//Скрипт "Добавить либо удалить пустые строки вокруг картинок"
 //Автор Sclex
 //http://www.fictionbook.org/forum/viewtopic.php?t=4412
 
 function Run() {
- var versionStr="1.5";
+ var versionStr="1.6";
  try { var nbspChar=window.external.GetNBSP(); }
  catch(e) { var nbspChar=String.fromCharCode(160); }
  var mode,fbw_body,ptr,ptrInBody,emptyLinePtr,emptyLinePtr2,nextEmptyLine,newEmptyLine,elementClass,el;
@@ -184,10 +184,10 @@ function Run() {
   }
  }
  
- window.external.BeginUndoUnit(document,"empty lines near images");
  mode=confirm("Выберите режим обработки:\n"+
-                  "ОК – добавить пустые строки до и после картинок.\n"+
-                  "Отмена – удалить пустые строки до и после картинок.\n");
+                  "ОК – добавить пустые строки до и после иллюстраций.\n"+
+                  "Отмена – удалить пустые строки до и после иллюстраций.\n");
+ window.external.BeginUndoUnit(document,mode?"добавление пустых строк возле иллюстраций":"удаление пустых строк возле иллюстраций");
  fbw_body=document.getElementById("fbw_body");
  if (!fbw_body) {
   MsgBox("Ошибка: fbw_body не найдено."); 
@@ -199,7 +199,7 @@ function Run() {
   ptr=ptr.nextSibling;
  }
  window.external.EndUndoUnit(document);
- alert("Скрипт «Пустые строки вокруг картинок»\n"+ 
+ MsgBox("Скрипт «Добавить либо удалить пустые строки вокруг картинок»\n"+ 
        "(Версия "+versionStr+". Автор Sclex)\n"+
        "\n"+
        "Обработка успешно завершена.\n"+
