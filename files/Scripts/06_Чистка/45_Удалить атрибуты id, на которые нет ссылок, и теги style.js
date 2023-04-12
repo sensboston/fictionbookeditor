@@ -1,4 +1,4 @@
-// Скрипт "Удалить атрибуты id, на которые нет ссылок, и теги style v1.0" 
+// Скрипт "Удалить атрибуты id, на которые нет ссылок, и теги style v1.1" 
 // Автор Sclex
 
 function Run() {
@@ -12,8 +12,7 @@ function Run() {
  var links = document.links;
  for(var i = 0; i < links.length; i++) {
   href=links[i].href;
-  pos=href.search("main.html#");
-  if (pos>=0 || href[1]=="#") {
+  if (href.search("main.html#")>=0 || href.indexOf("#")==0) {
    pos=href.search("#");
    href=href.substr(pos+1);
    usingIds[href.toLowerCase()]=true;
