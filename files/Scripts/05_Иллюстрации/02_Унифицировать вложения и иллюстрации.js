@@ -479,7 +479,7 @@ function Run() {
  if (NonJpegPngImgs_list!="") {st2+='\nВложения не image/jpg, не image/png:'+NonJpegPngImgs_list;}
  if (st2!="") st2="\n"+st2;
  MsgBox('            –= Sclex Script =– \n'+
-    ' "Унификация вложений и картинок"\n'+
+    ' "Унифицировать вложения и иллюстрации"\n'+
     '                          v'+versionNumber+'\n\n'+
 
         units(ImgCnt,{nom: 'Переименована', gen: 'Переименованы', plu: 'Переименовано'})+' '+ImgCnt+' '+units(ImgCnt,{nom: 'иллюстрация', gen: 'иллюстрации', plu: 'иллюстраций'})+'.\n'+
