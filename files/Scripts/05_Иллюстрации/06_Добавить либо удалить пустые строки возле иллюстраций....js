@@ -3,7 +3,7 @@
 //http://www.fictionbook.org/forum/viewtopic.php?t=4412
 
 function Run() {
- var versionStr="1.6";
+ var versionStr="1.7";
  try { var nbspChar=window.external.GetNBSP(); }
  catch(e) { var nbspChar=String.fromCharCode(160); }
  var mode,fbw_body,ptr,ptrInBody,emptyLinePtr,emptyLinePtr2,nextEmptyLine,newEmptyLine,elementClass,el;
@@ -199,7 +199,7 @@ function Run() {
   ptr=ptr.nextSibling;
  }
  window.external.EndUndoUnit(document);
- MsgBox("Скрипт «Добавить либо удалить пустые строки вокруг картинок»\n"+ 
+ MsgBox("Скрипт «Добавить либо удалить пустые строки возле иллюстраций»\n"+ 
        "(Версия "+versionStr+". Автор Sclex)\n"+
        "\n"+
        "Обработка успешно завершена.\n"+
