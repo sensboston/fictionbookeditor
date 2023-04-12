@@ -4,9 +4,9 @@
 //Мой сайт про мои скрипты: http://scripts.fictionbook.org
 
 function Run() {
- var versionStr="Переход на предыдущий верхний индекс v1.0.";
- var scriptDirection="forward";
- var isItTagWeLookingFor=function (t) { if (t.nodeName=="SUP") return true; else return false;}
+ var versionStr="Переход на предыдущий нижний индекс v1.1.";
+ var scriptDirection="backward";
+ var isItTagWeLookingFor=function (t) { if (t.nodeName=="SUB") return true; else return false;}
  var paragraphIndent=false;
  
  var randomNum,beginMarkerId,endMarkerId,beginMarkerEl,endMarkerEl,range1,range2,el,el2,el3,b,placeWhereToStop,fbw_body,nowInTagWeLookingFor,tagWeLookingFor_count;
@@ -127,6 +127,7 @@ function Run() {
      if (range1.parentElement!==el && range1.move("character",1)==1) range1.move("character",-1); else;
     else 
      if (range1.parentElement!==el && range1.move("character",-1)==1) range1.move("character",1);
+    if (scriptDirection=="backward") range1.move("character",1);
     range1.select();
     return;
    }

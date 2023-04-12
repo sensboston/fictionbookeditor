@@ -4,7 +4,7 @@
 //Мой сайт про мои скрипты: http://scripts.fictionbook.org
 
 function Run() {
- var versionStr="Переход на предыдущий абзац с верхним индексом v1.0.";
+ var versionStr="Переход на предыдущий абзац с верхним индексом v1.1.";
  var scriptDirection="backward";
  var isItTagWeLookingFor=function (t) { if (t.nodeName=="SUP") return true; else return false;}
  var paragraphIndent=true;
@@ -127,6 +127,7 @@ function Run() {
      if (range1.parentElement!==el && range1.move("character",1)==1) range1.move("character",-1); else;
     else 
      if (range1.parentElement!==el && range1.move("character",-1)==1) range1.move("character",1);
+    if (scriptDirection=="backward") range1.move("character",1);
     range1.select();
     return;
    }
