@@ -351,7 +351,7 @@ function win1252_search(selectWhatFound) {
 function Run() {
  try { var nbspChar=window.external.GetNBSP(); var nbspEntity; if (nbspChar.charCodeAt(0)==160) nbspEntity="&nbsp;"; else nbspEntity=nbspChar;}
  catch(e) { var nbspChar=String.fromCharCode(160); var nbspEntity="&nbsp;";}
- var elementBrowser_versionNum="1.3";
+ var elementBrowser_versionNum="1.4";
  var dialogWidth="540px";
  var dialogHeight="580px";
  var fbwBody=document.getElementById("fbw_body");
