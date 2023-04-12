@@ -1,9 +1,9 @@
-// Скрипт "удалить все вложения из книги"
-// Версия 1.3
+// Скрипт "Удалить все вложения"
+// Версия 1.4
 
 function Run() {
- if (!AskYesNo("Вы действительно хотите удалить все вложения из книги?")) return;
- window.external.BeginUndoUnit(document,"binaries deleting");
+ if (!AskYesNo("Вы действительно хотите удалить все вложения из документа?")) return;
+ window.external.BeginUndoUnit(document,"удаление всех вложений");
  var bins=document.all.binobj.getElementsByTagName("DIV");
  var ptr=document.all.binobj.firstChild;
  var GoMore=true;
@@ -28,5 +28,5 @@ function Run() {
  }
  FillCoverList();
  window.external.EndUndoUnit(document);
- MsgBox("Работа скрипта завершена, все вложения удалены из книги.");
+ MsgBox("Работа скрипта завершена, все вложения удалены из документа.");
 }
