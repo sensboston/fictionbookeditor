@@ -362,7 +362,7 @@ function Run() {
  coll["versionNum"]=elementBrowser_versionNum;
  coll["msg"]="Произведены автоматические замены в таком количестве слов:";
  coll["nbspChar"]=nbspChar;
- window.showModalDialog("HTML/Символы win-1252 в файле win-1251 - набор фреймов.html",coll,
+ window.showModalDialog("HTML/Символы win-1252, истолкованные как win-1251 - набор фреймов.html",coll,
    "dialogHeight: "+dialogHeight+"; dialogWidth: "+dialogWidth+"; "+
    "center: Yes; help: No; resizable: Yes; status: No;"); 
 }
