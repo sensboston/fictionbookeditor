@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 
 <xsl:stylesheet version="1.0"
 	xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
@@ -14,7 +14,7 @@
 	<xsl:variable name="IDS_TITLE" select="'Название:'"/>
 	<xsl:variable name="IDS_KEYWORDS" select="'Ключевые слова:'"/>
 	<xsl:variable name="IDS_DATE_TEXT" select="'Дата текстом:'"/>
-	<xsl:variable name="IDS_DATE_VALUE" select="'Значение даты:'"/>
+	<xsl:variable name="IDS_DATE_VALUE" select="'Значение даты (в формате ГГГГ-ММ-ДД):'"/>
 	<xsl:variable name="IDS_COVERPAGE" select="'Обложка'"/>
 	<xsl:variable name="IDS_IMAGE" select="'Изображение:'"/>
 	<xsl:variable name="IDS_LANGUAGE" select="'Язык:'"/>
