@@ -16,7 +16,8 @@ class Program
         {
             try
             {
-                var date = DateTime.Now.ToString("MMM dd yyyy");
+                var ci = new CultureInfo("en-US");
+                var date = DateTime.Now.ToString("MMM dd yyyy", ci);
                 var time = DateTime.Now.ToString("HH:mm:ss");
                 var timestamp = Encoding.ASCII.GetBytes(string.Format("{0} {1}", date, time));
                 var version = Encoding.ASCII.GetBytes(string.Format("{0}.{1}.{2}", ver.Major, ver.Minor, ver.Build));
