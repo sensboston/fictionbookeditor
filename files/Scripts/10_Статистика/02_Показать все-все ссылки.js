@@ -51,6 +51,6 @@ function Run()
 
 function MyMsgWindow(msg)
 {
- var MsgWindow = window.open("Scripts/links.htm",null,"height=710,width=300,status=no,toolbar=no,menubar=no,location=no,scrollbars=yes,resizeble=yes");
+ var MsgWindow = window.open("HTML/Показать все-все ссылки.html",null,"height=710,width=300,status=no,toolbar=no,menubar=no,location=no,scrollbars=yes,resizeble=yes");
  MsgWindow.document.body.innerText = msg;
 }
