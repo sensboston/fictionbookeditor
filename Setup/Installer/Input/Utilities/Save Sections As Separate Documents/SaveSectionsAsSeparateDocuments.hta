@@ -1,0 +1,1487 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<HTML>
+<HEAD>
+<TITLE>Save Sections As Separate Documents v6.4 (Old XML version) (автор Sclex)</TITLE>
+<HTA:APPLICATION ID="oHTA"/>
+<META http-equiv="Content-Type" content="text/html; charset=utf-8">
+<META http-equiv="MSThemeCompatible" content="yes">
+<STYLE>
+/* css reset
+http://meyerweb.com/eric/tools/css/reset/ 
+   v2.0 | 20110126
+   License: none (public domain)
+*/
+
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed, 
+figure, figcaption, footer, header, hgroup, 
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	font-size: 100%;
+	font: inherit;
+	vertical-align: baseline;
+}
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure, 
+footer, header, hgroup, menu, nav, section {
+	display: block;
+}
+body {
+	line-height: 1;
+}
+ol, ul {
+	list-style: none;
+}
+blockquote, q {
+	quotes: none;
+}
+blockquote:before, blockquote:after,
+q:before, q:after {
+	content: '';
+	content: none;
+}
+table {
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+/* конец css-reset-а */
+
+#elementList P {padding:0; margin:0;}
+.delim {background-color:green; height:3px; overflow:hidden; margin:0; padding:0;}
+.el_ {margin:0; padding:2px 1px 2px 1px; border:1px solid white; color:black; background-color:white;}
+.el_sel {margin:0; padding:2px 1px 2px 1px; border:1px solid #3399FF; background-color:#3399FF; color:white;}
+.el_active {margin:0; padding:2px 1px 2px 1px; border:1px solid black; background-color:white; color:black;}
+.el_active_sel {margin:0; padding:2px 1px 2px 1px; border:1px solid black; background-color:#3399FF; color:white;}
+input {font-family: Tahoma; font-size:14px;}
+input.gray {background-color:#D4D0C8; color:black;}
+</STYLE>
+<SCRIPT type="text/javascript">
+var logStr="";
+var scrollbarWidth=0,scrollbarHeight=0;
+var mouseTimer=null;
+var bookTitle="";
+var activeElement;
+var selectionBegin=null;
+var selectedElements={};
+var currentElementType="titles";
+var myLinks={};
+var sortedElementArray;
+var xmlDoc,savedXmlDocCode,savedFictionBook,openedFileName,selectedElementsCnt,ns,Ts;
+var initialWindowWidth=null;
+var initialWindowHeight=null;
+var doResize=false;
+var secondResizeCall=false;
+var nbspRegExp=new RegExp("(&nbsp;| |"+String.fromCharCode(160)+")","g");
+
+document.onselectstart = function() { return false; }
+
+function removeNode(node1) {
+  return node1.parentNode.removeChild(node1);
+}
+
+function setListWidthAndHeight() {
+  var newWidth=document.documentElement.clientWidth;
+  var newHeight=document.documentElement.clientHeight;
+//  alert("newInnerWidth: "+newInnerWidth+"\n"+
+//        "newInnerHeight: "+newInnerHeight+"\n"+//
+//        "initialWindowWidth: "+initialWindowWidth+"\n"+
+//        "initialWindowHeight: "+initialWindowHeight
+//  );
+  var tableWidth=document.getElementById("elementListTable").clientWidth;
+  var tableHeight=document.getElementById("elementListTable").clientHeight;
+  if (650+newWidth-initialWindowWidth<30)
+    document.getElementById("elementList").style.width="30px";
+  else if (650+newWidth-initialWindowWidth<tableWidth+scrollbarWidth)
+    document.getElementById("elementList").style.width=(650+newWidth-initialWindowWidth)+"px";
+  else
+    document.getElementById("elementList").style.width=(tableWidth+scrollbarWidth)+"px";
+// (650+newWidth-initialWindowWidth)+"px";
+  if (270+newHeight-initialWindowHeight>30 && 270+newHeight-initialWindowHeight<tableHeight)
+    document.getElementById("elementList").style.height=(270+newHeight-initialWindowHeight)+"px";
+  else
+    document.getElementById("elementList").style.height="270px";
+}
+
+function onWindowResize() {
+  if (!doResize) return;
+  if (secondResizeCall) {
+    secondResizeCall=false;
+    return;
+  }
+  if (!document.getElementById("elementListTable")) return;
+  setListWidthAndHeight();
+  //logStr+="newHeight: "+newHeight+"; initialWindowHeight: "+initialWindowHeight+"\n";
+  secondResizeCall=true;
+}
+
+function selectAllElements() {
+ var n;
+ var pp=document.getElementById("elementListTable");
+ if (!pp) {alert("Ошибка. Код ошибки ch26cb27db."); return;}
+ if (!pp.firstChild) {alert("Ошибка. Код ошибки cvefjef73j."); return;}
+ pp=pp.firstChild;
+ if (pp.nodeName!="TBODY") {alert("Ошибка. Код ошибки j8dj38e3j3e."); return;}
+ pp=pp.firstChild;
+ if (pp.nodeName!="TR") {alert("Ошибка. Код ошибки v8rjf7fjdeu."); return;}
+ if (!pp) return;
+ while (pp) {
+  if (pp.firstChild.nodeName=="TD" && pp.firstChild.className.indexOf("el_")==0 && pp.firstChild.className.indexOf("sel")<0) {
+   n=eval(pp.firstChild.id.substr(2));
+   selectedElements[n]=n;
+   selectedElementsCnt++;
+   if (pp.firstChild.className=="el_") pp.firstChild.className="el_sel";
+   else if (pp.firstChild.className=="el_active") pp.firstChild.className="el_active_sel";
+  }
+  pp=pp.nextSibling;
+ }
+ document.getElementById("selectedInput").value=selectedElementsCnt.toString();
+}
+
+function sortElements() {
+
+ var k,cnt=0;
+ sortedElementArray=[];
+ for (k in selectedElements)
+  if (selectedElements[k]==k) {
+   sortedElementArray[cnt]=k;
+   cnt++;
+  }
+ sortedElementArray=sortedElementArray.sort(function(a,b) { return a-b; });
+}
+
+var arrayOfSymbols=["0","1","2","3","4","5","6","7","8","9","A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"];
+
+function randomSymbol() {
+
+  function getRandomInRange(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+  }
+
+  return arrayOfSymbols[getRandomInRange(0,35)];
+}
+
+function addZeros2(number1,howManyDigitsToMake) {
+  var rslt=number1.toString();
+  while (rslt.length<howManyDigitsToMake) rslt="0"+rslt;
+  return rslt;
+}
+
+function getFirstChildElement(ptr3) {
+  var ptr4=ptr3.firstChild;
+  while (ptr4 && ptr4.nodeType!=1) ptr4=ptr4.nextSibling;
+  return ptr4;
+}
+
+function getNextElement(ptr5) {
+  if (!ptr5) return;
+  var ptr6=ptr5.nextSibling;
+  while (ptr6 && ptr6.nodeType!=1) ptr6=ptr6.nextSibling;
+  return ptr6;
+}
+
+function fillInDescription(sectionTitle,xmlDoc) {
+  var authorFirstName="";
+  var authorMiddleName="";
+  var authorLastName="";
+  var authorFirstName="";
+  var authorMiddleName="";
+  var authorLastName="";
+  var authorParagraph="";
+  var bookTitleParagraph="";
+  var firstNameElement=null;
+  //alert("sectionTitle: "+getOuterXML(sectionTitle));
+  var titleParagraphs=sectionTitle.selectNodes("./fb:p");
+  var arr1,author;
+  if (document.getElementById("radio1").checked) {
+    authorParagraph=titleParagraphs[0].xml.replace(/<\/?[^>]*>/g,"");
+    bookTitleParagraph=titleParagraphs[1].xml.replace(/<\/?[^>]*>/g,"");
+  }
+  if (document.getElementById("radio2").checked) {
+    authorParagraph=titleParagraphs[1].xml.replace(/<\/?[^>]*>/g,"");
+    bookTitleParagraph=titleParagraphs[0].xml.replace(/<\/?[^>]*>/g,"");
+  }
+
+  var authorArr=authorParagraph.match(/[^,]+/g);
+
+  if (document.getElementById("radio3").checked) {
+    bookTitle=titleParagraphs[0].xml.replace(/<\/?[^>]*>/g,"");
+  }
+
+  if (document.getElementById("radio4").checked) {
+    if (titleParagraphs.length>1)
+     bookTitle=titleParagraphs[1].xml.replace(/<\/?[^>]*>/g,"");
+   else
+     bookTitle=titleParagraphs[0].xml.replace(/<\/?[^>]*>/g,"");
+  }
+
+  var fictionBook=xmlDoc.selectSingleNode("//fb:FictionBook");
+
+  var stylesheet=fictionBook.selectSingleNode("./fb:stylesheet");
+
+  var description=fictionBook.selectSingleNode("./fb:description");
+  if (!description) {
+    description=xmlDoc.createNode(1,"description",fictionBook.namespaceURI);
+    if (stylesheet)
+      fictionBook.insertBefore(description,getNextElement(stylesheet));
+    else
+      fictionBook.insertBefore(description,getFirstChildElement(fictionBook));
+    description=fictionBook.selectSingleNode("./fb:description");
+  }
+
+  var titleInfo=description.selectSingleNode("./fb:title-info");
+  if (!titleInfo) {
+    titleInfo=xmlDoc.createNode(1,"title-info",fictionBook.namespaceURI);
+    description.insertBefore(titleInfo,getFirstChildElement(description));
+    titleInfo=description.selectSingleNode("./fb:title-info");
+  }
+
+  if (document.getElementById("radio1").checked || document.getElementById("radio2").checked) {
+    var authors=titleInfo.selectNodes("./fb:author");
+    for (var i=authors.length-1;i>=0;i--)
+      removeNode(authors[i]);
+  }
+
+  if (authorArr && (document.getElementById("radio1").checked || document.getElementById("radio2").checked)) {
+    for (var j=authorArr.length-1;j>=0;j--) {
+      authorFirstName="";
+      authorMiddleName="";
+      authorLastName="";
+      bookTitle=bookTitleParagraph;
+
+      arr1=authorArr[j].match(/([^\s.]+\.?)/g);
+      if (arr1.length==3 && arr1[2].slice(-1)!=".") {
+        authorFirstName=arr1[0];
+        authorMiddleName=arr1[1];
+        authorLastName=arr1[2];
+      }
+      if (arr1.length==3 && arr1[1].slice(-1)=="." && arr1[2].slice(-1)==".") {
+        authorFirstName=arr1[1];
+        authorMiddleName=arr1[2];
+        authorLastName=arr1[0];
+      }
+      if (arr1.length==2 && arr1[1].slice(-1)!=".") {
+        authorFirstName=arr1[0];
+        authorLastName=arr1[1];
+      }
+      if (arr1.length==2 && arr1[1].slice(-1)==".") {
+        authorFirstName=arr1[1];
+        authorLastName=arr1[0];
+      }
+  
+      if (authorFirstName!="" || authorMiddleName!="" || authorLastName!="") {
+        var author=xmlDoc.createNode(1,"author",fictionBook.namespaceURI);
+        var genres=titleInfo.selectNodes("./fb:genre");
+        if (!genres)
+          titleInfo.insertBefore(author,getNextElement(getFirstChildElement(titleInfo)));
+        else
+          titleInfo.insertBefore(author,getNextElement(genres[genres.length-1]));
+        author=titleInfo.selectSingleNode("./fb:author");
+    
+        // отсюда идет новый код
+        firstNameElement=author.selectSingleNode("./fb:first-name");
+        if (!firstNameElement) {
+          firstNameElement=xmlDoc.createNode(1,"first-name",fictionBook.namespaceURI);
+          author.insertBefore(firstNameElement,getFirstChildElement(author));
+          firstNameElement=author.selectSingleNode("./fb:first-name");
+        }
+        var middleNameElement=author.selectSingleNode("./fb:middle-name");
+        if (!middleNameElement) {
+          middleNameElement=xmlDoc.createNode(1,"middle-name",fictionBook.namespaceURI);
+          author.insertBefore(middleNameElement,getNextElement(firstNameElement));
+          middleNameElement=author.selectSingleNode("./fb:middle-name");
+        }
+        var lastNameElement=author.selectSingleNode("./fb:last-name");
+        if (!lastNameElement) {
+          lastNameElement=xmlDoc.createNode(1,"last-name",fictionBook.namespaceURI);
+          author.insertBefore(lastNameElement,getNextElement(middleNameElement));
+          lastNameElement=author.selectSingleNode("./fb:last-name");
+        }
+        while (firstNameElement.hasChildNodes)
+          removeNode(firstNameElement.firstChild);
+        firstNameElement.appendChild(xmlDoc.createTextNode(authorFirstName));
+        while (middleNameElement.hasChildNodes)
+          removeNode(middleNameElement.firstChild);
+        middleNameElement.appendChild(xmlDoc.createTextNode(authorMiddleName));
+        while (lastNameElement.hasChildNodes)
+          removeNode(lastNameElement.firstChild);
+        lastNameElement.appendChild(xmlDoc.createTextNode(authorLastName));
+        var nicknameElement=author.selectSingleNode("./fb:nickname");
+        if (nicknameElement) removeNode(nicknameElement);
+        var homepageElement=author.selectSingleNode("./fb:home-page");
+        if (homepageElement) removeNode(homepageElement);
+        var emailElement=author.selectSingleNode("./fb:email");
+        if (emailElement) removeNode(emailElement);
+        var authorId=author.selectSingleNode("./fb:id");
+        if (authorId) removeNode(authorId);
+      }
+    }
+  }
+  authors=titleInfo.selectNodes("./fb:author");
+  if (authors.length==0) {
+    var genres=titleInfo.selectNodes("./fb:genre");
+
+    author=xmlDoc.createNode(1,"author",fictionBook.namespaceURI);
+    if (!genres)
+      titleInfo.insertBefore(author,getNextElement(getFirstChildElement(titleInfo)));
+    else
+      titleInfo.insertBefore(author,getNextElement(genres[genres.length-1]));
+    author=titleInfo.selectSingleNode("./fb:author");
+
+    var firstNameElement=author.selectSingleNode("./fb:first-name");
+    // отсюда идет новый код
+    if (!firstNameElement) {
+      firstNameElement=xmlDoc.createNode(1,"first-name",fictionBook.namespaceURI);
+      author.appendChild(firstNameElement);
+     }
+    var lastNameElement=author.selectSingleNode("./fb:last-name");
+    if (!lastNameElement) {
+      lastNameElement=xmlDoc.createNode(1,"last-name",fictionBook.namespaceURI);
+      author.appendChild(lastNameElement);
+    }
+  }
+
+  var authors=titleInfo.selectNodes("./fb:author");
+  var bookTitleElement=titleInfo.selectSingleNode("./fb:book-title");
+  if (!bookTitleElement) {
+    bookTitleElement=xmlDoc.createNode(1,"book-title",fictionBook.namespaceURI);
+    titleInfo.insertBefore(bookTitleElement,getNextElement(authors[authors.length-1]));
+    bookTitleElement=titleInfo.selectSingleNode("./fb:book-title");
+  }
+
+  while (bookTitleElement.hasChildNodes)
+    removeNode(bookTitleElement.firstChild);
+  bookTitle=bookTitle.replace(nbspRegExp," ");
+  bookTitleElement.appendChild(xmlDoc.createTextNode(bookTitle));
+
+  var currentDate=new Date();
+  var dateStr1=currentDate.getFullYear()+"-"+addZeros2(currentDate.getMonth()+1,2)+"-"+addZeros2(currentDate.getDate(),2);
+  var dateStr2=addZeros2(currentDate.getDate(),2)+"."+addZeros2(currentDate.getMonth()+1,2)+"."+currentDate.getFullYear();
+  //alert(dateStr1+"\n"+dateStr2);
+  var srcTitleInfo=description.selectSingleNode("./fb:src-title-info");
+  var documentInfo=description.selectSingleNode("./fb:document-info");
+  if (!documentInfo) {
+    documentInfo=xmlDoc.createNode(1,"document-info",fictionBook.namespaceURI);
+    if (srcTitleInfo)
+      description.insertBefore(documentInfo,getNextElement(srcTitleInfo));
+    else
+      description.insertBefore(documentInfo,getNextElement(titleInfo));
+    documentInfo=description.selectSingleNode("./fb:document-info");
+  }
+  var dateElement=documentInfo.selectSingleNode("./fb:date");
+  if (!dateElement) {
+    var documentInfoAuthor=documentInfo.selectNodes("./fb:author");
+    var programUsed=documentInfo.selectNodes("./fb:program-used");
+    var elem1=null;
+    if (documentInfoAuthor) elem1=documentInfoAuthor[documentInfoAuthor.length-1];
+    if (programUsed) elem1=programUsed[programUsed.length-1];
+    dateElement=xmlDoc.createNode(1,"date",fictionBook.namespaceURI);
+    if (!elem1)
+      documentInfo.insertBefore(dateElement,getFirstChildElement(documentInfo));
+    else
+      documentInfo.insertBefore(dateElement,getNextElement(elem1));
+    dateElement=documentInfo.selectSingleNode("./fb:date");
+  } else
+    while (dateElement.hasChildNodes)
+      removeNode(dateElement.firstChild);
+  dateElement.insertBefore(xmlDoc.createTextNode(dateStr2),null);
+  dateElement.setAttribute("value",dateStr1);
+}
+
+var t={};
+for (var k in t)
+  delete(t[k]);
+t["А"]="A";
+t["Б"]="B";
+t["В"]="V";
+t["Г"]="G";
+t["Д"]="D";
+t["Е"]="E";
+t["Ё"]="E";
+t["Ж"]="ZH";
+t["З"]="Z";
+t["И"]="I";
+t["Й"]="I";
+t["К"]="K";
+t["Л"]="L";
+t["М"]="M";
+t["Н"]="N";
+t["О"]="O";
+t["П"]="P";
+t["Р"]="R";
+t["С"]="S";
+t["Т"]="T";
+t["У"]="U";
+t["Ф"]="F";
+t["Х"]="H";
+t["Ц"]="C";
+t["Ч"]="CH";
+t["Ш"]="SH";
+t["Щ"]="SH";
+t["Ъ"]="'";
+t["Ы"]="I";
+t["Э"]="E";
+t["Ю"]="YU";
+t["Я"]="YA";
+t["а"]="a";
+t["б"]="b";
+t["в"]="v";
+t["г"]="g";
+t["д"]="d";
+t["е"]="e";
+t["ё"]="e";
+t["ж"]="zh";
+t["з"]="z";
+t["и"]="i";
+t["й"]="i";
+t["к"]="k";
+t["л"]="l";
+t["м"]="m";
+t["н"]="n";
+t["о"]="o";
+t["п"]="p";
+t["р"]="r";
+t["с"]="s";
+t["т"]="t";
+t["у"]="u";
+t["ф"]="f";
+t["х"]="h";
+t["ц"]="c";
+t["ч"]="ch";
+t["ш"]="sh";
+t["щ"]="sh";
+t["ъ"]="'";
+t["ы"]="i";
+t["э"]="e";
+t["ю"]="yu";
+t["я"]="ya";
+t["0"]="0";
+t["1"]="1";
+t["2"]="2";
+t["3"]="3";
+t["4"]="4";
+t["5"]="5";
+t["6"]="6";
+t["7"]="7";
+t["8"]="8";
+t["9"]="9";
+t["-"]="-";
+t[" "]="_";
+t["A"]="A";
+t["B"]="B";
+t["C"]="C";
+t["D"]="D";
+t["E"]="E";
+t["F"]="F";
+t["G"]="G";
+t["H"]="H";
+t["I"]="I";
+t["J"]="J";
+t["K"]="K";
+t["L"]="L";
+t["M"]="M";
+t["N"]="N";
+t["O"]="O";
+t["P"]="P";
+t["Q"]="Q";
+t["R"]="R";
+t["S"]="S";
+t["T"]="T";
+t["U"]="U";
+t["V"]="V";
+t["W"]="W";
+t["X"]="X";
+t["Y"]="Y";
+t["Z"]="Z";
+t["a"]="a";
+t["b"]="b";
+t["c"]="c";
+t["d"]="d";
+t["e"]="e";
+t["f"]="f";
+t["g"]="g";
+t["h"]="h";
+t["i"]="i";
+t["j"]="j";
+t["k"]="k";
+t["l"]="l";
+t["m"]="m";
+t["n"]="n";
+t["o"]="o";
+t["p"]="p";
+t["q"]="q";
+t["r"]="r";
+t["s"]="s";
+t["t"]="t";
+t["u"]="u";
+t["v"]="v";
+t["w"]="w";
+t["x"]="x";
+t["y"]="y";
+t["z"]="z";
+
+function makeFilenameForSaving(fileCnt,bookTitle) {
+  var fileCnt2=1;
+  var transliteratedName="";
+  var maxNameLength=70;
+  var ch,transliteratedChar;
+  var i=0;
+  while (i<bookTitle.length) {
+    ch=bookTitle.charAt(i);
+    transliteratedChar=t[ch];
+    if (transliteratedChar && transliteratedName.length+transliteratedChar.length>maxNameLength) break;
+    if (transliteratedChar)
+      transliteratedName+=transliteratedChar;
+    i++;
+  }
+  var fullFileName=addZeros2(fileCnt,4)+"_"+transliteratedName;
+  var path=openedFileName.replace(/\\[^\\]+$/,"\\");
+  var fso=new ActiveXObject("Scripting.FileSystemObject");
+  i=0;
+  while (fso.FileExists(path+fullFileName+(i==0?"":"_"+addZeros2(i,4)+"_SSASD")+".fb2")) i++;
+  return path+fullFileName+(i==0?"":"_"+addZeros2(i,4)+"_SSASD")+".fb2";
+}
+
+function saveOneSectionAsSeparateDocument(titleNum,fileCnt) {
+  //xmlDoc.loadXML(savedXmlDocCode);
+  var i,j,sections,sections2,innerSection,elemInBody,prevElemInBody;
+  var fictionBook=xmlDoc.documentElement.selectSingleNode("//fb:FictionBook");
+  fictionBook.parentNode.replaceChild(savedFictionBook.cloneNode(true),fictionBook);
+  var titles=xmlDoc.documentElement.selectNodes("//fb:section/fb:title");
+  var myTitle=titles[titleNum];
+  fillInDescription(myTitle,xmlDoc);
+  var el1=myTitle;
+  var mySection,myBody,myClonedNode,bodies,i,subsections,myClonedNode2;
+  var savedBodyEpigraphs=[];
+  var savedSectionsAtBodyBegin=[];
+  while (el1 && el1.nodeName!="section") el1=el1.parentNode;
+  if (el1 && el1.nodeName=="section") mySection=el1;
+  while (el1 && el1.nodeName!="body") el1=el1.parentNode;
+  if (el1 && el1.nodeName=="body") myBody=el1;
+  if (mySection && myBody) {
+    if (document.getElementById("checkbox1").checked) {
+      var epigraphs=myBody.selectNodes("./fb:epigraph");
+      if (epigraphs.length>0)
+        for (i=0; i<epigraphs.length; i++)
+          savedBodyEpigraphs.push(epigraphs[i].cloneNode(true));    
+      //alert("epigraphs: "+epigraphs.length+"\n"+
+      //      "savedBodyEpigraphs: "+savedBodyEpigraphs.length);
+      var sectionsInBody=myBody.selectNodes("./fb:section");
+      var kkk=0;
+      if (sectionsInBody)
+        while (sectionsInBody[kkk] && !sectionsInBody[kkk].selectSingleNode("./fb:title")) {
+          savedSectionsAtBodyBegin.push(sectionsInBody[kkk].cloneNode(true));
+          kkk++;
+        }
+    }
+
+    var sectionAnnotationElem=myBody.selectSingleNode("./fb:section/fb:annotation");
+    if (sectionAnnotationElem) {
+      var sectionAnnotationClone=sectionAnnotationElem.cloneNode(true);
+      var oldAnnotationElem=xmlDoc.selectSingleNode("/fb:FictionBook//fb:description//fb:title-info//fb:annotation");
+      if (oldAnnotationElem) {
+        oldAnnotationElem.parentNode.insertBefore(sectionAnnotationClone,oldAnnotationElem);
+        removeNode(oldAnnotationElem);
+      }
+      else {
+        var bookTitle2=xmlDoc.selectSingleNode("/fb:FictionBook//fb:description//fb:title-info//fb:book-title");
+        bookTitle2.parentNode.insertBefore(sectionAnnotationClone,bookTitle2.nextSibling);
+      }
+      removeNode(sectionAnnotationElem);
+    }
+
+    //aert("mySection: "+getOuterXML(mySection));
+    //alert("myBody: "+getOuterXML(myBody));
+    myClonedNode=mySection.cloneNode(true);
+    while (myBody.hasChildNodes)
+      removeNode(myBody.lastChild);
+    myBody.appendChild(myClonedNode);
+    var outerSection=myBody.firstChild;
+    while (outerSection.nodeName=="title")
+      outerSection=outerSection.nextSibling;
+    // перенесем в body заголовок, эпиграфы, картинки раздела и аннотации раздела
+    var elemInBody=myBody.selectSingleNode("./fb:section/fb:section");
+    elemInBody=myBody.selectSingleNode("./fb:section").firstChild;
+    //alert("elemInBody: \n\n"+getOuterXML(elemInBody));
+    while (elemInBody && (elemInBody.nodeName=="title" || elemInBody.nodeName=="epigraph"
+           /* || elemInBody.nodeName=="image" || elemInBody.nodeName=="annotation" */
+           || elemInBody.nodeType==3))
+      elemInBody=elemInBody.nextSibling;
+    if (elemInBody && (elemInBody.nodeName!="title" && elemInBody.nodeName!="epigraph"
+          /* && elemInBody.nodeName!="image" && elemInBody.nodeName!="annotation" */))
+       elemInBody=elemInBody.previousSibling;
+    //alert("elemInBody 2: "+getOuterXML(elemInBody));
+    while (elemInBody) {
+      prevElemInBody=elemInBody.previousSibling
+      myClonedNode2=removeNode(elemInBody);
+      myBody.insertBefore(myClonedNode2,getFirstChildElement(myBody));
+      elemInBody=prevElemInBody;
+    }
+    //удалим наружный раздел, если нужно
+    //alert("myBody.firstChild: \n\n"+getOuterXML(myBody.firstChild));
+    //alert("outerSection: \n\n"+getOuterXML(outerSection));
+    var innerSection=outerSection.selectSingleNode("./fb:section");
+    if (innerSection) {
+      //alert("innerSection: "+getOuterXML(innerSection));
+      while (outerSection.hasChildNodes) {
+        //alert(2);
+        myClonedNode=outerSection.firstChild.cloneNode(true);
+        //alert("3. myClonedNode: \n\n"+getOuterXML(myClonedNode));
+        myBody.insertBefore(myClonedNode,outerSection);
+        //alert("4. myBody: \n\n"+getOuterXML(myBody));
+        removeNode(outerSection.firstChild);
+      }
+      removeNode(outerSection);
+    }
+
+    var elemInBody2=myBody.firstChild;
+    while (elemInBody2 && (elemInBody2.nodeName=="#text" || elemInBody2.nodeName=="image"))
+      elemInBody2=elemInBody2.nextSibling;
+    while (elemInBody2 && (elemInBody2.nodeName=="#text" || elemInBody2.nodeName=="title"))
+      elemInBody2=elemInBody2.nextSibling;
+    // вставим сохраненные эпиграфы body
+    if (savedBodyEpigraphs.length>0) {
+      for (i=0; i<savedBodyEpigraphs.length; i++)
+        myBody.insertBefore(savedBodyEpigraphs[i],elemInBody2);
+    }
+    // вставим сохраненный первый подраздел body (если он не имеет заголовка)
+    while (elemInBody2 && (elemInBody2.nodeName=="#text" || elemInBody2.nodeName=="epigraph"))
+      elemInBody2=elemInBody2.nextSibling;
+    if (savedSectionsAtBodyBegin.length>0) {
+      for (i=0; i<savedSectionsAtBodyBegin.length; i++)
+        myBody.insertBefore(savedSectionsAtBodyBegin[i],elemInBody2);
+    }
+
+    var removesCnt=1;
+    while (removesCnt>0) {
+      removesCnt=0;
+      var linksObj={};
+      for (i in linksObj)
+        delete linksObj[i];
+      bodies=xmlDoc.documentElement.selectNodes("//fb:body");
+      for (i=bodies.length-1; i>=0; i--) {
+        if (bodies[i]!=myBody && bodies[i].getAttribute("name")!="notes" && 
+          bodies[i].getAttribute("name")!="comments")
+          removeNode(bodies[i]);
+      }
+      var links=xmlDoc.documentElement.selectNodes("//fb:a");
+      for (j=0; j<links.length; j++) {
+        var address=links[j].getAttribute(ns+":href");
+        //alert("addreess: "+address);
+        if (address && address.lastIndexOf("#")!=-1 && address.lastIndexOf("#")!=address.length-1) {
+          //alert("Адрес ссылки: "+address.substr(address.lastIndexOf("#")+1).toLowerCase());
+          linksObj[address.substr(address.lastIndexOf("#")+1).toLowerCase()]=true;
+        }
+      }
+  
+      var removedCnt=0;
+      var removedStr="";
+      // удалим ненужные разделы в notes body
+      var sections=xmlDoc.documentElement.selectNodes('fb:body[@name="notes"]//fb:section');
+      //alert("Разделов в notes body: "+sections.length);
+      for (j=sections.length-1; j>=0; j--) {
+         subsections=sections[j].selectNodes("./fb:section");
+         //alert("j: "+j+"\n\nsubsections.length: "+subsections.length);
+         if (subsections.length==0 && (sections[j].getAttribute("id")==null || 
+             (sections[j].getAttribute("id") &&
+              linksObj[sections[j].getAttribute("id").toLowerCase()]!=true))) {
+           //alert("Удаляем раздел в notes body.");
+           //removedStr+="\n\n===\n\n"+getOuterXML(sections[j]);
+           removeNode(sections[j]);
+           removesCnt++;
+           //removedCnt++;
+         }
+      }
+      //alert("removedCnt: "+removedCnt);
+      //window.clipboardData.setData("text",removedStr);
+      var notesBodies=xmlDoc.documentElement.selectNodes('fb:body[@name="notes"]');
+      //alert("notes body в точке 1.\n\n"+getOuterXML(notesBodies[0]));
+      // если надо, удалим корневой раздел в notes body
+      sections=xmlDoc.documentElement.selectNodes('fb:body[@name="notes"]//fb:section');
+      if (sections.length!=0) {
+        sections2=xmlDoc.documentElement.selectNodes('fb:body[@name="notes"]//fb:section//fb:section');
+        if (sections2.length==0)
+         if (sections[0].getAttribute("id")==null || 
+             (sections[0].getAttribute("id") &&
+              linksObj[sections[0].getAttribute("id").toLowerCase()]!=true)) {
+           //alert("Удаляем корневой раздел в notes body.");
+           removeNode(sections[0]);
+           removesCnt++;
+        }
+      }
+      // удалим ненужные notes body
+      var notesBodies=xmlDoc.documentElement.selectNodes('fb:body[@name="notes"]');
+      for (j=notesBodies.length-1; j>=0; j--) {
+        if (xmlDoc.documentElement.selectNodes('fb:body[@name="notes"]//fb:section').length==0) {
+          //alert("Удаляем notes body.\n\n"+getOuterXML(notesBodies[j]));
+          removeNode(notesBodies[j]);
+          removesCnt++;
+       }
+      }
+  
+      // удалим ненужные разделы в comments body
+      var sections=xmlDoc.documentElement.selectNodes('fb:body[@name="comments"]//fb:section');
+      //alert("Разделов в comments body: "+sections.length);
+      for (j=sections.length-1; j>=0; j--) {
+         subsections=sections[j].selectNodes("./fb:section");
+         if (!subsections && sections[j].getAttribute("id")==null || 
+             (sections[j].getAttribute("id") &&
+              linksObj[sections[j].getAttribute("id").toLowerCase()]!=true)) {
+           //alert("Удаляем раздел в comments body.");
+           removeNode(sections[j]);
+           removesCnt++;
+         }
+      }
+      // если надо, удалим корневой раздел в comments body
+      sections=xmlDoc.documentElement.selectNodes('fb:body[@name="comments"]//fb:section');
+      if (sections.length!=0) {
+        sections2=xmlDoc.documentElement.selectNodes('fb:body[@name="comments"]//fb:section//fb:section');
+        if (sections2.length==0)
+         if (sections[0].getAttribute("id")==null || 
+             (sections[0].getAttribute("id") &&
+              linksObj[sections[0].getAttribute("id").toLowerCase()]!=true)) {
+           //alert("Удаляем корневой раздел в comments body.\n\n"+getOuterXML(sections[0]));
+           removeNode(sections[0]);
+           removesCnt++;
+        }
+      }
+      // удалим ненужные comments body
+      var commentsBodies=xmlDoc.documentElement.selectNodes('fb:body[@name="comments"]');
+      for (j=commentsBodies.length-1; j>=0; j--) {
+        if (xmlDoc.documentElement.selectNodes('fb:body[@name="comments"]//fb:section').length==0) {
+          //alerft("Удаляем comments body.\n\n"+getOuterXML(commentsBodies[j]));
+          removeNode(commentsBodies[j]);
+          removesCnt++;
+       }
+      }
+    }
+
+    // удалим ненужные теги binary
+    // вначале соберем id используемых картинок
+    var imagesObj={};
+    for (i in imagesObj)
+      delete imagesObj[i];
+    var images=xmlDoc.documentElement.selectNodes("//fb:image");
+    for (j=0; j<images.length; j++) {
+      var address=images[j].getAttribute(ns+":href");
+      //alert("addreess: "+address);
+      if (address && address.lastIndexOf("#")!=-1 && address.lastIndexOf("#")!=address.length-1) {
+        //alert("Адрес ссылки: "+address.substr(address.lastIndexOf("#")+1).toLowerCase());
+        imagesObj[address.substr(address.lastIndexOf("#")+1).toLowerCase()]=true;
+      }
+    }
+    // теперь удалим ненужные теги binary
+    var binaries=xmlDoc.documentElement.selectNodes("//fb:binary");
+    for (j=binaries.length-1; j>=0; j--) {
+      if (binaries[j] && binaries[j].getAttribute("id") && imagesObj[binaries[j].getAttribute("id").toLowerCase()]!=true)
+        removeNode(binaries[j]);
+    }
+ 
+    var idNode=xmlDoc.selectSingleNode("/fb:FictionBook//fb:description//fb:document-info//fb:id");
+    if (idNode) {
+      var newId=randomSymbol()+randomSymbol()+randomSymbol()+randomSymbol()+randomSymbol()+
+                randomSymbol()+randomSymbol()+randomSymbol()+"-"+
+                randomSymbol()+randomSymbol()+randomSymbol()+randomSymbol()+"-"+
+                randomSymbol()+randomSymbol()+randomSymbol()+randomSymbol()+"-"+
+                randomSymbol()+randomSymbol()+randomSymbol()+randomSymbol()+"-"+
+                randomSymbol()+randomSymbol()+randomSymbol()+randomSymbol()+
+                randomSymbol()+randomSymbol()+randomSymbol()+randomSymbol()+
+                randomSymbol()+randomSymbol()+randomSymbol()+randomSymbol();
+      var newIdNode=xmlDoc.createTextNode(newId);
+      idNode.replaceChild(newIdNode,idNode.firstChild);
+    }
+
+    var filenameForSaving=makeFilenameForSaving(fileCnt,bookTitle);
+    xmlDoc.save(filenameForSaving);
+  }
+}
+
+function addZeros(n) {
+  var n2=n.toString();
+  while (n2.length<5)
+   n2="0"+n2;
+  return n2;
+}
+
+function getTime1() {
+ Ts=new Date().getTime();
+}
+
+function getTime2() {
+ var Tf=new Date().getTime();
+ var Tmin = Math.floor((Tf-Ts)/60000);
+ var Tsek = Math.ceil(10*((Tf-Ts)/1000-Tmin*60))/10;
+ if (Tmin>0) {var TimeStr=Tmin+" мин. "+Tsek+" с"}
+ else {var TimeStr=Tsek+" с"}
+ return TimeStr;
+}
+
+function saveSectionsAsSeparateDocuments() {
+ getTime1();
+ sortElements();
+ if (sortedElementArray.length==0) {
+   alert("Ни один документ не был сохранен, так как в списке заголовков вы не выбрали ни один заголовок.");
+   return;
+ }
+ var myElem5,ps;
+ fileCnt=1;
+ if (document.getElementById("radio1").checked || document.getElementById("radio2").checked) {
+   var tooShortTitlesCnt=0;
+   var htmlStr2="<DIV style='text-align:center;'><TABLE style='display:inline-block; border:2px solid black;'><TBODY>";
+   var titles=xmlDoc.documentElement.selectNodes("//fb:section/fb:title");
+   var itIsFirstTitle=true;
+   for (nPtr=0;nPtr<sortedElementArray.length;nPtr++) {
+     myTitle=titles[sortedElementArray[nPtr]-1];
+     ps=myTitle.selectNodes("./fb:p");
+     if (ps.length<2) {
+       tooShortTitlesCnt++;
+       if (itIsFirstTitle) itIsFirstTitle=false;
+       else htmlStr2+="<TR><TD class=delim></TD></TR>";
+       htmlStr2+="<TR><TD style='padding-left:3px; padding-right:3px;'><NOBR>"+xmlToHtml(getInnerXML(ps[0]))+"</NOBR></TD></TR>";
+     }
+   }
+   htmlStr2="<DIV style='width:670px; font-size:16px; text-align:center; margin:0 auto;'><H1>Одноабзацные заголовки, которые должны быть как минимум двухабзацными</H1><BR>"+
+             "<P style='font-size:16px;'>Нижеуказанные заголовки ("+tooShortTitlesCnt+" шт.) являются одноабзацными.</P><BR>"+
+            "<P style='font-size:16px;'>Для создания отдельных документов в режимах \"Автор+название\" или \"Название+автор\" их (заголовки) нужно предварительно сделать двухабзацными.</P><BR></DIV>"+htmlStr2;
+   htmlStr2+="</TBODY></TABLE></DIV>";
+   if (tooShortTitlesCnt>0) {
+//    alert("     Некоторые из выделенных вами заголовков содержат в себе менее двух абзацев, при "+
+//          "том, что выбран режим обработки, предполагающий, что заголовки выбранных для "+
+//          "сохранения разделов должны состоять как минимум из двух абзацев.\n\n"+
+//          "     Количество выделенных заголовков, содержащих менее двух абзацев: "+tooShortTitlesCnt+".\n\n"+
+//          "     Сохранение разделов как отдельные документы – не было произведено.");
+    var dialogWidth="700px";
+    var dialogHeight="640px";
+    var msgWindow = window.open("SSASD - Show Wrong Titles.html","_blank","height="+dialogHeight+",width="+dialogWidth+",status=no,toolbar=no,menubar=no,location=no,scrollbars=yes,resizable=yes");
+    msgWindow.document.body.innerHTML=htmlStr2;
+    msgWindow.focus();
+    return;
+   }
+ }
+ for (nPtr=0;nPtr<sortedElementArray.length;nPtr++) {
+  //запишем в myElem5 ссылку на заголовок раздела, который (раздел) нужно сохранить как отдельный документ
+  myElem5=myLinks[sortedElementArray[nPtr]];
+  saveOneSectionAsSeparateDocument(myElem5,fileCnt);
+  fileCnt++;
+  //alert(makeHTMLTitle(myElem5));
+  var fictionBook=xmlDoc.documentElement.selectSingleNode("//fb:FictionBook");
+  fictionBook.parentNode.replaceChild(savedFictionBook,fictionBook);
+ }
+ alert("Готово!\n\nЗатраченное время: "+getTime2()+".");
+}
+
+function isItHighestLevelSection(title3) {
+  var sectionsCnt=0;
+  var ptr=title3;
+  while (ptr) {
+    if (ptr.nodeName=="section") sectionsCnt++;
+    ptr=ptr.parentNode;
+  }
+  if (sectionsCnt==1) return true;
+  return false;
+}
+
+function itIsInNotesOrCommentsBody(title4) {
+  var ptr=title4;
+  while (ptr) {
+    if (ptr.nodeName=="body" &&
+        (ptr.getAttribute("name")=="notes" || ptr.getAttribute("name")=="comments")) return true;
+   ptr=ptr.parentNode;
+  }
+  return false;
+}
+
+function saveOuterSectionsAsSeparateDocuments() {
+ getTime1();
+ var myElem5,ps;
+ fileCnt=1;
+ var titles=xmlDoc.documentElement.selectNodes("//fb:section/fb:title");
+ if (document.getElementById("radio1").checked || document.getElementById("radio2").checked) {
+   var tooShortTitlesCnt=0;
+   var htmlStr2="<DIV style='text-align:center;'><TABLE style='display:inline-block; border:2px solid black;'><TBODY>";
+   var itIsFirstTitle=true;
+   for (var i=0; i<titles.length; i++) {
+     myTitle=titles[i];
+     if (isItHighestLevelSection(myTitle) && !itIsInNotesOrCommentsBody(myTitle)) {
+       //alert("myTitle: "+getOuterXML(myTitle));
+       ps=myTitle.selectNodes("./fb:p");
+       if (ps.length<2) {
+         tooShortTitlesCnt++;
+         if (itIsFirstTitle) itIsFirstTitle=false;
+         else htmlStr2+="<TR><TD class=delim></TD></TR>";
+         htmlStr2+="<TR><TD style='padding-left:3px; padding-right:3px;'><NOBR>"+xmlToHtml(getInnerXML(ps[0]))+"</NOBR></TD></TR>";
+       }
+     }
+   }
+   htmlStr2="<DIV style='width:670px; font-size:16px; text-align:center; margin:0 auto;'><H1>Одноабзацные заголовки, которые должны быть как минимум двухабзацными</H1><BR>"+
+             "<P style='font-size:16px;'>Нижеуказанные заголовки ("+tooShortTitlesCnt+" шт.) являются одноабзацными.</P><BR>"+
+            "<P style='font-size:16px;'>Для создания отдельных документов в режимах \"Автор+название\" или \"Название+автор\" их (заголовки) нужно предварительно сделать двухабзацными.</P><BR></DIV>"+htmlStr2;
+   htmlStr2+="</TBODY></TABLE></DIV>";
+   if (tooShortTitlesCnt>0) {
+//    alert("     Некоторые из заголовков разделов верхнего уровня содержат в себе "+
+//          "менее двух абзацев, при том, что выбран режим обработки, предполагающий, "+
+//          "что заголовки подлежащих сохранению разделов должны состоять как минимум "+
+//          "из двух абзацев.\n\n"+
+//          "     Количество выделенных заголовков, содержащих менее двух абзацев: "+tooShortTitlesCnt+".\n\n"+
+//          "     Сохранение разделов как отдельные документы – не было произведено.");
+    var dialogWidth="700px";
+    var dialogHeight="640px";
+    var msgWindow = window.open("SSASD - Show Wrong Titles.html","_blank","height="+dialogHeight+",width="+dialogWidth+",status=no,toolbar=no,menubar=no,location=no,scrollbars=yes,resizable=yes");
+    msgWindow.document.body.innerHTML=htmlStr2;
+    msgWindow.focus();
+    return;
+   }
+ }
+ for (var i=0; i<titles.length; i++) {
+  //запишем в myElem5 ссылку на заголовок раздела, который (раздел) нужно сохранить как отдельный документ
+  if (isItHighestLevelSection(titles[i]) && !itIsInNotesOrCommentsBody(titles[i])) {
+    saveOneSectionAsSeparateDocument(i,fileCnt);
+    fileCnt++;
+    //alert(makeHTMLTitle(myElem5));
+    var fictionBook=xmlDoc.documentElement.selectSingleNode("//fb:FictionBook");
+    fictionBook.parentNode.replaceChild(savedFictionBook,fictionBook);
+  }
+ }
+ alert("Готово!\n\nЗатраченное время: "+getTime2()+".");
+}
+
+function selectElements(selectionBegin,selectionEnd) {
+
+ var currN,evaledCurrN;
+
+ function selectAnElement(el) {
+  currN=el.id;
+  if (currN!=null && currN!="" && currN.indexOf("n_")==0)
+   evaledCurrN=eval(currN.substr(2));
+  if (selectedElements[evaledCurrN]!=evaledCurrN)
+   selectedElementsCnt++;
+  el.className="el_sel";
+  //добавил элемент в список выделенных элементов:
+  selectedElements[evaledCurrN]=evaledCurrN;
+ }
+
+ var el=selectionEnd;
+ if (selectionBegin && selectionBegin.id)
+  var selectionBeginN=eval(selectionBegin.id.substr(2));
+ else return;
+ var selectionEndN=eval(selectionEnd.id.substr(2));
+ var currElement=(selectionBeginN<selectionEndN)?selectionBegin:el;
+ var endElement=(selectionBeginN<selectionEndN)?el:selectionBegin;
+ currElement=currElement.parentNode;
+ while (currElement && currElement.previousSibling!=endElement.parentNode) {
+  if (currElement.firstChild.className.indexOf("el_")==0) {
+   selectAnElement(currElement.firstChild);
+  }
+  currElement=currElement.nextSibling;
+ }
+}
+
+function removeActivityFromActiveElement() {
+ if (!activeElement) return;
+ if (activeElement.className=="el_active_sel")
+  activeElement.className="el_sel";
+ else if (activeElement.className=="el_active")
+  activeElement.className="el_";
+}
+
+function setActivityToElement(activeElement) {
+ if (!activeElement) return;
+ if (activeElement.className=="el_sel")
+  activeElement.className="el_active_sel";
+ else if (activeElement.className=="el_")
+  activeElement.className="el_active";
+}
+
+function getScrollBarWidthAndHeight() {
+
+ document.getElementById("elementList").style.display="inline-block";
+ var inner = document.createElement('p');
+ inner.style.width = "100%";
+ inner.style.height = "200px";
+
+ var outer = document.createElement('div');
+ outer.style.position = "absolute";
+ outer.style.top = "0px";
+ outer.style.left = "0px";
+ outer.style.visibility = "hidden";
+ outer.style.width = "200px";
+ outer.style.height = "150px";
+ outer.style.overflow = "hidden";
+ outer.appendChild(inner);
+
+ document.getElementById("elementList").appendChild(outer);
+ var w1=inner.offsetWidth;
+ var h1=inner.offsetHeight;
+ outer.style.overflow = 'scroll';
+ var w2=inner.offsetWidth;
+ var h2=inner.offsetHeight;
+ if (w1==w2) w2 = outer.clientWidth;
+ if (h1==h2) h2 = outer.clientWidth;
+ outer.removeNode(true);
+
+ scrollbarWidth=w1-w2;
+ scrollbarHeight=h1-h2;
+ //alert("scrollbarWidth: "+scrollbarWidth+"\n\n"+
+ //      "scrollbarHeight: "+scrollbarHeight);
+ document.getElementById("elementList").style.display="none";
+};
+
+function myOnKeydown() {
+  // следует помнить, что нажатия клавиш могут ловиться другими фреймами
+ if (event.keyCode=="65" && event.ctrlKey && !event.altKey && !event.shiftKey) {
+  selectAllElements();
+  event.returnValue=false;
+  return false;
+ }
+ return true;
+}
+
+function myOnMouseDown() {
+ //alert("myOnMouseDown();");
+/* logStr+="Вход в myOnMouseDown. Условие по y: "+(event.y>0 && event.y<document.getElementById("elementList").offsetHeight-scrollbarHeight)+
+    " event.y: "+event.y+
+    " document.getElementById('elementList').offsetHeight: "+document.getElementById('elementList').offsetHeight+
+    " scrollbarHeight: "+scrollbarHeight+
+//    " document.getElementById('elementList').top: "+document.getElementById('elementList').top+
+    " document.getElementById('elementList').getBoundingClientRect().top: "+document.getElementById('elementList').getBoundingClientRect().top+
+    "\n";*/
+ if (event.button==1 &&
+     event.y>0 && event.y<document.getElementById("elementList").offsetHeight-scrollbarHeight+document.getElementById('elementList').getBoundingClientRect().top &&
+     event.x>0 && event.x<document.getElementById("elementList").offsetWidth-scrollbarWidth+document.getElementById('elementList').getBoundingClientRect().left) {
+  // logStr+="Внутри if-а в myOnMouseDown\n";
+  mouseDown=true;
+  myOnClick();
+  document.getElementById("mouseCaptureSpan").setCapture(true);
+  event.returnValue=false;
+  return false;
+ } else if (event.button==2) {
+  if (currentElementType.substr(0,6)=="titles") /*contextMenu()*/;
+ } else {
+  event.returnValue=true;
+  return true;
+ }
+}
+
+function myOnClick() {
+ var el=event.srcElement;
+ event.returnValue=false;
+ while (el && el.nodeName!="BODY" && el.nodeName!="TD" || (el.nodeName=="TD" && el.className!=null && el.className!="" &&
+        el.className.search("el_")!=0))
+  el=el.parentNode;
+ if (!el || el.nodeName!="TD" || el.className.search("el_")!=0) { event.returnValue=true; return true; }
+  //теперь в el элемент, по которому кликнул пользователь
+
+ /* var rng=mainDoc.body.createTextRange(); */
+ var myN=el.id;
+ var evaledN=null;
+ if (myN==null || myN=="" || myN.indexOf("n_")!=0) return;
+ evaledN=eval(myN.substr(2));
+ /*if ((currentElementType.substr(0,6)=="titles" || currentElementType=="subtitles" ||
+      currentElementType=="emphasis" || currentElementType=="strong" ||
+      currentElementType=="sup" || currentElementType=="sub" ||
+      currentElementType=="strikethrough") && evaledN) {
+  try {
+   mainWin.scroll(0,0);
+   rng.moveToElementText(myLinks[evaledN]);
+   mainWin.scrollBy(0,rng.boundingTop-80);
+   rng.select();
+   var winHeight=document.documentElement.clientHeight;
+   /*alert("rng.boundingTop: "+rng.boundingTop+"    winHeight: "+winHeight);
+   if (rng.boundingHeight<=winHeight)
+    mainWin.scroll(0,Math.floor(rng.boundingTop-winHeight/2));
+   else
+    mainWin.scrollBy(0,rng.boundingTop);
+  }
+  catch(e) {
+   alert("При установке фокуса видимости на элемент произошла ошибка.");
+  } 
+ } */
+ //обработка выделения с незажатым шифтом и незажатым контролом
+ if (!event.ctrlKey && !event.shiftKey) {
+  //чистка списка выделенных элементов
+  for (k in selectedElements)
+   if (selectedElements[k]==k)
+    if (document.getElementById("n_"+k))
+     document.getElementById("n_"+k).className="el_";
+  selectedElements={};
+  selectedElementsCnt=0;
+ }
+ //если клик сделан с контролом, уберем стиль активности с активного элемента
+ if (event.ctrlKey)
+  removeActivityFromActiveElement();
+ if (event.shiftKey) {
+  //чистка списка выделенных элементов
+  if (!event.ctrlKey) {
+   for (k in selectedElements)
+    if (selectedElements[k]==k)
+     document.getElementById("n_"+k).className="el_";
+   selectedElements={};
+   selectedElementsCnt=0;
+  }
+ }
+ //обработка выделения с зажатым шифтом и незажатым контролом)
+ if (event.shiftKey && evaledN && selectionBegin) {
+  var oldN=selectionBegin.id;
+  if (oldN==null || oldN=="" || oldN.indexOf("n_")!=0) return;
+  evaledOldN=eval(oldN.substr(2));
+  if (!event.ctrlKey) {
+   //alert("добавляем в список n_"+evaledOldN);
+   selectedElements[evaledOldN]=evaledOldN;
+   selectionBegin.className="el_sel";
+   selectedElementsCnt=1;
+  }
+  if (evaledOldN!=evaledN) {
+   //alert("selectionBegin: "+selectionBegin+"\n\n"+"el: "+el);
+   selectElements(selectionBegin,el);
+  }
+ }
+
+ //обработка выделения с зажатым контролом
+ if (event.ctrlKey) {
+  if (el.className=="el_") {
+   if (selectedElements[evaledN]!=evaledN) {
+    selectedElements[evaledN]=evaledN;
+    selectedElementsCnt++;
+   }
+   el.className="el_active_sel";
+  } else if (el.className=="el_sel" || el.className=="el_active_sel") {
+   selectedElements[evaledN]=undefined;
+   selectedElementsCnt--;
+   el.className="el_active";
+  }
+ }
+
+ if (!event.ctrlKey || (event.ctrlKey && event.shiftKey)) {
+  el.className="el_active_sel";
+  if (selectedElements[evaledN]!=evaledN) {
+   selectedElements[evaledN]=evaledN;
+   selectedElementsCnt++;
+  }
+ }
+
+ activeElement=el;
+ if (!event.shiftKey)
+  selectionBegin=el;
+ if (!event.ctrlKey && !event.shiftKey) {
+  //занесем в список выделенных элементов элемент, по которому был клик
+  if (evaledN) {
+   selectedElements[evaledN]=evaledN;
+   selectedElementsCnt=1;
+  }
+ }
+ document.getElementById("selectedInput").value=selectedElementsCnt.toString();
+ event.returnValue=false;
+ return false;
+}
+
+function isInNotesOrCommentsBody(el) {
+ while (el && el.nodeName!="body") el=el.parentNode;
+ if (el.nodeName=="body" && (el.getAttribute("name")=="notes" || el.getAttribute("name")=="comments"))
+  return true;
+ return false;
+}
+
+function scrollingTimer() {
+ var tmpEl,el,n,r,l,elemListHeight;
+ el=document.getElementById("elementList");
+ if (scrolling=="up") {
+  document.getElementById("elementList").scrollTop-=20;
+  var listLeft=document.getElementById('elementList').getBoundingClientRect().left;
+  var listTop=document.getElementById('elementList').getBoundingClientRect().top;
+  var upperListElement=document.elementFromPoint(listLeft+10,listTop+10);
+  // logStr+="elementFromPoint: "+(document.elementFromPoint(listLeft+10,listTop+10).outerHTML)+"\n\n";
+  /* lft=0;
+  rgt=el.children.length-1;
+  while (lft<rgt) {
+   n=Math.round((lft+rgt-1)/2);
+   tmpEl=el.children[n];
+   r=tmpEl.getBoundingClientRect();
+   if (!r) {alert("r==null N1");return false;}
+   if (r.top<0 && r.bottom<0) lft=n+1;
+   else if (r.top>0 && r.bottom>0) rgt=n;
+   else if (r.top==0 || (r.top<0 && r.bottom>=0)) {lft=n; rgt=n;}
+   firstTime=false;
+  }
+  while (lft>=0 && el.children[lft].className=="delim")
+    lft++; */
+  //logStr+="activeElement: "+activeElement.outerHTML+"\n"+
+  //        "el.children[lft]: "+el.children[lft].outerHTML+"\n\n";
+  while (upperListElement.className=="delim")
+    upperListElement=upperListElement.previousSibling;
+  selectElements(activeElement,upperListElement);
+  removeActivityFromActiveElement();
+  activeElement=upperListElement;
+  setActivityToElement(activeElement);
+  //r=el.children[lft].getBoundingClientRect();
+  //document.getElementById("elementList").scrollTop-=r.top;
+ }
+ if (scrolling=="down") {
+  document.getElementById("elementList").scrollTop+=20;
+  lft=0;
+  rgt=el.children.length-1;
+  elemListHeight=el.offsetHeight-scrollbarHeight;
+  //logStr+="elemListHeight: "+elemListHeight+".\n";
+  while (lft<rgt) {
+   n=Math.round((lft+rgt-1)/2);
+   tmpEl=el.children[n];
+   r=tmpEl.getBoundingClientRect();
+   if (!r) {alert("r==null N2"); return false;}
+   if (r.top<elemListHeight && r.bottom<elemListHeight) lft=n+1;
+   else if (r.top>elemListHeight && r.bottom>elemListHeight) rgt=n;
+   else if (r.bottom==elemListHeight || (r.top<=elemListHeight && r.bottom>elemListHeight)) {lft=n; rgt=n;}
+   firstTime=false;
+  }
+  //logStr+="activeElement: "+activeElement.outerHTML+"\n"+
+  //        "el.children[lft]: "+el.children[lft].outerHTML+"\n\n";
+  while (lft>=0 && el.children[lft].className=="delim")
+    lft--;
+  selectElements(activeElement,el.children[lft]);
+  removeActivityFromActiveElement();
+  activeElement=el.children[lft];
+  setActivityToElement(activeElement);
+ }
+ document.getElementById("selectedInput").value=selectedElementsCnt.toString();
+}
+
+function capturedMouse() {
+ //logStr+="Вошли в capturedMouse.\n";
+ el=event.srcElement;
+ if (event.type=="mouseover") {
+  if (el.nodeName=="BODY") {
+   scrolling="no";
+   if (mouseTimer!=null) {
+    clearInterval(mouseTimer);
+    mouseTimer=null;
+   }
+  event.returnValue=false;
+  }
+  while (el && el.nodeName!="BODY" && el.nodeName!="TD" || (el.nodeName=="TD" && el.className!=null && el.className!="" &&
+         el.className.indexOf("el_")!=0))
+   el=el.parentNode;
+  if (!el || el.nodeName!="TD" || el.className.indexOf("el_")!=0) {
+   //logStr+="Вышли из capturedMouse - 04.\n";
+   return;
+  }
+  if (el && el.nodeName=="TD" && el.className.indexOf("el_")==0) {
+   evaledN=eval(el.id.substr(2));
+   removeActivityFromActiveElement();
+   selectElements(activeElement,el);
+   activeElement=el;
+   setActivityToElement(activeElement);
+   document.getElementById("selectedInput").value=selectedElementsCnt.toString();
+  }
+  //logStr+="Вышли из capturedMouse - 01.\n";
+  return true;
+ }
+ if (event.type=="mouseup") {
+  document.getElementById("mouseCaptureSpan").releaseCapture();
+  if (mouseTimer!=null) {
+   clearInterval(mouseTimer);
+   mouseTimer=null;
+  }
+  event.returnValue=false;
+  scrolling="no";
+  //logStr+="Вышли из capturedMouse - 02.\n";
+  return false;
+ }
+ if (event.type=="mousemove") {
+  if (event.y<3+document.getElementById('elementList').getBoundingClientRect().top) {
+   scrolling="up";
+   if (mouseTimer==null) mouseTimer=setInterval("scrollingTimer();",100);
+  }
+  else if (event.y>document.getElementById("elementList").offsetHeight-scrollbarHeight+document.getElementById('elementList').getBoundingClientRect().top) {
+   scrolling="down";
+   if (mouseTimer==null) mouseTimer=setInterval("scrollingTimer();",100);
+  } else if (mouseTimer!=null) {
+   clearInterval(mouseTimer);
+   mouseTimer=null;
+  }
+  event.returnValue=false;
+ }
+ //logStr+="Вышли из capturedMouse - 03.\n";
+ return true;
+}
+
+function getOuterXML(startEl) {
+  var myAttrs,i;
+  var xmlStr="<"+startEl.nodeName;
+  myAttrs=startEl.attributes;
+  if (myAttrs)
+    for (i=0; i<myAttrs.length; i++)
+      xmlStr+=" "+myAttrs[i].name+'="'+startEl.getAttribute(myAttrs[i].name)+'"';
+  if (!startEl.hasChildNodes) xmlStr+="/";
+  xmlStr+=">";
+  return xmlStr+getInnerXML(startEl)+"</"+startEl.nodeName+">";
+}
+
+function getInnerXML(startEl) {
+ var xmlStr="";
+ var myAttrs,myAttr,i;
+ if (!startEl.hasChildNodes) return "";
+ el=startEl.firstChild;
+
+ while (el && el!=startEl) {
+//  alert("nodeType: "+el.nodeType+"\n\nnodeValue: "+el.nodeValue);
+  if (el.nodeType==1) {
+    xmlStr+="<"+el.nodeName;
+    myAttrs=el.attributes;
+    for (i=0; i<myAttrs.length; i++)
+      xmlStr+=" "+myAttrs[i].name+'="'+el.getAttribute(myAttrs[i].name)+'"';
+    if (!el.hasChildNodes) xmlStr+="/";
+    xmlStr+=">"; 
+  }
+  if (el.nodeType==3) { xmlStr+=el.nodeValue.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+  if (el.hasChildNodes) {
+   el=el.firstChild;
+  }
+  else {
+   while (el && !el.nextSibling && el!=startEl) {
+    el=el.parentNode;
+    if (el.nodeType==1 && el!=startEl) { xmlStr+="</"+el.nodeName+">"; }
+   }
+   if (el && el!=startEl) el=el.nextSibling;
+  }
+ }
+ return xmlStr;
+}
+
+function xmlToHtml(s) {
+  return s.replace(/<empty-line\/>/g,"<P>&nbsp;</P>").replace(/<(?!\/?P[> ])[^>]+>/gi,"");
+}
+
+function parentSectionsCnt(titlesNode) {
+  var ptr=titlesNode;
+  var cnt=-1;
+  while (ptr && ptr.nodeName!="FictionBook") {
+    if (ptr.nodeName=="section") cnt++;
+    ptr=ptr.parentNode;
+  }
+  if (cnt==-1) return 0;
+  return cnt;
+}
+
+function getInitialWindowSize() {
+  initialWindowWidth=document.documentElement.clientWidth;
+  initialWindowHeight=document.documentElement.clientHeight;
+}
+
+
+function applySettings() {
+ var f1=document.getElementById("f1");
+ if (!f1) {alert("Ошибка!"); return}
+ f1=f1.value;
+ try {
+  var fso=new ActiveXObject("Scripting.FileSystemObject");
+  var s1=fso.GetBaseName(f1)+"."+fso.GetExtensionName(f1);
+  if (fso.GetExtensionName(f1)=="" || fso.GetExtensionName(f1).toLowerCase()!="fb2") {
+    alert("Ошибка: вы не выбрали файл, либо выбрали НЕ-fb2 файл.");
+    return;
+  }
+ }
+ catch(e) {
+  alert("Ошибка!");
+  return;
+ }
+ xmlDoc=new ActiveXObject("Microsoft.XMLDOM");
+ //xmlDoc=new ActiveXObject("Microsoft.XMLDOM");
+ xmlDoc.async=false;
+ xmlDoc.preserveWhiteSpace = true;
+ var fbNS="http://www.gribuser.ru/xml/fictionbook/2.0";
+ var xlNS="http://www.w3.org/1999/xlink";
+ xmlDoc.load(f1);
+ xmlDoc.setProperty("SelectionNamespaces", "xmlns:fb='"+fbNS+"' xmlns:xlink='"+xlNS+"'");
+ if (xmlDoc.parseError.errorCode) return;
+ openedFileName=f1;
+ var titles=xmlDoc.documentElement.selectNodes("//fb:section/fb:title");
+ //alert("titles.length: \n\n"+titles.length);
+ var i;
+ //window.clipboardData.setData("text",getOuterXML(xmlDoc.documentElement));
+ //savedXmlDocCode=getOuterXML(xmlDoc.documentElement);
+ var fictionBook=xmlDoc.documentElement.selectSingleNode("//fb:FictionBook");
+ savedFictionBook=fictionBook.cloneNode(true);
+ var myAttrs=fictionBook.attributes;
+ ns="l";
+ for (i=0; i<myAttrs.length; i++)
+   if (myAttrs[i].name.indexOf("xmlns:")==0)
+     ns=myAttrs[i].name.replace(/^xmlns:/i,"");
+ var htmlStr="<TABLE style='margin: 0 auto;' id=elementListTable><TBODY>";
+ var nCnt=0;
+ myLinks={};
+ var titleCode;
+ for (i=0; i<titles.length; i++) {
+   if (!isInNotesOrCommentsBody(titles[i])) {
+     titleCode=xmlToHtml(getInnerXML(titles[i]));
+     //alert("titleCode:\n\n"+titleCode);
+     nCnt++;
+     htmlStr+="<TR><TD  style='padding-left:"+(parentSectionsCnt(titles[i])*20)+"px;' class=el_ id=n_"+nCnt+"><NOBR>"+titleCode+"</NOBR></TD></TR><TR><TD class=delim></TD></TR>";
+     myLinks[nCnt]=i;
+   }
+ }
+ htmlStr+="</TBODY></TABLE>";
+ selectedElementsCnt=0;
+ document.getElementById("elementList").innerHTML=htmlStr;
+ document.getElementById("elementList").style.display="inline-block";
+ document.getElementById("inAllInput").value=nCnt;
+ document.getElementById("selectedInput").value=selectedElementsCnt;
+ document.getElementById("counters").style.display="inline-block";
+ document.getElementById("buttonsDiv").style.display="block";
+ getScrollBarWidthAndHeight();
+ document.getElementById("elementList").style.display="inline-block";
+ setListWidthAndHeight();
+ doResize=true;
+// alert("Настройки успешно применены.\n\n"+f1);
+}
+
+</SCRIPT>
+</HEAD>
+<BODY style="font-family:tahoma; font-size:14px; padding:10px; margin:0; color:black; background-color:white;" onload="window.resizeTo(800,710); getInitialWindowSize(); getScrollBarWidthAndHeight();" onkeydown="myOnKeydown();" onresize="onWindowResize();">
+<SPAN id=mouseCaptureSpan style="display:none;" onmousemove="capturedMouse();" onmouseout="capturedMouse();" onmouseup="capturedMouse();" onmouseover="capturedMouse();"></SPAN>
+<P style="text-align:center">Выберите fb2-файл:
+<br>
+<INPUT type=file style="width:500px;" id=f1></P>
+<DIV id="selectFileDiv">
+<P style="padding:0; margin:0; text-align:center;"><INPUT type=button value="Найти и показать заголовки разделов" onclick="applySettings();"><INPUT type=button value="Выйти" onclick="window.close();"></P>
+<BR>
+</DIV>
+<DIV id=outerDiv style="text-align:center;">
+<DIV id=elementList style="width:650px; height:270px; padding:2px; overflow:scroll; border:2px #808080 solid; text-align:left; display:none;" onmousedown="myOnMouseDown();" ondblclick="myOnClick();">
+</DIV>
+</DIV>
+<DIV id=outerDiv2 style="text-align:center">
+<DIV id=counters style="display:none; margin:0 auto;">
+<p style="text-align: center; width:650px;">Всего элементов: <input type=text readonly style="width:46px; text-align:center;" value="0" id=inAllInput> &nbsp; &nbsp; Выбрано элементов: <input type=text readonly style="width:46px; text-align:center;" value="0" id=selectedInput></p>
+</DIV>
+</DIV>
+<DIV id=buttonsDiv style="display:none;">
+<div style="margin:0 auto; width:600px;">
+<label for="checkbox1"><input type=checkbox id="checkbox1" name=noteSign style="width:30px; height:30px;"> включать в сохраняемые файлы эпиграфы, в исходном документе относившиеся к body, а также разделы без заголовков, которые (разделы) находились в начале body</label>
+</div>
+<div style="margin:0 auto; width:500px;">
+<label for=radio1><input type=radio id=radio1 name=radiogroup1 checked style="width:30px; height:30px;"> первый абзац заголовка – автор(ы), второй – название произведения</label>
+<br>
+<label for=radio2><input type=radio id=radio2 name=radiogroup1 style="width:30px; height:30px;"> первый абзац заголовка – название произведения, второй – автор(ы)</label>
+<br>
+<label for=radio3><input type=radio id=radio3 name=radiogroup1 style="width:30px; height:30px;"> первый (либо единственный) абзац заголовка – название произведения (а авторов оставить из исходного документа)</label>
+<br>
+<label for=radio4><input type=radio id=radio4 name=radiogroup1 style="width:30px; height:30px;"> второй (либо единственный) абзац заголовка – название произведения (а авторов оставить из исходного документа)</label>
+</div>
+<br>
+<p style="text-align:center;"><INPUT type=button value="Сохранить выбранные разделы как отдельные документы" onclick="saveSectionsAsSeparateDocuments();" class=gray></p>
+<br>
+<p style="text-align:center;"><INPUT type=button value="Сохранить как отдельные документы все разделы верхнего уровня" onclick="saveOuterSectionsAsSeparateDocuments();" class=gray></p>
+<!-- <INPUT type=button value="Код в буфер (отладочное)" onclick='window.clipboardData.setData("text",document.getElementById("elementList").innerHTML);'> -->
+<!-- <INPUT type=button value="Лог в буфер" onclick='window.clipboardData.setData("text",logStr);'> -->
+<!-- <INPUT type=button onclick="alert('XML6: '+xmlDoc);" value="MSXML"> -->
+</DIV>
+</BODY>
+</HTML>
