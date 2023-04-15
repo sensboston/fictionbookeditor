@@ -11,10 +11,12 @@
 ## Создание новой инсталляции:
 
 1. Все обновленные файлы FBE (читай - обновлённые скрипты) должны быть скопированы в \Installer\Input, в сответствующие папки
-2. Измените (при желании) timestamp и версию билда FBE.exe, для этого нужно запустить утилиту update_fbe.exe 1.2.3 
-(где 1.2.3 - версия нового релиза; FBE.exe должен находиться в той-же папке, что и update_fbe.exe)
-3. Измените версию релиза в скрипте инсталлятора \Installer\MakeInstaller.nsi
-!define PRODUCT_VERSION "${PRODUCT_STAGE} v2.7.0 (${PRODUCT_BUILD})"
+2. Измените (при желании) timestamp и версию билда FBE.exe, для этого нужно запустить утилиту **update_fbe.exe 2.7.0** 
+(где 2.7.0 - это версия нового релиза; FBE.exe должен находиться в той-же папке, что и update_fbe.exe)
+3. Измените версию релиза в скрипте инсталлятора \Installer\MakeInstaller.nsi (строка #2):
+```
+!define PRODUCT_VER_NUM "2.7.0"
+```
 4. Заупстите файл MakeInstaller.bat, по завершении работы он должен создать установочную exe-версию
 5. Чтобы работала встроенная в FBE система обновлений, отредактируйте файл update.xml на GitHub-е:
 https://github.com/sensboston/fictionbookeditor/edit/master/update.xml 
