@@ -10,7 +10,7 @@ function Run() {
  params["fbw_body"]=document.getElementById("fbw_body");
  params["document"]=document;
  params["window"]=window;
- var rslt=window.showModelessDialog("Scripts/CE.htm",params,
+ var rslt=window.showModelessDialog("HTML/Диакритика.html",params,
       "dialogHeight: "+dialogHeight+"; dialogWidth: "+dialogWidth+"; dialogLeft: "+dialogLeft+"; "+
       "center: Yes; help: No; resizable: Yes; status: No; scroll: No;"); 
 }

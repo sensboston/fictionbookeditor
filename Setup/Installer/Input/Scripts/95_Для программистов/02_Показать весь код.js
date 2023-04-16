@@ -19,6 +19,6 @@ function Run()
 function MyMsgWindow(pe)
 {
  msg = pe.outerHTML;
- var MsgWindow = window.open("Scripts/debug.htm",null,"height=680,width=1014,status=no,toolbar=no,menubar=no,location=no,scrollbars=yes,resizeble=yes");
+ var MsgWindow = window.open("HTML/Показать весь код.html",null,"height=680,width=1014,status=no,toolbar=no,menubar=no,location=no,scrollbars=yes,resizeble=yes");
  MsgWindow.document.body.innerText = msg;
 }

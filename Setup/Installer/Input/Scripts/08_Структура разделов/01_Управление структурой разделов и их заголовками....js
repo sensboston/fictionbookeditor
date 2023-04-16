@@ -1,7 +1,7 @@
 function Run() {
 
  var dialogWidth="640px"; // ширина диалогового окна
- var dialogHeight="480px"; // высота диалогового окна
+ var dialogHeight="540px"; // высота диалогового окна
  var params=new Object();
  var rslt;
  body=document.getElementById("fbw_body");
