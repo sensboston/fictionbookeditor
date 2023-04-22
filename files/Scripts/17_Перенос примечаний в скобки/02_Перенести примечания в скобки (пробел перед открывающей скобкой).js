@@ -2,7 +2,7 @@ function Run() {
 
  var addSpaceBeforeNoteInBrackets=true;
 
- var versionStr="Перенос примечаний в скобки v1.1. Автор Sclex."
+ var versionStr="Перенос примечаний в скобки v1.2. Автор Sclex."
  var myId,elem,elem2,bodyName,htmlStr1,htmlStr2,blockTag,pTag,insideWhatTag;
  var elem4,myHtmlStr,collectedText,aInnerText,range1,range2,bTag1,bTag2,firstP;
  var movedNotesCnt,elem5;
@@ -14,8 +14,8 @@ function Run() {
  var ltRegExp_="&lt;";
  var gtRegExp=new RegExp(">","g");
  var gtRegExp_="&gt;";
- var ampRegExp=new RegExp(">","g");
- var ampRegExp_="&gt;";
+ var ampRegExp=new RegExp("&","g");
+ var ampRegExp_="&amp;";
  var movedNotesCnt=0;
 
  function getLocalHref(name) {
@@ -68,7 +68,7 @@ function Run() {
    }
    //переход на следующий узел дерева
    if (myEl.nodeType==3)
-    myHtmlStr+=myEl.nodeValue.replace(ltRegExp,ltRegExp_).replace(gtRegExp,gtRegExp_).replace(ampRegExp,ampRegExp_);
+    myHtmlStr+=myEl.nodeValue.replace(ampRegExp,ampRegExp_).replace(ltRegExp,ltRegExp_).replace(gtRegExp,gtRegExp_);
    if (myEl.firstChild && !(myEl.parentNode==elem && myEl.className=="title")) {
     myHtmlStr+=getOpeningTag(myEl);
     myEl=myEl.firstChild;
