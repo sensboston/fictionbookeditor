@@ -1,5 +1,5 @@
 // Скрипт "Выполнить ПОЛНЫЙ сброс структуры разделов"
-// version 1.3
+// version 1.4
 // Автор Sclex
 
 function Run() {
@@ -63,8 +63,15 @@ function Run() {
  }
 
  window.external.BeginUndoUnit(document,"полный сброс структуры разделов");
- var fbwBody=document.getElementById("fbw_body");
+ var fbwBody=document.getElementById("fbw_body")
  if (!fbwBody) return;
+ 
+ var tr=document.body.createTextRange();
+ tr.moveToElementText(fbwBody);
+ tr.collapse(true);
+ tr.select();
+ window.scrollTo(0,0);
+
  if (fbwBody.firstChild)
    rec(fbwBody.firstChild);
  window.external.EndUndoUnit(document);
