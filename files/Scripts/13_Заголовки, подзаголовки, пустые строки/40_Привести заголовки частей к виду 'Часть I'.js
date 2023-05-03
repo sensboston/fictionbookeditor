@@ -1,7 +1,7 @@
 // Скрипт "Привести заголовки частей к виду "Часть I"
 // Автор Sclex
 
-var VersionNumber="1.6";
+var VersionNumber="1.7";
 
 //обрабатывать ли history
 var ObrabotkaHistory=false;
@@ -2158,11 +2158,11 @@ a4["тысячная"]="M";
           }
         }
       }
-      searchRslt=s.search(re14);
+      searchRslt=s.replace(/ё/ig,"е").search(re14);
       if (searchRslt!=-1) {
         // Поиск заголовков вида "Часть тридцатая. <...>" и Часть тридцатая: <...>"
-        searchRslt=s.search(re14);
-        matches=s.match(re15);
+        searchRslt=s.replace(/ё/ig,"е").search(re14);
+        matches=s.replace(/ё/ig,"е").match(re15);
         if (matches) {
           nReplace=matches[0].length;
           s2=matches[0].replace(/[^:.]+/g,"");
