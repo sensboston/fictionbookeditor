@@ -1,7 +1,7 @@
 // Скрипт "Приведение заголовков к виду "Глава 1"
 // Автор Sclex
 
-var VersionNumber="1.8";
+var VersionNumber="1.9";
 
 //обрабатывать ли history
 var ObrabotkaHistory=false;
@@ -2247,17 +2247,15 @@ a2["тысячная"]="1000";
           return;
         }
       }
-      searchRslt=s.search(re20);
+      searchRslt=s.replace(/ё/ig,"е").search(re20);
       if (searchRslt!=-1) {
-        alert("Нашли");
-        // Поиск заголовков вида "Глава тридцатая. <...>"
-        searchRslt=s.search(re20);
-        matches=s.match(re21);
+        // Поиск заголовков вида "Тридцатая глава"
+        searchRslt=s.replace(/ё/ig,"е").search(re20);
+        matches=s.replace(/ё/ig,"е").match(re21);
         if (matches) {
           nReplace=matches[0].length+1;
           s2=matches[0].replace(/[^:.,]+/g,"");
           matches=matches[0].match(re22);
-          alert("matches[0]: "+matches[0]);
           replaceStr=a2[matches[0].toLowerCase().replace(/ё/ig,"е").replace(re100,"").replace(re101," ").replace(re102,"")];
           if (replaceStr!=undefined) {
             ptr.innerHTML=removeSymbolsBeyondTags(ptr.innerHTML.replace(/&nbsp;/g,usualNbspChar),searchRslt,nReplace,"Глава "+replaceStr+s2+" ").replace(/\xA0/g,usualNbspChar);
@@ -2311,7 +2309,7 @@ a2["тысячная"]="1000";
   ptr=SaveNext;
  }
 
-    window.external.EndUndoUnit(document);                               // undo конец
+window.external.EndUndoUnit(document);                               // undo конец
 
 var Tf=new Date().getTime();
 var Thour = Math.floor((Tf-Ts)/3600000);
