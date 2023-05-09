@@ -1,6 +1,6 @@
 // Скрипт "Приведение заголовков к виду "Глава 1"
 // Автор Sclex
-var VersionNumber="2.0";
+var VersionNumber="2.1";
 //обрабатывать ли history
 var ObrabotkaHistory=false;
 //обрабатывать ли annotation
@@ -2294,8 +2294,11 @@ a2["тысячная"]="1000";
           matches=s.match(re25);
           nReplace=matches[0].length;
           if (matches) {
-            ptr.innerHTML=removeSymbolsBeyondTags(ptr.innerHTML.replace(/&nbsp;/g,usualNbspChar),1,s.length,"Глава "+matches[0]).replace(/\xA0/g,usualNbspChar);
-            count++;
+            var s3=s.replace(/&nbsp;/g,usualNbspChar).replace(new RegExp(nbspChar+"+","g")," ").replace(new RegExp("^ +"),"").replace(new RegExp(" +$"),"");
+            var newHTML=removeSymbolsBeyondTags(ptr.innerHTML.replace(/&nbsp;/g,usualNbspChar),1,s.length,"Глава "+matches[0]).replace(/\xA0/g,usualNbspChar);
+            ptr.innerHTML=newHTML;
+            if (s3!=newHTML)
+              count++;
             return;
           }
         }
@@ -2309,8 +2312,11 @@ a2["тысячная"]="1000";
           s2=matches[0].replace(/[^:.]+/g,"");
           matches=matches[0].match(re33);
           if (matches) {
-            ptr.innerHTML=removeSymbolsBeyondTags(ptr.innerHTML.replace(/&nbsp;/g,usualNbspChar),searchRslt,nReplace,"Глава "+matches[0]+s2).replace(/\xA0/g,usualNbspChar);
-            count++;
+            var s3=s.replace(/&nbsp;/g,usualNbspChar).replace(new RegExp(nbspChar+"+","g")," ").replace(new RegExp("^ +"),"").replace(new RegExp(" +$"),"");
+            var newHTML=removeSymbolsBeyondTags(ptr.innerHTML.replace(/&nbsp;/g,usualNbspChar),searchRslt,nReplace,"Глава "+matches[0]+s2).replace(/\xA0/g,usualNbspChar);
+            ptr.innerHTML=newHTML;
+            if (s3!=newHTML.replace(new RegExp(nbspChar+"+","g")," "))
+              count++;
             return;
           }
         }
