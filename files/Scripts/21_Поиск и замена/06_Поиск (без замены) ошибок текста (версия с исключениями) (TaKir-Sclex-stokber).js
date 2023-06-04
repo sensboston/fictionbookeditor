@@ -1,5 +1,5 @@
 // Скрипт «Поиск по набору регэкспов» для редактора Fiction Book Editor (FBE).
-// Версия 4.6
+// Версия 4.8
 // Автор Sclex, набор RegExp-ов - TaKir, Sclex, 06.04.2023
 // 30 января 2023 года исправлены недочеты поисковых команд, на которые (недочеты) указал пользователь stokber
 // 06 апреля 2023 года исправлены недочеты поисковых команд, на которые (недочеты) указал пользователь stokber
@@ -1022,7 +1022,7 @@ function Run() {
    s_html=ptr.innerHTML;
   
    while (el && el!=fbwBody) {
-    if (el.nodeName=="P" && s1_len<s_len) {
+    if (el.nodeName=="P" && (s1_len<s_len || s_len==0)) {
      founds=[];
      foundsCnt=0;
      minPos=-1;
@@ -1050,6 +1050,7 @@ function Run() {
       }
       else { //its tagRegExp[i]==true, т.е. в этой ветке ищем по теговым регэкспам
        flag1=true;
+       regExps[i].lastIndex=s1_html_len;
        rslt=regExps[i].exec(s_html);
        savedIndex=s1_html_len+(ignoreNullPosition?1:0);
        while (rslt && flag1) {
@@ -1126,10 +1127,10 @@ function Run() {
     }
     while (el && el!=fbwBody && el.nodeName!="P")
      if (el && el.firstChild && el.nodeName!="P")
-    el=el.firstChild;
+      el=el.firstChild;
      else {
-    while (el && el!=fbwBody && el.nextSibling==null) el=el.parentNode;
-    if (el && el!=fbwBody) el=el.nextSibling;
+      while (el && el!=fbwBody && el.nextSibling==null) el=el.parentNode;
+      if (el && el!=fbwBody) el=el.nextSibling;
      }
     if (el && el.nodeName=="P") {
      s=el.innerHTML.replace(removeTagsRE,removeTagsRE_).replace(imgTagRE,imgTagRE_).replace(ltRE,ltRE_).replace(gtRE,gtRE_).replace(ampRE,ampRE_).replace(nbspRE,nbspRE_);
@@ -1150,7 +1151,7 @@ function Run() {
  el=tr.parentElement();
  el2=el;
  while (el2 && el2.nodeName!="BODY" && el2.nodeName!="P")
- el2=el2.parentNode;
+  el2=el2.parentNode;
  ptr=el2;
 
  if (el2.nodeName=="P") {
