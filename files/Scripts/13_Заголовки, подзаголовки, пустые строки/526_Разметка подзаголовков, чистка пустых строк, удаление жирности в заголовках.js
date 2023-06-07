@@ -4,7 +4,7 @@
 function Run() {
  try { var nbspChar=window.external.GetNBSP(); var nbspEntity; if (nbspChar.charCodeAt(0)==160) nbspEntity="&nbsp;"; else nbspEntity=nbspChar;}
  catch(e) { var nbspChar=String.fromCharCode(160); var nbspEntity="&nbsp;";}
- var verStr="v4.3";
+ var verStr="v4.4";
  var DebugMode=0;
  var DestrongTitles=true; //делать ли удаление жирности в заголовках
  var DeitalicTitles=false; //удалять ли курсив в заголовках
@@ -31,8 +31,8 @@ function Run() {
  function destrongAndDeitalic(el,destrong,deitalic) {
   var elHtmlStr=el.innerHTML;
   var savedHtmlStr=elHtmlStr;
-  if (destrong) elHtmlStr=elHtmlStr.replace(/<\/?(STRONG|B)( [>]*)?>/gi,"");
-  if (deitalic) elHtmlStr=elHtmlStr.replace(/<\/?(EM|I)( [>]*)?>/gi,"");
+  if (destrong) elHtmlStr=elHtmlStr.replace(/<\/?(STRONG|B)( [^>]*)?>/gi,"");
+  if (deitalic) elHtmlStr=elHtmlStr.replace(/<\/?(EM|I)( [^>]*)?>/gi,"");
   if (elHtmlStr!=savedHtmlStr) el.innerHTML=elHtmlStr;
   
  }
