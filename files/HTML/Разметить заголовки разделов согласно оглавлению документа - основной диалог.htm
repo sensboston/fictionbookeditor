@@ -23,9 +23,9 @@
 
   function removeBlockMarkers() {
     if (mainDocument.getElementById("mtbc_BlockStart"))
-      mainDocument.getElementById("mtbc_BlockStart").removeNode(false);
+      mainDocument.getElementById("mtbc_BlockStart").removeNode(true);
     if (mainDocument.getElementById("mtbc_BlockEnd"))
-      mainDocument.getElementById("mtbc_BlockEnd").removeNode(false);
+      mainDocument.getElementById("mtbc_BlockEnd").removeNode(true);
     if (undoBeginMade) myWin.myEndUndoUnit();
   }
 
@@ -100,6 +100,9 @@
                          .replace(/</g,"&lt;")
                          .replace(/>/g,"&gt;");
       Arr=contentsText.match(/^[^\r\n]+/gm);
+      Arr2=[];
+      for (var jjj=0; jjj<Arr.length; jjj++)
+        Arr2.push(true);
       contentsText=contentsText.replace(/[–—]/g,"-").replace(/[«„“»]/g,'"').replace(/…/g,"...").replace(/’/g,"'");
       contentsText=contentsText.toLowerCase();
       titlesArr=contentsText.match(/^[^\r\n]+$/gm);
@@ -144,25 +147,26 @@
                             .replace(/\[\d+\]|\{\d+\}|\*+/gmi,"")
                             .replace(/([a-zа-яё.,:;!?»"\)])\d+/ig,"$1");
       //alert("titleTextNew after: \n\n"+titleTextNew)
+      //alert("Вызов detectIfTitleFits.\n\ntitleTextNew: #"+titleTextNew+"#\n\ntitlesArr: "+titlesArr+"\n\nArr[0]: "+Arr[0]);
       for (var i=0; i<titlesArr.length; i++) {
         if (processingType=="FullMatch") {
           if (titleTextNew==titlesArr[i]) {
             savedPThatFits=Arr[i];
-            delete Arr[i];
+            Arr2[i]=false;
             return true;
           }
         }
         else if (processingType=="MatchWithIgnoring") {
           if (titleTextNew2==titlesArr[i]) {
             savedPThatFits=Arr[i];
-            delete Arr[i];
+            Arr2[i]=false;
             return true;
           }
           else if (titleTextNew2.indexOf(titlesArr[i])==0 &&
                    titleTextNew2.substr(titlesArr[i].length).search(strEnding2)!=-1
                    ) {
             savedPThatFits=Arr[i];
-            delete Arr[i];
+            Arr2[i]=false;
             return true;
           }
         }
@@ -232,6 +236,7 @@
         if (ptrInSection.nodeName=="P" && ptrInSection.innerHTML=="") 
           ptrInSection.innerHTML=nbspChar;
         if (!weAreInBlock && ptrInSection.nodeName=="P" /* && ptrInSection.className!="subtitle" */ && detectIfTitleFits(ptrInSection.innerHTML)) {
+         //alert("ptrInSection.innerHTML: "+ptrInSection.innerHTML+"\n\nadaptCaseMode: "+adaptCaseMode+"\n\nsavedPThatFits: "+savedPThatFits);
          if (adaptCaseMode && savedPThatFits)
            ptrInSection.innerHTML=adaptCase(ptrInSection.innerHTML,savedPThatFits);
          titleBegin=ptrInSection;
@@ -333,7 +338,7 @@
     var captureBeforeCnt=0;
     var captureAfterCnt=0;
     var titlesArr=[];
-    var Arr=[];
+    var Arr=[], Arr2;
     getReadyTitlesArray();
     if (!titlesArr) {
       alert("Список не содержит ни одного заголовка, поэтому заголовки в этот раз не были размечены.");
@@ -345,7 +350,7 @@
     }
     var titlesNewArr=[];
     for (var i=0; i<Arr.length; i++)
-      if (Arr[i]) {
+      if (Arr2[i]) {
         titlesNewArr.push(Arr[i]);
     }
     document.getElementById("contentsTextArea").value=titlesNewArr.join("\n")
@@ -402,8 +407,35 @@
     contentsTextArea.value=contentsText;
     //alert(contentsText);
   }
+
+function main() {
+  var crLfRegExp=new RegExp("[\\r\\n]+","gm");
+  var crLfRegExp_="\n";
+  var params=window.dialogArguments;
+
+  // найдем первый и последний абзац в пользовательском выделении
+  var MyTagName="B";
+  removeBlockMarkers();
+
+  var ttr1=mainDocument.selection.createRange();
+  var tr1=ttr1.duplicate();
+  tr1.collapse();
+  var tr2=ttr1.duplicate();
+  tr2.collapse(false);
+  tr2.select();
+  tr1.pasteHTML("<"+MyTagName+" id=mtbc_BlockStart></"+MyTagName+">");
+  tr2.pasteHTML("<"+MyTagName+" id=mtbc_BlockEnd></"+MyTagName+">");
+  
+  makeSelection();
+//  if (mainDocument.getElementById("mtbc_BlockStart"))
+//    mainDocument.getElementById("mtbc_BlockStart").removeNode(true);
+//  if (mainDocument.getElementById("mtbc_BlockEnd"))
+//    mainDocument.getElementById("mtbc_BlockEnd").removeNode(true);
+  document.getElementById("contentsTextArea").value=myRange.text.replace(crLfRegExp,crLfRegExp_)
+     .replace(new RegExp("^([ "+nbspChar+"]*[\\r\\n]+)+","gm"),"\n");
+}
  </script>
-<body onbeforeunload="removeBlockMarkers();">
+<body onbeforeunload="removeBlockMarkers();" onload="main();">
 
 <input type="button" value="Удалить из оглавления лишние символы" onclick="removeSymbols();">
 <!-- <input type="button" value="Код в буфер" onclick="window.clipboardData.setData('text',mainDocument.body.outerHTML);"> -->
@@ -423,29 +455,5 @@
 <input type="button" value="Разметить заголовки разделов согласно списку" onclick="markupTitles();">
 <textarea style="width:100%; height:70%;" id="contentsTextArea">
 </textarea>
-<script>
-  var crLfRegExp=new RegExp("[\\r\\n]+","gm");
-  var crLfRegExp_="\n";
-  var params=window.dialogArguments;
-
-  // найдем первый и последний абзац в пользовательском выделении
-  var MyTagName="B";
-  removeBlockMarkers();
-  var ttr1=mainDocument.selection.createRange();
-  var tr=ttr1.duplicate();
-  tr.collapse();
-  tr.pasteHTML("<"+MyTagName+" id=mtbc_BlockStart></"+MyTagName+">");
-  tr=ttr1.duplicate();
-  tr.collapse(false);
-  tr.pasteHTML("<"+MyTagName+" id=mtbc_BlockEnd></"+MyTagName+">");
-  // alert(fbwBody.outerHTML);
-  makeSelection();
-//  if (mainDocument.getElementById("mtbc_BlockStart"))
-//    mainDocument.getElementById("mtbc_BlockStart").removeNode(true);
-//  if (mainDocument.getElementById("mtbc_BlockEnd"))
-//    mainDocument.getElementById("mtbc_BlockEnd").removeNode(true);
-  document.getElementById("contentsTextArea").value=myRange.text.replace(crLfRegExp,crLfRegExp_)
-     .replace(new RegExp("^([ "+nbspChar+"]*[\\r\\n]+)+","gm"),"\n");
-</script>
 </body>
 </html>
