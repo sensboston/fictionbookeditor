@@ -303,10 +303,13 @@
        regExp2_="</DIV >";
        regExp3=new RegExp("\\A\\s*?</DIV><DIV class=section>");
        regExp3_="";
-       regExp4=new RegExp("</DIV >\\s*</DIV >\\s*<DIV class=section><DIV class=title>");
+       regExp4=new RegExp("</DIV >\\s*</DIV >\\s*<DIV class=section><DIV class=title>","g");
        regExp4_="";
-       if (document.getElementById("checkbox2").checked)
+       //alert("Предварительный alert.");
+       if (document.getElementById("checkbox2").checked) {
+         //alert("sectionPtr.outerHTML:\n\n"+sectionPtr.outerHTML);
          sectionPtr.outerHTML=sectionPtr.outerHTML.replace(regExp1,regExp1_).replace(regExp2,regExp2_).replace(regExp3,regExp3_).replace(regExp4,regExp4_);
+       }
        else
          sectionPtr.outerHTML=sectionPtr.outerHTML.replace(regExp1,regExp1_).replace(regExp2,regExp2_).replace(regExp3,regExp3_);
        makeSelection();
