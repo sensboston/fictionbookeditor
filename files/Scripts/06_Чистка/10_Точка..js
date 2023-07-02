@@ -20,7 +20,7 @@
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // v.1.8 — кастомизированные nbsp — Sclex (20.03.2010)
 //======================================
-var VersionNumber="1.9";
+var VersionNumber="2.0";
 
 //обрабатывать ли history
 var ObrabotkaHistory=false;
@@ -1082,9 +1082,16 @@ sobCol[""] = true;
 //    window.external.BeginUndoUnit(document,"точка, точка, запятая...");                               // отключил откат — жрёт оперативку
 
  var s="";
+ var log="";
+ 
+ //function addToLog(s) {
+ //  log+=s;
+ //  window.clipboardData.setData("text",log);
+ //}
 
  // функция, обрабатывающая абзац P
  function HandleP(ptr) {
+  //addToLog("Вошли в HandleP. ");
   s=ptr.innerHTML;
 
 ptr2=ptr;                                      // следующий абзац за совпадением — переход на него, чтобы в FBE было видно  проблемное место
@@ -1106,7 +1113,6 @@ while (ptr2!=fbw_body && ptr2.nodeName!="P") {
        if (s.search(re10)!=-1)
          {
            if (ptr2==fbw_body) GoTo(ptr); else GoTo(ptr2);
-
 
        while (s.search(re10)!=-1) {
     var v1  = s.replace(re10, re11);
@@ -1134,7 +1140,7 @@ while (ptr2!=fbw_body && ptr2.nodeName!="P") {
 
 // MsgBox("a1: "+a1+"\nsearch: "+ss.search(s1)+"\nnakat: "+nak+"\ns1: "+s1+"\nb1: "+b1+"\nem2: "+em2+"\nem3: "+em3+"\n\ns: \n"+s+"\nss: \n"+ss);
 //                   Конец подсветки                           //
-
+  
   if (sobCol[sob]==true)  {
         if (k<10)   { Col[k] = v1;    s=sl1+("col1_" +k)+sp1;  nak=nak+b1-6; } 
         if (k>10)   { Col[k] = v1;    s=sl1+("col2_" +k)+sp1;  nak=nak+b1-7; }
@@ -1149,15 +1155,21 @@ while (ptr2!=fbw_body && ptr2.nodeName!="P") {
 // var r=prompt(" :: Пропущена точка ::                                                                … " +count+ "\nВведите свой вариант:                " +v1,v1)
  if(r!=null && r.$!="")  { Col[k] = r.$;    s=sl1+("col1_" +k)+sp1;  if (r.$!=v1) {count++} }
  else                       { Col[k] = v1; sobCol[sob]=true;  s=sl1+("col1_" +k)+sp1}; {counttt++} nak=nak+b1-6; }
+ //addToLog("Точка 4. ");
  if (k>=10 && sobCol[sob]==null) {
+ //addToLog("Точка 4.1. count: "+count+" v1: "+v1+" r: "+r+" IDCANCEL: "+IDCANCEL+" ");
  // changed by SeNS
+ var r=Object();
  if (InputBox(" :: Пропущена точка ::                                                                … " +count+ "\nВведите свой вариант:                " +v1,v1, r) == IDCANCEL) return "exit";
+ //addToLog("Точка 4.2. ");
 // var r=prompt(" :: Пропущена точка ::                                                                … " +count+ "\nВведите свой вариант:                " +v1,v1)
  if(r!=null && r.$!="")  { Col[k] = r.$;    s=sl1+("col2_" +k)+sp1;  if (r!=v1) {count++} }
  else                       { Col[k] = v1; sobCol[sob]=true;  s=sl1+("col2_" +k)+sp1}; {counttt++} nak=nak+b1-7; }
+ //addToLog("Точка 4.3. ");
 k++; }
 
-				}
+ //addToLog("Точка 5. ");				
+ }
 
 
 
@@ -1172,6 +1184,7 @@ for (z=0;z<k;z++)  {
 
    ptr.innerHTML=s; 
 // changed by SeNS
+   //addToLog("Вышли из HandleP. ");
    return true;
   } 
 
@@ -1191,7 +1204,7 @@ for (z=0;z<k;z++)  {
  while (ptr2 && ptr2.nodeName!="BODY" && ptr2.nodeName!="P")
   ptr2=ptr2.parentNode;
  if (ptr2 && ptr2.nodeName=="P") ptr=ptr2;
- alert(ptr.outerHTML);
+ //alert(ptr.outerHTML);
  while (!ProcessingEnding && ptr) {
   SaveNext=ptr;
   if (SaveNext.firstChild!=null && SaveNext.nodeName!="P" && 
