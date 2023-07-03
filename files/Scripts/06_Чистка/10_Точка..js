@@ -20,7 +20,7 @@
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // v.1.8 — кастомизированные nbsp — Sclex (20.03.2010)
 //======================================
-var VersionNumber="2.0";
+var VersionNumber="2.1";
 
 //обрабатывать ли history
 var ObrabotkaHistory=false;
@@ -1046,15 +1046,6 @@ sobCol["Юстинианом"] = true;
 sobCol["Ямале"] = true;
 sobCol["Япете"] = true;
 sobCol["Японию"] = true;
-sobCol[""] = true;
-sobCol[""] = true;
-sobCol[""] = true;
-sobCol[""] = true;
-sobCol[""] = true;
-sobCol[""] = true;
-sobCol[""] = true;
-sobCol[""] = true;
-
                                                    // После строчной через пробел Прописная — возможно пропущена точка
  var re10 = new RegExp("^(.*?){0,1}([А-ЯЁ]*[а-яё]+“{0,1}»{0,1})("+eIB+"){0,1} ("+sIB+"){0,1}(«{0,1}„{0,1}([А-ЯЁ]+[А-яё\\\-']*))(.*?){0,1}$","g");
  var re11 = "$2$3 $4$5";
@@ -1243,8 +1234,8 @@ var Tsec3 = Math.ceil(1000*((Tf-Ts)/1000-Tmin*60))/1000;
  else { if (Tmin>=1 && Thour<1)   TimeStr=Tmin+ " мин " +Tsec+ " с"
  else { if (Thour>=1)                    TimeStr=Thour+ " ч " +Tmin+ " мин " +Tsec+ " с"  }}}}}
 
- MsgBox ('       –= Jurgen Script =–          \n'+
-              '«Точка. Точка, запятая» v.'+VersionNumber+'	\n\n'+
+ MsgBox ('–= Jurgen Script =–          \n'+
+              '«Точка.» v.'+VersionNumber+'	\n\n'+
 
               ' Произведено замен: ' +count+'\n\n'+
 
