@@ -20,7 +20,7 @@
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // v.1.8 — кастомизированные nbsp — Sclex (20.03.2010)
 //======================================
-var VersionNumber="2.1";
+var VersionNumber="2.2";
 
 //обрабатывать ли history
 var ObrabotkaHistory=false;
@@ -1154,7 +1154,7 @@ while (ptr2!=fbw_body && ptr2.nodeName!="P") {
  if (InputBox(" :: Пропущена точка ::                                                                … " +count+ "\nВведите свой вариант:                " +v1,v1, r) == IDCANCEL) return "exit";
  //addToLog("Точка 4.2. ");
 // var r=prompt(" :: Пропущена точка ::                                                                … " +count+ "\nВведите свой вариант:                " +v1,v1)
- if(r!=null && r.$!="")  { Col[k] = r.$;    s=sl1+("col2_" +k)+sp1;  if (r!=v1) {count++} }
+ if(r!=null && r.$!="")  { Col[k] = r.$;    s=sl1+("col2_" +k)+sp1;  if (r.$!=v1) {count++} }
  else                       { Col[k] = v1; sobCol[sob]=true;  s=sl1+("col2_" +k)+sp1}; {counttt++} nak=nak+b1-7; }
  //addToLog("Точка 4.3. ");
 k++; }
