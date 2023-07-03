@@ -20,7 +20,7 @@
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // v.1.8 — кастомизированные nbsp — Sclex (20.03.2010)
 //======================================
-var VersionNumber="2.2";
+var VersionNumber="2.3";
 
 //обрабатывать ли history
 var ObrabotkaHistory=false;
@@ -44,10 +44,10 @@ function Run() {
 
   var nak = 0;                   // коррекция сдвига подсветки после вставки временых замен и курсива.
 
-          Col = new Object();                        // коллекции проверенных словосочетаний
-           var k = 0;
+  var Col = new Object();                        // коллекции проверенных словосочетаний
+  var k = 0;
 
-          sobCol = new Object();                   // коллекция имён Собственных, перед которыми не стоит ставить точку, набивается при «Отмене»
+  var sobCol = new Object();                   // коллекция имён Собственных, перед которыми не стоит ставить точку, набивается при «Отмене»
 
 // Можно, конечно, набить предварительный словарь, но он должен быть огромным и не факт, что все Имена собственные располагаются в середине предложения, а не в начале. Однако с ним веселее. ;)
 
@@ -1047,27 +1047,26 @@ sobCol["Ямале"] = true;
 sobCol["Япете"] = true;
 sobCol["Японию"] = true;
                                                    // После строчной через пробел Прописная — возможно пропущена точка
- var re10 = new RegExp("^(.*?){0,1}([А-ЯЁ]*[а-яё]+“{0,1}»{0,1})("+eIB+"){0,1} ("+sIB+"){0,1}(«{0,1}„{0,1}([А-ЯЁ]+[А-яё\\\-']*))(.*?){0,1}$","g");
- var re11 = "$2$3 $4$5";
- var re12 = "$1";
- var re13 = "$7";
- var re14 = "$2 $5";
- var re15 = "$6";                    // Слово с Прописной после пробела (в коллекцию)
+  var re10 = new RegExp("^(.*?){0,1}([А-ЯЁ]*[а-яё]+“{0,1}»{0,1})("+eIB+"){0,1} ("+sIB+"){0,1}(«{0,1}„{0,1}([А-ЯЁ]+[А-яё\\\-']*))(.*?){0,1}$","g");
+  var re11 = "$2$3 $4$5";
+  var re12 = "$1";
+  var re13 = "$7";
+  var re14 = "$2 $5";
+  var re15 = "$6";                    // Слово с Прописной после пробела (в коллекцию)
 
- var re1s = new RegExp("([А-ЯЁ]*[а-яё]+“{0,1}»{0,1}("+eIB+"){0,1}) (("+sIB+"){0,1}«{0,1}„{0,1}([А-ЯЁ]+[А-яё\\\-']*))","g");
+  var re1s = new RegExp("([А-ЯЁ]*[а-яё]+“{0,1}»{0,1}("+eIB+"){0,1}) (("+sIB+"){0,1}«{0,1}„{0,1}([А-ЯЁ]+[А-яё\\\-']*))","g");
 
- var re1cl = new RegExp("<[^<>]+>","g");
- var re11cl = "";
+  var re1cl = new RegExp("<[^<>]+>","g");
+  var re11cl = "";
 
- var re2cl = new RegExp(nbspEntity,"g");
- var re21cl = " ";
+  var re2cl = new RegExp(nbspEntity,"g");
+  var re21cl = " ";
 
- var re3cl = new RegExp("&#\\\d+;","g");
- var re31cl = "q";
+  var re3cl = new RegExp("&#\\\d+;","g");
+  var re31cl = "q";
 
-                                                     // шаблоны для финального восстановления временных замен «col1_» – до десяти, свыше – «col2_»
-  var re_fin1 = new RegExp("col1_\\\d","g");
-  var re_fin2 = new RegExp("col2_\\\d{2}","g");
+                                                   // шаблоны для финального восстановления временных замен
+  var re_fin1 = new RegExp("col5_\\d{5}","g");
 
 
 //    window.external.BeginUndoUnit(document,"точка, точка, запятая...");                               // отключил откат — жрёт оперативку
@@ -1079,105 +1078,112 @@ sobCol["Японию"] = true;
  //  log+=s;
  //  window.clipboardData.setData("text",log);
  //}
-
+ function addZeros(n,n_len) {
+  var s=n.toString();
+  while (s.length<n_len) s="0"+s;
+  return s;
+ } 
  // функция, обрабатывающая абзац P
  function HandleP(ptr) {
   //addToLog("Вошли в HandleP. ");
   s=ptr.innerHTML;
 
-ptr2=ptr;                                      // следующий абзац за совпадением — переход на него, чтобы в FBE было видно  проблемное место
-if (ptr2.hasChildNodes()) {
-   ptr2=ptr2.firstChild;
-} else {
-   while (ptr2!=fbw_body && !ptr2.nextSibling) ptr2=ptr2.parentNode;
-   if (ptr2!=fbw_body) ptr2=ptr2.nextSibling;
-}
-while (ptr2!=fbw_body && ptr2.nodeName!="P") {
-   if (ptr2.hasChildNodes() && ptr2.nodeName!="P") {
+  ptr2=ptr;                                      // следующий абзац за совпадением — переход на него, чтобы в FBE было видно  проблемное место
+  if (ptr2.hasChildNodes()) {
      ptr2=ptr2.firstChild;
-   } else {
+  } else {
      while (ptr2!=fbw_body && !ptr2.nextSibling) ptr2=ptr2.parentNode;
      if (ptr2!=fbw_body) ptr2=ptr2.nextSibling;
-   }
-}
+  }
+  while (ptr2!=fbw_body && ptr2.nodeName!="P") {
+     if (ptr2.hasChildNodes() && ptr2.nodeName!="P") {
+       ptr2=ptr2.firstChild;
+     } else {
+       while (ptr2!=fbw_body && !ptr2.nextSibling) ptr2=ptr2.parentNode;
+       if (ptr2!=fbw_body) ptr2=ptr2.nextSibling;
+     }
+  }
 
-       if (s.search(re10)!=-1)
-         {
-           if (ptr2==fbw_body) GoTo(ptr); else GoTo(ptr2);
-
-       while (s.search(re10)!=-1) {
-    var v1  = s.replace(re10, re11);
-    var sl1   = s.replace(re10, re12);
-    var sp1   = s.replace(re10, re13);
-
-    var sob = s.replace(re10, re15);
-
-//                  Подсветка                                    //
- var ss = s;                      // очистка абзаца от тегов, неразрывных, умляутов
- if (s.search(re1cl)!=-1) {ss = ss.replace(re1cl, re11cl);}
- if (s.search(re2cl)!=-1) {ss = ss.replace(re2cl, re21cl);}
- if (s.search(re3cl)!=-1) {ss = ss.replace(re3cl, re31cl);}
-
- var s1  = s.replace(re10, re14);
- var a1=ss.search(s1)+nak;
- var b1=s1.length
-
- var range1=document.body.createTextRange();
- range1.moveToElementText(ptr);
- range1.collapse();
- range1.move("character",a1);
- range1.moveEnd("character",b1);
- range1.select();
-
-// MsgBox("a1: "+a1+"\nsearch: "+ss.search(s1)+"\nnakat: "+nak+"\ns1: "+s1+"\nb1: "+b1+"\nem2: "+em2+"\nem3: "+em3+"\n\ns: \n"+s+"\nss: \n"+ss);
-//                   Конец подсветки                           //
+  if (s.search(re10)!=-1) {
   
-  if (sobCol[sob]==true)  {
-        if (k<10)   { Col[k] = v1;    s=sl1+("col1_" +k)+sp1;  nak=nak+b1-6; } 
-        if (k>10)   { Col[k] = v1;    s=sl1+("col2_" +k)+sp1;  nak=nak+b1-7; }
-		 k++;} 
+   if (ptr2==fbw_body) GoTo(ptr); else GoTo(ptr2);
 
-// MsgBox ('      И где это я?     \nv1:  ' +v1+ '\nsobCol[l]: ' +sob+ '  =  ' +sobCol[sob]+ '\n\nабзац:\n' +s );
+   while (s.search(re10)!=-1) {
+     var v1  = s.replace(re10, re11);
+     var sl1   = s.replace(re10, re12);
+     var sp1   = s.replace(re10, re13);
 
- if (k<10 && sobCol[sob]==null) {
- // changed by SeNS
- var r=Object();
- if (InputBox(" :: Пропущена точка ::                                                                … " +count+ "\nВведите свой вариант:                " +v1,v1, r) == IDCANCEL) return "exit";
-// var r=prompt(" :: Пропущена точка ::                                                                … " +count+ "\nВведите свой вариант:                " +v1,v1)
- if(r!=null && r.$!="")  { Col[k] = r.$;    s=sl1+("col1_" +k)+sp1;  if (r.$!=v1) {count++} }
- else                       { Col[k] = v1; sobCol[sob]=true;  s=sl1+("col1_" +k)+sp1}; {counttt++} nak=nak+b1-6; }
+     var sob = s.replace(re10, re15);
+
+     //                  Подсветка                                    //
+     var ss = s;                      // очистка абзаца от тегов, неразрывных, умляутов
+     if (s.search(re1cl)!=-1) ss=ss.replace(re1cl, re11cl);
+     if (s.search(re2cl)!=-1) ss=ss.replace(re2cl, re21cl);
+     if (s.search(re3cl)!=-1) ss=ss.replace(re3cl, re31cl);
+    
+     var s1=s.replace(re10, re14);
+     var a1=ss.search(s1)+nak;
+     var b1=s1.length
+    
+     var range1=document.body.createTextRange();
+     range1.moveToElementText(ptr);
+     range1.collapse();
+     range1.move("character",a1);
+     range1.moveEnd("character",b1);
+     range1.select();
+    
+    // MsgBox("a1: "+a1+"\nsearch: "+ss.search(s1)+"\nnakat: "+nak+"\ns1: "+s1+"\nb1: "+b1+"\nem2: "+em2+"\nem3: "+em3+"\n\ns: \n"+s+"\nss: \n"+ss);
+    //                   Конец подсветки                           //
+  
+     if (sobCol[sob]==true)  {
+       Col[k] = v1;
+       s=sl1+("col5_" +addZeros(k,5))+sp1;
+       nak+=b1-10;
+       k++;
+     } 
+
+     // MsgBox ('      И где это я?     \nv1:  ' +v1+ '\nsobCol[l]: ' +sob+ '  =  ' +sobCol[sob]+ '\n\nабзац:\n' +s );
+     //alert("s: "+s);
+     // changed by SeNS
+     var r=Object();
+     if (InputBox(" :: Пропущена точка ::                                                                … " +count+ "\nВведите свой вариант:                " +v1,v1, r) == IDCANCEL) return "exit";
+     // var r=prompt(" :: Пропущена точка ::                                                                … " +count+ "\nВведите свой вариант:                " +v1,v1)
+     if (r!=null && r.$!="")  {
+       Col[k] = r.$;
+       s=sl1+("col5_" +addZeros(k,5))+sp1;
+       if (r.$!=v1) count++;
+     }
+     else {
+       Col[k] = v1;
+       sobCol[sob]=true;
+       s=sl1+("col5_"+addZeros(k,5))+sp1
+     };
+     counttt++;
+     nak=nak+b1-10;
  //addToLog("Точка 4. ");
- if (k>=10 && sobCol[sob]==null) {
- //addToLog("Точка 4.1. count: "+count+" v1: "+v1+" r: "+r+" IDCANCEL: "+IDCANCEL+" ");
- // changed by SeNS
- var r=Object();
- if (InputBox(" :: Пропущена точка ::                                                                … " +count+ "\nВведите свой вариант:                " +v1,v1, r) == IDCANCEL) return "exit";
- //addToLog("Точка 4.2. ");
-// var r=prompt(" :: Пропущена точка ::                                                                … " +count+ "\nВведите свой вариант:                " +v1,v1)
- if(r!=null && r.$!="")  { Col[k] = r.$;    s=sl1+("col2_" +k)+sp1;  if (r.$!=v1) {count++} }
- else                       { Col[k] = v1; sobCol[sob]=true;  s=sl1+("col2_" +k)+sp1}; {counttt++} nak=nak+b1-7; }
- //addToLog("Точка 4.3. ");
-k++; }
-
+     k++;
+   }
  //addToLog("Точка 5. ");				
  }
 
-
-
-if ( s.search(re_fin1)!=-1 || s.search(re_fin2)!=-1) {                                                 // Восстановление временных замен
-for (z=0;z<k;z++)  {
-                     if (z<10)     { var re200 = new RegExp("col1_("+z+")","g");
-                                        var re201 = Col[z];
-                                           s=s.replace(re200,re201); }
-                  if (z>=10)      {var re210 = new RegExp("col2_("+z+")","g");
-                                        var re211 = Col[z];
-                                           s=s.replace(re210,re211); }            }                  k=0;    nak = 0;}
+   var re200, re201;
+   
+   if (s.search(re_fin1)!=-1) { //Восстановление временных замен
+     for (z=0;z<k;z++)  {
+       re200 = new RegExp("col5_("+addZeros(z,5)+")","g");
+       re201 = Col[z];
+       //alert("Заменяем re200: "+re200);
+       s=s.replace(re200,re201);
+      } 
+      k=0;
+      nak=0;
+   }
 
    ptr.innerHTML=s; 
 // changed by SeNS
    //addToLog("Вышли из HandleP. ");
    return true;
-  } 
+ }
 
  var body=document.getElementById("fbw_body");
  var ptr=body;
@@ -1217,24 +1223,24 @@ for (z=0;z<k;z++)  {
   ptr=SaveNext;
  }
 
-window.external.EndUndoUnit(document);
+  window.external.EndUndoUnit(document);
 
-var Tf=new Date().getTime();
-var Thour = Math.floor((Tf-Ts)/3600000);
-var Tmin  = Math.floor((Tf-Ts)/60000-Thour*60);
-var Tsec = Math.ceil((Tf-Ts)/1000-Tmin*60-Thour*3600);
-var Tsec1 = Math.ceil(10*((Tf-Ts)/1000-Tmin*60))/10;
-var Tsec2 = Math.ceil(100*((Tf-Ts)/1000-Tmin*60))/100;
-var Tsec3 = Math.ceil(1000*((Tf-Ts)/1000-Tmin*60))/1000;
+  var Tf=new Date().getTime();
+  var Thour = Math.floor((Tf-Ts)/3600000);
+  var Tmin  = Math.floor((Tf-Ts)/60000-Thour*60);
+  var Tsec = Math.ceil((Tf-Ts)/1000-Tmin*60-Thour*3600);
+  var Tsec1 = Math.ceil(10*((Tf-Ts)/1000-Tmin*60))/10;
+  var Tsec2 = Math.ceil(100*((Tf-Ts)/1000-Tmin*60))/100;
+  var Tsec3 = Math.ceil(1000*((Tf-Ts)/1000-Tmin*60))/1000;
 
-           if (Tsec3<1 && Tmin<1)    TimeStr=Tsec3+ " сек"
- else { if (Tsec2<10 && Tmin<1)   TimeStr=Tsec2+ " сек"
- else { if (Tsec1<30 && Tmin<1)   TimeStr=Tsec1+ " сек"
- else { if (Tmin<1)                       TimeStr=Tsec+ " сек" 
- else { if (Tmin>=1 && Thour<1)   TimeStr=Tmin+ " мин " +Tsec+ " с"
- else { if (Thour>=1)                    TimeStr=Thour+ " ч " +Tmin+ " мин " +Tsec+ " с"  }}}}}
+  if (Tsec3<1 && Tmin<1)    TimeStr=Tsec3+ " сек"
+  else { if (Tsec2<10 && Tmin<1)   TimeStr=Tsec2+ " сек"
+  else { if (Tsec1<30 && Tmin<1)   TimeStr=Tsec1+ " сек"
+  else { if (Tmin<1)                       TimeStr=Tsec+ " сек" 
+  else { if (Tmin>=1 && Thour<1)   TimeStr=Tmin+ " мин " +Tsec+ " с"
+  else { if (Thour>=1)                    TimeStr=Thour+ " ч " +Tmin+ " мин " +Tsec+ " с"  }}}}}
 
- MsgBox ('–= Jurgen Script =–          \n'+
+  MsgBox ('–= Jurgen Script =–          \n'+
               '«Точка.» v.'+VersionNumber+'	\n\n'+
 
               ' Произведено замен: ' +count+'\n\n'+
