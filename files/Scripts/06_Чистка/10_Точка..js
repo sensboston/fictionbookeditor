@@ -20,7 +20,7 @@
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // v.1.8 — кастомизированные nbsp — Sclex (20.03.2010)
 //======================================
-var VersionNumber="2.3";
+var VersionNumber="2.4";
 
 //обрабатывать ли history
 var ObrabotkaHistory=false;
@@ -1047,12 +1047,12 @@ sobCol["Ямале"] = true;
 sobCol["Япете"] = true;
 sobCol["Японию"] = true;
                                                    // После строчной через пробел Прописная — возможно пропущена точка
-  var re10 = new RegExp("^(.*?){0,1}([А-ЯЁ]*[а-яё]+“{0,1}»{0,1})("+eIB+"){0,1} ("+sIB+"){0,1}(«{0,1}„{0,1}([А-ЯЁ]+[А-яё\\\-']*))(.*?){0,1}$","g");
-  var re11 = "$2$3 $4$5";
-  var re12 = "$1";
-  var re13 = "$7";
-  var re14 = "$2 $5";
-  var re15 = "$6";                    // Слово с Прописной после пробела (в коллекцию)
+ var re10 = new RegExp("^(.*?){0,1}([А-ЯЁ]*[а-яё]+“{0,1}»{0,1})("+eIB+"){0,1}( |"+nbspChar+")("+sIB+"){0,1}(«{0,1}„{0,1}([А-ЯЁ]+[А-яё\\\-']*))(.*?){0,1}$","g");
+ var re11 = "$2$3$4$5$6";
+ var re12 = "$1";
+ var re13 = "$8";
+ var re14 = "$2$4$6";
+ var re15 = "$7";                    // Слово с Прописной после пробела (в коллекцию)
 
   var re1s = new RegExp("([А-ЯЁ]*[а-яё]+“{0,1}»{0,1}("+eIB+"){0,1}) (("+sIB+"){0,1}«{0,1}„{0,1}([А-ЯЁ]+[А-яё\\\-']*))","g");
 
@@ -1060,7 +1060,7 @@ sobCol["Японию"] = true;
   var re11cl = "";
 
   var re2cl = new RegExp(nbspEntity,"g");
-  var re21cl = " ";
+  var re21cl = nbspChar;
 
   var re3cl = new RegExp("&#\\\d+;","g");
   var re31cl = "q";
@@ -1083,10 +1083,13 @@ sobCol["Японию"] = true;
   while (s.length<n_len) s="0"+s;
   return s;
  } 
+ var nbspRE=new RegExp(nbspEntity,"g");
  // функция, обрабатывающая абзац P
  function HandleP(ptr) {
   //addToLog("Вошли в HandleP. ");
   s=ptr.innerHTML;
+  s=s.replace(nbspRE,nbspChar);
+  //alert("s: "+s);
 
   ptr2=ptr;                                      // следующий абзац за совпадением — переход на него, чтобы в FBE было видно  проблемное место
   if (ptr2.hasChildNodes()) {
@@ -1118,7 +1121,7 @@ sobCol["Японию"] = true;
      //                  Подсветка                                    //
      var ss = s;                      // очистка абзаца от тегов, неразрывных, умляутов
      if (s.search(re1cl)!=-1) ss=ss.replace(re1cl, re11cl);
-     if (s.search(re2cl)!=-1) ss=ss.replace(re2cl, re21cl);
+     //if (s.search(re2cl)!=-1) ss=ss.replace(re2cl, re21cl);
      if (s.search(re3cl)!=-1) ss=ss.replace(re3cl, re31cl);
     
      var s1=s.replace(re10, re14);
@@ -1134,7 +1137,6 @@ sobCol["Японию"] = true;
     
     // MsgBox("a1: "+a1+"\nsearch: "+ss.search(s1)+"\nnakat: "+nak+"\ns1: "+s1+"\nb1: "+b1+"\nem2: "+em2+"\nem3: "+em3+"\n\ns: \n"+s+"\nss: \n"+ss);
     //                   Конец подсветки                           //
-  
      if (sobCol[sob]==true)  {
        Col[k] = v1;
        s=sl1+("col5_" +addZeros(k,5))+sp1;
@@ -1145,21 +1147,23 @@ sobCol["Японию"] = true;
      // MsgBox ('      И где это я?     \nv1:  ' +v1+ '\nsobCol[l]: ' +sob+ '  =  ' +sobCol[sob]+ '\n\nабзац:\n' +s );
      //alert("s: "+s);
      // changed by SeNS
-     var r=Object();
-     if (InputBox(" :: Пропущена точка ::                                                                … " +count+ "\nВведите свой вариант:                " +v1,v1, r) == IDCANCEL) return "exit";
-     // var r=prompt(" :: Пропущена точка ::                                                                … " +count+ "\nВведите свой вариант:                " +v1,v1)
-     if (r!=null && r.$!="")  {
-       Col[k] = r.$;
-       s=sl1+("col5_" +addZeros(k,5))+sp1;
-       if (r.$!=v1) count++;
+     if (sobCol[sob]==null) {
+       var r=Object();
+       if (InputBox(" :: Пропущена точка ::                                                                … " +count+ "\nВведите свой вариант:                " +v1,v1, r) == IDCANCEL) return "exit";
+       // var r=prompt(" :: Пропущена точка ::                                                                … " +count+ "\nВведите свой вариант:                " +v1,v1)
+       if (r!=null && r.$!="")  {
+         Col[k] = r.$;
+         s=sl1+("col5_" +addZeros(k,5))+sp1;
+         if (r.$!=v1) count++;
+       }
+       else {
+         Col[k] = v1;
+         sobCol[sob]=true;
+         s=sl1+("col5_"+addZeros(k,5))+sp1
+       };
+       counttt++;
+       nak=nak+b1-10;
      }
-     else {
-       Col[k] = v1;
-       sobCol[sob]=true;
-       s=sl1+("col5_"+addZeros(k,5))+sp1
-     };
-     counttt++;
-     nak=nak+b1-10;
  //addToLog("Точка 4. ");
      k++;
    }
