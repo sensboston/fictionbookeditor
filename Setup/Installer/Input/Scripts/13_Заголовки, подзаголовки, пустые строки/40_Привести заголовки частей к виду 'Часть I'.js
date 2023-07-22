@@ -1,33 +1,25 @@
 // Скрипт "Привести заголовки частей к виду "Часть I"
 // Автор Sclex
-
-var VersionNumber="1.6";
-
+var VersionNumber="1.9";
 //обрабатывать ли history
 var ObrabotkaHistory=false;
 //обрабатывать ли annotation
 var ObrabotkaAnnotation=false;
-
-
 function Run() {
   try { var nbspChar=window.external.GetNBSP(); var nbspEntity; if (nbspChar.charCodeAt(0)==160) nbspEntity="&nbsp;"; else nbspEntity=nbspChar;}
   catch(e) { var nbspChar=String.fromCharCode(160); var nbspEntity="&nbsp;";}
   
-  var undoBlockDescription="приведение заголовков частей к виду \"Часть 1\"";
+  window.external.BeginUndoUnit(document,"приведение заголовков к виду \"Часть I\"");                               // ОТКАТ (UNDO) начало
   
   var usualNbspChar=String.fromCharCode(160);
-
   var Ts=new Date().getTime();
   var TimeStr=0;
-
   var count=0;                                                  //  счётчик
-
   var s="";
   var s2="";
   var searchRslt=0;
   var matches;
   var nReplace;
-
   var re4=new RegExp("^[ "+nbspChar+"]*Часть[ "+nbspChar+"]+\\d+[ "+nbspChar+"]*$","i");
   var re5=new RegExp("\\d+","i");
   
@@ -59,11 +51,21 @@ function Run() {
   var re15=new RegExp("^( |"+nbspChar+")*Часть"+
                        "([ "+nbspChar+"]+(первая|вторая|третья|четвертая|пятая|шестая|седьмая|восьмая|девятая|десятая|одиннадцатая|двенадцатая|тринадцатая|четырнадцатая|пятнадцатая|шестнадцатая|семнадцатая|восемнадцатая|девятнадцатая|двадцатая|двадцать|тридцатая|тридцать|сороковая|сорок|пятидесятая|пятьдесят|шестидесятая|шестьдесят|семидесятая|семьдесят|восьмидесятая|восемьдесят|девяностая|девяносто|сотая|сто|двухсотая|двести|трехсотая|триста|четырехсотая|четыреста|пятисотая|пятьсот|шестисотая|шестьсот|семисотая|семьсот|восьмисотая|восемьсот|девятисотая|девятьсот|тысячная))+[.:]?[ "+nbspChar+"]+","i");
   var re16=new RegExp("([ "+nbspChar+"]+(первая|вторая|третья|четвертая|пятая|шестая|седьмая|восьмая|девятая|десятая|одиннадцатая|двенадцатая|тринадцатая|четырнадцатая|пятнадцатая|шестнадцатая|семнадцатая|восемнадцатая|девятнадцатая|двадцатая|двадцать|тридцатая|тридцать|сороковая|сорок|пятидесятая|пятьдесят|шестидесятая|шестьдесят|семидесятая|семьдесят|восьмидесятая|восемьдесят|девяностая|девяносто|сотая|сто|двухсотая|двести|трехсотая|триста|четырехсотая|четыреста|пятисотая|пятьсот|шестисотая|шестьсот|семисотая|семьсот|восьмисотая|восемьсот|девятисотая|девятьсот|тысячная))+","i");
+  
+  var re20=new RegExp("^([ "+nbspChar+"]*(первая|вторая|третья|четвертая|пятая|шестая|седьмая|восьмая|девятая|десятая"+
+                                          "|одиннадцатая|двенадцатая|тринадцатая|четырнадцатая|пятнадцатая|шестнадцатая|"+
+                                          "семнадцатая|восемнадцатая|девятнадцатая|двадцатая|двадцать|тридцатая|тридцать|"+
+                                          "сороковая|сорок|пятидесятая|пятьдесят|шестидесятая|шестьдесят|семидесятая|семьдесят|"+
+                                          "восьмидесятая|восемьдесят|девяностая|девяносто|сотая|сто|двухсотая|двести|трехсотая|"+
+                                          "триста|четырехсотая|четыреста|пятисотая|пятьсот|шестисотая|шестьсот|семисотая|семьсот|"+
+                                          "восьмисотая|восемьсот|девятисотая|девятьсот|тысячная))+[ "+nbspChar+"]+часть$"+
+                      "[ "+nbspChar+"]*$","i");
+  var re21=new RegExp("([ "+nbspChar+"]*(первая|вторая|третья|четвертая|пятая|шестая|седьмая|восьмая|девятая|десятая|одиннадцатая|двенадцатая|тринадцатая|четырнадцатая|пятнадцатая|шестнадцатая|семнадцатая|восемнадцатая|девятнадцатая|двадцатая|двадцать|тридцатая|тридцать|сороковая|сорок|пятидесятая|пятьдесят|шестидесятая|шестьдесят|семидесятая|семьдесят|восьмидесятая|восемьдесят|девяностая|девяносто|сотая|сто|двухсотая|двести|трехсотая|триста|четырехсотая|четыреста|пятисотая|пятьсот|шестисотая|шестьсот|семисотая|семьсот|восьмисотая|восемьсот|девятисотая|девятьсот|тысячная))+[ "+nbspChar+"]+часть","i");
+  var re22=new RegExp("([ "+nbspChar+"]*(первая|вторая|третья|четвертая|пятая|шестая|седьмая|восьмая|девятая|десятая|одиннадцатая|двенадцатая|тринадцатая|четырнадцатая|пятнадцатая|шестнадцатая|семнадцатая|восемнадцатая|девятнадцатая|двадцатая|двадцать|тридцатая|тридцать|сороковая|сорок|пятидесятая|пятьдесят|шестидесятая|шестьдесят|семидесятая|семьдесят|восьмидесятая|восемьдесят|девяностая|девяносто|сотая|сто|двухсотая|двести|трехсотая|триста|четырехсотая|четыреста|пятисотая|пятьсот|шестисотая|шестьсот|семисотая|семьсот|восьмисотая|восемьсот|девятисотая|девятьсот|тысячная))+","i");
  
   var re100=new RegExp("^( |"+nbspChar+")+");
   var re101=new RegExp("( |"+nbspChar+"){2,}","g");
   var re102=new RegExp("( |"+nbspChar+")+$");
-
 a3={};
 for (var x in a3) 
   delete a3[x];
@@ -1067,7 +1069,6 @@ a3["997"]="CMXCVII";
 a3["998"]="CMXCVIII";
 a3["999"]="CMXCIX";
 a3["1000"]="M";
-
 a4={};
 for (x in a4) 
   delete a4[x];
@@ -2071,7 +2072,6 @@ a4["девятьсот девяносто седьмая"]="CMXCVII";
 a4["девятьсот девяносто восьмая"]="CMXCVIII";
 a4["девятьсот девяносто девятая"]="CMXCIX";
 a4["тысячная"]="M";
-
   function removeSymbolsBeyondTags(str,beginIndex,howManySymbolsToRemove,substrToInsert) {
     var i=0;
     var removedSymbolsCnt=0;
@@ -2105,11 +2105,9 @@ a4["тысячная"]="M";
       }
       return str2;
     }
-
  // функция, обрабатывающая абзац P
  function HandleP(ptr) {
    if (ptr.parentNode.className=="title" && ptr.parentNode.parentNode.nodeName=="DIV" && ptr.parentNode.parentNode.className=="section") {
-
     s=ptr.innerText;
 //    alert(s);
     searchRslt=s.search(re4);
@@ -2158,11 +2156,11 @@ a4["тысячная"]="M";
           }
         }
       }
-      searchRslt=s.search(re14);
+      searchRslt=s.replace(/ё/ig,"е").search(re14);
       if (searchRslt!=-1) {
         // Поиск заголовков вида "Часть тридцатая. <...>" и Часть тридцатая: <...>"
-        searchRslt=s.search(re14);
-        matches=s.match(re15);
+        searchRslt=s.replace(/ё/ig,"е").search(re14);
+        matches=s.replace(/ё/ig,"е").match(re15);
         if (matches) {
           nReplace=matches[0].length;
           s2=matches[0].replace(/[^:.]+/g,"");
@@ -2175,16 +2173,31 @@ a4["тысячная"]="M";
           }
         }
       }
+      searchRslt=s.replace(/ё/ig,"е").search(re20);
+      if (searchRslt!=-1) {
+        // Поиск заголовков вида "Тридцатая глава"
+        searchRslt=s.replace(/ё/ig,"е").search(re20);
+        matches=s.replace(/ё/ig,"е").match(re22);
+        if (matches) {
+          nReplace=matches[0].length+1;
+          s2=matches[0].replace(/[^:.]+/g,"");
+          matches=matches[0].match(re22);
+          replaceStr=a4[matches[0].toLowerCase().replace(/ё/ig,"е").replace(re100,"").replace(re101," ").replace(re102,"")];
+          if (replaceStr!=undefined) {
+              ptr.innerHTML=removeSymbolsBeyondTags(ptr.innerHTML.replace(/&nbsp;/g,usualNbspChar),1,s.length,"Часть "+replaceStr).replace(/\xA0/g,usualNbspChar);
+            count++;
+            return;
+          }
+        }
+      }
     }
 //   ptr.innerHTML=s;
    return true;
   }
-
- window.external.BeginUndoUnit(document,undoBlockDescription);                               // ОТКАТ (UNDO) начало
+  
  var body=document.getElementById("fbw_body");
  var ptr=body;
  var ProcessingEnding=false;
-
 /* var tr=document.selection.createRange();
  if (!tr) return;
  tr.collapse();
@@ -2194,9 +2207,7 @@ a4["тысячная"]="M";
  while (ptr2 && ptr2.nodeName!="BODY" && ptr2.nodeName!="P")
   ptr2=ptr2.parentNode;
  if (ptr2 && ptr2.nodeName=="P") ptr=ptr2; */
-
  var ptr=body.firstChild;
-
  while (!ProcessingEnding && ptr) {
   SaveNext=ptr;
   if (SaveNext.firstChild!=null && SaveNext.nodeName!="P" &&
@@ -2206,7 +2217,6 @@ a4["тысячная"]="M";
        !(SaveNext.className=="body" && SaveNext.getAttribute("fbname")=="notes") &&
        !(SaveNext.className=="body" && SaveNext.getAttribute("fbname")=="comments"))
   {    SaveNext=SaveNext.firstChild; }                                                         // либо углубляемся...
-
   else {
     while (SaveNext && SaveNext!=body && SaveNext.nextSibling==null)  {
      SaveNext=SaveNext.parentNode;                                                           // ...либо поднимаемся (если уже сходили вглубь)
@@ -2219,9 +2229,7 @@ a4["тысячная"]="M";
    if (HandleP(ptr)=="exit") break;
   ptr=SaveNext;
  }
-
-    window.external.EndUndoUnit(document);                               // undo конец
-
+window.external.EndUndoUnit(document);                               // undo конец
 var Tf=new Date().getTime();
 var Thour = Math.floor((Tf-Ts)/3600000);
 var Tmin  = Math.floor((Tf-Ts)/60000-Thour*60);
@@ -2229,17 +2237,14 @@ var Tsec = Math.ceil((Tf-Ts)/1000-Tmin*60-Thour*3600);
 var Tsec1 = Math.ceil(10*((Tf-Ts)/1000-Tmin*60))/10;
 var Tsec2 = Math.ceil(100*((Tf-Ts)/1000-Tmin*60))/100;
 var Tsec3 = Math.ceil(1000*((Tf-Ts)/1000-Tmin*60))/1000;
-
            if (Tsec3<1 && Tmin<1)    TimeStr=Tsec3+ " сек"
  else { if (Tsec2<10 && Tmin<1)   TimeStr=Tsec2+ " сек"
  else { if (Tsec1<30 && Tmin<1)   TimeStr=Tsec1+ " сек"
  else { if (Tmin<1)                       TimeStr=Tsec+ " сек"
  else { if (Tmin>=1 && Thour<1)   TimeStr=Tmin+ " мин " +Tsec+ " с"
  else { if (Thour>=1)                    TimeStr=Thour+ " ч " +Tmin+ " мин " +Tsec+ " с"  }}}}}
-
    MsgBox ('  –= Скрипт Sclex-а =– \n'+
                  ' «Приведение заголовков частей к виду "Часть 1"» v'+VersionNumber+'  	 \n\n'+
                  ' Произведено замен заголовков частей: ' +count+'\n\n'+
                  ' Время: ' +TimeStr+ '.\n' );
-
 }

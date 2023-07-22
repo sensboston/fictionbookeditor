@@ -1,5 +1,5 @@
-// Скрипт "Полный срос структуры разделов"
-// version 1.2
+// Скрипт "Выполнить ПОЛНЫЙ сброс структуры разделов"
+// version 1.4
 // Автор Sclex
 
 function Run() {
@@ -62,14 +62,21 @@ function Run() {
   }
  }
 
- window.external.BeginUndoUnit(document,"full reset of structure of sections");
- var fbwBody=document.getElementById("fbw_body");
+ window.external.BeginUndoUnit(document,"полный сброс структуры разделов");
+ var fbwBody=document.getElementById("fbw_body")
  if (!fbwBody) return;
+ 
+ var tr=document.body.createTextRange();
+ tr.moveToElementText(fbwBody);
+ tr.collapse(true);
+ tr.select();
+ window.scrollTo(0,0);
+
  if (fbwBody.firstChild)
    rec(fbwBody.firstChild);
  window.external.EndUndoUnit(document);
  try {
-   window.external.SetStatusBarText("Full reset of structure of sections is successfully finished.");
+   window.external.SetStatusBarText("Полный сброс структуры разделов успешно завершен.");
  }
  catch(e) 
  {}

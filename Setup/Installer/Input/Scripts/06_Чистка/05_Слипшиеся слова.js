@@ -44,7 +44,7 @@
 // v.2.92 — доработка подсветки для найденных рез-тов поиска — Alex2L, май, июнь 2012
 //======================================
 
-var VersionNumber="2.92";
+var VersionNumber="3.0";
 
 //обрабатывать ли history
 var ObrabotkaHistory=true;
@@ -281,7 +281,7 @@ Coldef["право"] = true;
 
    b0 = ss.length;
   }
- else { a1 = ss.length; }
+ else { a1 = ss.replace(/&(lt|gt|amp|nbsp);/gi,"&").length; }
 
  var range1=document.body.createTextRange();
  range1.moveToElementText(ptr);
