@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FBE>
-	<Name>FictionBook Editor Release 2.7.0</Name>
-	<Date>15-04-2023</Date>
-	<Version>2.7.0</Version>
+	<Name>FictionBook Editor Release 2.7.1</Name>
+	<Date>22-07-2023</Date>
+	<Version>2.7.1</Version>
 	<Beta>false</Beta>
-	<DownloadUrl>https://github.com/sensboston/fictionbookeditor/releases/download/2.7.0/FictionBook.Editor.Release.2.7.0.build.15.Apr.2023.exe</DownloadUrl>
-	<MD5>f797c4c76576700249af940349e30ecc</MD5>
+	<DownloadUrl>https://github.com/sensboston/fictionbookeditor/releases/download/2.7.1/FictionBook.Editor.Release.2.7.1.build.22.Jul.2023.exe</DownloadUrl>
+	<MD5>20b6ca70951ee3edfb17b7539dc195a3</MD5>
 </FBE>
