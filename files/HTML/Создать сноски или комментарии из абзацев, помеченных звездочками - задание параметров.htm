@@ -4,6 +4,7 @@
  <meta http-equiv="MSThemeCompatible" content="yes">
  <style>
   body, input{font-family:Tahoma; font-size:16px;margin:2px;}
+  p {margin: 2px;}
  </style>
  <title>Создать сноски или комментарии из абзацев, помеченных звездочками</title>
  <script language=JavaScript type="text/javascript">
@@ -1153,6 +1154,10 @@
   <input type=text style="display:none; width:600px;" id=refMarkerStr value="\*+" onfocus="getElementById('radio20').checked=true;" checked><!-- <br> -->
   <input type=checkbox id=interpretAsRegExpCheckbox checked style="display:none;"> трактовать как регулярное выражение
  </div>
+<p>Подряд идущие символы «*» <b>не в начале абзаца</b> (а после каких-то символов — кроме простых или неразрывных пробелов) будут истолкованы как маркер знака сноски или комментария.</p>
+<hr>
+<p>Подряд идущие символы «*» <b>в начале абзаца</b> будут истолкованы как маркер 1-го абзаца текста сноски или комментария.</p>
+<hr>
  Маркер 2-го, 3-го и т.д. абзацев текста сноски (не регэксп, а простой текст):<br>
  <input type=text style="width:600px;" id=notFirstParagraphStr value="++"><br><br>
  

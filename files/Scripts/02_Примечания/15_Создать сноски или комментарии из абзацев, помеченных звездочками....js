@@ -1,11 +1,11 @@
 //Скрипт «Создать сноски или комментарии из абзацев, помеченных звездочками»
 //Автор Sclex
 
-var notesFromSelectedParagraphs_versionNum="3.5";
+var notesFromSelectedParagraphs_versionNum="3.6";
 
 function Run() {
  var dialogWidth="700px";
- var dialogHeight="240px";
+ var dialogHeight="340px";
  var fbwBody=document.getElementById("fbw_body");
  var coll=new Object();
  coll["fbwBody"]=fbwBody;
