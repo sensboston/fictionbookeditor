@@ -807,18 +807,7 @@
     '   var htmlStr=p.innerHTML.replace(/(<A( [^>]*)?>)(.*)(<\\/A>)/g,replaceFunction3);'+
     '   var htmlStr=leaveOnlyFirstLevelSups(htmlStr.replace(leaveOnlySupsRegExp,""));'+
     '   var matches3=htmlStr.match(upperNumberRegExp);'+
-    '   if (matches3) {'+
-    '    upperNumberRegExp.lastIndex=0;'+
-    '    var srchResult=upperNumberRegExp.exec(htmlStr);;'+
-    '    while (srchResult) {'+
-    '     if (checkIfTagsAreInFoundSubstr(htmlStr,srchResult.index,srchResult[0].replace(/<[^>]*>/g,"").length)) {'+
-    '      srchResult=upperNumberRegExp.exec(htmlStr);'+
-    '      continue;'+
-    '     }'+
-    '     refMarkersCnt++;'+
-    '     srchResult=upperNumberRegExp.exec(htmlStr);'+
-    '    }'+
-    '   }'+
+    '   if (matches3) refMarkersCnt+=matches3.length;'+
 //    '   if (matches3) { alert("matches3[0]: "+matches3[0]+"\\n\\nmatches3[1]: "+matches3[1]); }'+
     '   return;'+
     '  }'+
