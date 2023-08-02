@@ -603,6 +603,7 @@
    );
   myWin.eval(
     ' function checkIfTagsAreInFoundSubstr(s,fromIndex,substrLen) {'+
+    //'  alert("s: "+s+"\\n\\nfromIndex: "+fromIndex+"\\n\\nsubstrLen: "+substrLen);'+
     ' '+
     '  var regExp10=/<[^>]*>|[^<>]+/gi;'+
     '  var srchConst1=/^<A /ig;'+
@@ -792,15 +793,32 @@
     ' }' // конец функции processP_2
    );
    myWin.eval(
+    ' function replaceFunction3(match1,p1,p2,p3,p4) {'+
+    '  return p1+p3.replace(/.|\\r|\\n/g,"x")+p4;'+
+    ' }'
+   );
+   myWin.eval(
     ' function processP_3(p) {'+
 //   Эта функция считает маркеры знака сноски
     '  if (p.innerText.search(pIsSubtitleRegExp)==0) return;'+
 //    '  alert("p.innerHTML:\\n\\n"+p.innerHTML+"\\n\\ncontainsFirstNotePMarker(p.innerHTML): "+containsFirstNotePMarker(p.innerHTML));'+
     '  if (containsFirstNotePMarker(p.innerHTML)) return;'+
     '  if (upperIndex1) {'+
-    '   var htmlStr=leaveOnlyFirstLevelSups(p.innerHTML.replace(leaveOnlySupsRegExp,""));'+
+    '   var htmlStr=p.innerHTML.replace(/(<A( [^>]*)?>)(.*)(<\\/A>)/g,replaceFunction3);'+
+    '   var htmlStr=leaveOnlyFirstLevelSups(htmlStr.replace(leaveOnlySupsRegExp,""));'+
     '   var matches3=htmlStr.match(upperNumberRegExp);'+
-    '   if (matches3) refMarkersCnt+=matches3.length;'+
+    '   if (matches3) {'+
+    '    upperNumberRegExp.lastIndex=0;'+
+    '    var srchResult=upperNumberRegExp.exec(htmlStr);;'+
+    '    while (srchResult) {'+
+    '     if (checkIfTagsAreInFoundSubstr(htmlStr,srchResult.index,srchResult[0].replace(/<[^>]*>/g,"").length)) {'+
+    '      srchResult=upperNumberRegExp.exec(htmlStr);'+
+    '      continue;'+
+    '     }'+
+    '     refMarkersCnt++;'+
+    '     srchResult=upperNumberRegExp.exec(htmlStr);'+
+    '    }'+
+    '   }'+
 //    '   if (matches3) { alert("matches3[0]: "+matches3[0]+"\\n\\nmatches3[1]: "+matches3[1]); }'+
     '   return;'+
     '  }'+
