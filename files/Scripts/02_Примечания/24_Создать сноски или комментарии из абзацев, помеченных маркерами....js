@@ -1,7 +1,7 @@
 //Скрипт «Создать сноски или комментарии из абзацев, помеченных маркерами»
 //Автор Sclex
 
-var notesFromSelectedParagraphs_versionNum="5.1";
+var notesFromSelectedParagraphs_versionNum="5.2";
 
 function Run() {
  var dialogWidth="700px";
