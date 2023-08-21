@@ -783,8 +783,7 @@
     '  var sectionByNumber={};'+
     '  var sectionCnt=0;'+
     '  var el=targetBody.firstChild;'+
-    '  while (el && !(el.nodeName && el.nodeName=="DIV" && '+
-    '          (el.className=="title" || el.className=="image" || el.className=="epigraph")))'+
+    '  while (el && !(el.nodeName && el.nodeName=="DIV" && el.className=="section"))'+
     '   el=el.nextSibling;'+
     '  while (el) {'+
     '    while (el && !(el.nodeName && el.nodeName=="DIV" && el.className=="section")) '+
