@@ -263,7 +263,20 @@
     '   '+
     '  }'+
     '  firstNotePMarkerRegExp=new RegExp(firstNotePMarkerREStr,"gm");'+
-    '  return myInnerHTML.replace(/<[^>]*>/g,"").replace(spacesAtBeginningRegExp,"").search(firstNotePMarkerRegExp)==0;'+
+    '  var myPos=myInnerHTML.replace(/<[^>]*>/g,"").replace(spacesAtBeginningRegExp,"").search(firstNotePMarkerRegExp);'+
+    '  if (myPos==0) {'+
+    '   var htmlStr12=myInnerHTML.replace(/<[^>]*>/g,"").replace(spacesAtBeginningRegExp,"");'+
+    '   firstNotePMarkerRegExp.lastIndex=0;'+
+    '   spacesAtBeginningRegExp.lastIndex=0;'+
+    '   var srchResult2=spacesAtBeginningRegExp.exec(myInnerHTML.replace(/<[^>]*>/g,""));'+
+    '   var nSpaces=0;'+
+    '   if (srchResult2) nSpaces=srchResult2[0].length;'+
+    '   var srchResult=firstNotePMarkerRegExp.exec(htmlStr12);'+
+//    '   alert("myInnerHTML: #"+myInnerHTML+"#\\n\\nhtmlStr12:\\n\\n#"+htmlStr12+"#\\n\\nfromIndex: "+(myInnerHTML.length-htmlStr12.length-srchResult[0].length-1)+"\\n\\nlen: "+srchResult[0].length);'+
+    '   if (checkIfTagsAreInFoundSubstr(myInnerHTML,nSpaces,srchResult[0].length-1)) return false;'+
+    '   return true;'+
+    '  }'+
+    '  else return false;'+
     ' }');
 
    myWin.eval(
@@ -581,7 +594,7 @@
     '        ) {'+
     '   i--;'+
     '  }'+
-    '  if (i<0) return null;'+
+    '  if (i<0) return "Нет предыдущей ссылки.";'+
     '  return document.links[i];'+
     ' }'
    );
