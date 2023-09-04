@@ -2,10 +2,10 @@
 
 ## Пререквизиты:
 
-1. Установите систему инсталляции NSIS: \NSIS\nsis-2.46.5-Unicode-setup.exe 
+1. Установите систему инсталляции NSIS: [nsis-3.09-setup.exe](https://sourceforge.net/projects/nsis/files/NSIS%203/3.09/nsis-3.09-setup.exe/download)
 2. Скопируйте файлы:
-   \NSIS\UAC.dll -> C:\Program Files (x86)\NSIS\Unicode\Plugins
-   \NSIS\UAC.nsh -> C:\Program Files (x86)\NSIS\Unicode\Include 
+   \NSIS\UAC.dll -> C:\Program Files (x86)\NSIS\Plugins\x86-unicode
+   \NSIS\UAC.nsh -> C:\Program Files (x86)\NSIS\Include
 
 
 ## Создание новой инсталляции:
