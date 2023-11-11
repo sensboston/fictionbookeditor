@@ -2,7 +2,7 @@
 //Автор Sclex
 //http://www.fictionbook.org/forum/viewtopic.php?t=4412
 
-var markupTitlesOrSubtitles_versionNum="2.8";
+var markupTitlesOrSubtitles_versionNum="2.9";
 
 function Run() {
  var dialogWidth="700px";

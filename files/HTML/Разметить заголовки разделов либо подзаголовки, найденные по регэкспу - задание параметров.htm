@@ -1,4 +1,4 @@
-<!-- версия 2.8 -->
+<!-- версия скрипта 2.9 -->
 
 <html>
 <head>
@@ -72,6 +72,7 @@ table {
     ''+
     ' try { var nbspChar=window.external.GetNBSP(); var nbspEntity; if (nbspChar.charCodeAt(0)==160) nbspEntity="&nbsp;"; else nbspEntity=nbspChar;}'+
     ' catch(e) { var nbspChar=String.fromCharCode(160); var nbspEntity="&nbsp;";}'+
+    ' var nbspRegExp=new RegExp("&nbsp;|"+String.fromCharCode(160),"ig");'+
     ''+
     ' var find_xA0=new RegExp("((\\\\\\\\)+?)xA0","ig");'+
     ' function replaceA0(full_match, brackets1, offset_of_match, string_we_search_in) {'+
@@ -103,7 +104,7 @@ table {
     '  while (ptrInSection) {'+
     '   if (ptrInSection.nodeName=="P" && ptrInSection.innerHTML=="") '+
     '     ptrInSection.innerHTML=nbspChar;'+
-    '   if (ptrInSection.nodeName=="P" && ptrInSection.className!="subtitle" && ptrInSection.innerHTML.replace(/<[^>]+>/g,"").replace(/\s{2,}/," ").replace(/&lt;/g,"<").replace(/&gt;/g,">").replace(/&amp;/g,"&").replace(new RegExp("&nbsp;","ig"),String.fromCharCode(160)).search(abruptionRegExp)>=0) {'+
+    '   if (ptrInSection.nodeName=="P" && ptrInSection.className!="subtitle" && ptrInSection.innerHTML.replace(/<[^>]+>/g,"").replace(/\s{2,}/," ").replace(/&lt;/g,"<").replace(/&gt;/g,">").replace(/&amp;/g,"&").replace(nbspRegExp,nbspChar).search(abruptionRegExp)>=0) {'+
     '    titleBegin=ptrInSection;'+
     '    titleEnd=ptrInSection;'+
     '    titleEnd.removeAttribute("className");'+
@@ -186,7 +187,7 @@ table {
     ' var captureBeforeCnt=eval(captureBeforeSelect.value);'+
     ' var captureAfterCnt=eval(captureAfterSelect.value);'+
     ' try {'+
-    '  var abruptionRegExp=new RegExp(regExpEdit.value.replace(find_xA0,replaceA0),caseSensitiveCheckbox.getAttribute("checked")==false?"i":"");'+
+    '  var abruptionRegExp=new RegExp(regExpEdit.value.replace(find_xA0,replaceA0).replace(/ /ig,nbspChar),caseSensitiveCheckbox.getAttribute("checked")==false?"i":"");'+
     ' }'+
     ' catch(e) {'+
     '  if (e instanceof RegExpError) {'+
@@ -218,6 +219,7 @@ table {
     ''+
     ' try { var nbspChar=window.external.GetNBSP(); var nbspEntity; if (nbspChar.charCodeAt(0)==160) nbspEntity="&nbsp;"; else nbspEntity=nbspChar;}'+
     ' catch(e) { var nbspChar=String.fromCharCode(160); var nbspEntity="&nbsp;";}'+
+    ' var nbspRegExp=new RegExp("&nbsp;|"+String.fromCharCode(160),"ig");'+
     ''+
     ' var find_xA0=new RegExp("((\\\\\\\\)+?)xA0","ig");'+
     ' function replaceA0(full_match, brackets1, offset_of_match, string_we_search_in) {'+
@@ -249,7 +251,7 @@ table {
     '  while (ptrInSection) {'+
     '   if (ptrInSection.nodeName=="P" && ptrInSection.innerHTML=="") '+
     '     ptrInSection.innerHTML=nbspChar;'+
-    '   if (ptrInSection.nodeName=="P" && (ptrInSection.className=="" || ptrInSection.className=="normal") && ptrInSection.innerHTML.replace(/<[^>]+>/g,"").replace(/\s{2,}/," ").replace(/&lt;/g,"<").replace(/&gt;/g,">").replace(/&amp;/g,"&").replace(new RegExp("&nbsp;","ig"),String.fromCharCode(160)).search(subtitleRegExp)>=0) {'+
+    '   if (ptrInSection.nodeName=="P" && (ptrInSection.className=="" || ptrInSection.className=="normal") && ptrInSection.innerHTML.replace(/<[^>]+>/g,"").replace(/\s{2,}/," ").replace(/&lt;/g,"<").replace(/&gt;/g,">").replace(/&amp;/g,"&").replace(nbspRegExp,nbspChar).search(subtitleRegExp)>=0) {'+
     '    ptrInSection.className="subtitle";'+
     '    newSubtitleCnt++;'+
     '    var el2=ptrInSection.previousSibling;'+
@@ -305,7 +307,7 @@ table {
     ' var captureBeforeCnt=eval(captureBeforeSelect.value);'+
     ' var captureAfterCnt=eval(captureAfterSelect.value);'+
     ' try {'+
-    '  var subtitleRegExp=new RegExp(regExpEdit.value.replace(find_xA0,replaceA0),caseSensitiveCheckbox.getAttribute("checked")==false?"i":"");'+
+    '  var subtitleRegExp=new RegExp(regExpEdit.value.replace(find_xA0,replaceA0).replace(/ /ig,nbspChar),caseSensitiveCheckbox.getAttribute("checked")==false?"i":"");'+
     ' }'+
     ' catch(e) {'+
     '  if (e instanceof RegExpError) {'+
@@ -376,7 +378,7 @@ table {
 <option value="^[ \xA0]*§[ \xA0]*(\d+\.)*\d+\.?">Вида «§ 123. Имя подраздела»</option>
 <option value="^[ \xA0]*Таблица[ \xA0]+№?[ \xA0]+?(\d+\.?)+.+[ \xA0]*$">Вида «Таблица №123»</option>
 <option value="^[ \xA0]*((Действующие[ \xA0]+лица:?)|((Сцена|Картина)([ \xA0]+(первая|вторая|третья|четв[её]ртая|пятая|шестая|седьмая|восьмая|девятая|десятая|одиннадцатая|двенадцатая|тринадцатая|четырнадцатая|пятнадцатая|шестнадцатая|семнадцатая|восемнадцатая|девятнадцатая|двадцатая|двадцать|тридцатая|тридцать|сороковая|сорок|пятидесятая|пятьдесят|шестидесятая|шестьдесят|семидесятая|семьдесят|восьмидесятая|восемьдесят|девяностая|девяносто|сотая|сто|двухсотая|двести|тр[её]хсотая|триста|четыр[её]хсотая|четыреста|пятисотая|пятьсот|шестисотая|шестьсот|семисотая|семьсот|восьмисотая|восемьсот|девятисотая|девятьсот|тысячная))+)|((Действие|Явление)([ \xA0]+(первое|второе|третье|четв[её]ртое|пятое|шестое|седьмое|восьмое|девятое|десятое|одиннадцатое|двенадцатое|тринадцатое|четырнадцатое|пятнадцатое|шестнадцатое|семнадцатое|восемнадцатое|девятнадцатле|двадцатое|двадцать|тридцатое|тридцать|сороковое|сорок|пятидесятое|пятьдесят|шестидесятое|шестьдесят|семидесятое|семьдесят|восьмидесятое|восемьдесят|девяностое|девяносто|сотое|сто|двухсотое|двести|тр[её]хсотое|триста|четыр[её]хсотое|четыреста|пятисотое|пятьсот|шестисотое|шестьсот|семисотое|семьсот|восьмисотое|восемьсот|девятисотое|девятьсот|тысячное))+)|(Эпизод|Акт)([ \xA0]+(первый|второй|третий|четв[её]ртый|пятый|шестой|седьмой|восьмой|девятый|десятый|одиннадцатый|двенадцатый|тринадцатый|четырнадцатый|пятнадцатый|шестнадцатый|семнадцатый|восемнадцатый|девятнадцатый|двадцатый|двадцать|тридцатый|тридцать|сороковой|сорок|пятидесятый|пятьдесят|шестидесятый|шестьдесят|семидесятый|семьдесят|восьмидесятый|восемьдесят|девяностый|девяносто|сотый|сто|двухсотый|двести|тр[её]хсотый|триста|четыр[её]хсотый|четыреста|пятисотый|пятьсот|шестисотый|шестьсот|семисотый|семьсот|восьмисотый|восемьсот|девятисотый|девятьсот|тысячный))+|(Первый|Второй|Третий|Четв[её]ртый|Пятый|Шестой|Седьмой|Восьмой|Девятый|Десятый|Одиннадцатый|Двенадцатый|Тринадцатый|Четырнадцатый|Пятнадцатый|Шестнадцатый|Семнадцатый|Восемнадцатый|Девятнадцатый|Двадцатый|Двадцать|Тридцатый|Тридцать|Сороковой|Сорок|Пятидесятый|Пятьдесят|Шестидесятый|Шестьдесят|Семидесятый|Семьдесят|Восьмидесятый|Восемьдесят|Девяностый|Девяносто|Сотый|Сто|Двухсотый|Двести|Тр[её]хсотый|Триста|Четыр[её]хсотый|Четыреста|Пятисотый|Пятьсот|Шестисотый|Шестьсот|Семисотый|Семьсот|Восьмисотый|Восемьсот|Девятисотый|Девятьсот|Тысячный)([ \xA0]+(первый|второй|третий|четв[её]ртый|пятый|шестой|седьмой|восьмой|девятый|десятый|одиннадцатый|двенадцатый|тринадцатый|четырнадцатый|пятнадцатый|шестнадцатый|семнадцатый|восемнадцатый|девятнадцатый|двадцатый|двадцать|тридцатый|тридцать|сороковой|сорок|пятидесятый|пятьдесят|шестидесятый|шестьдесят|семидесятый|семьдесят|восьмидесятый|восемьдесят|девяностый|девяносто|сотый|сто|двухсотый|двести|тр[её]хсотый|триста|четыр[её]хсотый|четыреста|пятисотый|пятьсот|шестисотый|шестьсот|семисотый|семьсот|восьмисотый|восемьсот|девятисотый|девятьсот|тысячный))*[ \xA0]+(эпизод|акт)|(Сцена|Картина|Действие|Явление|Эпизод|Акт)[ \xA0]+(\d+|[IVXLCDM]+))[ \xA0]*$">Типичное для драматургии («Акт I», «Сцена 2» и др.)</option>
-<option value="^[.…«\( \xA0]*([A-ZА-ЯЁ]+(?![A-ZА-ЯЁ])[-—–\d\.\*,;:?!…«»“”„\(\) \xA0]*)+$">Вида «ЗАГОЛОВОК» (включите флажок «учитывать регистр»)</option>
+<option value="^[.…«\( \xA0]*([A-ZА-ЯЁ]+(?![A-ZА-ЯЁ])[-—–\d\.\*,;:?!…«»“”„\(\) \xA0&quot;&#39;]*)+$">Вида «ЗАГОЛОВОК» (включите флажок «учитывать регистр»)</option>
 </select><br>
  <input type=checkbox id=caseSensitiveId> учитывать регистр при поиске по регэкспу<br>
  <select id=captureBeforeId><option selected value=0>0<option value=1>1<option value=2>2<option value=3>3</option></select> сколько захватывать в заголовок либо подзаголовок абзацев, находящихся <b>перед</b> абзацем, найденным по регэкспу<br>
