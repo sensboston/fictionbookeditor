@@ -1,5 +1,4 @@
-<!-- версия скрипта 2.9 -->
-
+<!-- версия скрипта 3.0 -->
 <html>
 <head>
  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -10,7 +9,6 @@ http://meyerweb.com/eric/tools/css/reset/
    v2.0 | 20110126
    License: none (public domain)
 */
-
 html, body, div, span, applet, object, iframe,
 h1, h2, h3, h4, h5, h6, p, blockquote, pre,
 a, abbr, acronym, address, big, cite, code,
@@ -55,7 +53,6 @@ table {
 	border-spacing: 0;
 }
 /* конец css-reset-а */
-
   body{font-family:Tahoma; font-size:16px;margin:2px;}
   select, input {font-size: 15px; font-family:Tahoma;}
  </style>
@@ -65,18 +62,18 @@ table {
   var params=window.dialogArguments;
   document.title="Разметить заголовки разделов либо подзаголовки, найденные по регэкспу v"+params["versionNum"]+". Автор Sclex.";
   var myWin=params["window"];
-
   function markupTitles() {
    try {
    myWin.eval('function splittingIntoSections_OK(dialogDoc) {'+
     ''+
-    ' try { var nbspChar=window.external.GetNBSP(); var nbspEntity; if (nbspChar.charCodeAt(0)==160) nbspEntity="&nbsp;"; else nbspEntity=nbspChar;}'+
+    ' try { var nbspChar=window.external.GetNBSP(); var nbspEntity; if (nbspChar.charCodeAt(0)==160) nbspEntity="&nbsp;"; else nbspEntity=nbspChar; }'+
     ' catch(e) { var nbspChar=String.fromCharCode(160); var nbspEntity="&nbsp;";}'+
-    ' var nbspRegExp=new RegExp("&nbsp;|"+String.fromCharCode(160),"ig");'+
+    ' var nbspRegExp=new RegExp("&nbsp;|"+nbspChar,"ig");'+
+    ' var char160=String.fromCharCode(160);'+
     ''+
     ' var find_xA0=new RegExp("((\\\\\\\\)+?)xA0","ig");'+
     ' function replaceA0(full_match, brackets1, offset_of_match, string_we_search_in) {'+
-    '  if (brackets1.length%2==1) return nbspChar;'+
+    '  if (brackets1.length%2==1) return char160;'+
     '  else return full_match;'+
     ' }'+
     ''+
@@ -104,7 +101,7 @@ table {
     '  while (ptrInSection) {'+
     '   if (ptrInSection.nodeName=="P" && ptrInSection.innerHTML=="") '+
     '     ptrInSection.innerHTML=nbspChar;'+
-    '   if (ptrInSection.nodeName=="P" && ptrInSection.className!="subtitle" && ptrInSection.innerHTML.replace(/<[^>]+>/g,"").replace(/\s{2,}/," ").replace(/&lt;/g,"<").replace(/&gt;/g,">").replace(/&amp;/g,"&").replace(nbspRegExp,nbspChar).search(abruptionRegExp)>=0) {'+
+    '   if (ptrInSection.nodeName=="P" && ptrInSection.className!="subtitle" && ptrInSection.innerHTML.replace(/<[^>]+>/g,"").replace(nbspRegExp,char160).replace(/&lt;/g,"<").replace(/&gt;/g,">").replace(/&amp;/g,"&").search(titleRegExp)>=0) {'+
     '    titleBegin=ptrInSection;'+
     '    titleEnd=ptrInSection;'+
     '    titleEnd.removeAttribute("className");'+
@@ -187,7 +184,7 @@ table {
     ' var captureBeforeCnt=eval(captureBeforeSelect.value);'+
     ' var captureAfterCnt=eval(captureAfterSelect.value);'+
     ' try {'+
-    '  var abruptionRegExp=new RegExp(regExpEdit.value.replace(find_xA0,replaceA0).replace(/ /ig,nbspChar),caseSensitiveCheckbox.getAttribute("checked")==false?"i":"");'+
+    '  var titleRegExp=new RegExp(regExpEdit.value.replace(find_xA0,replaceA0).replace(nbspRegExp,char160),caseSensitiveCheckbox.getAttribute("checked")==false?"i":"");'+
     ' }'+
     ' catch(e) {'+
     '  if (e instanceof RegExpError) {'+
@@ -212,14 +209,14 @@ table {
    } 
    myWin.splittingIntoSections_OK(document);
   }
-
   function markupSubtitles() {
    try {
    myWin.eval('function splittingIntoSections_OK(dialogDoc) {'+
     ''+
     ' try { var nbspChar=window.external.GetNBSP(); var nbspEntity; if (nbspChar.charCodeAt(0)==160) nbspEntity="&nbsp;"; else nbspEntity=nbspChar;}'+
     ' catch(e) { var nbspChar=String.fromCharCode(160); var nbspEntity="&nbsp;";}'+
-    ' var nbspRegExp=new RegExp("&nbsp;|"+String.fromCharCode(160),"ig");'+
+    ' var nbspRegExp=new RegExp("&nbsp;|"+nbspChar,"ig");'+
+    ' var char160=String.fromCharCode(160);'+
     ''+
     ' var find_xA0=new RegExp("((\\\\\\\\)+?)xA0","ig");'+
     ' function replaceA0(full_match, brackets1, offset_of_match, string_we_search_in) {'+
@@ -251,7 +248,7 @@ table {
     '  while (ptrInSection) {'+
     '   if (ptrInSection.nodeName=="P" && ptrInSection.innerHTML=="") '+
     '     ptrInSection.innerHTML=nbspChar;'+
-    '   if (ptrInSection.nodeName=="P" && (ptrInSection.className=="" || ptrInSection.className=="normal") && ptrInSection.innerHTML.replace(/<[^>]+>/g,"").replace(/\s{2,}/," ").replace(/&lt;/g,"<").replace(/&gt;/g,">").replace(/&amp;/g,"&").replace(nbspRegExp,nbspChar).search(subtitleRegExp)>=0) {'+
+    '   if (ptrInSection.nodeName=="P" && (ptrInSection.className=="" || ptrInSection.className=="normal") && ptrInSection.innerHTML.replace(/<[^>]+>/g,"").replace(nbspRegExp,char160).replace(/&lt;/g,"<").replace(/&gt;/g,">").replace(/&amp;/g,"&").search(subtitleRegExp)>=0) {'+
     '    ptrInSection.className="subtitle";'+
     '    newSubtitleCnt++;'+
     '    var el2=ptrInSection.previousSibling;'+
@@ -307,7 +304,7 @@ table {
     ' var captureBeforeCnt=eval(captureBeforeSelect.value);'+
     ' var captureAfterCnt=eval(captureAfterSelect.value);'+
     ' try {'+
-    '  var subtitleRegExp=new RegExp(regExpEdit.value.replace(find_xA0,replaceA0).replace(/ /ig,nbspChar),caseSensitiveCheckbox.getAttribute("checked")==false?"i":"");'+
+    '  var subtitleRegExp=new RegExp(regExpEdit.value.replace(find_xA0,replaceA0).replace(nbspRegExp,char160),caseSensitiveCheckbox.getAttribute("checked")==false?"i":"");'+
     ' }'+
     ' catch(e) {'+
     '  if (e instanceof RegExpError) {'+
@@ -334,7 +331,6 @@ table {
    } 
    myWin.splittingIntoSections_OK(document);
   }
-
   function myBeforeUnload() {
    if (myWin) {
     try {
@@ -344,7 +340,6 @@ table {
     }
    }
   }
-
  </script>
 <body onbeforeunload="myBeforeUnload();">
  Регэксп для поиска абзацев, которые следует превратить в заголовки либо подзаголовки. Например: «^Глава \d+$».<br>
@@ -385,7 +380,5 @@ table {
  <select id=captureAfterId><option selected value=0>0<option value=1>1<option value=2>2<option value=3>3</option></select> сколько захватывать в заголовок либо подзаголовок абзацев, находящихся <b>после</b> абзаца, найденного по регэкспу<br>
  <p style="text-align:center; margin-top:8px; padding-top:0; margin-bottom:0; padding-bottom:0;"><input type=button value="Разметить заголовки" onclick="markupTitles();" style="width:220px;"><input type=button value="Разметить заголовки и выйти" onclick="markupTitles(); window.close();" style="width:240px;"><input type=button onclick="window.close();" value="Выйти" style="width:120px;"></p>
 <p style="text-align:center; margin-top:8px; padding-top:0; margin-bottom:0; padding-bottom:0;"><input type=button value="Разметить подзаголовки" onclick="markupSubtitles();" style="width:220px;"><input type=button value="Разметить подзаголовки и выйти" onclick="markupSubtitles(); window.close();" style="width:240px;"><input type=button onclick="window.close();" value="Выйти" style="width:120px;"></p>
-
-
 </body>
 </html>
