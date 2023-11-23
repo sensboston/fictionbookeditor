@@ -1,5 +1,5 @@
 // Скрипт «Обратный поиск по набору регэкспов (версия с исключениями) (заготовка)» для редактора Fiction Book Editor (FBE).
-// Версия 1.0
+// Версия 1.1
 // Автор Sclex
 
 function Run() {
@@ -88,14 +88,13 @@ function Run() {
   addMacros("<мы-не-внутри-тэга>","(^|\>)[^\<]*");
   addMacros("<впереди-закр-тэги-но-не-A>","(</?(?!A>)[A-Za-z]+(/s+[^>]+)?>)*");
   addMacros("<пустота-теги-или-ничего>","([\\x20\\xA0]|<(?!IMG)(?!/A\>)/?[A-Za-z]+[^\>]*>)*");
-
-
-
   addMacros("<сокращения>","(т<тэги-кроме-IMG-и-закр-A>\\.<пустота-теги-или-ничего>д|т<тэги-кроме-IMG-и-закр-A>\\.<пустота-теги-или-ничего>п|т<тэги-кроме-IMG-и-закр-A>\\.<пустота-теги-или-ничего>к|т<тэги-кроме-IMG-и-закр-A>\\.<пустота-теги-или-ничего>е|т<тэги-кроме-IMG-и-закр-A>\\.<пустота-теги-или-ничего>о|т<тэги-кроме-IMG-и-закр-A>\\.<пустота-теги-или-ничего>ч|Р<тэги-кроме-IMG-и-закр-A>\\.<пустота-теги-или-ничего>Х|т<тэги-кроме-IMG-и-закр-A>ы<тэги-кроме-IMG-и-закр-A>с<тэги-кроме-IMG-и-закр-A>|м<тэги-кроме-IMG-и-закр-A>л<тэги-кроме-IMG-и-закр-A>н<тэги-кроме-IMG-и-закр-A>|ч<тэги-кроме-IMG-и-закр-A>е<тэги-кроме-IMG-и-закр-A>л<тэги-кроме-IMG-и-закр-A>|э<тэги-кроме-IMG-и-закр-A>к<тэги-кроме-IMG-и-закр-A>з<тэги-кроме-IMG-и-закр-A>|р<тэги-кроме-IMG-и-закр-A>у<тэги-кроме-IMG-и-закр-A>б<тэги-кроме-IMG-и-закр-A>|к<тэги-кроме-IMG-и-закр-A>о<тэги-кроме-IMG-и-закр-A>п<тэги-кроме-IMG-и-закр-A>|н<тэги-кроме-IMG-и-закр-A>е<тэги-кроме-IMG-и-закр-A>м<тэги-кроме-IMG-и-закр-A>|и<тэги-кроме-IMG-и-закр-A>с<тэги-кроме-IMG-и-закр-A>п<тэги-кроме-IMG-и-закр-A>|л<тэги-кроме-IMG-и-закр-A>а<тэги-кроме-IMG-и-закр-A>т<тэги-кроме-IMG-и-закр-A>|а<тэги-кроме-IMG-и-закр-A>в<тэги-кроме-IMG-и-закр-A>т<тэги-кроме-IMG-и-закр-A>|р<тэги-кроме-IMG-и-закр-A>е<тэги-кроме-IMG-и-закр-A>д<тэги-кроме-IMG-и-закр-A>|о<тэги-кроме-IMG-и-закр-A>б<тэги-кроме-IMG-и-закр-A>л<тэги-кроме-IMG-и-закр-A>|ц<тэги-кроме-IMG-и-закр-A>и<тэги-кроме-IMG-и-закр-A>т<тэги-кроме-IMG-и-закр-A>|р<тэги-кроме-IMG-и-закр-A>у<тэги-кроме-IMG-и-закр-A>к<тэги-кроме-IMG-и-закр-A>|м<тэги-кроме-IMG-и-закр-A>и<тэги-кроме-IMG-и-закр-A>н<тэги-кроме-IMG-и-закр-A>|с<тэги-кроме-IMG-и-закр-A>е<тэги-кроме-IMG-и-закр-A>к<тэги-кроме-IMG-и-закр-A>|с<тэги-кроме-IMG-и-закр-A>т<тэги-кроме-IMG-и-закр-A>р<тэги-кроме-IMG-и-закр-A>|м<тэги-кроме-IMG-и-закр-A>л<тэги-кроме-IMG-и-закр-A>р<тэги-кроме-IMG-и-закр-A>д<тэги-кроме-IMG-и-закр-A>|т<тэги-кроме-IMG-и-закр-A>р<тэги-кроме-IMG-и-закр-A>л<тэги-кроме-IMG-и-закр-A>н<тэги-кроме-IMG-и-закр-A>|с<тэги-кроме-IMG-и-закр-A>о<тэги-кроме-IMG-и-закр-A>к<тэги-кроме-IMG-и-закр-A>р<тэги-кроме-IMG-и-закр-A>|д<тэги-кроме-IMG-и-закр-A>о<тэги-кроме-IMG-и-закр-A>л<тэги-кроме-IMG-и-закр-A>л<тэги-кроме-IMG-и-закр-A>|п<тэги-кроме-IMG-и-закр-A>р<тэги-кроме-IMG-и-закр-A>о<тэги-кроме-IMG-и-закр-A>ч<тэги-кроме-IMG-и-закр-A>|а<тэги-кроме-IMG-и-закр-A>н<тэги-кроме-IMG-и-закр-A>г<тэги-кроме-IMG-и-закр-A>л<тэги-кроме-IMG-и-закр-A>|п<тэги-кроме-IMG-и-закр-A>р<тэги-кроме-IMG-и-закр-A>и<тэги-кроме-IMG-и-закр-A>м<тэги-кроме-IMG-и-закр-A>|п<тэги-кроме-IMG-и-закр-A>е<тэги-кроме-IMG-и-закр-A>р<тэги-кроме-IMG-и-закр-A>е<тэги-кроме-IMG-и-закр-A>в<тэги-кроме-IMG-и-закр-A>|в<тэги-кроме-IMG-и-закр-A>в<тэги-кроме-IMG-и-закр-A>|д<тэги-кроме-IMG-и-закр-A>е<тэги-кроме-IMG-и-закр-A>р<тэги-кроме-IMG-и-закр-A>|г<тэги-кроме-IMG-и-закр-A>о<тэги-кроме-IMG-и-закр-A>р<тэги-кроме-IMG-и-закр-A>|г<тэги-кроме-IMG-и-закр-A>г<тэги-кроме-IMG-и-закр-A>|д<тэги-кроме-IMG-и-закр-A>р<тэги-кроме-IMG-и-закр-A>|п<тэги-кроме-IMG-и-закр-A>р<тэги-кроме-IMG-и-закр-A>|г<тэги-кроме-IMG-и-закр-A>р<тэги-кроме-IMG-и-закр-A>|с<тэги-кроме-IMG-и-закр-A>м<тэги-кроме-IMG-и-закр-A>|с<тэги-кроме-IMG-и-закр-A>р<тэги-кроме-IMG-и-закр-A>|ф<тэги-кроме-IMG-и-закр-A>р<тэги-кроме-IMG-и-закр-A>|м<тэги-кроме-IMG-и-закр-A>м<тэги-кроме-IMG-и-закр-A>|к<тэги-кроме-IMG-и-закр-A>г<тэги-кроме-IMG-и-закр-A>|у<тэги-кроме-IMG-и-закр-A>л<тэги-кроме-IMG-и-закр-A>|с<тэги-кроме-IMG-и-закр-A>т<тэги-кроме-IMG-и-закр-A>|г<тэги-кроме-IMG-и-закр-A>|в<тэги-кроме-IMG-и-закр-A>|П<тэги-кроме-IMG-и-закр-A>р<тэги-кроме-IMG-и-закр-A>и<тэги-кроме-IMG-и-закр-A>м<тэги-кроме-IMG-и-закр-A>|П<тэги-кроме-IMG-и-закр-A>е<тэги-кроме-IMG-и-закр-A>р<тэги-кроме-IMG-и-закр-A>|С<тэги-кроме-IMG-и-закр-A>м<тэги-кроме-IMG-и-закр-A>|н<тэги-кроме-IMG-и-закр-A>\\.<пустота-теги-или-ничего>э)");
-    
 
-  addRegExp("cba","i","cba");
+  tagRegExp(">PUS/<\\d+>PUS<","i","Найдено: число надстрочным текстом.");
+  addRegExp("cba","i","Найдено: abc.");
 
+  // <SUP>10</SUP> слово ' слово.
+  // оволс ' оволс >PUS/<10>PUS<
  }
 
  try { var nbspChar=window.external.GetNBSP(); var nbspEntity; if (nbspChar.charCodeAt(0)==160) nbspEntity="&nbsp;"; else nbspEntity=nbspChar;}
@@ -363,22 +362,34 @@ function Run() {
  var tr,tr2,el,el2,el3,myIndex,s,s_orig,s_html_orig,s_html,s1_len,ignoreNullPosition,desc,rslt,newPos,re,macrosRE;
  var k,flag1,rslt_replaced,founds,foundsCnt;
 
- var removeTagsRE=new RegExp("<(?!IMG\\b).*?(>|$)","ig");
+ //var removeTagsRE=new RegExp("<(?!IMG\\b).*?(>|$)","ig");
+ var removeTagsRE=new RegExp("(^|>)[^><]*?<","ig");
  var removeTagsRE_="";
- var imgTagRE=new RegExp("<IMG\\b.*?>","ig");
+ //var imgTagRE=new RegExp("<IMG\\b.*?>","ig");
+ var imgTagRE=new RegExp(">.*?\\bGMI<","ig");
  var imgTagRE_="~~~";
- var ampRE=new RegExp("&amp;","g");
+ //var ampRE=new RegExp("&amp;","g");
+ var ampRE=new RegExp(";pma&","g");
  var ampRE_="&";
- var ltRE=new RegExp("&lt;","g");
+ //var ltRE=new RegExp("&lt;","g");
+ var ltRE=new RegExp(";tl&","g");
  var ltRE_="<";
- var gtRE=new RegExp("&gt;","g");
+ //var gtRE=new RegExp("&gt;","g");
+ var gtRE=new RegExp(";tg&","g");
  var gtRE_=">";
- var nbspRE=new RegExp("&nbsp;","g");
+ //var nbspRE=new RegExp("&nbsp;","g");
+ var nbspRE=new RegExp(";psbn&","g");
  var nbspRE_=" ";
  
- var pNode,foundPos,foundLen;
+ var pNode,foundPos,foundLen,k1;
  var s_len;
  var foundMatch=false;
+ 
+ function replaceFunc1(fullMatch,group1,position) {
+   //alert("position: "+position+"\n\nfullMatch: "+fullMatch+"\n\nreturnValue: "+position+fullMatch.length);
+   k1=position+fullMatch.length;
+   return "";
+ }
 
  //var log="";
  //var iterations2=0;
@@ -408,24 +419,23 @@ function Run() {
    ignoreNullPosition=false; //tr.compareEndPoints("StartToEnd",tr)==0;
 
    el=ptr;
-   s_orig=el.innerHTML.replace(removeTagsRE,removeTagsRE_).replace(imgTagRE,imgTagRE_).replace(ltRE,ltRE_).replace(gtRE,gtRE_).replace(ampRE,ampRE_).replace(nbspRE,nbspRE_);
-   s=s_orig.split("").reverse().join("");
+   s=el.innerHTML.replace(/<[^>]+>/g,"").replace(/&([^;]+);/g,"&").split("").reverse().join("");
+   //alert("s в начале: "+s);
    s_len=s.length;
    //log+="Входим в searchNext.  s1_len: "+s1_len+"  s_len: "+s_len+"\n\n";
-   tr.moveToElementText(el);
-   tr.move("character",s1_len);
-   //tr.select();
-   //alert("s1_len: "+s1_len);
-   tr2=tr.duplicate();
    tr2.moveToElementText(el);
-   tr2.setEndPoint("EndToEnd",tr);
+   tr2.collapse(false);
+   tr2.move("character",-1);
+   tr2.moveStart("character",-s1_len);
    //tr2.select();
-   //alert("После команды tr2.select();");
+   //alert("После select.");
    s1_len=tr2.text.length;
-   var s1=tr2.htmlText.replace(/\s{2,}/g," ");
+   var s1=tr2.htmlText.replace(/\s{2,}/g," ").split("").reverse().join("");
    var s1_len2=s1.length;
-   var s2=el.innerHTML;
-   var k1=s1.search(/(<\/[^<>]+>)+$/);
+   var s2=el.innerHTML.split("").reverse().join("");
+   //var k1=s1.search(/(<\/[^<>]+>)+$/);
+   k1=-1;
+   s1.replace(/^(>[^<>]+\/<)+/,replaceFunc1);
    if (k1==-1)
     s1_html_len=s1_len2;
    else {
@@ -448,6 +458,7 @@ function Run() {
        regExps[i].lastIndex=s1_len+(ignoreNullPosition?1:0);
        savedIndex=s1_len+(ignoreNullPosition?1:0);
        //alert("s1_len+(ignoreNullPosition?1:0): "+(s1_len+(ignoreNullPosition?1:0)));
+       //alert("s перед exec: "+s);
        rslt=regExps[i].exec(s);
        while (rslt && !checkLookBehs(i, s, rslt.index, false)) {
         savedIndex++;
@@ -474,14 +485,14 @@ function Run() {
         rslt=regExps[i].exec(s_html);
         flag1=false;
         if (rslt) {
-         newPos=s_html.substr(0,rslt.index).replace(removeTagsRE,removeTagsRE_).replace(imgTagRE,imgTagRE_).replace(ltRE,ltRE_).replace(gtRE,gtRE_).replace(ampRE,ampRE_).replace(nbspRE,nbspRE_).length;
-         rslt_replaced=rslt[0].replace(removeTagsRE,removeTagsRE_).replace(imgTagRE,imgTagRE_).replace(ltRE,ltRE_).replace(gtRE,gtRE_).replace(ampRE,ampRE_).replace(nbspRE,nbspRE_);
+         newPos=s_html.substr(0,rslt.index).replace(imgTagRE,imgTagRE_).replace(removeTagsRE,removeTagsRE_).replace(ltRE,ltRE_).replace(gtRE,gtRE_).replace(ampRE,ampRE_).replace(nbspRE,nbspRE_).length;
+         rslt_replaced=rslt[0].replace(imgTagRE,imgTagRE_).replace(removeTagsRE,removeTagsRE_).replace(ltRE,ltRE_).replace(gtRE,gtRE_).replace(ampRE,ampRE_).replace(nbspRE,nbspRE_);
          if (ignoreNullPosition ? minPos==s1_html_len+1 : minPos==s1_html_len) break;
          if (rslt_replaced.length==0 || (rslt_replaced.length!=0 && rslt_replaced[0]!="<")) {
           k=regExps[i].lastIndex;
           while (k<s_html.length && s_html.charAt(k)!=">" && s_html.charAt(k)!="<") k++;
           //alert("k после цикла: "+k+"\n\ns_html[k]: "+s_html.charAt(k));
-          if (k<s_html.length && s_html.charAt(k)==">") {
+          if (k<s_html.length && s_html.charAt(k)=="<") {
            regExps[i].lastIndex=k+1;
            //alert("regExps[i].lastIndex: "+regExps[i].lastIndex);
            flag1=true;
@@ -526,6 +537,7 @@ function Run() {
         // пропускаем исключения...
         if (desc.indexOf("Пропустить") == 0) return true; // (stokber)
         foundMatch=true;
+        //alert("Выходим. Возвращаем foundPos="+foundPos);
         return false;
         //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
        }
@@ -547,8 +559,7 @@ function Run() {
       if (el && el!=fbwBody) el=el.previousSibling;
      }
     if (el && el.nodeName=="P") {
-     s_orig=el.innerHTML.replace(removeTagsRE,removeTagsRE_).replace(imgTagRE,imgTagRE_).replace(ltRE,ltRE_).replace(gtRE,gtRE_).replace(ampRE,ampRE_).replace(nbspRE,nbspRE_);
-     s=s_orig.split("").reverse().join("");
+     s=el.innerHTML.replace(/<[^>]+>/g,"").replace(/&([^;]+);/g,"&").split("").reverse().join("");
      s1_len=0;
      s_html_orig=el.innerHTML;
      s_html=s_html_orig.split("").reverse().join("");
@@ -562,7 +573,7 @@ function Run() {
  }
  
  function getElemTextLen(ptr) {
-   return ptr.innerHTML.replace(removeTagsRE,removeTagsRE_).replace(imgTagRE,imgTagRE_).replace(ltRE,ltRE_).replace(gtRE,gtRE_).replace(ampRE,ampRE_).replace(nbspRE,nbspRE_).length;
+   return ptr.innerHTML.replace(/<[^>]*>/g,"").replace(/&([^;]+);/,"&").length;
  }
  
  fbwBody=document.getElementById("fbw_body");
@@ -579,6 +590,7 @@ function Run() {
   tr2.moveToElementText(el2);
   tr2.setEndPoint("StartToStart",tr);
   s1_len=tr2.text.length;
+  //alert("s1_len: "+s1_len);
  }
     
  while (searchNext()) ;
@@ -588,9 +600,9 @@ function Run() {
   tr.moveToElementText(ptr);
   //alert("tr.text: "+tr.text);
   tr.collapse(true);
+  //alert("foundPos: "+foundPos+"\n\nfoundLen: "+foundLen+"\n\nptr:\n\n"+ptr.innerHTML+"\n\ngetElemTextLen(ptr)-foundPos: "+(getElemTextLen(ptr)-foundPos));
   tr.move("character",getElemTextLen(ptr)-foundPos);
   tr.moveStart("character",-foundLen);
-  //alert("foundPos: "+foundPos+" foundLen: "+foundLen+" s_len: "+s_len+"\n\nptr:\n\n"+ptr.outerHTML);
   tr.select();
  }
  //clipboardData.setData("Text",log);
