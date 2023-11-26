@@ -1,4 +1,4 @@
-// Поиск ошибок нумерации постраничных сносок с постраничной нумерацией v.1.0
+// Поиск ошибок нумерации постраничных сносок с постраничной нумерацией v.1.1
 // Находит ошибки нумерации маркеров концевых сносок
 // Автор stokber
 
@@ -22,11 +22,25 @@ var z;
 var t;
 var no = "В этом документе не найдено маркеров сносок.";
 
-
 // окно выбора вида маркеров сносок:
  var dialogWidth="320px";
- var dialogHeight="250px";
- // var dialogHeight="300px";
+ var dialogHeight;
+  // проверка версии IE: 
+var isIE6 = false;
+if (navigator.appName === 'Microsoft Internet Explorer') {
+  var userAgent = navigator.userAgent;
+  if (userAgent.indexOf('MSIE 6.0') !== -1) {
+    isIE6 = true;
+  }
+}
+if (isIE6) {
+  // alert('Используется Internet Explorer 6');
+  dialogHeight="250px";
+} else {
+  // alert('Используется другая версия Internet Explorer или другой браузер');
+  dialogHeight="215px";
+}
+
  var fbwBody=document.getElementById("fbw_body");
  var coll=new Object();
  coll["fbwBody"]=fbwBody;
@@ -412,7 +426,7 @@ if (result == null) {
    while ((result = RX.exec(report)) != null) {
      var razniza = (result[2] - result[1]);
      if (razniza != 1) {
-        var textMsg = "После выделенного маркера знака сноски "+result[1]+" следует маркер знака сноски "+result[2]+", что нарушает порядок нумерации. Возможно пропущены или неверно пронумерованы маркеры знака сноски ниже выделенного места или склеенные абзацы. Если выделен маркер текста сноски — возможно пробел (невыделенный скриптом) между началом строки и маркером." // #10";
+         var textMsg = "После выделенного маркера знака сноски "+result[1]+" следует маркер знака сноски "+result[2]+", что нарушает порядок нумерации. Возможно пропущены или неверно пронумерованы маркеры знака сноски ниже выделенного места или склеенные абзацы. Или (невыделенный скриптом) пробел перед маркером текста сноски." // #10";
         window.external.SetStatusBarText(textMsg); 
         result.index += result.length - 1;
         Perehod();
@@ -427,7 +441,6 @@ if (result == null) {
    while ((result = RX.exec(report)) != null) {
    var razniza = (result[2] - result[1]);
    if (razniza != 1) {
-      var textMsg = "После "+result[1]+" идёт "+result[2]+", что не есть гут. #7";
       var textMsg = "После выделенного маркера текста сноски "+result[1]+" следует маркер текста сноски "+result[2]+", что нарушает порядок нумерации. Возможно пропущены или неверно пронумерованы маркеры текста сноски ниже выделенного места." // #11";
       window.external.SetStatusBarText(textMsg); 
       result.index += result.length - 1;

@@ -1,9 +1,60 @@
+<!--"Поиск некорректных маркеров сносок v.1.1"-->
 <html>
 <head>
  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
  <meta http-equiv="MSThemeCompatible" content="yes">
  <style>
-  body, input{font-family:Tahoma; font-size:16px;margin:2px;}
+/* css reset
+http://meyerweb.com/eric/tools/css/reset/ 
+   v2.0 | 20110126
+   License: none (public domain)
+*/
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed, 
+figure, figcaption, footer, header, hgroup, 
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	font-size: 100%;
+	font: inherit;
+	vertical-align: baseline;
+}
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure, 
+footer, header, hgroup, menu, nav, section {
+	display: block;
+}
+body {
+	line-height: 1;
+}
+ol, ul {
+	list-style: none;
+}
+blockquote, q {
+	quotes: none;
+}
+blockquote:before, blockquote:after,
+q:before, q:after {
+	content: '';
+	content: none;
+}
+table {
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+/* конец css-reset-а */
+  body{font-family:Tahoma; font-size:16px;margin:2px;}
+  select, input {font-size: 15px; font-family:Tahoma;}
  </style>
  <title>Поиск некорректных маркеров сносок</title>
 <script>
@@ -47,7 +98,6 @@ window.open("help_mark.htm",null,"height="+helpHeight+",width="+helpWidth+"cente
 <!--<label for="radio7"><input type="radio" name="markSign" id="radio7">символами ¹²³⁴⁵⁶⁷⁸⁹⁰</label><br>
 <label for="radio8"><input type="radio" name="markSign" id="radio8">надстрочным и ¹²³⁴⁵⁶⁷⁸⁹⁰</label><br>-->
 <br>
-<!-- <input type="button" value="Найти ошибочные маркеры" onclick="window.returnValue=markerFunc(); window.close();" style="width:258px;"><BR> -->
 
 <input type="button" value="Найти ошибочные маркеры" onclick="window.close(); window.returnValue=markerFunc(); " style="width:258px;"><BR>
 

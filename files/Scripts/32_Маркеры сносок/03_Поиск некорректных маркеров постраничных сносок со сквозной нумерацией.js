@@ -1,7 +1,8 @@
-// Поиск ошибок нумерации постраничных сносок со сквозной нумерацией v.1.0
+// Поиск ошибок нумерации постраничных сносок со сквозной нумерацией v.1.1
 // Находит ошибки нумерации:
-// постраничных сносок с сквозной нумерацией;
-// поглавных сносок с сквозной нумерацией;
+// постраничных сносок со сквозной нумерацией;
+// поглавных сносок со сквозной нумерацией;
+// Автор stokber
 
 function Run() {
 
@@ -27,8 +28,24 @@ var no = "В этом документе не найдено маркеров с
 
 // окно выбора вида маркеров сносок:
  var dialogWidth="320px";
- var dialogHeight="250px";
- // var dialogHeight="360px";
+ var dialogHeight;
+  // проверка версии IE: 
+var isIE6 = false;
+if (navigator.appName === 'Microsoft Internet Explorer') {
+  var userAgent = navigator.userAgent;
+  if (userAgent.indexOf('MSIE 6.0') !== -1) {
+    isIE6 = true;
+  }
+}
+if (isIE6) {
+  // alert('Используется Internet Explorer 6');
+  dialogHeight="250px";
+} else {
+  // alert('Используется другая версия Internet Explorer или другой браузер');
+  dialogHeight="215px";
+}
+
+
  var fbwBody=document.getElementById("fbw_body");
  var coll=new Object();
  coll["fbwBody"]=fbwBody;
@@ -189,6 +206,8 @@ function FMarkKvSk() {
    report = report.replace(/\{/g, "☺");
    report = report.replace(/\}/g, "☻");
    report = report.replace(/(<A href=[^<]+?>)\((\d+)\)(<\/A>)/ig, "$1{$2}$3"); //  !!!
+   
+   report = report.replace( /☻☺/mg, "☻ ☺") ; // чтобы были видны два маркера знака сносок подряд без пробелов между. 17.09.2022. !?!?!?!?
 }
 
 function FMarkKvSkTilde() {
@@ -225,6 +244,7 @@ function Report() {
    txt = txt.replace(/<\/?[^<>]+>/g, ""); // удаляем все теги
    txt = txt.replace(/\r\n(\r\n)+/gm, "\r\n"); //
    txt = txt.replace(/☻☺/g, ""); //
+   
    txt = txt.replace(/[ □▫◦]/g, " "); // 
    txt = txt.replace(/&lt;/g, "<"); // 
    txt = txt.replace(/&gt;/g, ">"); // 
@@ -234,6 +254,9 @@ function Report() {
 
 // создаём постраничный список маркеров сносок:
 report = report.replace(/&nbsp;/g, " "); // заменяем неразрывные пробелы на обычные.
+
+report = report.replace(/☻([ ]*)☺/g, "$1"); // // два маркера подряд или только с пробелами между считать за один ошибочный.23.11.2023  !?!?!?!?
+
 report = report.replace(/<\/?[^<>]+>/g, ""); // удаляем все теги
 report = report.replace(/(\r\n)(\r\n)+/g, "$1"); // удалить пустые строки.
 report = report.replace(/^☺(.+?)☻/mg, "☺t$1☻"); // пометить меткой "t" маркеры текстов сносок.
@@ -321,7 +344,7 @@ if (result == null) {
    var RX = new RegExp("t[zt]|t\\d*[^\\dzt\\r\\n]+|t0","m");
    result = RX.exec(report);
    if (result !== null) {
-     var textMsg = "Маркер текста сноски — не число. Возможно, в маркер попал пробел. Как вариант — маркер в пустой строке." // #5";
+     var textMsg = "Маркер текста сноски — не число. Возможно, в маркер попал пробел. Как вариант — маркер в пустой строке. Или два маркера подряд с пробелом/пробелами между ними." // #5";
      window.external.SetStatusBarText(textMsg); 
      result.index += result.length;
      Perehod();
@@ -384,7 +407,7 @@ if (result == null) {
    var razniza = (result[2] - result[1]);
    if (razniza != 1) {
    // alert("Найдено: \nПозиция: "+result.index+"\nСовпадение: "+result[0]+"\nДлина: "+result.length);
-      var textMsg = "После выделенного маркера знака сноски "+result[1]+" идет маркер знака сноски "+result[2]+", что неправильно. Возможно пропущены или неверно пронумерованы маркеры знака сноски ниже выделенного места (на следующей странице). Если выделен маркер текста сноски — возможно (невыделенный скриптом) пробел между началом строки и маркером." // 10";
+      var textMsg = "После выделенного маркера знака сноски "+result[1]+" идет маркер знака сноски "+result[2]+", что неправильно. Возможно пропущены или неверно пронумерованы маркеры знака сноски ниже выделенного места (на следующей странице), либо склеенные абзацы. Если выделен маркер текста сноски — возможно (невыделенный) пробел между началом строки и маркером." // 10";
       window.external.SetStatusBarText(textMsg); 
       result.index += result.length - 1;
       Perehod();
