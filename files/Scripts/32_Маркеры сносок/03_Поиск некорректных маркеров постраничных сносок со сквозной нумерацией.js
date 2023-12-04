@@ -1,4 +1,4 @@
-// Поиск ошибок нумерации постраничных сносок со сквозной нумерацией v.1.1
+// Поиск некорректных маркеров постраничных сносок со сквозной нумерацией v.1.2
 // Находит ошибки нумерации:
 // постраничных сносок со сквозной нумерацией;
 // поглавных сносок со сквозной нумерацией;
@@ -52,12 +52,15 @@ if (isIE6) {
  coll["mainDocument"]=document;
  coll["window"]=window;
  // coll["versionNum"]=listMarker_versionNum;
- var markSign=window.showModalDialog("HTML/Поиск некорректных маркеров сносок.htm",coll,
+ var markSign=window.showModalDialog("HTML/Поиск некорректных маркеров сносок - выбор из вариантов.htm",coll,
      "dialogHeight: "+dialogHeight+"; dialogWidth: "+dialogWidth+"; "+
      "center: Yes; help: No; resizable: Yes; status: No;");
 if (!markSign) return;
 
- // Проверяем случайное наличие в документе символов ☺ и ☻, которые 
+
+   report = report.replace(/[☺☻]/g, "?"); // заменяем не знамо откуда вдруг могущие появиться символы ☺ и ☻, которые мы планируем использовать в дальнейшем в качестве временных меток.
+
+/*  // Проверяем случайное наличие в документе символов ☺ и ☻, которые 
 // будут использоваться скриптом как временные метки маркеров сносок 
 // в  переменной report: 
 var Metk = (report.match(/☺|☻/g) || []).length;
@@ -65,7 +68,7 @@ if (Metk > 0) {
    window.clipboardData.setData("text","[☻☺]+");
    alert("В вашем документе имеются символ(ы) ☺ и(ли) ☻, которые используются скриптом как временные метки. Для корректной работы рекомендуем на время работы скрипта заменить их на другие символы.\nНайти в документе их можно перейдя в режим Кода и вставив регулярное выражение из буфера обмена в строку поиска окна Найти (Ctrl+F)")
    return true;
-}
+} */
 
 // выполнение скрипта в зависимости от выбранных маркеров:
 if (markSign == "надстрочным текстом") {
@@ -137,7 +140,7 @@ else
 // преобразуем текст документа  в зависимости от выбранных меток:
 function FMarkSup() {
    marker = "числами надстрочным текстом" // фрагмент текста для сообщения о результатах поиска.
-   report = fromHTML.replace(/<SUP>/ig, "☺"); //подменяем теги SUP на метки
+   report = report.replace(/<SUP>/ig, "☺"); //подменяем теги SUP на метки
    report = report.replace(/<\/SUP>/ig, "☻"); 
    
    report = report.replace(/[¹²³⁴⁵⁶⁷⁸⁹⁰]+/g, "☺$&☻"); //подменяем символы цифр надстрочным  текстом на цифры.
@@ -161,9 +164,9 @@ function FMarkSup() {
 function FMarkAsteriks() {
 // (звездочек — не более двенадцати в одном маркере)
    marker = "звёздочками";
-   report = fromHTML;
+   // report = fromHTML;
    report = report.replace(/<\/?(STRONG|EM|SUP|STRIKE|CODE)>/ig, ""); 
-   str = str.replace(/<SPAN class=code>(.+?)<\/SPAN>/ig, "$1"); // 
+   report = report.replace(/<SPAN class=code>(.+?)<\/SPAN>/ig, "$1"); // 
    report = report.replace(/&nbsp;(&nbsp;| |\*)/g, " $1"); // 
    report = report.replace(/(&nbsp;| |\*)&nbsp;/g, "$1 "); // 
    report = report.replace(/[ □▫◦]/g, " "); // 
@@ -200,6 +203,7 @@ function FMarkKvSk() {
 }
 
  function FMarkFigSk() {
+   marker = "в виде скобок {1}";
    report = report.replace(/<\/?(STRONG|EM|SUP|SUB|STRIKE)>/ig, ""); 
    report = report.replace(/<SPAN class=code>(.+?)<\/SPAN>/ig, "$1"); //  !!!
    report = report.replace(/(<A href=[^<]+?>)\{(\d+)\}(<\/A>)/ig, "$1($2)$3"); //  !!!
@@ -259,22 +263,30 @@ report = report.replace(/☻([ ]*)☺/g, "$1"); // // два маркера по
 
 report = report.replace(/<\/?[^<>]+>/g, ""); // удаляем все теги
 report = report.replace(/(\r\n)(\r\n)+/g, "$1"); // удалить пустые строки.
-report = report.replace(/^☺(.+?)☻/mg, "☺t$1☻"); // пометить меткой "t" маркеры текстов сносок.
-report = report.replace(/([^\n])☺(.+?)☻/gm, "$1☺z$2☻"); // пометить меткой "z" маркеры знаков сносок.
-report = report.replace(/^(☺t\d+☻[^\n☺☻]+?☺)z(\d+☻)/gm, "$1Z$2"); // пометить меткой "Z" маркер знака сноски в тексте сноски.
-report = report.replace(/^[^☺☻]+$/gm, ""); // удалить строки без меток.
 
-report = report.replace(/^([ ]+)(☺.+?)☻/gm, "$2$1☻"); // начальные пробелы перед маркерами текстов сносок
-// переместить в границы маркеров для лучшей локализации.
-report = report.replace(/^(☺.+?)☻[ ]*$/gm, "$1 ☻"); // маркер сноски в пустой строке сделать видимым.
-// alert(report);
-report = report.replace(/(^|☻)[^☺☻]+?(☺|$)/g, "$1$2"); // удалить всё кроме меток и их номеров.
-report = report.replace(/[☻☺]/g, ""); // удалить метки тегов бывшего верхнего индекса.
-reportOdnoiStrokoi = report;
-// alert(reportOdnoiStrokoi);
-report = report.replace(/(t.+?)(z.+?)/gm, "$1\r\n$2"); // делим на строки-"страницы".
+   // заменяем все символы "z" и "t", если такие вдруг оказались между метками сносок.
+   var colZT = 1
+   for (var i = 0; colZT > 0; i++) { 
+      var colZT= (report.match(/(☺.+?)[ztZT](.*?☻)/g) || []).length; // 
+      report = report.replace(/(☺.+?)[ztZT](.*?☻)/g, "$1?$2"); //
+   }
 
-// alert(report);
+   report = report.replace(/^☺(.+?)☻/mg, "☺t$1☻"); // пометить меткой "t" маркеры текстов сносок.
+   report = report.replace(/([^\n])☺(.+?)☻/gm, "$1☺z$2☻"); // пометить меткой "z" маркеры знаков сносок.
+   report = report.replace(/^(☺t\d+☻[^\n☺☻]+?☺)z(\d+☻)/gm, "$1Z$2"); // пометить меткой "Z" маркер знака сноски в тексте сноски.
+   report = report.replace(/^[^☺☻]+$/gm, ""); // удалить строки без меток.
+   
+   report = report.replace(/^([ ]+)(☺.+?)☻/gm, "$2$1☻"); // начальные пробелы перед маркерами текстов сносок
+   // переместить в границы маркеров для лучшей локализации.
+   report = report.replace(/^(☺.+?)☻[ ]*$/gm, "$1 ☻"); // маркер сноски в пустой строке сделать видимым.
+   // alert(report);
+   report = report.replace(/(^|☻)[^☺☻]+?(☺|$)/g, "$1$2"); // удалить всё кроме меток и их номеров.
+   report = report.replace(/[☻☺]/g, ""); // удалить метки тегов бывшего верхнего индекса.
+   reportOdnoiStrokoi = report;
+   // alert(reportOdnoiStrokoi);
+   report = report.replace(/(t.+?)(z.+?)/gm, "$1\r\n$2"); // делим на строки-"страницы".
+   
+   // alert(report);
 
    // подбиваем итоги по списку маркеров:
    z = (report.match(/z/gi) || []).length; // маркеров знаков сносок всего.
