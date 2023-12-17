@@ -1,0 +1,51 @@
+<!--Создать таблицу маркеров-сносок v.1.0
+Автор: stokber
+-->
+<html>
+<head>
+ <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+ <meta http-equiv="MSThemeCompatible" content="yes">
+ <style>
+  body, input{font-family:Tahoma; font-size:16px;margin:2px;}
+ </style>
+ <title>Создать таблицу маркеров-сносок</title>
+<script>
+function markerFunc() {
+ if (document.getElementById("radio1").checked) return "надстрочным текстом";
+ if (document.getElementById("radio2").checked) return "вида *";
+ if (document.getElementById("radio3").checked) return "вида [1]";
+ if (document.getElementById("radio4").checked) return "вида {1}";
+ if (document.getElementById("radio5").checked) return "вида [~1~]";
+ if (document.getElementById("radio6").checked) return "вида {~1~}";
+ }
+ 
+//function Help() {
+// var shell=new ActiveXObject("WScript.Shell")
+// var location = window.location.pathname;
+// var path = location.replace(/Создать таблицу маркеров-сносок\.htm/, "help_table.txt");
+// path = path.replace(/\\/g, "\\\\");
+//shell.Run("\""+path+"\"", 1,false); 
+//// shell.Run('"C:\\Program Files (x86)\\FictionBook Editor 2.7.0\\HTML\\help.txt"', 1,false);
+//}
+</script>
+</head>
+<body>
+<!--Выберите вид нумерации сносок:<br>
+<label for="radio7"><input type="radio" name="ordNumMarker" id="radio7" checked>постраничные с постраничной нумерацией</label><br>
+<label for="radio8"><input type="radio" name="ordNumMarker" id="radio8">постраничные со сквозной нумерацией</label><br>
+<label for="radio9"><input type="radio" name="ordNumMarker" id="radio9">постраничные с постраничной нумерацией 2<br>&nbsp;&nbsp;&nbsp;&nbsp;(тексты сносок — в конце книги)</label><br>
+<br>-->
+
+Выберите вид маркеров сносок:<br>
+<label for="radio1"><input type="radio" name="markSign" id="radio1" checked>надстрочным текстом</label><br>
+<label for="radio2"><input type="radio" name="markSign" id="radio2">вида *</label><br>
+<label for="radio3"><input type="radio" name="markSign" id="radio3">вида [1]</label><br>
+<label for="radio4"><input type="radio" name="markSign" id="radio4">вида {1}</label><br>
+<label for="radio5"><input type="radio" name="markSign" id="radio5">вида [~1~]</label><br>
+<label for="radio6"><input type="radio" name="markSign" id="radio6">вида {~1~}</label><br>
+<br>
+<input type="button" value="Создать таблицу сносок" onclick="window.returnValue=markerFunc(); window.close();" style="width:258px;"><BR>
+<!--<input type="button" value="Справка" onclick="Help();" style="width:125px;">-->
+<input type="button" value="Отмена" onclick="window.returnValue=null; window.close();" style="width:125px;"><BR>
+</body>
+</html>
