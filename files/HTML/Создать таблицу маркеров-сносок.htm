@@ -1,14 +1,16 @@
 <!--Создать таблицу маркеров-сносок v.1.0
 Автор: stokber
 -->
+<!DOCTYPE html> 
 <html>
 <head>
  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
  <meta http-equiv="MSThemeCompatible" content="yes">
+ <title>Создать таблицу маркеров-сносок</title>
  <style>
   body, input{font-family:Tahoma; font-size:16px;margin:2px;}
  </style>
- <title>Создать таблицу маркеров-сносок</title>
+</head>
 <script>
 function markerFunc() {
  if (document.getElementById("radio1").checked) return "надстрочным текстом";
@@ -18,17 +20,7 @@ function markerFunc() {
  if (document.getElementById("radio5").checked) return "вида [~1~]";
  if (document.getElementById("radio6").checked) return "вида {~1~}";
  }
- 
-//function Help() {
-// var shell=new ActiveXObject("WScript.Shell")
-// var location = window.location.pathname;
-// var path = location.replace(/Создать таблицу маркеров-сносок\.htm/, "help_table.txt");
-// path = path.replace(/\\/g, "\\\\");
-//shell.Run("\""+path+"\"", 1,false); 
-//// shell.Run('"C:\\Program Files (x86)\\FictionBook Editor 2.7.0\\HTML\\help.txt"', 1,false);
-//}
 </script>
-</head>
 <body>
 <!--Выберите вид нумерации сносок:<br>
 <label for="radio7"><input type="radio" name="ordNumMarker" id="radio7" checked>постраничные с постраничной нумерацией</label><br>
