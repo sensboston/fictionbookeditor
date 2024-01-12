@@ -1,6 +1,6 @@
 // Скрипт «Обратный поиск (без замены) мусорных символов» для редактора Fiction Book Editor (FBE).
-// Версия 1.0
-// Автор Sclex, регэксп для поисковой команды составлен неизвестно кем
+// Версия 1.1
+// Автор Sclex
 
 function Run() {
 
@@ -66,7 +66,7 @@ function Run() {
   addMacros("<пустота-теги-или-ничего>","([\\x20\\xA0]|<(?!IMG)(?!/A\>)/?[A-Za-z]+[^\>]*>)*");
   addMacros("<сокращения>","(т<тэги-кроме-IMG-и-закр-A>\\.<пустота-теги-или-ничего>д|т<тэги-кроме-IMG-и-закр-A>\\.<пустота-теги-или-ничего>п|т<тэги-кроме-IMG-и-закр-A>\\.<пустота-теги-или-ничего>к|т<тэги-кроме-IMG-и-закр-A>\\.<пустота-теги-или-ничего>е|т<тэги-кроме-IMG-и-закр-A>\\.<пустота-теги-или-ничего>о|т<тэги-кроме-IMG-и-закр-A>\\.<пустота-теги-или-ничего>ч|Р<тэги-кроме-IMG-и-закр-A>\\.<пустота-теги-или-ничего>Х|т<тэги-кроме-IMG-и-закр-A>ы<тэги-кроме-IMG-и-закр-A>с<тэги-кроме-IMG-и-закр-A>|м<тэги-кроме-IMG-и-закр-A>л<тэги-кроме-IMG-и-закр-A>н<тэги-кроме-IMG-и-закр-A>|ч<тэги-кроме-IMG-и-закр-A>е<тэги-кроме-IMG-и-закр-A>л<тэги-кроме-IMG-и-закр-A>|э<тэги-кроме-IMG-и-закр-A>к<тэги-кроме-IMG-и-закр-A>з<тэги-кроме-IMG-и-закр-A>|р<тэги-кроме-IMG-и-закр-A>у<тэги-кроме-IMG-и-закр-A>б<тэги-кроме-IMG-и-закр-A>|к<тэги-кроме-IMG-и-закр-A>о<тэги-кроме-IMG-и-закр-A>п<тэги-кроме-IMG-и-закр-A>|н<тэги-кроме-IMG-и-закр-A>е<тэги-кроме-IMG-и-закр-A>м<тэги-кроме-IMG-и-закр-A>|и<тэги-кроме-IMG-и-закр-A>с<тэги-кроме-IMG-и-закр-A>п<тэги-кроме-IMG-и-закр-A>|л<тэги-кроме-IMG-и-закр-A>а<тэги-кроме-IMG-и-закр-A>т<тэги-кроме-IMG-и-закр-A>|а<тэги-кроме-IMG-и-закр-A>в<тэги-кроме-IMG-и-закр-A>т<тэги-кроме-IMG-и-закр-A>|р<тэги-кроме-IMG-и-закр-A>е<тэги-кроме-IMG-и-закр-A>д<тэги-кроме-IMG-и-закр-A>|о<тэги-кроме-IMG-и-закр-A>б<тэги-кроме-IMG-и-закр-A>л<тэги-кроме-IMG-и-закр-A>|ц<тэги-кроме-IMG-и-закр-A>и<тэги-кроме-IMG-и-закр-A>т<тэги-кроме-IMG-и-закр-A>|р<тэги-кроме-IMG-и-закр-A>у<тэги-кроме-IMG-и-закр-A>к<тэги-кроме-IMG-и-закр-A>|м<тэги-кроме-IMG-и-закр-A>и<тэги-кроме-IMG-и-закр-A>н<тэги-кроме-IMG-и-закр-A>|с<тэги-кроме-IMG-и-закр-A>е<тэги-кроме-IMG-и-закр-A>к<тэги-кроме-IMG-и-закр-A>|с<тэги-кроме-IMG-и-закр-A>т<тэги-кроме-IMG-и-закр-A>р<тэги-кроме-IMG-и-закр-A>|м<тэги-кроме-IMG-и-закр-A>л<тэги-кроме-IMG-и-закр-A>р<тэги-кроме-IMG-и-закр-A>д<тэги-кроме-IMG-и-закр-A>|т<тэги-кроме-IMG-и-закр-A>р<тэги-кроме-IMG-и-закр-A>л<тэги-кроме-IMG-и-закр-A>н<тэги-кроме-IMG-и-закр-A>|с<тэги-кроме-IMG-и-закр-A>о<тэги-кроме-IMG-и-закр-A>к<тэги-кроме-IMG-и-закр-A>р<тэги-кроме-IMG-и-закр-A>|д<тэги-кроме-IMG-и-закр-A>о<тэги-кроме-IMG-и-закр-A>л<тэги-кроме-IMG-и-закр-A>л<тэги-кроме-IMG-и-закр-A>|п<тэги-кроме-IMG-и-закр-A>р<тэги-кроме-IMG-и-закр-A>о<тэги-кроме-IMG-и-закр-A>ч<тэги-кроме-IMG-и-закр-A>|а<тэги-кроме-IMG-и-закр-A>н<тэги-кроме-IMG-и-закр-A>г<тэги-кроме-IMG-и-закр-A>л<тэги-кроме-IMG-и-закр-A>|п<тэги-кроме-IMG-и-закр-A>р<тэги-кроме-IMG-и-закр-A>и<тэги-кроме-IMG-и-закр-A>м<тэги-кроме-IMG-и-закр-A>|п<тэги-кроме-IMG-и-закр-A>е<тэги-кроме-IMG-и-закр-A>р<тэги-кроме-IMG-и-закр-A>е<тэги-кроме-IMG-и-закр-A>в<тэги-кроме-IMG-и-закр-A>|в<тэги-кроме-IMG-и-закр-A>в<тэги-кроме-IMG-и-закр-A>|д<тэги-кроме-IMG-и-закр-A>е<тэги-кроме-IMG-и-закр-A>р<тэги-кроме-IMG-и-закр-A>|г<тэги-кроме-IMG-и-закр-A>о<тэги-кроме-IMG-и-закр-A>р<тэги-кроме-IMG-и-закр-A>|г<тэги-кроме-IMG-и-закр-A>г<тэги-кроме-IMG-и-закр-A>|д<тэги-кроме-IMG-и-закр-A>р<тэги-кроме-IMG-и-закр-A>|п<тэги-кроме-IMG-и-закр-A>р<тэги-кроме-IMG-и-закр-A>|г<тэги-кроме-IMG-и-закр-A>р<тэги-кроме-IMG-и-закр-A>|с<тэги-кроме-IMG-и-закр-A>м<тэги-кроме-IMG-и-закр-A>|с<тэги-кроме-IMG-и-закр-A>р<тэги-кроме-IMG-и-закр-A>|ф<тэги-кроме-IMG-и-закр-A>р<тэги-кроме-IMG-и-закр-A>|м<тэги-кроме-IMG-и-закр-A>м<тэги-кроме-IMG-и-закр-A>|к<тэги-кроме-IMG-и-закр-A>г<тэги-кроме-IMG-и-закр-A>|у<тэги-кроме-IMG-и-закр-A>л<тэги-кроме-IMG-и-закр-A>|с<тэги-кроме-IMG-и-закр-A>т<тэги-кроме-IMG-и-закр-A>|г<тэги-кроме-IMG-и-закр-A>|в<тэги-кроме-IMG-и-закр-A>|П<тэги-кроме-IMG-и-закр-A>р<тэги-кроме-IMG-и-закр-A>и<тэги-кроме-IMG-и-закр-A>м<тэги-кроме-IMG-и-закр-A>|П<тэги-кроме-IMG-и-закр-A>е<тэги-кроме-IMG-и-закр-A>р<тэги-кроме-IMG-и-закр-A>|С<тэги-кроме-IMG-и-закр-A>м<тэги-кроме-IMG-и-закр-A>|н<тэги-кроме-IMG-и-закр-A>\\.<пустота-теги-или-ничего>э)");
 
-  addRegExp("[^а-яa-z()\\.0-9—(\\-…;«»!?:\\*“”\\[\\]„\\,/–’ё№≈✓≤≥≠◦\\x20]","i","Найдено: мусорный символ.");
+  addRegExp("[^Ǿа-яa-z()\\.0-9—(\\-…;«»!?:\\*“”\\[\\]„\\,/–’ё№≈✓≤≥≠◦\\x20\\xA0]","i","Найдено: мусорный символ.");
 
  }
 
@@ -340,7 +340,9 @@ function Run() {
  var removeTagsRE_="";
  //var imgTagRE=new RegExp("<IMG\\b.*?>","ig");
  var imgTagRE=new RegExp(">.*?\\bGMI<","ig");
- var imgTagRE_="~~~";
+ var imgTagRE_="ǾǾǾ";
+ var imgTagRE_01=new RegExp("<IMG\\b.*?>","ig");
+ var imgTagRE_01_="ǾǾǾ";
  //var ampRE=new RegExp("&amp;","g");
  var ampRE=new RegExp(";pma&","g");
  var ampRE_="&";
@@ -392,7 +394,7 @@ function Run() {
    ignoreNullPosition=false; //tr.compareEndPoints("StartToEnd",tr)==0;
 
    el=ptr;
-   s=el.innerHTML.replace(/<[^>]+>/g,"").replace(/&([^;]+);/g,"&").split("").reverse().join("");
+   s=el.innerHTML.replace(imgTagRE_01,imgTagRE_01_).replace(/<[^>]+>/g,"").replace(/&([^;]+);/g,"&").split("").reverse().join("");
    //alert("s в начале: "+s);
    s_len=s.length;
    //log+="Входим в searchNext.  s1_len: "+s1_len+"  s_len: "+s_len+"\n\n";
@@ -402,8 +404,8 @@ function Run() {
    tr2.moveStart("character",-s1_len);
    //tr2.select();
    //alert("После select.");
-   s1_len=tr2.text.length;
-   var s1=tr2.htmlText.replace(/\s{2,}/g," ").split("").reverse().join("");
+   s1_len=tr2.htmlText.replace(/\s{2,}/g," ").replace(imgTagRE_01,imgTagRE_01_).replace(removeTagsRE,removeTagsRE_).replace(imgTagRE,imgTagRE_).replace(ltRE,ltRE_).replace(gtRE,gtRE_).replace(ampRE,ampRE_).replace(nbspRE,nbspRE_).length;
+   var s1=tr2.htmlText.replace(/\s{2,}/g," ").replace(imgTagRE_01,imgTagRE_01_).split("").reverse().join("");
    var s1_len2=s1.length;
    var s2=el.innerHTML.split("").reverse().join("");
    //var k1=s1.search(/(<\/[^<>]+>)+$/);
@@ -546,7 +548,7 @@ function Run() {
  }
  
  function getElemTextLen(ptr) {
-   return ptr.innerHTML.replace(/<[^>]*>/g,"").replace(/&([^;]+);/,"&").length;
+   return ptr.innerHTML.replace(imgTagRE_01,imgTagRE_01_).replace(/<[^>]*>/g,"").replace(/&([^;]+);/,"&").length;
  }
  
  fbwBody=document.getElementById("fbw_body");
@@ -562,7 +564,7 @@ function Run() {
   tr2=document.body.createTextRange();
   tr2.moveToElementText(el2);
   tr2.setEndPoint("StartToStart",tr);
-  s1_len=tr2.text.length;
+  s1_len=tr2.htmlText.replace(/\s{2,}/g," ").replace(imgTagRE_01,imgTagRE_01_).replace(removeTagsRE,removeTagsRE_).replace(ltRE,ltRE_).replace(gtRE,gtRE_).replace(ampRE,ampRE_).replace(nbspRE,nbspRE_).length;
   //alert("s1_len: "+s1_len);
  }
     
@@ -571,7 +573,6 @@ function Run() {
  if (foundMatch) {
   tr=document.body.createTextRange();
   tr.moveToElementText(ptr);
-  //alert("tr.text: "+tr.text);
   tr.collapse(true);
   //alert("foundPos: "+foundPos+"\n\nfoundLen: "+foundLen+"\n\nptr:\n\n"+ptr.innerHTML+"\n\ngetElemTextLen(ptr)-foundPos: "+(getElemTextLen(ptr)-foundPos));
   tr.move("character",getElemTextLen(ptr)-foundPos);
