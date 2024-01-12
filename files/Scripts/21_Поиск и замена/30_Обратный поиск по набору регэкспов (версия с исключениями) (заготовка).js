@@ -1,5 +1,5 @@
 // Скрипт «Обратный поиск по набору регэкспов (версия с исключениями) (заготовка)» для редактора Fiction Book Editor (FBE).
-// Версия 1.2
+// Версия 1.3
 // Автор Sclex
 
 function Run() {
@@ -97,7 +97,7 @@ function Run() {
   // оволс ' оволс >PUS/<10>PUS<
  }
 
-try { var nbspChar=window.external.GetNBSP(); var nbspEntity; if (nbspChar.charCodeAt(0)==160) nbspEntity="&nbsp;"; else nbspEntity=nbspChar;}
+ try { var nbspChar=window.external.GetNBSP(); var nbspEntity; if (nbspChar.charCodeAt(0)==160) nbspEntity="&nbsp;"; else nbspEntity=nbspChar;}
  catch(e) { var nbspChar=String.fromCharCode(160); var nbspEntity="&nbsp;";}
 
  var sel=document.selection;
@@ -423,9 +423,8 @@ try { var nbspChar=window.external.GetNBSP(); var nbspEntity; if (nbspChar.charC
    ignoreNullPosition=false; //tr.compareEndPoints("StartToEnd",tr)==0;
 
    el=ptr;
-   s=el.innerHTML.replace(imgTagRE_01,imgTagRE_01_).replace(removeTagsRE_01,removeTagsRE_01_).replace(/&lt;/g,"<").replace(/&gt;/g,">").replace(/&nbsp;/g," ").replace(/&amp;/g,"&").split("").reverse().join("");
-   //alert("s:\n"+s);
-   //alert("s в начале: "+s);
+   s=el.innerHTML.replace(imgTagRE_01,imgTagRE_01_).replace(removeTagsRE_01,removeTagsRE_01_).replace(/&lt;/g,"<").replace(/&gt;/g,">").replace(/&nbsp;/g,nbspChar).replace(/&amp;/g,"&").split("").reverse().join("");
+   //alert("s 01:\n"+s);
    s_len=s.length;
    //log+="Входим в searchNext.  s1_len: "+s1_len+"  s_len: "+s_len+"\n\n";
    tr2.moveToElementText(el);
@@ -434,7 +433,7 @@ try { var nbspChar=window.external.GetNBSP(); var nbspEntity; if (nbspChar.charC
    tr2.moveStart("character",-s1_len);
    //tr2.select();
    //alert("После select.");
-   s1_len=tr2.htmlText.replace(/^\s+<P(?=[ >])/im,"<P").replace(/\s{2,}/g," ").replace(imgTagRE_01,imgTagRE_01_).replace(removeTagsRE_01,removeTagsRE_01_).replace(/&lt;/g,"<").replace(/&gt;/g,">").replace(/&nbsp;/g," ").replace(/&amp;/g,"&").length;
+   s1_len=tr2.htmlText.replace(/^\s+<P(?=[ >])/im,"<P").replace(/\s{2,}/g," ").replace(imgTagRE_01,imgTagRE_01_).replace(removeTagsRE_01,removeTagsRE_01_).replace(/&lt;/g,"<").replace(/&gt;/g,">").replace(/&nbsp;/g,nbspChar).replace(/&amp;/g,"&").length;
    //alert("s1_len: "+s1_len);
    var s1=tr2.htmlText.replace(/^\s+<P(?=[ >])/im,"<P").replace(/\s{2,}/g," ").replace(imgTagRE_01,imgTagRE_01_).split("").reverse().join("");
    var s1_len2=s1.length;
@@ -464,12 +463,13 @@ try { var nbspChar=window.external.GetNBSP(); var nbspEntity; if (nbspChar.charC
        regExps[i].lastIndex=s1_len+(ignoreNullPosition?1:0);
        savedIndex=s1_len+(ignoreNullPosition?1:0);
        //alert("s1_len+(ignoreNullPosition?1:0): "+(s1_len+(ignoreNullPosition?1:0)));
-       //alert("s перед exec: "+s);
+       //alert("s перед exec 01: "+s);
        rslt=regExps[i].exec(s);
        while (rslt && !checkLookBehs(i, s, rslt.index, false)) {
         savedIndex++;
         if (rslt.index>savedIndex) savedIndex=rslt.index;
         regExps[i].lastIndex=savedIndex;
+        //alert("s перед exec 02: "+s);
         rslt=regExps[i].exec(s);
        }
        if (rslt) {
@@ -565,7 +565,8 @@ try { var nbspChar=window.external.GetNBSP(); var nbspEntity; if (nbspChar.charC
       if (el && el!=fbwBody) el=el.previousSibling;
      }
     if (el && el.nodeName=="P") {
-     s=el.innerHTML.replace(/<[^>]+>/g,"").replace(/&([^;]+);/g,"&").split("").reverse().join("");
+     s=el.innerHTML.replace(imgTagRE_01,imgTagRE_01_).replace(removeTagsRE_01,removeTagsRE_01_).replace(/&lt;/g,"<").replace(/&gt;/g,">").replace(/&nbsp;/g,nbspChar).replace(/&amp;/g,"&").split("").reverse().join("");
+     //alert("s 02: "+s);
      s1_len=0;
      s_html_orig=el.innerHTML;
      s_html=s_html_orig.split("").reverse().join("");
@@ -579,7 +580,7 @@ try { var nbspChar=window.external.GetNBSP(); var nbspEntity; if (nbspChar.charC
  }
  
  function getElemTextLen(ptr) {
-   return ptr.innerHTML.replace(imgTagRE_01,imgTagRE_01_).replace(removeTagsRE_01,removeTagsRE_01_).replace(/&lt;/g,"<").replace(/&gt;/g,">").replace(/&nbsp;/g," ").replace(/&amp;/g,"&").length;
+   return ptr.innerHTML.replace(imgTagRE_01,imgTagRE_01_).replace(removeTagsRE_01,removeTagsRE_01_).replace(/&lt;/g,"<").replace(/&gt;/g,">").replace(/&nbsp;/g,nbspChar).replace(/&amp;/g,"&").length;
  }
  
  fbwBody=document.getElementById("fbw_body");
@@ -595,7 +596,7 @@ try { var nbspChar=window.external.GetNBSP(); var nbspEntity; if (nbspChar.charC
   tr2=document.body.createTextRange();
   tr2.moveToElementText(el2);
   tr2.setEndPoint("StartToStart",tr);
-  s1_len=tr2.htmlText.replace(/^\s+<P(?=[ >])/im,"<P").replace(/\s{2,}/g," ").replace(imgTagRE_01,imgTagRE_01_).replace(removeTagsRE_01,removeTagsRE_01_).replace(/&lt;/g,"<").replace(/&gt;/g,">").replace(/&nbsp;/g," ").replace(/&amp;/g,"&").length;
+  s1_len=tr2.htmlText.replace(/^\s+<P(?=[ >])/im,"<P").replace(/\s{2,}/g," ").replace(imgTagRE_01,imgTagRE_01_).replace(removeTagsRE_01,removeTagsRE_01_).replace(/&lt;/g,"<").replace(/&gt;/g,">").replace(/&nbsp;/g,nbspChar).replace(/&amp;/g,"&").length;
   //alert("tr2.htmlText: "+tr2.htmlText+"\n\n"+
   //      "tr2.htmlText...: "+tr2.htmlText.replace(/^\s+<P(?=[ >])/im,"<P").replace(/\s{2,}/g," ").replace(imgTagRE_01,imgTagRE_01_).replace(removeTagsRE_01,removeTagsRE_01_).replace(/&lt;/g,"<").replace(/&gt;/g,">").replace(/&nbsp;/g," ").replace(/&amp;/g,"&"));
   //alert("s1_len: "+s1_len);
