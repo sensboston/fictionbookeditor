@@ -1,5 +1,5 @@
 // Скрипт «Обратный поиск (без замены) мусорных символов» для редактора Fiction Book Editor (FBE).
-// Версия 1.1
+// Версия 1.2
 // Автор Sclex
 
 function Run() {
@@ -338,6 +338,8 @@ function Run() {
  //var removeTagsRE=new RegExp("<(?!IMG\\b).*?(>|$)","ig");
  var removeTagsRE=new RegExp("(^|>)[^><]*?<","ig");
  var removeTagsRE_="";
+ var removeTagsRE_01=new RegExp("<(?!IMG\\b).*?(>|$)","ig");
+ var removeTagsRE_01_="";
  //var imgTagRE=new RegExp("<IMG\\b.*?>","ig");
  var imgTagRE=new RegExp(">.*?\\bGMI<","ig");
  var imgTagRE_="ǾǾǾ";
@@ -394,7 +396,8 @@ function Run() {
    ignoreNullPosition=false; //tr.compareEndPoints("StartToEnd",tr)==0;
 
    el=ptr;
-   s=el.innerHTML.replace(imgTagRE_01,imgTagRE_01_).replace(/<[^>]+>/g,"").replace(/&([^;]+);/g,"&").split("").reverse().join("");
+   s=el.innerHTML.replace(imgTagRE_01,imgTagRE_01_).replace(removeTagsRE_01,removeTagsRE_01_).replace(/&lt;/g,"<").replace(/&gt;/g,">").replace(/&nbsp;/g," ").replace(/&amp;/g,"&").split("").reverse().join("");
+   //alert("s:\n"+s);
    //alert("s в начале: "+s);
    s_len=s.length;
    //log+="Входим в searchNext.  s1_len: "+s1_len+"  s_len: "+s_len+"\n\n";
@@ -404,8 +407,9 @@ function Run() {
    tr2.moveStart("character",-s1_len);
    //tr2.select();
    //alert("После select.");
-   s1_len=tr2.htmlText.replace(/\s{2,}/g," ").replace(imgTagRE_01,imgTagRE_01_).replace(removeTagsRE,removeTagsRE_).replace(imgTagRE,imgTagRE_).replace(ltRE,ltRE_).replace(gtRE,gtRE_).replace(ampRE,ampRE_).replace(nbspRE,nbspRE_).length;
-   var s1=tr2.htmlText.replace(/\s{2,}/g," ").replace(imgTagRE_01,imgTagRE_01_).split("").reverse().join("");
+   s1_len=tr2.htmlText.replace(/^\s+<P(?=[ >])/im,"<P").replace(/\s{2,}/g," ").replace(imgTagRE_01,imgTagRE_01_).replace(removeTagsRE_01,removeTagsRE_01_).replace(/&lt;/g,"<").replace(/&gt;/g,">").replace(/&nbsp;/g," ").replace(/&amp;/g,"&").length;
+   //alert("s1_len: "+s1_len);
+   var s1=tr2.htmlText.replace(/^\s+<P(?=[ >])/im,"<P").replace(/\s{2,}/g," ").replace(imgTagRE_01,imgTagRE_01_).split("").reverse().join("");
    var s1_len2=s1.length;
    var s2=el.innerHTML.split("").reverse().join("");
    //var k1=s1.search(/(<\/[^<>]+>)+$/);
@@ -548,7 +552,7 @@ function Run() {
  }
  
  function getElemTextLen(ptr) {
-   return ptr.innerHTML.replace(imgTagRE_01,imgTagRE_01_).replace(/<[^>]*>/g,"").replace(/&([^;]+);/,"&").length;
+   return ptr.innerHTML.replace(imgTagRE_01,imgTagRE_01_).replace(removeTagsRE_01,removeTagsRE_01_).replace(/&lt;/g,"<").replace(/&gt;/g,">").replace(/&nbsp;/g," ").replace(/&amp;/g,"&").length;
  }
  
  fbwBody=document.getElementById("fbw_body");
@@ -564,7 +568,9 @@ function Run() {
   tr2=document.body.createTextRange();
   tr2.moveToElementText(el2);
   tr2.setEndPoint("StartToStart",tr);
-  s1_len=tr2.htmlText.replace(/\s{2,}/g," ").replace(imgTagRE_01,imgTagRE_01_).replace(removeTagsRE,removeTagsRE_).replace(ltRE,ltRE_).replace(gtRE,gtRE_).replace(ampRE,ampRE_).replace(nbspRE,nbspRE_).length;
+  s1_len=tr2.htmlText.replace(/^\s+<P(?=[ >])/im,"<P").replace(/\s{2,}/g," ").replace(imgTagRE_01,imgTagRE_01_).replace(removeTagsRE_01,removeTagsRE_01_).replace(/&lt;/g,"<").replace(/&gt;/g,">").replace(/&nbsp;/g," ").replace(/&amp;/g,"&").length;
+  //alert("tr2.htmlText: "+tr2.htmlText+"\n\n"+
+  //      "tr2.htmlText...: "+tr2.htmlText.replace(/^\s+<P(?=[ >])/im,"<P").replace(/\s{2,}/g," ").replace(imgTagRE_01,imgTagRE_01_).replace(removeTagsRE_01,removeTagsRE_01_).replace(/&lt;/g,"<").replace(/&gt;/g,">").replace(/&nbsp;/g," ").replace(/&amp;/g,"&"));
   //alert("s1_len: "+s1_len);
  }
     
@@ -574,7 +580,7 @@ function Run() {
   tr=document.body.createTextRange();
   tr.moveToElementText(ptr);
   tr.collapse(true);
-  //alert("foundPos: "+foundPos+"\n\nfoundLen: "+foundLen+"\n\nptr:\n\n"+ptr.innerHTML+"\n\ngetElemTextLen(ptr)-foundPos: "+(getElemTextLen(ptr)-foundPos));
+  //alert("foundPos: "+foundPos+"\n\nfoundLen: "+foundLen+"\n\nptr:\n\n"+ptr.innerHTML+"getElemTextLen(ptr): "+getElemTextLen(ptr)+"\n\ngetElemTextLen(ptr)-foundPos: "+(getElemTextLen(ptr)-foundPos));
   tr.move("character",getElemTextLen(ptr)-foundPos);
   tr.moveStart("character",-foundLen);
   tr.select();
