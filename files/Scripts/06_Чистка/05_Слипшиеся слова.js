@@ -44,7 +44,7 @@
 // v.2.92 — доработка подсветки для найденных рез-тов поиска — Alex2L, май, июнь 2012
 //======================================
 
-var VersionNumber="3.1";
+var VersionNumber="3.2";
 
 //обрабатывать ли history
 var ObrabotkaHistory=true;
@@ -410,7 +410,7 @@ xCol[k] = v3; k++; }
  if (InputBox(" :: Подозрительные символы ::\nВведите свой вариант:        " +v4,v4, r) == IDCANCEL) return "exit";
  if(r!=null && r.$!="")  { Col[k] = r.$;    s=sl4+("col1_" +k+ "†")+sp4; count++; }
  else                       { Col[k] = v4; sobCol[v4]=true;  s=sl4+("col1_" +k+ "†")+sp4; } }
- if (k>=10 && sobCol[sv4]==null) {
+ if (k>=10 && sobCol[v4]==null) {
  if (InputBox(" :: Подозрительные символы ::\nВведите свой вариант:        " +v4,v4, r) == IDCANCEL) return "exit";
  if(r!=null && r.$!="")  { Col[k] = r.$;    s=sl4+("col2_" +k+ "†")+sp4; count++; }
  else                       { Col[k] = v4; sobCol[v4]=true;  s=sl4+("col2_" +k+ "†")+sp4; } }
