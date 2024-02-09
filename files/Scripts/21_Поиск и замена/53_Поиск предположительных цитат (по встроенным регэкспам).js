@@ -1,5 +1,5 @@
 // Скрипт "Поиск предположительных цитат".
-// Версия 4.8
+// Версия 4.9
 // Автор скрипта Sclex, набор RegExp-ов - TaKir, 18.10.2022
 
 // Редакция на 18.10.2022.
@@ -114,6 +114,20 @@ function Run() {
 // -------------конец блока Stokber - регэкспы (30.12.2022):---------------
  }
 
+ function scrollIfItNeeds() {
+  var selection = document.selection;
+  if (selection) {
+    var range = selection.createRange();
+    var rect = range.getBoundingClientRect();
+    
+    // Проверяем, находится ли выделение менее чем в 20 пикселях от нижнего края окна
+    if (document.documentElement.clientHeight - rect.bottom < 20) {
+      // Прокручиваем документ на 50 пикселей вниз
+      window.scrollBy(0, 50);
+    }
+  }
+ }
+ 
  try { var nbspChar=window.external.GetNBSP(); var nbspEntity; if (nbspChar.charCodeAt(0)==160) nbspEntity="&nbsp;"; else nbspEntity=nbspChar;}
  catch(e) { var nbspChar=String.fromCharCode(160); var nbspEntity="&nbsp;";}
 
@@ -492,6 +506,7 @@ function Run() {
   tr.setEndPoint("EndToStart",tr2);
   if (foundLen==0 && tr.move("character",1)==1) tr.move("character",-1);
   tr.select();
+  scrollIfItNeeds();
   return;
   }
   currFound++;

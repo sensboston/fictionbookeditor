@@ -1,5 +1,5 @@
 // Скрипт «Поиск (без замены) мусорных символов» для редактора Fiction Book Editor (FBE).
-// Версия 1.1
+// Версия 1.2
 // Автор Sclex
 
 function Run() {
@@ -75,6 +75,20 @@ function Run() {
     
   addRegExp("[^а-яa-z()\\.0-9—(\\-…;«»!?:\\*“”\\[\\]„\\,/–’ё№≈✓≤≥≠◦\\x20\\xA0Ǿ]","i","Найдено: мусорный символ.");
 
+ }
+
+ function scrollIfItNeeds() {
+  var selection = document.selection;
+  if (selection) {
+    var range = selection.createRange();
+    var rect = range.getBoundingClientRect();
+    
+    // Проверяем, находится ли выделение менее чем в 20 пикселях от нижнего края окна
+    if (document.documentElement.clientHeight - rect.bottom < 20) {
+      // Прокручиваем документ на 50 пикселей вниз
+      window.scrollBy(0, 50);
+    }
+  }
  }
 
  try { var nbspChar=window.external.GetNBSP(); var nbspEntity; if (nbspChar.charCodeAt(0)==160) nbspEntity="&nbsp;"; else nbspEntity=nbspChar;}
@@ -563,6 +577,7 @@ function Run() {
   tr.setEndPoint("EndToStart",tr2);
   if (foundLen==0 && tr.move("character",1)==1) tr.move("character",-1);
   tr.select();
+  scrollIfItNeeds();
  }
  //clipboardData.setData("Text",log);
  //var s="";
