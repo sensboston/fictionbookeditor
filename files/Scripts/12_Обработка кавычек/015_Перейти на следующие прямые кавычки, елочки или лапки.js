@@ -1,4 +1,4 @@
-//Переход на кавычки v2.9
+//Переход на кавычки v3.0
 //Автор Sclex
 //Подробности тут: http://www.fictionbook.org/forum/viewtopic.php?f=7&t=4412
 //И тут: http://scripts.fictionbook.org
@@ -13,6 +13,20 @@ function Run() {
  window.external.BeginUndoUnit(document,"Переход на символы "+chars+" "+versionNum);
  var beginMarkerId,beginMarkerEl,endMarkerId,endMarkerEl,range,range1,range2,charsLength,k,myNodeValue,extremeIndex,tmpIndex,fbw_body,el;
 
+ function scrollIfItNeeds() {
+  var selection = document.selection;
+  if (selection) {
+    var range = selection.createRange();
+    var rect = range.getBoundingClientRect();
+    
+    // Проверяем, находится ли выделение менее чем в 20 пикселях от нижнего края окна
+    if (document.documentElement.clientHeight - rect.bottom < 20) {
+      // Прокручиваем документ на 50 пикселей вниз
+      window.scrollBy(0, 50);
+    }
+  }
+ }
+ 
  function searchSymbol() {
    if (scriptDirection=="forward") {
    if (el.hasChildNodes()) el=el.firstChild;
@@ -105,6 +119,7 @@ function Run() {
   range.moveEnd("character",1);
   range.select();
   tmpLabelNode.removeNode();
+  scrollIfItNeeds();
  }
 
  fbw_body=document.getElementById("fbw_body");
