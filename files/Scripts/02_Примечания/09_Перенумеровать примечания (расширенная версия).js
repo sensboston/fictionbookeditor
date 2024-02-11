@@ -540,7 +540,7 @@ function Run() {
    MsgBox ('Скрипт «Перенумеровать примечания (расширенная версия)» v.'+VersionNumber+' GE'         ); 
   }
   
- window.external.BeginUndoUnit(document,"перенумерацию сносок (расширенная версия)");
+ window.external.BeginUndoUnit(document,"перенумерацию примечаний (расширенная версия)");
  Run1();
  Run2();
  window.external.EndUndoUnit(document);
