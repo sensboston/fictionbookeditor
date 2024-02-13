@@ -4,7 +4,7 @@
 //Мой сайт про мои скрипты: http://scripts.fictionbook.org
 
 function Run() {
- var versionStr="Переход на предыдущий верхний индекс v1.1.";
+ var versionStr="Переход на следующий верхний индекс v1.2.";
  var scriptDirection="forward";
  var isItTagWeLookingFor=function (t) { if (t.nodeName=="SUP") return true; else return false;}
  var paragraphIndent=false;
