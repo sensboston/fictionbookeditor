@@ -1,10 +1,10 @@
 //скрипт «Добавить маркеры списка (по выбору пользователя) (не нумеровать пустые строки).js»
 //автор Sclex
-//v1.1
+//v1.2
 
 function Run() {
 
- listMarker_versionNum="v1.1";
+ listMarker_versionNum="v1.2";
 
  try { var nbspChar=window.external.GetNBSP(); var nbspEntity; if (nbspChar.charCodeAt(0)==160) nbspEntity="&nbsp;"; else nbspEntity=nbspChar;}
  catch(e) { var nbspChar=String.fromCharCode(160); var nbspEntity="&nbsp;";}
@@ -30,7 +30,7 @@ function Run() {
  var processFlag=false;
  var ss="(</?(EM|I|B|STRONG)\\b[^>]*?>)*?";
  var re0=new RegExp("^"+ss+"([0-9]+?)"+ss+"( |"+nbspChar+")( |"+nbspChar+")*","i"); 
- var errMsg="Нет выделения.\n\nПеред запуском скрипта нужно выделить текст, который будет обработан, а именно: будут сделаны надстрочными индексами числа в началах абзацев, попавших в выделение, после которых (чисел) идет пробел. И если после числа в начале абзаца идет несколько пробелов (простых или неразрывных), они будут заменены на один пробел.";
+ var errMsg="Нет выделения.\n\nПеред запуском скрипта нужно выделить текст, который будет обработан.";
  tr=document.selection.createRange();
  if (!tr || tr.compareEndPoints("StartToEnd",tr)==0) {
   MsgBox(errMsg);

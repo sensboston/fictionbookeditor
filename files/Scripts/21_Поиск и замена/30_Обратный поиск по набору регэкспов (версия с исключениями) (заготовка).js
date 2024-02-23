@@ -1,6 +1,6 @@
-//Скрипт «Поиск по набору регэкспов»
-//Версия 4.9
-//Автор Sclex
+// Скрипт «Обратный поиск по набору регэкспов (версия с исключениями) (заготовка)» для редактора Fiction Book Editor (FBE).
+// Версия 1.3
+// Автор Sclex
 
 function Run() {
 
@@ -12,7 +12,7 @@ function Run() {
 
   // ТУТ НАДО НАСТРОИТЬ СПИСОК РЕГЭКСПОВ
   // Каждый регэксп настраивается строкой такого формата:
-  //   addRegExp("регэксп","ключи","описание","в каких тегах искать","лимит для просмотра назад");
+  //  addRegExp("регэксп","ключи","описание","в каких тегах искать","лимит для просмотра назад");
   // Слеши \ в регэкспе надо удвоить
   // Если регэксп содержит прямые кавычки, перед ними надо поставить слеш: \"
   // (этот слеш перед кавычкой не надо удваивать)
@@ -20,59 +20,83 @@ function Run() {
   //   i – поиск без учета регистра (case Insensitive)
   // По умолчанию поиск происходит с учетом регистра
   // "Описание" – это текст, который выведется в строке статуса, когда
-  //    по регэкспу будет что-то найдено
+  //  по регэкспу будет что-то найдено
   // "В каких тегах искать" – параметр должен содержать сочетания
-  //    "плюс или минус, потом имя элемента", разделенные пробелом.
-  //    К примеру, если этот параметр имеет значение "+poem -stanza +title",
-  //    то скрипт будет искать по регэкспу только в абзацах P,
-  //    вложенных в <poem> и в <title>, но при этом не вложенных в <stanza>.
-  //    Указывать имена инлайн-тегов не разрешено.
+  //  "плюс или минус, потом имя элемента", разделенные пробелом.
+  //  К примеру, если этот параметр имеет значение "+poem -stanza +title",
+  //  то скрипт будет искать по регэкспу только в абзацах P,
+  //  вложенных в <poem> и в <title>, но при этом не вложенных в <stanza>.
+  //  Указывать имена инлайн-тегов не разрешено.
   // "Лимит для просмотра назад" – устанавливает максимальную длину подстроки,
-  //    которая может быть найдена конструкцией (?<= ...) или (?= ...) данного
-  //    регэкспа. Чем меньше значение данного параметра, тем быстрее будет 
-  //    выполняться поиск. Чтобы искать без ограничения длины (самый медленный поиск),
-  //    можно прописать значение 0 или undefined, или вообще не задавать параметр.
+  //  которая может быть найдена конструкцией (?<= ...) или (?= ...) данного
+  //  регэкспа. Чем меньше значение данного параметра, тем быстрее будет 
+  //  выполняться поиск. Чтобы искать без ограничения длины (самый медленный поиск),
+  //  можно прописать значение 0 или undefined, или вообще не задавать параметр.
   // Пример:
-  //   addRegExp("\\d-\\d","","Найдено: две цифры с дефисом между ними.");
-  //   addRegExp("\"","","Найдено: прямая кавычка.");
-  //   tagRegExp("(?<![а-яё])пего(?![а-яё])","i","Найдено: слово \"пего\" (\"него\" с опечаткой).","",1);
+  //  addRegExp("\\d-\\d","","Найдено: две цифры с дефисом между ними.");
+  //  addRegExp("\"","","Найдено: прямая кавычка.");
+  //  tagRegExp("(?<![а-яё])пего(?![а-яё])","i","Найдено: слово \"пего\" (\"него\" с опечаткой).");
   // Если надо, чтобы найденный текст не выделялся, а просто курсор стал
   // в позицию перед этим найденным текстом, используйте конструкцию (?= ... )
-  //   addRegExp("(?=\")","","Найдено: прямая кавычка.");
+  //  addRegExp("(?=\")","","Найдено: прямая кавычка.");
   // Конструкции look behind, т.е. (?<! ...) и (?<= ...) разрешены только
   //   только в начале регэкспа и проверяются независимо от остальной части
   //   регэкспа. То есть (?<=а)б|в найдет не "б, перед которым а" либо "в",
-  //   а найдет "{б или в}, перед которым а".
-  addRegExp("","i","Задайте список регэкспов, отредактировав скрипт в текстовом редакторе (кодировка UTF-8). Инструкция – в скрипте.");
+  //   а "{б или в}, перед которым а".
+  //  addRegExp("","i","Задайте список регэкспов, отредактировав скрипт в текстовом редакторе (кодировка UTF-8). Инструкция – в скрипте.");
+
   // Когда будете задавать свои регэкспы, сотрите или закомментируйте предыдущую строку.
-  // tagRegExp("(?<=[а-яё])<strong>[а-яё]+?</strong>","i","Найдено: курсив в слове.");
-  // tagRegExp("<strong>[а-яё]+?</strong>(?=[а-яё])","i","Найдено: курсив в слове.");
-  // Команда tagRegExp с аналогичным форматом ищет текст с учетом тегов.
-  // В регэкспах команды tagRegExp можно использовать макросы (см. выше).
+  //   tagRegExp("(?<=[а-яё])<strong>[а-яё]+?</strong>","i","Найдено: курсив в слове.");
+  //   tagRegExp("<strong>[а-яё]+?</strong>(?=[а-яё])","i","Найдено: курсив в слове.");
+  // Команда   tagRegExp с аналогичным форматом ищет текст с учетом тегов.
+  // В регэкспах команды   tagRegExp можно использовать макросы (см. выше).
   // Например: можно определить макрос строкой
   //   addMacros("<открывающий-emphasis-или-strong>","<emphasis>|<strong>");
   // И потом использовать его:
-  //   tagRegExp("а<открывающий-emphasis-или-strong>б","i","Найдено: аб.");
+  //  tagRegExp("а<открывающий-emphasis-или-strong>б","i","Найдено: аб.");
   // Работают предопределенные макросы <emphasis>, </emphasis>, <strong>, </strong>,
   //   <sup>, </sup>, <sub>, </sub>, <strikethrough>, </strikethrough>,
   //   <code>, </code>, <любые-теги>
-  //tagRegExp("[а-яё]<emphasis>[а-яё]+?</emphasis>|<emphasis>[а-яё]+?</emphasis>[а-яё]","i","Найдено: курсивность части слова.");
+
+
+
+
+
+// -------------начало блока TaKir - регэкспы (TaKir, 20.11.2019)---------------
+
+
+  //  _________________________________________________________________________
+  //  I. Общий поиск ошибок в тексте
+  //  _________________________________________________________________________
+
+
+
+
+  //  _._._._._._._._._._._._._._._._._._._._._._._._
+  //  1) Поиск "подозрительных" знаков препинания, мусора после скана, некорректных символов:
+  //  _._._._._._._._._._._._._._._._._._._._._._._._
+
+
+  //  _._._._._._._._._._._._._._._._._._._._._._._._
+  //  !!Эта секция про макросы должна быть в начале, для корректной работы.
+  //  _._._._._._._._._._._._._._._._._._._._._._._._
+
+
+  addMacros("<откр-закр-em-str>","<emphasis>|</emphasis>|<strong>|</strong>");
+  addMacros("<тэги-кроме-IMG-и-закр-A>","(<(?!IMG)(?!/A\>)/?[A-Za-z]+[^\>]*>)*");
+  addMacros("<впереди-нет-закр-A>","(?![^\<\>]*(<(?!A[ \>])/?[A-Za-z]+(/s+[^\>]+)?\>)*[^\<\>]*</A>)");
+  addMacros("<мы-не-внутри-тэга>","(^|\>)[^\<]*");
+  addMacros("<впереди-закр-тэги-но-не-A>","(</?(?!A>)[A-Za-z]+(/s+[^>]+)?>)*");
+  addMacros("<пустота-теги-или-ничего>","([\\x20\\xA0]|<(?!IMG)(?!/A\>)/?[A-Za-z]+[^\>]*>)*");
+  addMacros("<сокращения>","(т<тэги-кроме-IMG-и-закр-A>\\.<пустота-теги-или-ничего>д|т<тэги-кроме-IMG-и-закр-A>\\.<пустота-теги-или-ничего>п|т<тэги-кроме-IMG-и-закр-A>\\.<пустота-теги-или-ничего>к|т<тэги-кроме-IMG-и-закр-A>\\.<пустота-теги-или-ничего>е|т<тэги-кроме-IMG-и-закр-A>\\.<пустота-теги-или-ничего>о|т<тэги-кроме-IMG-и-закр-A>\\.<пустота-теги-или-ничего>ч|Р<тэги-кроме-IMG-и-закр-A>\\.<пустота-теги-или-ничего>Х|т<тэги-кроме-IMG-и-закр-A>ы<тэги-кроме-IMG-и-закр-A>с<тэги-кроме-IMG-и-закр-A>|м<тэги-кроме-IMG-и-закр-A>л<тэги-кроме-IMG-и-закр-A>н<тэги-кроме-IMG-и-закр-A>|ч<тэги-кроме-IMG-и-закр-A>е<тэги-кроме-IMG-и-закр-A>л<тэги-кроме-IMG-и-закр-A>|э<тэги-кроме-IMG-и-закр-A>к<тэги-кроме-IMG-и-закр-A>з<тэги-кроме-IMG-и-закр-A>|р<тэги-кроме-IMG-и-закр-A>у<тэги-кроме-IMG-и-закр-A>б<тэги-кроме-IMG-и-закр-A>|к<тэги-кроме-IMG-и-закр-A>о<тэги-кроме-IMG-и-закр-A>п<тэги-кроме-IMG-и-закр-A>|н<тэги-кроме-IMG-и-закр-A>е<тэги-кроме-IMG-и-закр-A>м<тэги-кроме-IMG-и-закр-A>|и<тэги-кроме-IMG-и-закр-A>с<тэги-кроме-IMG-и-закр-A>п<тэги-кроме-IMG-и-закр-A>|л<тэги-кроме-IMG-и-закр-A>а<тэги-кроме-IMG-и-закр-A>т<тэги-кроме-IMG-и-закр-A>|а<тэги-кроме-IMG-и-закр-A>в<тэги-кроме-IMG-и-закр-A>т<тэги-кроме-IMG-и-закр-A>|р<тэги-кроме-IMG-и-закр-A>е<тэги-кроме-IMG-и-закр-A>д<тэги-кроме-IMG-и-закр-A>|о<тэги-кроме-IMG-и-закр-A>б<тэги-кроме-IMG-и-закр-A>л<тэги-кроме-IMG-и-закр-A>|ц<тэги-кроме-IMG-и-закр-A>и<тэги-кроме-IMG-и-закр-A>т<тэги-кроме-IMG-и-закр-A>|р<тэги-кроме-IMG-и-закр-A>у<тэги-кроме-IMG-и-закр-A>к<тэги-кроме-IMG-и-закр-A>|м<тэги-кроме-IMG-и-закр-A>и<тэги-кроме-IMG-и-закр-A>н<тэги-кроме-IMG-и-закр-A>|с<тэги-кроме-IMG-и-закр-A>е<тэги-кроме-IMG-и-закр-A>к<тэги-кроме-IMG-и-закр-A>|с<тэги-кроме-IMG-и-закр-A>т<тэги-кроме-IMG-и-закр-A>р<тэги-кроме-IMG-и-закр-A>|м<тэги-кроме-IMG-и-закр-A>л<тэги-кроме-IMG-и-закр-A>р<тэги-кроме-IMG-и-закр-A>д<тэги-кроме-IMG-и-закр-A>|т<тэги-кроме-IMG-и-закр-A>р<тэги-кроме-IMG-и-закр-A>л<тэги-кроме-IMG-и-закр-A>н<тэги-кроме-IMG-и-закр-A>|с<тэги-кроме-IMG-и-закр-A>о<тэги-кроме-IMG-и-закр-A>к<тэги-кроме-IMG-и-закр-A>р<тэги-кроме-IMG-и-закр-A>|д<тэги-кроме-IMG-и-закр-A>о<тэги-кроме-IMG-и-закр-A>л<тэги-кроме-IMG-и-закр-A>л<тэги-кроме-IMG-и-закр-A>|п<тэги-кроме-IMG-и-закр-A>р<тэги-кроме-IMG-и-закр-A>о<тэги-кроме-IMG-и-закр-A>ч<тэги-кроме-IMG-и-закр-A>|а<тэги-кроме-IMG-и-закр-A>н<тэги-кроме-IMG-и-закр-A>г<тэги-кроме-IMG-и-закр-A>л<тэги-кроме-IMG-и-закр-A>|п<тэги-кроме-IMG-и-закр-A>р<тэги-кроме-IMG-и-закр-A>и<тэги-кроме-IMG-и-закр-A>м<тэги-кроме-IMG-и-закр-A>|п<тэги-кроме-IMG-и-закр-A>е<тэги-кроме-IMG-и-закр-A>р<тэги-кроме-IMG-и-закр-A>е<тэги-кроме-IMG-и-закр-A>в<тэги-кроме-IMG-и-закр-A>|в<тэги-кроме-IMG-и-закр-A>в<тэги-кроме-IMG-и-закр-A>|д<тэги-кроме-IMG-и-закр-A>е<тэги-кроме-IMG-и-закр-A>р<тэги-кроме-IMG-и-закр-A>|г<тэги-кроме-IMG-и-закр-A>о<тэги-кроме-IMG-и-закр-A>р<тэги-кроме-IMG-и-закр-A>|г<тэги-кроме-IMG-и-закр-A>г<тэги-кроме-IMG-и-закр-A>|д<тэги-кроме-IMG-и-закр-A>р<тэги-кроме-IMG-и-закр-A>|п<тэги-кроме-IMG-и-закр-A>р<тэги-кроме-IMG-и-закр-A>|г<тэги-кроме-IMG-и-закр-A>р<тэги-кроме-IMG-и-закр-A>|с<тэги-кроме-IMG-и-закр-A>м<тэги-кроме-IMG-и-закр-A>|с<тэги-кроме-IMG-и-закр-A>р<тэги-кроме-IMG-и-закр-A>|ф<тэги-кроме-IMG-и-закр-A>р<тэги-кроме-IMG-и-закр-A>|м<тэги-кроме-IMG-и-закр-A>м<тэги-кроме-IMG-и-закр-A>|к<тэги-кроме-IMG-и-закр-A>г<тэги-кроме-IMG-и-закр-A>|у<тэги-кроме-IMG-и-закр-A>л<тэги-кроме-IMG-и-закр-A>|с<тэги-кроме-IMG-и-закр-A>т<тэги-кроме-IMG-и-закр-A>|г<тэги-кроме-IMG-и-закр-A>|в<тэги-кроме-IMG-и-закр-A>|П<тэги-кроме-IMG-и-закр-A>р<тэги-кроме-IMG-и-закр-A>и<тэги-кроме-IMG-и-закр-A>м<тэги-кроме-IMG-и-закр-A>|П<тэги-кроме-IMG-и-закр-A>е<тэги-кроме-IMG-и-закр-A>р<тэги-кроме-IMG-и-закр-A>|С<тэги-кроме-IMG-и-закр-A>м<тэги-кроме-IMG-и-закр-A>|н<тэги-кроме-IMG-и-закр-A>\\.<пустота-теги-или-ничего>э)");
+
+  tagRegExp(">PUS/<\\d+>PUS<","i","Найдено: число надстрочным текстом.");
+  addRegExp("cba","i","Найдено: abc.");
+
+  // <SUP>10</SUP> слово ' слово.
+  // оволс ' оволс >PUS/<10>PUS<
  }
 
- function scrollIfItNeeds() {
-  var selection = document.selection;
-  if (selection) {
-    var range = selection.createRange();
-    var rect = range.getBoundingClientRect();
-    
-    // Проверяем, находится ли выделение менее чем в 20 пикселях от нижнего края окна
-    if (document.documentElement.clientHeight - rect.bottom < 20) {
-      // Прокручиваем документ на 50 пикселей вниз
-      window.scrollBy(0, 50);
-    }
-  }
- }
- 
  try { var nbspChar=window.external.GetNBSP(); var nbspEntity; if (nbspChar.charCodeAt(0)==160) nbspEntity="&nbsp;"; else nbspEntity=nbspChar;}
  catch(e) { var nbspChar=String.fromCharCode(160); var nbspEntity="&nbsp;";}
 
@@ -335,25 +359,41 @@ function Run() {
   return;
  }
  var fbwBody,tmpNode,s1WithTagsRemoved,s2WithTagsRemoved,minPos,minHtmlPos,currPos,i,rslt,foundLen;
- var tr,tr2,el,el2,el3,myIndex,s,s_html,s1_len,ignoreNullPosition,desc,rslt,newPos,re,macrosRE;
+ var tr,tr2,el,el2,el3,myIndex,s,s_orig,s_html_orig,s_html,s1_len,ignoreNullPosition,desc,rslt,newPos,re,macrosRE;
  var k,flag1,rslt_replaced,founds,foundsCnt;
 
- var removeTagsRE=new RegExp("<(?!IMG\\b).*?(>|$)","ig");
+ //var removeTagsRE=new RegExp("<(?!IMG\\b).*?(>|$)","ig");
+ var removeTagsRE=new RegExp("(^|>)[^><]*?<","ig");
  var removeTagsRE_="";
- var imgTagRE=new RegExp("<IMG\\b.*?>","ig");
- var imgTagRE_="~~~";
- var ampRE=new RegExp("&amp;","g");
+ var removeTagsRE_01=new RegExp("<(?!IMG\\b).*?(>|$)","ig");
+ var removeTagsRE_01_="";
+ //var imgTagRE=new RegExp("<IMG\\b.*?>","ig");
+ var imgTagRE=new RegExp(">.*?\\bGMI<","ig");
+ var imgTagRE_="ǾǾǾ";
+ var imgTagRE_01=new RegExp("<IMG\\b.*?>","ig");
+ var imgTagRE_01_="ǾǾǾ";
+ //var ampRE=new RegExp("&amp;","g");
+ var ampRE=new RegExp(";pma&","g");
  var ampRE_="&";
- var ltRE=new RegExp("&lt;","g");
+ //var ltRE=new RegExp("&lt;","g");
+ var ltRE=new RegExp(";tl&","g");
  var ltRE_="<";
- var gtRE=new RegExp("&gt;","g");
+ //var gtRE=new RegExp("&gt;","g");
+ var gtRE=new RegExp(";tg&","g");
  var gtRE_=">";
- var nbspRE=new RegExp("&nbsp;","g");
+ //var nbspRE=new RegExp("&nbsp;","g");
+ var nbspRE=new RegExp(";psbn&","g");
  var nbspRE_=" ";
  
- var pNode,foundPos,foundLen;
+ var pNode,foundPos,foundLen,k1;
  var s_len;
  var foundMatch=false;
+ 
+ function replaceFunc1(fullMatch,group1,position) {
+   //alert("position: "+position+"\n\nfullMatch: "+fullMatch+"\n\nreturnValue: "+position+fullMatch.length);
+   k1=position+fullMatch.length;
+   return "";
+ }
 
  //var log="";
  //var iterations2=0;
@@ -383,31 +423,33 @@ function Run() {
    ignoreNullPosition=false; //tr.compareEndPoints("StartToEnd",tr)==0;
 
    el=ptr;
-   s=el.innerHTML.replace(removeTagsRE,removeTagsRE_).replace(imgTagRE,imgTagRE_).replace(ltRE,ltRE_).replace(gtRE,gtRE_).replace(ampRE,ampRE_).replace(nbspRE,nbspRE_);
+   s=el.innerHTML.replace(imgTagRE_01,imgTagRE_01_).replace(removeTagsRE_01,removeTagsRE_01_).replace(/&lt;/g,"<").replace(/&gt;/g,">").replace(/&nbsp;/g,nbspChar).replace(/&amp;/g,"&").split("").reverse().join("");
+   //alert("s 01:\n"+s);
    s_len=s.length;
    //log+="Входим в searchNext.  s1_len: "+s1_len+"  s_len: "+s_len+"\n\n";
-   tr.moveToElementText(el);
-   tr.move("character",s1_len);
-   //tr.select();
-   //alert("s1_len: "+s1_len);
-   tr2=tr.duplicate();
    tr2.moveToElementText(el);
-   tr2.setEndPoint("EndToEnd",tr);
+   tr2.collapse(false);
+   tr2.move("character",-1);
+   tr2.moveStart("character",-s1_len);
    //tr2.select();
-   //alert("После команды tr2.select();");
-   s1_len=tr2.text.length;
-   var s1=tr2.htmlText.replace(/\s{2,}/g," ");
+   //alert("После select.");
+   s1_len=tr2.htmlText.replace(/^\s+<P(?=[ >])/im,"<P").replace(/\s{2,}/g," ").replace(imgTagRE_01,imgTagRE_01_).replace(removeTagsRE_01,removeTagsRE_01_).replace(/&lt;/g,"<").replace(/&gt;/g,">").replace(/&nbsp;/g,nbspChar).replace(/&amp;/g,"&").length;
+   //alert("s1_len: "+s1_len);
+   var s1=tr2.htmlText.replace(/^\s+<P(?=[ >])/im,"<P").replace(/\s{2,}/g," ").replace(imgTagRE_01,imgTagRE_01_).split("").reverse().join("");
    var s1_len2=s1.length;
-   var s2=el.innerHTML;
-   var k1=s1.search(/(<\/[^<>]+>)+$/);
+   var s2=el.innerHTML.split("").reverse().join("");
+   //var k1=s1.search(/(<\/[^<>]+>)+$/);
+   k1=-1;
+   s1.replace(/^(>[^<>]+\/<)+/,replaceFunc1);
    if (k1==-1)
     s1_html_len=s1_len2;
    else {
     while (k1<s1_len2 && s1.charAt(k1)==s2.charAt(k1)) k1++;
     s1_html_len=k1;
    }
-   s_html=ptr.innerHTML;
-  
+   s_html_orig=ptr.innerHTML;
+   s_html=s_html_orig.split("").reverse().join("");
+     
    while (el && el!=fbwBody) {
     if (el.nodeName=="P" && (s1_len<s_len || s_len==0)) {
      founds=[];
@@ -421,11 +463,13 @@ function Run() {
        regExps[i].lastIndex=s1_len+(ignoreNullPosition?1:0);
        savedIndex=s1_len+(ignoreNullPosition?1:0);
        //alert("s1_len+(ignoreNullPosition?1:0): "+(s1_len+(ignoreNullPosition?1:0)));
+       //alert("s перед exec 01: "+s);
        rslt=regExps[i].exec(s);
        while (rslt && !checkLookBehs(i, s, rslt.index, false)) {
         savedIndex++;
         if (rslt.index>savedIndex) savedIndex=rslt.index;
         regExps[i].lastIndex=savedIndex;
+        //alert("s перед exec 02: "+s);
         rslt=regExps[i].exec(s);
        }
        if (rslt) {
@@ -447,14 +491,14 @@ function Run() {
         rslt=regExps[i].exec(s_html);
         flag1=false;
         if (rslt) {
-         newPos=s_html.substr(0,rslt.index).replace(removeTagsRE,removeTagsRE_).replace(imgTagRE,imgTagRE_).replace(ltRE,ltRE_).replace(gtRE,gtRE_).replace(ampRE,ampRE_).replace(nbspRE,nbspRE_).length;
-         rslt_replaced=rslt[0].replace(removeTagsRE,removeTagsRE_).replace(imgTagRE,imgTagRE_).replace(ltRE,ltRE_).replace(gtRE,gtRE_).replace(ampRE,ampRE_).replace(nbspRE,nbspRE_);
+         newPos=s_html.substr(0,rslt.index).replace(imgTagRE,imgTagRE_).replace(removeTagsRE,removeTagsRE_).replace(ltRE,ltRE_).replace(gtRE,gtRE_).replace(ampRE,ampRE_).replace(nbspRE,nbspRE_).length;
+         rslt_replaced=rslt[0].replace(imgTagRE,imgTagRE_).replace(removeTagsRE,removeTagsRE_).replace(ltRE,ltRE_).replace(gtRE,gtRE_).replace(ampRE,ampRE_).replace(nbspRE,nbspRE_);
          if (ignoreNullPosition ? minPos==s1_html_len+1 : minPos==s1_html_len) break;
          if (rslt_replaced.length==0 || (rslt_replaced.length!=0 && rslt_replaced[0]!="<")) {
           k=regExps[i].lastIndex;
           while (k<s_html.length && s_html.charAt(k)!=">" && s_html.charAt(k)!="<") k++;
           //alert("k после цикла: "+k+"\n\ns_html[k]: "+s_html.charAt(k));
-          if (k<s_html.length && s_html.charAt(k)==">") {
+          if (k<s_html.length && s_html.charAt(k)=="<") {
            regExps[i].lastIndex=k+1;
            //alert("regExps[i].lastIndex: "+regExps[i].lastIndex);
            flag1=true;
@@ -499,6 +543,7 @@ function Run() {
         // пропускаем исключения...
         if (desc.indexOf("Пропустить") == 0) return true; // (stokber)
         foundMatch=true;
+        //alert("Выходим. Возвращаем foundPos="+foundPos);
         return false;
         //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
        }
@@ -507,34 +552,40 @@ function Run() {
      ignoreNullPosition=false;
     }
     if (el && el.firstChild && el.nodeName!="P")
-     el=el.firstChild;
+     el=el.lastChild;
     else {
-     while (el && el.nextSibling==null) el=el.parentNode;
-     if (el) el=el.nextSibling;
+     while (el && el.previousSibling==null) el=el.parentNode;
+     if (el) el=el.previousSibling;
     }
     while (el && el!=fbwBody && el.nodeName!="P")
-     if (el && el.firstChild && el.nodeName!="P")
-      el=el.firstChild;
+     if (el && el.lastChild && el.nodeName!="P")
+      el=el.lastChild;
      else {
-      while (el && el!=fbwBody && el.nextSibling==null) el=el.parentNode;
-      if (el && el!=fbwBody) el=el.nextSibling;
+      while (el && el!=fbwBody && el.previousSibling==null) el=el.parentNode;
+      if (el && el!=fbwBody) el=el.previousSibling;
      }
     if (el && el.nodeName=="P") {
-     s=el.innerHTML.replace(removeTagsRE,removeTagsRE_).replace(imgTagRE,imgTagRE_).replace(ltRE,ltRE_).replace(gtRE,gtRE_).replace(ampRE,ampRE_).replace(nbspRE,nbspRE_);
+     s=el.innerHTML.replace(imgTagRE_01,imgTagRE_01_).replace(removeTagsRE_01,removeTagsRE_01_).replace(/&lt;/g,"<").replace(/&gt;/g,">").replace(/&nbsp;/g,nbspChar).replace(/&amp;/g,"&").split("").reverse().join("");
+     //alert("s 02: "+s);
      s1_len=0;
-     s_html=el.innerHTML;
+     s_html_orig=el.innerHTML;
+     s_html=s_html_orig.split("").reverse().join("");
      s1_html_len=0;
     }
    }
    // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++
    window.external.SetStatusBarText("Поиск завершен!"); // (stokber)
    // ++++++++++++++++++++++++++++++++++++++++++++++++++++++
-   MsgBox("От позиции курсора до конца документа ничего не найдено.");
+   MsgBox("От позиции курсора до начала документа ничего не найдено.");
+ }
+ 
+ function getElemTextLen(ptr) {
+   return ptr.innerHTML.replace(imgTagRE_01,imgTagRE_01_).replace(removeTagsRE_01,removeTagsRE_01_).replace(/&lt;/g,"<").replace(/&gt;/g,">").replace(/&nbsp;/g,nbspChar).replace(/&amp;/g,"&").length;
  }
  
  fbwBody=document.getElementById("fbw_body");
  tr=sel.createRange();
- tr.collapse(false);
+ tr.collapse(true);
  el=tr.parentElement();
  el2=el;
  while (el2 && el2.nodeName!="BODY" && el2.nodeName!="P")
@@ -544,8 +595,11 @@ function Run() {
  if (el2.nodeName=="P") {
   tr2=document.body.createTextRange();
   tr2.moveToElementText(el2);
-  tr2.setEndPoint("EndToEnd",tr);
-  s1_len=tr2.text.length;
+  tr2.setEndPoint("StartToStart",tr);
+  s1_len=tr2.htmlText.replace(/^\s+<P(?=[ >])/im,"<P").replace(/\s{2,}/g," ").replace(imgTagRE_01,imgTagRE_01_).replace(removeTagsRE_01,removeTagsRE_01_).replace(/&lt;/g,"<").replace(/&gt;/g,">").replace(/&nbsp;/g,nbspChar).replace(/&amp;/g,"&").length;
+  //alert("tr2.htmlText: "+tr2.htmlText+"\n\n"+
+  //      "tr2.htmlText...: "+tr2.htmlText.replace(/^\s+<P(?=[ >])/im,"<P").replace(/\s{2,}/g," ").replace(imgTagRE_01,imgTagRE_01_).replace(removeTagsRE_01,removeTagsRE_01_).replace(/&lt;/g,"<").replace(/&gt;/g,">").replace(/&nbsp;/g," ").replace(/&amp;/g,"&"));
+  //alert("s1_len: "+s1_len);
  }
     
  while (searchNext()) ;
@@ -553,13 +607,11 @@ function Run() {
  if (foundMatch) {
   tr=document.body.createTextRange();
   tr.moveToElementText(ptr);
-  tr.move("character",foundPos);
-  tr2=tr.duplicate();
-  tr2.move("character",foundLen);
-  tr.setEndPoint("EndToStart",tr2);
-  if (foundLen==0 && tr.move("character",1)==1) tr.move("character",-1);
+  tr.collapse(true);
+  //alert("foundPos: "+foundPos+"\n\nfoundLen: "+foundLen+"\n\nptr:\n\n"+ptr.innerHTML+"getElemTextLen(ptr): "+getElemTextLen(ptr)+"\n\ngetElemTextLen(ptr)-foundPos: "+(getElemTextLen(ptr)-foundPos));
+  tr.move("character",getElemTextLen(ptr)-foundPos);
+  tr.moveStart("character",-foundLen);
   tr.select();
-  scrollIfItNeeds();
  }
  //clipboardData.setData("Text",log);
  //var s="";

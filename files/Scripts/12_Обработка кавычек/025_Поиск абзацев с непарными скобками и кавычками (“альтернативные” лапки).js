@@ -1,6 +1,7 @@
-// Скрипт «62_Поиск (без замены) последовательностей 'буква пробел буква пробел...'» для редактора Fiction Book Editor (FBE).
-// Версия 4.9
-// Автор Sclex
+// Скрипт «Скрипт «Поиск абзацев с непарными скобками и кавычками (“альтернативные” лапки) v.1.0» для редактора Fiction Book Editor (FBE).
+// Создано на базе скрипта «Поиск (без замены) ошибок текста (версия с исключениями)» Версия 4.8. Автор Sclex.
+// Добавлены  фрагменты, обрамленные закомментироваными строками из дефисов и знаков равенства, 
+// сверху и снизу соответственно. (stokber).
 
 function Run() {
 
@@ -58,44 +59,34 @@ function Run() {
   //   <sup>, </sup>, <sub>, </sub>, <strikethrough>, </strikethrough>,
   //   <code>, </code>, <любые-теги>
 
-   addRegExp("(?<![a-zа-яё])[a-zа-яё]([\\x20\\xA0]+[a-zа-яё]){2,}(?![a-zа-яё])","i",'Найдено: последовательность "буква пробел буква пробел буква...".');
-
+  //  -----------------------------------------------------------------------------------------------------------------------------
+   
+      addRegExp("[\"„“”\\{\\}\\[\\]\\(\\)«»<>].*[\"„“”\\{\\}\\[\\]\\(\\)«»<>]|[\"„“”\\{\\}\\[\\]\\(\\)«»<>]","","Найдено: Абзац со скобками и/или кавычками"); 
+  //  ==============================================================================
  }
 
- function scrollIfItNeeds() {
-  var selection = document.selection;
-  if (selection) {
-    var range = selection.createRange();
-    var rect = range.getBoundingClientRect();
-    
-    // Проверяем, находится ли выделение менее чем в 20 пикселях от нижнего края окна
-    if (document.documentElement.clientHeight - rect.bottom < 20) {
-      // Прокручиваем документ на 50 пикселей вниз
-      window.scrollBy(0, 50);
-    }
-  }
+ try { var nbspChar=window.external.GetNBSP(); var nbspEntity; if (nbspChar.charCodeAt(0)==160) nbspEntity="&nbsp;"; else nbspEntity=nbspChar;}
+ catch(e) { var nbspChar=String.fromCharCode(160); var nbspEntity="&nbsp;";}
+
+ var sel=document.selection;
+
+ if (sel.type!="None" && sel.type!="Text") {
+  MsgBox("Не обрабатываемый тип выделения: sel.type");
+  return;
  }
+
+ try { var nbspChar=window.external.GetNBSP(); var nbspEntity; if (nbspChar.charCodeAt(0)==160) nbspEntity="&nbsp;"; else nbspEntity=nbspChar;}
+ catch(e) { var nbspChar=String.fromCharCode(160); var nbspEntity="&nbsp;";}
+
+ var sel=document.selection;
+
+ if (sel.type!="None" && sel.type!="Text") {
+  MsgBox("Не обрабатываемый тип выделения: sel.type");
+  return;
+ }
+
+ var str;
  
- try { var nbspChar=window.external.GetNBSP(); var nbspEntity; if (nbspChar.charCodeAt(0)==160) nbspEntity="&nbsp;"; else nbspEntity=nbspChar;}
- catch(e) { var nbspChar=String.fromCharCode(160); var nbspEntity="&nbsp;";}
-
- var sel=document.selection;
-
- if (sel.type!="None" && sel.type!="Text") {
-  MsgBox("Не обрабатываемый тип выделения: sel.type");
-  return;
- }
-
- try { var nbspChar=window.external.GetNBSP(); var nbspEntity; if (nbspChar.charCodeAt(0)==160) nbspEntity="&nbsp;"; else nbspEntity=nbspChar;}
- catch(e) { var nbspChar=String.fromCharCode(160); var nbspEntity="&nbsp;";}
-
- var sel=document.selection;
-
- if (sel.type!="None" && sel.type!="Text") {
-  MsgBox("Не обрабатываемый тип выделения: sel.type");
-  return;
- }
-
  var regExps=[];
  var itsTagRegExp=[];
  var lookBehinds=[];
@@ -271,7 +262,6 @@ function Run() {
   if (ss) ss.replace(findTagRE,checkOneTag);
   return tagFlag;
  }
-
  function checkLookBehs(reNum,s,pos) {
   if (!lookBehinds[reNum]) return true;
   limit=lookBehLimit[reNum];
@@ -410,7 +400,7 @@ function Run() {
     s1_html_len=k1;
    }
    s_html=ptr.innerHTML;
-  
+
    while (el && el!=fbwBody) {
     if (el.nodeName=="P" && (s1_len<s_len || s_len==0)) {
      founds=[];
@@ -486,8 +476,9 @@ function Run() {
         //log+="Вошли в проверку.\n\n";
         var desc=descs[i];
         if (desc!=undefined && desc!="")
+		
          try {
-         window.external.SetStatusBarText(desc);
+
          }
          catch(e)
          {}
@@ -498,7 +489,41 @@ function Run() {
         //log+="s1_len - новое значение: "+s1_len+"\n\n";
     
         //log+="Перед проверкой desc. "+desc+" "+desc.indexOf("Пропустить")+"\n\n"; 
-        //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+   //----------------------------------------------------------------------------------------------------------------------------------
+
+   var rX;
+   var sTrad = "\"\"|„“|«»|\\{}|\\[]|\\(\\)|<>"; // с обычными внутренними (н99…в66).
+   var sAlt = "\"\"|“”|«»|\\{}|\\[]|\\(\\)|<>"; // с альтернативными внутренними (в66…в99).
+   // var sTradPlusAlt = "\"\"|„“|“”|«»|\\{}|\\[]|\\(\\)|<>"; // с обычными + альтернативными. ?????
+   // var sTradPlusAlt = "\"\"|“”|„“|«»|\\{}|\\[]|\\(\\)|<>"; // с обычными + альтернативными. ?????
+   var sAlt2 = "\"\"|””|«»|\\{}|\\[]|\\(\\)|<>"; // с альтернативными внутренними 2 (в99…в99)
+
+   // выбор вида лапок:
+   // rX = sTrad;
+   rX = sAlt;
+   // rX = sAlt2;
+   
+   // удалить всё кроме указанных скобок и кавычек:
+        s = s.replace( /^[1-9а-е][)]|[^"„“”«»{}[\]()<>]/g, "" );
+
+   var result = 0;
+   for (var i = 0; result != null; i++) { 
+      result = s.match(new RegExp(rX, "g"));
+      s = s.replace(new RegExp(rX, "g"), ""); // удалить последовательно все соседние пары однородных откр/закр скобок/кавычек:
+   }
+
+   if (!s) {
+      desc = "Пропустить: ";
+   }
+   else {
+      desc = "Найдено: Следующие символы непарные: "+s+".          Вы выбрали проверку документа с “альтернативными лапками” (в66…в99).";
+   }
+
+   // ===========================================================================
+   
+window.external.SetStatusBarText(desc); 
+
         // пропускаем исключения...
         if (desc.indexOf("Пропустить") == 0) return true; // (stokber)
         foundMatch=true;
@@ -562,7 +587,6 @@ function Run() {
   tr.setEndPoint("EndToStart",tr2);
   if (foundLen==0 && tr.move("character",1)==1) tr.move("character",-1);
   tr.select();
-  scrollIfItNeeds();
  }
  //clipboardData.setData("Text",log);
  //var s="";
