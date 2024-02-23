@@ -4,14 +4,28 @@
 //Мой сайт про мои скрипты: http://scripts.fictionbook.org
 
 function Run() {
- var versionStr="Переход на предыдущий верхний индекс v1.0.";
+ var versionStr="Переход на следующий верхний индекс v1.2.";
  var scriptDirection="forward";
  var isItTagWeLookingFor=function (t) { if (t.nodeName=="SUP") return true; else return false;}
  var paragraphIndent=false;
  
  var randomNum,beginMarkerId,endMarkerId,beginMarkerEl,endMarkerEl,range1,range2,el,el2,el3,b,placeWhereToStop,fbw_body,nowInTagWeLookingFor,tagWeLookingFor_count;
  window.external.BeginUndoUnit(document,versionStr);
- 
+
+ function scrollIfItNeeds() {
+  var selection = document.selection;
+  if (selection) {
+    var range = selection.createRange();
+    var rect = range.getBoundingClientRect();
+    
+    // Проверяем, находится ли выделение менее чем в 20 пикселях от нижнего края окна
+    if (document.documentElement.clientHeight - rect.bottom < 20) {
+      // Прокручиваем документ на 50 пикселей вниз
+      window.scrollBy(0, 50);
+    }
+  }
+ }
+  
  function getNextNodeInScriptDirection(a) {
   if (scriptDirection=="forward") {
    if (a.firstChild) {
@@ -128,6 +142,7 @@ function Run() {
     else 
      if (range1.parentElement!==el && range1.move("character",-1)==1) range1.move("character",1);
     range1.select();
+    scrollIfItNeeds();
     return;
    }
   }

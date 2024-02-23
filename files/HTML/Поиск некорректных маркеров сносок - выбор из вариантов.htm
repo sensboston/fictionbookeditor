@@ -1,0 +1,109 @@
+<!--"Поиск некорректных маркеров сносок - выбор из вариантов v.1.1"-->
+<html>
+<head>
+ <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+ <meta http-equiv="MSThemeCompatible" content="yes">
+ <style>
+/* css reset
+http://meyerweb.com/eric/tools/css/reset/ 
+   v2.0 | 20110126
+   License: none (public domain)
+*/
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed, 
+figure, figcaption, footer, header, hgroup, 
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	font-size: 100%;
+	font: inherit;
+	vertical-align: baseline;
+}
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure, 
+footer, header, hgroup, menu, nav, section {
+	display: block;
+}
+body {
+	line-height: 1;
+}
+ol, ul {
+	list-style: none;
+}
+blockquote, q {
+	quotes: none;
+}
+blockquote:before, blockquote:after,
+q:before, q:after {
+	content: '';
+	content: none;
+}
+table {
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+/* конец css-reset-а */
+  body{font-family:Tahoma; font-size:16px;margin:2px;}
+  select, input {font-size: 15px; font-family:Tahoma;}
+ </style>
+ <title>Поиск некорректных маркеров сносок</title>
+<script>
+function markerFunc() {
+ if (document.getElementById("radio1").checked) return "надстрочным текстом";
+ if (document.getElementById("radio2").checked) return "вида *";
+ if (document.getElementById("radio3").checked) return "вида [1]";
+ if (document.getElementById("radio4").checked) return "вида {1}";
+ if (document.getElementById("radio5").checked) return "вида [~1~]";
+ if (document.getElementById("radio6").checked) return "вида {~1~}";
+// if (document.getElementById("radio7").checked) return "символами ¹²³⁴⁵⁶⁷⁸⁹⁰";
+// if (document.getElementById("radio8").checked) return "надстрочным и ¹²³⁴⁵⁶⁷⁸⁹⁰";
+ }
+function Help() {
+var helpWidth="620px";
+ var helpHeight="550px";
+window.open("Поиск некорректных маркеров сносок - справка.htm",null,"height="+helpHeight+",width="+helpWidth+"center: Yes,status=no,toolbar=no,menubar=no,location=no,scrollbars=yes,resizable=yes");
+// var shell=new ActiveXObject("WScript.Shell")
+// var location = window.location.pathname;
+// var path = location.replace(/Поиск некорректных маркеров сносок\.htm/, "help_mark.htm");
+// path = path.replace(/\\/g, "\\\\");
+//shell.Run("\""+path+"\"", 1,false); 
+// shell.Run('"C:\\Program Files (x86)\\FictionBook Editor 2.7.0\\HTML\\help.txt"', 1,false);
+}
+</script>
+</head>
+<body>
+
+<!--Выберите вид нумерации сносок:<br>
+<label for="radio9"><input type="radio" name="ordNumMarker" id="radio9" checked>постраничные с постраничной нумерацией</label><br>
+<label for="radio10"><input type="radio" name="ordNumMarker" id="radio10">постраничные со сквозной нумерацией</label><br>
+<label for="radio11"><input type="radio" name="ordNumMarker" id="radio11">постраничные с постраничной нумерацией 2<br>&nbsp;&nbsp;&nbsp;&nbsp;(тексты сносок — в конце книги)</label><br>
+<br>-->
+
+Выберите вид маркеров сносок:<br>
+<label for="radio1"><input type="radio" name="markSign" id="radio1" checked>надстрочным текстом</label><br>
+<label for="radio2"><input type="radio" name="markSign" id="radio2">вида *</label><br>
+<label for="radio3"><input type="radio" name="markSign" id="radio3">вида [1]</label><br>
+<label for="radio4"><input type="radio" name="markSign" id="radio4">вида {1}</label><br>
+<label for="radio5"><input type="radio" name="markSign" id="radio5">вида [~1~]</label><br>
+<label for="radio6"><input type="radio" name="markSign" id="radio6">вида {~1~}</label><br>
+<!--<label for="radio7"><input type="radio" name="markSign" id="radio7">символами ¹²³⁴⁵⁶⁷⁸⁹⁰</label><br>
+<label for="radio8"><input type="radio" name="markSign" id="radio8">надстрочным и ¹²³⁴⁵⁶⁷⁸⁹⁰</label><br>-->
+<br>
+
+<input type="button" value="Найти ошибочные маркеры" onclick="window.close(); window.returnValue=markerFunc(); " style="width:258px;"><BR>
+
+<input type="button" value="Справка" onclick="Help();" style="width:125px;">
+<input type="button" value="Отмена" onclick="window.returnValue=null; window.close();" style="width:125px;">
+</body>
+</html>
+

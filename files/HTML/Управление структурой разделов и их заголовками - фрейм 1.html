@@ -1,6 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
  "http://www.w3.org/TR/html4/loose.dtd">
 <html>
+<head>
 <title>заголовок</title>
 <meta http-equiv="X-UA-Compatible" content="IE=6">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -1074,17 +1075,17 @@ Owner of DHTMLgoodies.com
                                 try{
                                         /* Creating menu model for the context menu, i.e. the datasource */
                                         menuModel=new DHTMLGoodies_menuModel();
-                                        if (this.deleteAllowed) menuModel.addItem(1,'Удалить','','',false,'JSTreeObj.deleteItem');
-                                        if (this.renameAllowed) menuModel.addItem(2,'Переименовать','','',false,'JSTreeObj.renameItem');
+                                        if (this.deleteAllowed) menuModel.addItem(1,'Удалить (Del)','','',false,'JSTreeObj.deleteItem');
+                                        if (this.renameAllowed) menuModel.addItem(2,'Переименовать (F2)','','',false,'JSTreeObj.renameItem');
                                         menuModel.addItem(6,'Обрамить section-ом','','',false,'JSTreeObj.frameBySection');
                                         menuModel.init();
 
                                         menuModelRenameOnly=new DHTMLGoodies_menuModel();
-                                        if (this.renameAllowed)menuModelRenameOnly.addItem(3,'Переименовать','','',false,'JSTreeObj.renameItem');
+                                        if (this.renameAllowed)menuModelRenameOnly.addItem(3,'Переименовать (F2)','','',false,'JSTreeObj.renameItem');
                                         menuModelRenameOnly.init();
 
                                         menuModelDeleteOnly=new DHTMLGoodies_menuModel();
-                                        if (this.deleteAllowed)menuModelDeleteOnly.addItem(4,'Удалить','','',false,'JSTreeObj.deleteItem');
+                                        if (this.deleteAllowed)menuModelDeleteOnly.addItem(4,'Удалить (Del)','','',false,'JSTreeObj.deleteItem');
                                         menuModelDeleteOnly.addItem(5,'Обрамить section-ом','','',false,'JSTreeObj.frameBySection');
                                         menuModelDeleteOnly.init();
 
@@ -1872,6 +1873,7 @@ function initStructure() {
   window.close();
  }
   </script>
+</head>
   <body scroll=no onload="preInit();" onkeydown="onKeyDown();" onresizeend="calculateAndPaintScrollbar(); return true;" onmousewheel="myonmousewheel();">
    <div id=scrolling_div>
     <div id=for_messages class=message></div>

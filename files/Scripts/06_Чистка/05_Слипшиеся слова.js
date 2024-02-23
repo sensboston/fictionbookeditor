@@ -1,6 +1,7 @@
 //======================================
 //     Интерактивный поиск знаков препинания и т. д. и т. п.
 //                                                 8 мая 2008 г.
+//     Автор скрипта - jurgennt
 //                                                         Engine by ©Sclex
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // v.1.1 – Цифры после строчных                         2007.09.16
@@ -44,7 +45,7 @@
 // v.2.92 — доработка подсветки для найденных рез-тов поиска — Alex2L, май, июнь 2012
 //======================================
 
-var VersionNumber="3.0";
+var VersionNumber="3.2";
 
 //обрабатывать ли history
 var ObrabotkaHistory=true;
@@ -275,11 +276,13 @@ Coldef["право"] = true;
  var a1 = 0;
 
  if (CodeMode) {
-   ss=ptr.innerHTML;
+   //ss=ptr.innerHTML;
+   //alert("ss: "+ss);
    if (ss.search(re1cl)!=-1) {ss = ss.replace(re1cl, re11cl);}
    if (ss.search(re3cl)!=-1) {ss = ss.replace(re3cl, re31cl);}
 
-   b0 = ss.length;
+   a1 = ss.replace(/<[^>]+>/g,"").replace(/&(lt|gt|amp|nbsp);/gi,"&").length;
+   b0 = s1.replace(/<[^>]+>/g,"").replace(/&(lt|gt|amp|nbsp);/gi,"&").length;
   }
  else { a1 = ss.replace(/&(lt|gt|amp|nbsp);/gi,"&").length; }
 
@@ -288,6 +291,7 @@ Coldef["право"] = true;
  range1.collapse();
  range1.move("character",a1);
  range1.moveEnd("character",b0);
+ //alert("a1: "+a1+"\n\nb0: "+b0+"\n\nptr.innerHTML: "+ptr.innerHTML);
  range1.select();
  }
 //                   Конец подсветки                           //
@@ -407,7 +411,7 @@ xCol[k] = v3; k++; }
  if (InputBox(" :: Подозрительные символы ::\nВведите свой вариант:        " +v4,v4, r) == IDCANCEL) return "exit";
  if(r!=null && r.$!="")  { Col[k] = r.$;    s=sl4+("col1_" +k+ "†")+sp4; count++; }
  else                       { Col[k] = v4; sobCol[v4]=true;  s=sl4+("col1_" +k+ "†")+sp4; } }
- if (k>=10 && sobCol[sv4]==null) {
+ if (k>=10 && sobCol[v4]==null) {
  if (InputBox(" :: Подозрительные символы ::\nВведите свой вариант:        " +v4,v4, r) == IDCANCEL) return "exit";
  if(r!=null && r.$!="")  { Col[k] = r.$;    s=sl4+("col2_" +k+ "†")+sp4; count++; }
  else                       { Col[k] = v4; sobCol[v4]=true;  s=sl4+("col2_" +k+ "†")+sp4; } }
@@ -429,7 +433,7 @@ xCol[k] = v4; k++; }
  if (InputBox(" :: Подозрительные символы ::\nВведите свой вариант:        " +v5,v5, r) == IDCANCEL) return "exit";
  if(r!=null && r.$!="")  { Col[k] = r.$;    s=sl5+("col1_" +k+ "†")+sp5; count++; }
  else                       { Col[k] = v5; sobCol[v5]=true;  s=sl5+("col1_" +k+ "†")+sp5; } }
- if (k && sobCol[v5]==null>=10) {
+ if (k>=10 && sobCol[v5]==null) {
  if (InputBox(" :: Подозрительные символы ::\nВведите свой вариант:        " +v5,v5, r) == IDCANCEL) return "exit";
  if(r!=null && r.$!="")  { Col[k] = r.$;    s=sl5+("col2_" +k+ "†")+sp5; count++; }
  else                       { Col[k] = v5; sobCol[v5]=true;  s=sl5+("col2_" +k+ "†")+sp5; } }

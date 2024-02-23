@@ -1,5 +1,5 @@
 ﻿//Скрипт «Поиск по набору регэкспов»
-//Версия 4.8
+//Версия 4.9
 //Автор Sclex
 
 function Run() {
@@ -123,6 +123,20 @@ function Run() {
 
 // -------------конец блока JonVic - регэкспы:---------------
 
+ }
+ 
+ function scrollIfItNeeds() {
+  var selection = document.selection;
+  if (selection) {
+    var range = selection.createRange();
+    var rect = range.getBoundingClientRect();
+    
+    // Проверяем, находится ли выделение менее чем в 20 пикселях от нижнего края окна
+    if (document.documentElement.clientHeight - rect.bottom < 20) {
+      // Прокручиваем документ на 50 пикселей вниз
+      window.scrollBy(0, 50);
+    }
+  }
  }
 
  try { var nbspChar=window.external.GetNBSP(); var nbspEntity; if (nbspChar.charCodeAt(0)==160) nbspEntity="&nbsp;"; else nbspEntity=nbspChar;}
@@ -611,6 +625,7 @@ function Run() {
   tr.setEndPoint("EndToStart",tr2);
   if (foundLen==0 && tr.move("character",1)==1) tr.move("character",-1);
   tr.select();
+  scrollIfItNeeds();
  }
  //clipboardData.setData("Text",log);
  //var s="";
