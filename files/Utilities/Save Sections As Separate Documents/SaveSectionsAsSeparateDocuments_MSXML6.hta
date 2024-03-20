@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <HTML>
 <HEAD>
-<TITLE>Save Sections As Separate Documents v6.4 (MSXML6 version) (автор Sclex)</TITLE>
+<TITLE>Save Sections As Separate Documents v6.6 (MSXML6 version) (автор Sclex)</TITLE>
 <HTA:APPLICATION ID="oHTA"/>
 <META http-equiv="Content-Type" content="text/html; charset=utf-8">
 <META http-equiv="MSThemeCompatible" content="yes">
@@ -67,6 +67,10 @@ input {font-family: Tahoma; font-size:14px;}
 input.gray {background-color:#D4D0C8; color:black;}
 </STYLE>
 <SCRIPT type="text/javascript">
+//var DOMDocumentObjectName="Microsoft.XMLDOM";
+// var DOMDocumentObjectName="Msxml2.DOMDocument.4.0";
+var DOMDocumentObjectName="Msxml2.DOMDocument.6.0";
+
 var logStr="";
 var scrollbarWidth=0,scrollbarHeight=0;
 var mouseTimer=null;
@@ -85,6 +89,32 @@ var secondResizeCall=false;
 var nbspRegExp=new RegExp("(&nbsp;| |"+String.fromCharCode(160)+")","g");
 
 document.onselectstart = function() { return false; }
+
+function saveBeautifiedXML(xmlDoc,pathForSaving) {
+
+  var xmlString = xmlDoc.xml;
+  
+  var xmlWriter = new ActiveXObject(DOMDocumentObjectName);
+  xmlWriter.loadXML(xmlString);
+  xmlWriter.setProperty("SelectionLanguage", "XPath");
+  xmlWriter.setProperty("SelectionNamespaces", "xmlns:xsl='http://www.w3.org/1999/XSL/Transform'");
+  
+  var xslDoc = new ActiveXObject(DOMDocumentObjectName);
+
+  xslDoc.load("beautify.xml");
+  
+  var formattedXmlString=xmlWriter.transformNode(xslDoc);
+
+  var xmlDoc2=new ActiveXObject(DOMDocumentObjectName);
+  xmlDoc2.loadXML(formattedXmlString);
+
+  var root=xmlDoc2.documentElement;
+  var xmlDoc3 = new ActiveXObject(DOMDocumentObjectName);
+  xmlDoc3.appendChild(xmlDoc3.createProcessingInstruction("xml", 'version="1.0" encoding="UTF-8"'));
+  xmlDoc3.appendChild(root);
+
+  xmlDoc3.save(pathForSaving);
+}
 
 function removeNode(node1) {
   return node1.parentNode.removeChild(node1);
@@ -802,7 +832,8 @@ function saveOneSectionAsSeparateDocument(titleNum,fileCnt) {
     }
 
     var filenameForSaving=makeFilenameForSaving(fileCnt,bookTitle);
-    xmlDoc.save(filenameForSaving);
+    //xmlDoc.save(filenameForSaving);
+    saveBeautifiedXML(xmlDoc,filenameForSaving);
   }
 }
 
@@ -1392,7 +1423,7 @@ function applySettings() {
   alert("Ошибка!");
   return;
  }
- xmlDoc=new ActiveXObject("Msxml2.DOMDocument.6.0");
+ xmlDoc=new ActiveXObject(DOMDocumentObjectName);
  //xmlDoc=new ActiveXObject("Microsoft.XMLDOM");
  xmlDoc.async=false;
  xmlDoc.preserveWhiteSpace = true;
