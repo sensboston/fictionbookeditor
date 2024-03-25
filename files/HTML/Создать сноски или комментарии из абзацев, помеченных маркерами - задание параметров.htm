@@ -756,7 +756,7 @@
     '     previousNoteHref=getLocalHref(previousNote.getAttribute("href"));'+
     '     previousNoteSection=document.getElementById(previousNoteHref);'+
     '     if (!previousNoteSection) {'+
-    '      alert("Ошибка!");'+
+    '      alert("Ошибка! Ссылка в документе указывает на элемент, которого не существует.");'+
     '      return;'+
     '     }'+
     '     previousNoteSection.insertAdjacentHTML("afterend",'+
