@@ -1,6 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
  "http://www.w3.org/TR/html4/loose.dtd">
 <HTML style="height:100%;">
+<!-- версия 2.8 -->
 <HEAD>
  <TITLE>заголовок, который должен быть не виден</TITLE>
  <META http-equiv="X-UA-Compatible" content="IE=6">
@@ -28,7 +29,9 @@ var debugMode=true;
 var fbwBody=window.dialogArguments["fbwBody"];
 var mainDoc=window.dialogArguments["mainDocument"];
 var mainWin=window.dialogArguments["window"];
-try { var nbspChar=window.external.GetNBSP(); }
+var shortWords=window.dialogArguments["shortWords"];
+var abbreviatures=window.dialogArguments["abbreviatures"];
+try { var nbspChar=mainWin.external.GetNBSP(); }
 catch(e) { var nbspChar=String.fromCharCode(160); } 
 var maxNumberOfTextSymbolsInElement=160; // сколько максимум символов может быть в
                                          // тексте элемента
@@ -377,7 +380,88 @@ function replaceWithUpperCase(full_match, brackets1, offset_of_match,
  return full_match.toUpperCase();
 }
 
+var letterRegExp=new RegExp("[abcdefghijklmnopqrstuvwxyzßàáâãäåæçèéêëìíîïðñòóôõöøùúûüýþÿāăąćĉċčďđē"+
+ "ĕėęěĝğġģĥħĩīĭįıĵķĸĺļľŀłńņňŉŋōŏőŕŗřśŝşšţťŧũūŭůűųŵŷźżžſƀƃƅƈƌƍƒƕƙƚƛƞơƣƥƨƫƭ"+
+ "ưƴƶƹƺƽǅǆǈǉǋǌǎǐǒǔǖǘǚǜǝǟǡǣǥǧǩǫǭǯǰǲǳǵǹǻǽǿȁȃȅȇȉȋȍȏȑȓȕȗșțȝȟȡȣȥȧȩȫȭȯȱȳȴȵȶȷȸȹȼȿ"+
+ "ɀɂɇɉɋɍɏɐɑɒɓɔɕɖɗɘəɚɛɜɝɞɟɠɡɣɤɥɦɧɨɩɫɬɭɮɯɰɱɲɳɵɷɸɹɺɻɼɽɾɿʂʃʄʅʆʇʈʉʊʋʌʍʎʐʑʒʓʚʝʞ"+
+ "ʠʣʤʥʦʧʨʩʪʫʮʯͣͤͥͦͧͨͩͪͫͬͭͮͯͱͳͷΐάέήίΰαβγδεζηθικλμνξοπρςστυφχψωϊϋόύώϙϛϝϟϡϣϥϧϩϫϭϯϸϻабвгдеж"+
+ "зийклмнопрстуфхцчшщъыьэюяѐёђѓєѕіїјљњћќѝўџѡѣѥѧѩѫѭѯѱѳѵѷѹѻѽѿҁҋҍҏґғҕҗҙқҝҟҡңҧ"+
+ "ҩҫҭүұҳҷҹһҽҿӂӄӆӈӊӌӎӏӑӓӗәӛӝӟӡӣӥӧөӫӭӯӱӳӵӷӹӻӽӿԁԃԅԇԉԋԍԏԑԓԕԗԙԛԝԟԡԣԥԧԩԫԭԯաբգդեզէըթ"+
+ "ժիլխծկհձղճմյնշոչպջռսվտրցւփքօֆᏸᏹᏺᏻᏼᏽᤰᤱᤲᤳᤴᤵᤶᤷᤸᲀᲁᲂᲃᲄᲅᲆᲇᲈᴂᴈᴉᴑᴒᴓᴔᴖᴗᴝᴞᴟᵢᵣᵤᵥᵦᵧᵨᵩᵪᵫᵬᵭᵮᵯᵰᵱᵲᵳᵴᵵᵶᵷ"+
+ "ᵹᵺᵼᵽᵿᶀᶁᶂᶃᶄᶅᶆᶇᶈᶉᶊᶋᶌᶍᶎᶏᶐᶑᶒᶓᶔᶕᶖᶗᶘᶙᶚ᷊ᷓᷔᷕᷖᷗᷘᷙᷚᷜᷝᷠᷣᷤᷥᷦᷧᷨᷩᷪᷫᷬᷭᷮᷯᷰᷱᷲᷳᷴḁḃḅḇḉḋḍḏḑḓḕḗḙḛḝḟḡ"+
+ "ḣḥḧḩḫḭḯḱḳḵḷḹḻḽḿṁṃṅṇṉṋṍṏṑṓṕṗṙṛṝṟṡṣṥṧṩṫṭṯṱṳṵṷṹṻṽṿẁẃẅẇẉẋẍẏẑẓẕẖẗẘẙẚẛẜẝẟạảấầẩẫậắằẳẵặẹ"+
+ "ẻẽếềểễệỉịọỏốồổỗộớờởỡợụủứừửữựỳỵỷỹỻỽỿἀἁἂἃἄἅἆἇἐἑἒἓἔἕἠἡἢἣἤἥἦἧἰἱἲἳἴἵἶἷὀὁὂὃὄὅὐὑὒὓὔὕὖὗὠὡ"+
+ "ὢὣὤὥὦὧὰάὲέὴήὶίὸόὺύὼώᾀᾁᾂᾃᾄᾅᾆᾇᾐᾑᾒᾓᾔᾕᾖᾗᾠᾡᾢᾣᾤᾥᾦᾧᾰᾱᾲᾳᾴᾶᾷῂῃῄῆῇῐῑῒΐῖῗῠῡῢΰῤῥῦῧῲῳῴῶῷⁱⁿₐₑₒ"+
+ "ₓₔₕₖₗₘₙₚₛₜ℩ↄ⒜⒝⒞⒟⒠⒡⒢⒣⒤⒥⒦⒧⒨⒩⒪⒫⒬⒭⒮⒯⒰⒱⒲⒳⒴⒵ⓐⓑⓒⓓⓔⓕⓖⓗⓘⓙⓚⓛⓜⓝⓞⓟⓠⓡⓢⓣⓤⓥⓦⓧⓨⓩⰰⰱⰲⰳⰴⰵⰶⰷⰸⰹⰺⰻⰼⰽⰾⰿ"+
+ "ⱀⱁⱂⱃⱄⱅⱆⱇⱈⱉⱊⱋⱌⱍⱎⱏⱐⱑⱒⱓⱔⱕⱖⱗⱘⱙⱚⱛⱜⱝⱞⱡⱥⱦⱨⱪⱬⱱⱳⱴⱶⱷⱸⱹⱺⱼⲁⲃⲅⲇⲉⲋⲍⲏⲑⲓⲕⲗⲙⲛⲝⲟⲡⲣⲥⲧⲩⲫⲭⲯⲱⲳⲵⲷⲹⲻⲽⲿⳁⳃ"+
+ "ⳅⳇⳉⳋⳍⳏⳑⳓⳕⳗⳙⳛⳝⳟⳡⳣⳬⳮⳳⴀⴁⴂⴃⴄⴅⴆⴇⴈⴉⴊⴋⴌⴍⴎⴏⴐⴑⴒⴓⴔⴕⴖⴗⴘⴙⴚⴛⴜⴝⴞⴟⴠⴡⴢⴣⴤⴥⴧⴭꙁꙃꙅꙇꙉꙋꙍꙏꙑꙓꙕꙗꙙꙛꙝꙟꙡꙣꙥꙧꙩ"+
+ "ꙫꙭꚁꚃꚅꚇꚉꚋꚍꚏꚑꚓꚕꚗꚙꚛꜣꜥꜧꜩꜫꜭꜯꜳꜵꜷꜹꜻꜽꜿꝁꝃꝅꝇꝉꝋꝍꝏꝑꝓꝕꝗꝙꝛꝝꝟꝡꝣꝥꝧꝩꝫꝭꝯꝱꝲꝳꝴꝵꝷꝸꝺꝼꝿꞁꞃꞅꞇꞌꞎꞑꞓꞔꞕꞗꞙꞛꞝꞟꞡ"+
+ "ꞣꞥꞧꞩꞵꞷꬰꬱꬲꬳꬴꬵꬶꬷꬸꬹꬺꬻꬼꬽꬾꬿꭀꭁꭂꭃꭄꭅꭇꭈꭉꭊꭋꭌꭍꭎꭏꭐꭑꭒꭓꭔꭕꭖꭗꭘꭙꭚꭠꭡꭢꭣꭤꭰꭱꭲꭳꭴꭵꭶꭷꭸꭹꭺꭻꭼꭽꭾꭿꮀꮁꮂꮃꮄꮅꮆꮇꮈꮉꮊ"+
+ "ꮋꮌꮍꮎꮏꮐꮑꮒꮓꮔꮕꮖꮗꮘꮙꮚꮛꮜꮝꮞꮟꮠꮡꮢꮣꮤꮥꮦꮧꮨꮩꮪꮫꮬꮭꮮꮯꮰꮱꮲꮳꮴꮵꮶꮷꮸꮹꮺꮻꮼꮽꮾꮿａｂｃｄｅｆｇｈｉｊｋｌｍｎｏｐｑｒｓｔｕｖｗｘｙｚ"+
+ "ШЩЪЫЬЭЮЯабвгдежзийклмнопрстуфхцчшщъыьэюяӘәӚӛӜӝӞӟӠӡӢӣӤӥӦӧӨөӪӫӬӭӮӯӰӱӲӳӴӵӶӷӸӹӺӻೀುೂೃೄ೅ೆೇೈ೉ೊೋೌ್೎೏"+
+ "೐೑೒೓೔ೕೖ೗೘೙೚೛೜ೝೞ೟ೠೡೢೣ೤೥೦೧೨೩೪೫೬೭೮೯೰ೱೲᣀᣁᣂᣃᣄᣅᣆᣇᣈᣉᣊᣋᣌᣍᣎᣏᣐᣑᣒᣓᣔᣕᣖᣗᣘᣙᣚᣛᣜᣝᣞᣟ"+
+ "abcdefghijklmnopqrstuvwxyz]","i");
+
+var stEm="(?:</?(?:strong|em|strike)>)*";
+
+var re3=new RegExp("<[^>]*>|&(gt|lt|amp);"
+             +"|"+
+             "(\\d"+stEm+"(( |"+nbspChar+"|&nbsp;)"+stEm+")+(г"+stEm+"(г"+stEm+")?"+
+             "|"+
+             "в"+stEm+"(в"+stEm+")?)\\.)"+
+             "|"+
+             "(([IVXLCDM]"+stEm+")+[-–—]"+stEm+")?(([IVXLCDM]"+stEm+")+(( |"+nbspChar+"|&nbsp;)"+stEm+")+в("+stEm+"в)?"+stEm+"\\.)"+
+             "|"+
+             "&nbsp;"+
+             "|"+
+             ".(?=[^<]*(<|$))","gi"); //ошибка в этой строке
+
+var re4=new RegExp("^\\d"+stEm+"(( |"+nbspChar+"|&nbsp;)"+stEm+")+(г"+stEm+"(г"+stEm+")?|в"+stEm+"(в"+stEm+")?)\\.$","i");
+
+var re5=new RegExp("^(([IVXLCDM]"+stEm+")+[-–—]"+stEm+")?([IVXLCDM]"+stEm+")+(( |"+nbspChar+"|&nbsp;)"+stEm+")+в("+stEm+"в)?"+stEm+"\\.$","i");
+
 function changeCaseInOneP(pToProcess,numberOfWordToProcess) {
+
+ function wordFirstLetterBigFunction(full_match) {
+   //alert(full_match);
+   if (full_match.charAt(0)=="<") return full_match;
+   if (full_match.search(/&(gt|lt|amp);/)==0) return full_match;
+   if (full_match.search(/&nbsp;/)==0) {
+    needsToMakingBig=true;
+    return full_match;
+   }
+   if (full_match.search(re4)==0) return full_match.toLowerCase();
+   if (full_match.search(re5)==0) return full_match.toUpperCase().replace(/в((<\/?strong>|<\/?em>)*)\.$/i,"в$1.").replace(/в((<\/?strong>|<\/?em>)*)в((<\/?strong>|<\/?em>)*)\.$/i,"в$1в$3.").replace(/&NBSP;/ig,"&nbsp;");
+   if (needsToMakingBig && full_match.search(letterRegExp)>=0) {
+    needsToMakingBig=false;
+    return full_match.toUpperCase();
+   }
+   //alert("full_match: "+full_match+"  search: "+full_match.search(letterRegExp));
+   if (full_match.search(letterRegExp)==-1) needsToMakingBig=true;
+   if (full_match=="-") needsToMakingBig=false;
+   return full_match.toLowerCase();
+ }
+
+ var shortWords2=shortWords.replace(/([^\|])(?=[^\|])/gi,"$1"+stEm);
+
+ var re6=new RegExp("^(?:(?: |"+nbspChar+"|&nbsp;)"+stEm+")*(?:(?:\\d"+stEm+")+\\."+stEm+"(?: |"+nbspChar+"|&nbsp;)*)?(?:(?:(?: |"+nbspChar+"|&nbsp;)"+stEm+")*(?:…|\\."+stEm+"\\."+stEm+"\\.)?"+stEm+"(?:\"|«)?"+stEm+"("+shortWords2+")"+stEm+"(?=($|\\.|,|!|\\?|;| |"+nbspChar+"|&nbsp;)))"+
+                    "|"+
+                    "(( |"+nbspChar+"|&nbsp;)"+stEm+"("+shortWords2+")"+stEm+"(?=($|\\.|,|!|\\?|;| |"+nbspChar+"|&nbsp;)))","ig");
+
+ function wordFirstLetterBigExclusionsFunction(full_match,group1) {
+  //alert("group1: "+group1);
+  if (group1) return full_match;
+  return full_match.toLowerCase();
+ }
+
+ var abbreviatures2=abbreviatures.replace(/([^\|])(?=[^\|])/gi,"$1"+stEm);
+
+ var re7=new RegExp("(( |"+nbspChar+"|&nbsp;)"+stEm+"("+abbreviatures2+")"+stEm+"(?=($|\\.|,|!|\\?|;| |"+nbspChar+"|&nbsp;)))","ig");
+
+ function wordFirstLetterBigAbbrFunction(full_match,group1) {
+  return full_match.toUpperCase().replace(/&NBSP;/ig,"&nbsp;");
+ }
+
  var el=pToProcess.firstChild;
  var alreadyMetDot=false;
  var alreadyMadeFirstLetterBig=false;
@@ -388,6 +472,16 @@ function changeCaseInOneP(pToProcess,numberOfWordToProcess) {
  var xState=1;
  var currWordNum=0;
  var s1,s2,i,j;
+ if (caseFlag=="wordFirstLetterBig") {
+   var needsToMakingBig=true;
+   pToProcess.innerHTML=pToProcess.innerHTML.replace(re3,wordFirstLetterBigFunction);
+   return;
+ }
+ if (caseFlag=="wordFirstLetterBigWithExclusions") {
+  var needsToMakingBig=true;
+  pToProcess.innerHTML=pToProcess.innerHTML.replace(re3,wordFirstLetterBigFunction).replace(re6,wordFirstLetterBigExclusionsFunction).replace(re7,wordFirstLetterBigAbbrFunction);
+  return;
+ }
  if (caseFlag=="secondWordBigLetters") var numberOfWordToProcess=2;
  while (el && el!=pToProcess) {
   if (el.nodeType==3) {
@@ -533,14 +627,20 @@ function contextMenu() {
     "<p style='padding:0; margin:0;'>N-ное «слово» каждого элемента – большими буквами…</p>"+
    "</div>"+
    "<div onmouseover='this.style.backgroundColor=\"yellow\"; this.style.color=\"black\"' onmouseout='this.style.backgroundColor=\"black\"; this.style.color=\"#7F7F7F\";' onclick='parent.changeCase(\"allBig\");' style='width:100%; padding:2px; margin:0;'>"+
-    "<p style='padding:0; margin:0;'>Все буквы большие</p>"+
+    "<p style='padding:0; margin:0;'>Все буквы сделать большими</p>"+
    "</div>"+
    "<div onmouseover='this.style.backgroundColor=\"yellow\"; this.style.color=\"black\"' onmouseout='this.style.backgroundColor=\"black\"; this.style.color=\"#7F7F7F\";' onclick='parent.changeCase(\"allSmall\");' style='width:100%; padding:2px; margin:0;'>"+
-    "<p style='padding:0; margin:0;'>Все буквы маленькие</p>"+
+    "<p style='padding:0; margin:0;'>Все буквы сделать маленькими</p>"+
+   "</div>"+
+   "<div onmouseover='this.style.backgroundColor=\"yellow\"; this.style.color=\"black\"' onmouseout='this.style.backgroundColor=\"black\"; this.style.color=\"#7F7F7F\";' onclick='parent.changeCase(\"wordFirstLetterBig\");' style='width:100%; padding:2px; margin:0;'>"+
+    "<p style='padding:0; margin:0;'>Первую букву каждого слова сделать большой, остальные – маленькими</p>"+
+   "</div>"+
+   "<div onmouseover='this.style.backgroundColor=\"yellow\"; this.style.color=\"black\"' onmouseout='this.style.backgroundColor=\"black\"; this.style.color=\"#7F7F7F\";' onclick='parent.changeCase(\"wordFirstLetterBigWithExclusions\");' style='width:100%; padding:2px; margin:0;'>"+
+    "<p style='padding:0; margin:0;'>Первую букву каждого слова (кроме исключений) сделать большой, остальные – маленькими</p>"+
    "</div>"+
   "</div>"+
   "</td><tr></table>";
- p.show(event.screenX, event.screenY, 390, 156);
+ p.show(event.screenX, event.screenY, 600, 200);
 }
 
 function myOnMouseDown() {
