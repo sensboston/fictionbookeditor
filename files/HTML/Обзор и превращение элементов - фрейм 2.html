@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
  "http://www.w3.org/TR/html4/loose.dtd">
 <HTML style="height:100%;">
-<!-- версия 2.8 -->
+<!-- версия 3.1 -->
 <HEAD>
  <TITLE>заголовок, который должен быть не виден</TITLE>
  <META http-equiv="X-UA-Compatible" content="IE=6">
@@ -441,8 +441,9 @@ function changeCaseInOneP(pToProcess,numberOfWordToProcess) {
    if (full_match=="-") needsToMakingBig=false;
    return full_match.toLowerCase();
  }
-
- var shortWords2=shortWords.replace(/([^\|])(?=[^\|])/gi,"$1"+stEm);
+ //alert(shortWords.replace(/([^-|а-яёa-z])/,"\\$1"));
+ var shortWords2=shortWords.replace(/([^-|а-яёa-z])/,"\\$1").replace(/(\\.|[^\|\\])(?=[^\|])/gi,"$1"+stEm);
+ //alert("shortwords: "+shortWords+"\n\n shortWords2: "+shortWords2);
 
  var re6=new RegExp("^(?:(?: |"+nbspChar+"|&nbsp;)"+stEm+")*(?:(?:\\d"+stEm+")+\\."+stEm+"(?: |"+nbspChar+"|&nbsp;)*)?(?:(?:(?: |"+nbspChar+"|&nbsp;)"+stEm+")*(?:…|\\."+stEm+"\\."+stEm+"\\.)?"+stEm+"(?:\"|«)?"+stEm+"("+shortWords2+")"+stEm+"(?=($|\\.|,|!|\\?|;| |"+nbspChar+"|&nbsp;)))"+
                     "|"+
@@ -454,9 +455,10 @@ function changeCaseInOneP(pToProcess,numberOfWordToProcess) {
   return full_match.toLowerCase();
  }
 
- var abbreviatures2=abbreviatures.replace(/([^\|])(?=[^\|])/gi,"$1"+stEm);
+ var abbreviatures2=abbreviatures.replace(/([^-|а-яёa-z])/,"\\$1").replace(/(\\.|[^\|\\])(?=[^\|])/gi,"$1"+stEm);
+ //alert("abbr: "+abbreviatures+"\n\n abbr2: "+abbreviatures2);
 
- var re7=new RegExp("(( |"+nbspChar+"|&nbsp;)"+stEm+"("+abbreviatures2+")"+stEm+"(?=($|\\.|,|!|\\?|;| |"+nbspChar+"|&nbsp;)))","ig");
+ var re7=new RegExp("((^|( |"+nbspChar+"|&nbsp;))"+stEm+"("+abbreviatures2+")"+stEm+"(?=($|\\.|,|!|\\?|;| |"+nbspChar+"|&nbsp;)))","ig");
 
  function wordFirstLetterBigAbbrFunction(full_match,group1) {
   return full_match.toUpperCase().replace(/&NBSP;/ig,"&nbsp;");
