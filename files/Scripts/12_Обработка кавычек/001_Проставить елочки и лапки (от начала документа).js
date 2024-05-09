@@ -5,7 +5,7 @@
 
 function Run() {
 
- var versionStr="Скрипт «Проставить елочки и лапки (от начала документа)» (версия 3.1)\nАвтор Sclex.\n\n";
+ var versionStr="Скрипт «Проставить елочки и лапки (от начала документа)» (версия 3.7)\nАвтор Sclex.\n\n";
  var otstupSverhu=60;
  var debug=false;
  try { var nbspChar=window.external.GetNBSP(); }
@@ -45,6 +45,30 @@ function Run() {
   }
  }
 
+ function getElementType1(el) {
+   if (el.className=="annotation") return "аннотации документа";
+   if (el.className=="history") return "истории документа";
+   if (el.className=="section") return "раздела";
+ }
+ 
+ function getElementType2(el) {
+   if (el.className=="annotation") return "аннотации документа";
+   if (el.className=="history") return "истории документа";
+   if (el.className=="section") return "разделе";
+ }
+ 
+  function getElementType3(el) {
+   if (el.className=="annotation") return "ней";
+   if (el.className=="history") return "ней";
+   if (el.className=="section") return "нем";
+ }
+ 
+ function getElementType4(el) {
+   if (el.className=="annotation") return "этой аннотации документа";
+   if (el.className=="history") return "этой истории документа";
+   if (el.className=="section") return "этого раздела";
+ }
+ 
  var re3=new RegExp("[-?!,;\–—)"+nbspChar+"]|\\s","i");
  var re4=new RegExp("\w|[а-яёa-zÀÁÂÃÄÅÆÇÈÉÊËÌÍÏÐÑÒÓÔÕÖØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõöøùúûüýþÿĀāăĄąĆćĈĉĊċČčĎďĐđĒēĔĕĖėĘęĚěĜĝĞğĠġĢģĤĥĦħĨĩĪīĬĭĮįİıĲĳĴĵĶķĸĹĺĻļĽľĿŀŁłŃńŅņŇňŉŊŋŌōŎŏŐőŒœŔŕŖŗŘřŚśŜŝŞşŠšŢţŤťŦŧŨũŪūŬŭŮůŰűŲųŴŵŶŷŸŹźŻżŽžſƏƒƠơƯưƷǤǥǦǧǨǩǪǫǮǯǺǻǼǽǾǿȘșȚțȨȩəʒ"+
   "ΆΈΉΊΌΎΐΑΒΓΔΕΖΗΘΙΚΛΜΝΞΟΠΡΣΤΥΦΧΨΩΪΫάέήίΰαβγδεζηθικλμνξοπρςστυφχψωϊϋόύώЀЁЂЃЄЅІЇЈЉЊЋЌЍЎЏ"+
@@ -153,6 +177,7 @@ function Run() {
   window.scrollBy(0,-otstupSverhu);
   var range=document.body.createTextRange();
   range.moveToElementText(tmpLabelNode);
+  range.moveEnd("character",1);
   range.select();
   tmpLabelNode.removeNode();
  }
@@ -340,13 +365,16 @@ function Run() {
      return "error";
     }
     //alert("qwieupry1\n\nel:\n"+el.outerHTML+"\n\ncurrentQuotesLevel:"+currentQuotesLevel);
-    if (el.nodeName=="DIV" && el.className=="section" && currentQuotesLevel!=0) {
+    if (el.nodeName=="DIV" && (el.className=="section" || el.className=="history" || (el.className=="annotation" && el.parentNode==fbw_body)) && currentQuotesLevel!=0) {
      range3=document.body.createTextRange();
      range3.moveToElementText(el);
      range3.collapse(false);
+     range3.moveStart("character",-2);
      range3.select();
-     window.scrollBy(0,-otstupSverhu);
-     alert(versionStr+"Ошибка:\n\nВ конце раздела получился ненулевой уровень вложенности кавычек.\nТо есть не все открытые в разделе кавычки были в нем закрыты.\nКурсор установлен в конец этого раздела.\n\n"+getInfoStr());
+     if (document.selection.createRange().getBoundingClientRect().top < document.documentElement.clientHeight - 100) {
+      window.scrollBy(0,-otstupSverhu);
+     }
+     alert(versionStr+"Ошибка:\n\nВ конце "+getElementType1(el)+" получился ненулевой уровень вложенности кавычек.\nТо есть не все открытые в "+getElementType2(el)+" кавычки были в "+getElementType3(el)+" закрыты.\nВыделение установлено в конец "+getElementType4(el)+".\n\n"+getInfoStr());
      return "error";
     }    
     if (blockCodename[currentBlockIndex]!=undefined && el.nodeName=="DIV" && el.className!="stanza" && currentQuotesLevel!=blockInitQuotesLevel[currentBlockIndex]) {
@@ -355,7 +383,7 @@ function Run() {
      range3.collapse(false);
      range3.select();
      window.scrollBy(0,-otstupSverhu);
-     alert(versionStr+"Ошибка:\n\nВ конце элемента получился не тот же уровень вложенности кавычек, что в начале.\nКурсор установлен в конец этого элемента.\n\n"+getInfoStr());
+     alert(versionStr+"Ошибка:\n\nВ конце блочного элемента получился не тот же уровень вложенности кавычек, что в начале.\nВыделение установлено в конец этого элемента.\n\n"+getInfoStr());
      return "error";
     }
     //alert("Вышли из:\n"+el.outerHTML+"\n\nКодовое имя: "+getElementCodename(el));
@@ -367,13 +395,16 @@ function Run() {
       return "error";
      }
      //alert("qwieupry1\n\nel:\n"+el.outerHTML+"\n\ncurrentQuotesLevel:"+currentQuotesLevel);
-     if (el.nodeName=="DIV" && el.className=="section" && currentQuotesLevel!=0) {
+     if (el.nodeName=="DIV" && (el.className=="section" || el.className=="history" || (el.className=="annotation" && el.parentNode==fbw_body)) && currentQuotesLevel!=0) {
       range3=document.body.createTextRange();
       range3.moveToElementText(el);
       range3.collapse(false);
+      range3.moveStart("character",-2);
       range3.select();
-      window.scrollBy(0,-otstupSverhu);
-      alert(versionStr+"Ошибка:\n\nВ конце раздела получился ненулевой уровень вложенности кавычек.\nТо есть не все открытые в разделе кавычки были в нем закрыты.\nКурсор установлен в конец этого раздела.\n\n"+getInfoStr());
+      if (document.selection.createRange().getBoundingClientRect().top < document.documentElement.clientHeight - 100) {
+       window.scrollBy(0,-otstupSverhu);
+      }
+      alert(versionStr+"Ошибка:\n\nВ конце "+getElementType1(el)+" получился ненулевой уровень вложенности кавычек.\nТо есть не все открытые в "+getElementType2(el)+" кавычки были в "+getElementType3(el)+" закрыты.\nВыделение установлено в конец "+getElementType4(el)+".\n\n"+getInfoStr());
       return "error";
      }          
      if (blockCodename[currentBlockIndex]!=undefined && el.nodeName=="DIV" && el.className!="stanza" && currentQuotesLevel!=blockInitQuotesLevel[currentBlockIndex]) {
@@ -382,7 +413,7 @@ function Run() {
       range3.collapse(false);
       range3.select();
       window.scrollBy(0,-otstupSverhu);
-      alert(versionStr+"Ошибка:\n\nВ конце элемента получился не тот же уровень вложенности кавычек, что в начале.\nКурсор установлен в конец этого элемента.\n\n"+getInfoStr());
+      alert(versionStr+"Ошибка:\n\nВ конце блочного элемента получился не тот же уровень вложенности кавычек, что в начале.\nВыделение установлено в конец этого элемента.\n\n"+getInfoStr());
       return "error";
      }
      //alert("Вышли из:\n"+el.outerHTML+"\n\nКодовое имя: "+getElementCodename(el));
@@ -395,9 +426,12 @@ function Run() {
    range3=document.body.createTextRange();
    range3.moveToElementText(selectionEndEl);
    range3.collapse(false);
+   range3.moveStart("character",-2);
    range3.select();
-   window.scrollBy(0,-otstupSverhu);
-   alert(versionStr+"Ошибка:\n\nВ конце области документа, заданной для обработки, получился ненулевой уровень вложенности кавычек.\nКурсор установлен в конец этой области.\n\n"+getInfoStr());
+   if (document.selection.createRange().getBoundingClientRect().top < document.documentElement.clientHeight - 100) {
+    window.scrollBy(0,-otstupSverhu);
+   }
+   alert(versionStr+"Ошибка:\n\nВ конце области документа, заданной для обработки, получился ненулевой уровень вложенности кавычек.\nВыделение установлено в конец этой области.\n\n"+getInfoStr());
    return "error";
   }     
  //}

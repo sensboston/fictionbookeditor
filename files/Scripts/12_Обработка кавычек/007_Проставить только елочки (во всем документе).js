@@ -5,7 +5,7 @@
 
 function Run() {
 
- var versionStr="Скрипт «Проставить только елочки» (версия 3.0)\nАвтор Sclex.\n\n";
+ var versionStr="Скрипт «Проставить только елочки» (версия 3.7)\nАвтор Sclex.\n\n";
  var otstupSverhu=60;
  var debug=false;
  try { var nbspChar=window.external.GetNBSP(); }
@@ -135,6 +135,7 @@ function Run() {
   window.scrollBy(0,-otstupSverhu);
   var range=document.body.createTextRange();
   range.moveToElementText(tmpLabelNode);
+  range.moveEnd("character",1);
   range.select();
   tmpLabelNode.removeNode();
  }
