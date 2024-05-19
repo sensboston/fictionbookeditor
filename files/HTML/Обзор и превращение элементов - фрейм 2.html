@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
  "http://www.w3.org/TR/html4/loose.dtd">
 <HTML style="height:100%;">
-<!-- версия 3.1 -->
+<!-- версия 3.2 -->
 <HEAD>
  <TITLE>заголовок, который должен быть не виден</TITLE>
  <META http-equiv="X-UA-Compatible" content="IE=6">
@@ -545,6 +545,29 @@ function changeCaseInOneP(pToProcess,numberOfWordToProcess) {
     } // for (i=1; i<s1.length; i++)
    } // if (caseFlag=="firstLetterBigAndAfterEveryDotBigToo")
 // ===============================================================
+   if (caseFlag=="firstLetterBigAndAfterSymbolsBigToo") {
+    s2=s1.toLowerCase();
+
+    for (i=0; i<s1.length; i++) {
+     if (xState==1 && s2.charAt(i).search(letterRE)>=0) {
+      // переводим в верхний регистр символ в позиции i
+      s2=s2.substring(0,i)+s2.charAt(i).toUpperCase()+s2.substring(i+1);
+      xState=2;
+     } // if (alreadyMetDot && !alreadyMetLetterAfterDot && s2.charAt(i).search(letterRE)>=0)
+     else {
+      if (s2.charAt(i)=="." || s2.charAt(i)=="?" || s2.charAt(i)=="!") xState=1
+      else if (s2.charAt(i)==" " || s2.charAt(i)==nbspChar)
+       { 
+        if (xState==1 && s2.charAt(i).search(letterRE)>=0) {
+         // переводим в верхний регистр символ в позиции i
+         s2=s2.substring(0,i)+s2.charAt(i).toUpperCase()+s2.substring(i+1);
+         // alreadyMetLetterAfterDot=true; // !!! Ошибка, возможно, в этой строке! !!!
+        } // if (alreadyMetDotButNotMetLetter && !alreadyMetLetterAfterDot && s2.charAt(i).search(letterRE)>=0)
+       } // if (s2.charAt(i)==".") alreadyMetDotButNotMetLetter=true; else 
+     } // if (alreadyMetDotButNotMetLetter && !alreadyMetLetterAfterDot && s2.charAt(i).search(letterRE)>=0) { <...> } else
+    } // for (i=1; i<s1.length; i++)
+   } // if (caseFlag=="firstLetterBigAndAfterEveryDotBigToo")
+// ===============================================================
    if (caseFlag=="secondWordBigLetters" || caseFlag=="nthWordBigLetters") {
     s2=s1;
     for (i=0; i<s1.length; i++) {
@@ -622,6 +645,9 @@ function contextMenu() {
    "<div onmouseover='this.style.backgroundColor=\"yellow\"; this.style.color=\"black\"' onmouseout='this.style.backgroundColor=\"black\"; this.style.color=\"#7F7F7F\";' onclick='parent.changeCase(\"firstLetterBigAndAfterEveryDotBigToo\");' style='width:100%; padding:2px; margin:0;'>"+
     "<p style='padding:0; margin:0;'>Первая буква большая, и после каждой точки большая буква</p>"+
    "</div>"+
+   "<div onmouseover='this.style.backgroundColor=\"yellow\"; this.style.color=\"black\"' onmouseout='this.style.backgroundColor=\"black\"; this.style.color=\"#7F7F7F\";' onclick='parent.changeCase(\"firstLetterBigAndAfterSymbolsBigToo\");' style='width:100%; padding:2px; margin:0;'>"+
+    "<p style='padding:0; margin:0;'>Первая буква большая, и после символов «.», «!», «?» – большая буква</p>"+
+   "</div>"+
    "<div onmouseover='this.style.backgroundColor=\"yellow\"; this.style.color=\"black\"' onmouseout='this.style.backgroundColor=\"black\"; this.style.color=\"#7F7F7F\";' onclick='parent.changeCase(\"secondWordBigLetters\");' style='width:100%; padding:2px; margin:0;'>"+
     "<p style='padding:0; margin:0;'>Второе «слово» каждого элемента – большими буквами</p>"+
    "</div>"+
@@ -642,7 +668,7 @@ function contextMenu() {
    "</div>"+
   "</div>"+
   "</td><tr></table>";
- p.show(event.screenX, event.screenY, 600, 200);
+ p.show(event.screenX, event.screenY, 600, 230);
 }
 
 function myOnMouseDown() {
