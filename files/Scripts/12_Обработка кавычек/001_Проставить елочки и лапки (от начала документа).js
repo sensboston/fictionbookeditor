@@ -5,7 +5,7 @@
 
 function Run() {
 
- var versionStr="Скрипт «Проставить елочки и лапки (от начала документа)» (версия 3.7)\nАвтор Sclex.\n\n";
+ var versionStr="Скрипт «Проставить елочки и лапки (от начала документа)» (версия 3.9)\nАвтор Sclex.\n\n";
  var otstupSverhu=60;
  var debug=false;
  try { var nbspChar=window.external.GetNBSP(); }
@@ -29,7 +29,25 @@ function Run() {
   "ῂῃῄῆῇῈΈῊΉῌ"+
   "ῐῑῒΐῖῗῘῙῚΊῠῡῢΰῤῥῦῧῨῩῪΎῬῲῳῴῶῷῸΌῺΏῼ"+
   "ªº%‰©µ¶ℓ™℗⁰¹²³⁴⁵⁶⁷⁸⁹₀₁₂₃₄₅₆₇₈₉£¤¢¥€$¼½¾]","i");
+  
+  /*function scrollIfItNeeds() { 
+   if (document.selection.createRange().getBoundingClientRect().top < document.documentElement.clientHeight - 100) {
+    window.scrollBy(0,-otstupSverhu);
+   }
+  } */
 
+ function scrollIfItNeeds() { 
+  var selection = document.selection;
+  if (selection) {
+    var range = selection.createRange();
+    var rect = range.getBoundingClientRect();
+    // var correction = (rect.bottom - document.documentElement.clientHeight/2); // центр
+   var correction = (rect.bottom - document.documentElement.clientHeight/2); // верх
+   // var popravka = (rect.bottom - document.documentElement.clientHeight/8* 6); // низ
+   window.scrollBy(0, correction);
+  }
+ }
+    
  function analyseSymbolOnTheLeft(ch) {
   if (ch==undefined) {
    if (debug) alert("by symbol aleft - left quotes"); 
@@ -371,9 +389,7 @@ function Run() {
      range3.collapse(false);
      range3.moveStart("character",-2);
      range3.select();
-     if (document.selection.createRange().getBoundingClientRect().top < document.documentElement.clientHeight - 100) {
-      window.scrollBy(0,-otstupSverhu);
-     }
+     scrollIfItNeeds();
      alert(versionStr+"Ошибка:\n\nВ конце "+getElementType1(el)+" получился ненулевой уровень вложенности кавычек.\nТо есть не все открытые в "+getElementType2(el)+" кавычки были в "+getElementType3(el)+" закрыты.\nВыделение установлено в конец "+getElementType4(el)+".\n\n"+getInfoStr());
      return "error";
     }    
@@ -381,8 +397,9 @@ function Run() {
      range3=document.body.createTextRange();
      range3.moveToElementText(el);
      range3.collapse(false);
+     range3.moveStart("character",-2);
      range3.select();
-     window.scrollBy(0,-otstupSverhu);
+     scrollIfItNeeds();
      alert(versionStr+"Ошибка:\n\nВ конце блочного элемента получился не тот же уровень вложенности кавычек, что в начале.\nВыделение установлено в конец этого элемента.\n\n"+getInfoStr());
      return "error";
     }
@@ -401,9 +418,7 @@ function Run() {
       range3.collapse(false);
       range3.moveStart("character",-2);
       range3.select();
-      if (document.selection.createRange().getBoundingClientRect().top < document.documentElement.clientHeight - 100) {
-       window.scrollBy(0,-otstupSverhu);
-      }
+      scrollIfItNeeds();
       alert(versionStr+"Ошибка:\n\nВ конце "+getElementType1(el)+" получился ненулевой уровень вложенности кавычек.\nТо есть не все открытые в "+getElementType2(el)+" кавычки были в "+getElementType3(el)+" закрыты.\nВыделение установлено в конец "+getElementType4(el)+".\n\n"+getInfoStr());
       return "error";
      }          
@@ -411,8 +426,9 @@ function Run() {
       range3=document.body.createTextRange();
       range3.moveToElementText(el);
       range3.collapse(false);
+      range3.moveStart("character",-2);
       range3.select();
-      window.scrollBy(0,-otstupSverhu);
+      scrollIfItNeeds();
       alert(versionStr+"Ошибка:\n\nВ конце блочного элемента получился не тот же уровень вложенности кавычек, что в начале.\nВыделение установлено в конец этого элемента.\n\n"+getInfoStr());
       return "error";
      }
@@ -428,9 +444,7 @@ function Run() {
    range3.collapse(false);
    range3.moveStart("character",-2);
    range3.select();
-   if (document.selection.createRange().getBoundingClientRect().top < document.documentElement.clientHeight - 100) {
-    window.scrollBy(0,-otstupSverhu);
-   }
+   scrollIfItNeeds();
    alert(versionStr+"Ошибка:\n\nВ конце области документа, заданной для обработки, получился ненулевой уровень вложенности кавычек.\nВыделение установлено в конец этой области.\n\n"+getInfoStr());
    return "error";
   }     
