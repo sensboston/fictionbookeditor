@@ -4,7 +4,7 @@
 function Run() {
  try { var nbspChar=window.external.GetNBSP(); var nbspEntity; if (nbspChar.charCodeAt(0)==160) nbspEntity="&nbsp;"; else nbspEntity=nbspChar;}
  catch(e) { var nbspChar=String.fromCharCode(160); var nbspEntity="&nbsp;";}
- var verStr="v4.4";
+ var verStr="v4.5";
  var DebugMode=0;
  var DestrongTitles=false; //делать ли удаление жирности в заголовках
  var DeitalicTitles=false; //удалять ли курсив в заголовках
@@ -324,14 +324,14 @@ function Run() {
         destrongAndDeitalic(chld,DestrongTitles,DeitalicTitles);
        }
       }
-      if ((chld.nodeName=="P" && chld.className=="subtitle") ||
+      /* if ((chld.nodeName=="P" && chld.className=="subtitle") ||
           flag) {
        var hhh=ptr.previousSibling;
        var s=ptr.innerHTML;
        ptr.outerHTML="";
        hhh.innerHTML=hhh.innerHTML+s;
        s="";
-     }
+     } */
     }
    }
    if (ptr.nodeName=="DIV" && (ptr.className=="section" || ptr.className=="body")) {
