@@ -1,6 +1,6 @@
 function Run() {
 
- var versionNum="1.8";
+ var versionNum="1.9";
 
  function thereIsParentBodyDiv(ptr) {
   while (ptr && ptr.nodeName && ptr.nodeName!="BODY" &&
@@ -71,7 +71,7 @@ function Run() {
    } else if (el.className=="cite" || el.className=="epigraph") {
     el2=el.firstChild;
     while (el2!=null) {
-     if (el2.nodeName=="P" && el2.className=="text-author") {
+     if (el2.nodeName=="P" && (el2.className=="text-author" || el2.className=="subtitle")) {
       el2.removeAttribute("class");
       el2.removeAttribute("className");
      }
