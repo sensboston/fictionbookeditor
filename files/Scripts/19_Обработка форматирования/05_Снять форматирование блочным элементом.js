@@ -1,6 +1,6 @@
 function Run() {
 
- var versionNum="1.9";
+ var versionNum="2.0";
 
  function thereIsParentBodyDiv(ptr) {
   while (ptr && ptr.nodeName && ptr.nodeName!="BODY" &&
@@ -12,6 +12,19 @@ function Run() {
    return false;
  }
 
+ function unformatDivsAndParagraphsInsideElement(elem) {
+  var divs, ps, i;
+  divs=elem.getElementsByTagName("DIV");
+  ps=elem.getElementsByTagName("P");
+  for (i=0;i<ps.length;i++) {
+   ps[i].removeAttribute("class");
+   ps[i].removeAttribute("className");
+  }
+  for (i=divs.length-1;i>=0;i--) {
+   if (divs[i].className!="image") divs[i].removeNode(false);
+  }
+ }
+ 
  var range,el,el2,saveNextAfterEl,saveNextAfterEl2;
  var elParent,i,j,divs,ps,saveClassName;
  var randomNum=Math.floor((Math.random()*9)).toString()+Math.floor((Math.random()*9)).toString()+
@@ -59,36 +72,30 @@ function Run() {
         }
       el2.removeNode(false);
      }
-     else if (el2.nodeName=="DIV" && el2.className=="epigraph") {
-       el2.removeNode(false);
-     }
-     else if (el2.nodeName=="P" && el2.className=="text-author" && el2.parentNode==el) {
-      el2.removeAttribute("class");
-      el2.removeAttribute("className");
-     } 
      el2=saveNextAfterEl2;
     }
-   } else if (el.className=="cite" || el.className=="epigraph") {
-    el2=el.firstChild;
-    while (el2!=null) {
-     if (el2.nodeName=="P" && (el2.className=="text-author" || el2.className=="subtitle")) {
-      el2.removeAttribute("class");
-      el2.removeAttribute("className");
-     }
-     el2=el2.nextSibling;
+    unformatDivsAndParagraphsInsideElement(el);
+   } else if (el.className=="cite") {
+    unformatDivsAndParagraphsInsideElement(el);
+   } else if (el.className=="epigraph") {
+    var el3=el;
+    var nextNode3=el3.nextSibling;
+    while (el3 && el3.className && (el3.className=="epigraph" || el3.className=="annotation")) {
+     unformatDivsAndParagraphsInsideElement(el3);
+     el3.removeNode(false);
+     el3=nextNode3;
+     nextNode3=el3.nextSibling;
     }
    } else if (el.className=="title") {
-    divs=el.parentNode.getElementsByTagName("DIV");
-    for (var i=divs.length-1; i>=0; i--)
-      if (divs[i].className && divs[i].className=="epigraph") {
-       ps=divs[i].getElementsByTagName("P");
-       for (j=0; j<ps.length; j++)
-        if (ps[j].className && ps[j].className=="text-author")
-         ps[j].removeAttribute("className");
-       divs[i].removeNode(false);
-      } else if (divs[i].className && divs[i].className=="annotation") {
-       divs[i].removeNode(false);
-      }
+    var el3=el.nextSibling;
+    var nextNode3=el3.nextSibling;
+    while (el3 && el3.className && (el3.className=="epigraph" || el3.className=="annotation")) {
+     unformatDivsAndParagraphsInsideElement(el3);
+     el3.removeNode(false);
+     el3=nextNode3;
+     nextNode3=el3.nextSibling;
+    }
+    unformatDivsAndParagraphsInsideElement(el);
    } else if (el.className=="table") {
     divs=el.getElementsByTagName("DIV");
     for (var i=divs.length-1; i>=0; i--)
