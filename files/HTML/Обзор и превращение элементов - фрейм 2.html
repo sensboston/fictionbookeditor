@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
  "http://www.w3.org/TR/html4/loose.dtd">
 <HTML style="height:100%;">
-<!-- версия 3.2 -->
+<!-- версия 4.0 -->
 <HEAD>
  <TITLE>заголовок, который должен быть не виден</TITLE>
  <META http-equiv="X-UA-Compatible" content="IE=6">
@@ -57,7 +57,7 @@ var needKillDelim,nPtr,nPtr2,attributeSv,flag2,saveEl5,prev,gg,unselElemInListMa
 var newSection,elemInMainDoc,el8,titleElement,nextSectionOrPoemOrStanza,titleInNextSection;
 var newP,thereWasSubtitlesInCite,nPtr3,saveEl2,flag3,flag4,tt,ttt,nextTt,sForText,newEmptyLine;
 var foundInlineElementsInP,caseFlag,pInPreviousSection,subtitleInPreviousSectionBeforeEmptyLines;
-var pInPreviousContainer,subtitleInPreviousContainerBeforeEmptyLines,weMovedAlready;
+var pInPreviousContainer,subtitleInPreviousContainerBeforeEmptyLines,weMovedAlready,tt2,tt3;
 var saveNextSiblingAfterSubtitle=null;
 var alreadyAddedEmptyLine,sectionToRemove,doNotAddEmptyLine,weMovedSubtitles;
 var thereAreSubtitlesInPreviousContainer,oldSectionOrPoemOrStanza=null,weRemovedEpigraphs;
@@ -96,7 +96,14 @@ var nCnt;
 var emptyLineRE=new RegExp("^( | |&nbsp;|"+nbspChar+")*?$","i");
 
 function debugAlert(msg) {
- // alert(msg);
+ //alert(msg);
+}
+
+function removeEpigraphAuthors(tt) {
+  var ps=tt.getElementsByTagName("P");
+  for (var i=0;i<ps.length;i++)
+   if (ps[i].className=="text-author" && ps[i].parentNode.className=="epigraph")
+    removeFromClassName(ps[i],/\btext-author\b/gi);
 }
 
 function removeFromClassName(elem,regExp) {
@@ -937,6 +944,12 @@ function isEpigraph(gg) {
  return true;
 }
 
+function isAnnotation(gg) {
+ if (!gg) return false;
+ if (gg.nodeName!="DIV" || !gg.className || gg.className.toLowerCase()!="annotation") return false;
+ return true;
+}
+
 function isTitle(gg) {
  if (!gg) return false;
  if (gg.nodeName!="DIV" || !gg.className || gg.className!="title") return false;
@@ -971,8 +984,8 @@ function getParentSection(el) {
  return el1;
 }
 
-function howManyEmptyLinesInTheEndOf(container1) {
- var ptr=container1.lastChild;
+function countEmptyLinesInTheEnd(lastElem) {
+ var ptr=lastElem;
  var cnt=0;
  while (isEmptyLine(ptr)) {
   cnt++;
@@ -984,9 +997,12 @@ function howManyEmptyLinesInTheEndOf(container1) {
 function moving1(moveIfThereAreNotEmptyLines) {
  // функция переносит подзаголовки из контейнера-источника
  // в позицию перед пустыми строками в конце prevSectionOrPoemOrStanza
- debugAlert("Вошли в moving1.");
+ //alert("Вошли в moving1.");
  // alert("prevSectionOrPoemOrStanza: \n\n"+prevSectionOrPoemOrStanza.outerHTML);
- pInPreviousContainer=prevSectionOrPoemOrStanza.lastChild;
+ if (prevSectionOrPoemOrStanza && prevSectionOrPoemOrStanza.lastChild)
+  pInPreviousContainer=prevSectionOrPoemOrStanza.lastChild;
+ else
+  pInPreviousContainer=sectionOrPoemOrStanza.previousSibling;
  if (isEmptyLine(pInPreviousContainer)) {
   while (isEmptyLine(pInPreviousContainer))
    pInPreviousContainer=pInPreviousContainer.previousSibling;
@@ -1002,17 +1018,23 @@ function moving1(moveIfThereAreNotEmptyLines) {
    }
    subtitleInPreviousContainerBeforeEmptyLines=pInPreviousContainer;
    saveNextSiblingAfterSubtitle=subtitleInPreviousContainerBeforeEmptyLines.nextSibling;
+   //alert("moving number 1");
    if (tt && isSubtitle(tt) && saveNextSiblingAfterSubtitle) {
+    //alert("moving number 2");
     while (tt && isSubtitle(tt) && saveNextSiblingAfterSubtitle) {
      nextTt=tt.nextSibling;
-     debugAlert("1. Перенесем элемент: \n\n"+tt.outerHTML);
+     //alert("1. Перенесем элемент: \n\n"+tt.outerHTML);
      saveNextSiblingAfterSubtitle.insertAdjacentElement("beforeBegin",tt.removeNode(true));
      tt=nextTt;
     }
     weMovedSubtitles=true;
     weMovedAlready=true;
    } else return;
-   var numberOfLinesToRemove=howManyEmptyLinesInTheEndOf(prevSectionOrPoemOrStanza);
+   //alert("Значение prevSectionOrPoemOrStanza на момент вызова countEmptyLinesInTheEnd: "+prevSectionOrPoemOrStanza);
+   if (prevSectionOrPoemOrStanza)
+    var numberOfLinesToRemove=countEmptyLinesInTheEnd(prevSectionOrPoemOrStanza.lastChild);
+   else
+    var numberOfLinesToRemove=countEmptyLinesInTheEnd(sectionOrPoemOrStanza.previousSibling);
    debugAlert("Столько строк нужно удалить в начале контейнера-источника: "+numberOfLinesToRemove);
    var i;
    for (i=1; i<=numberOfLinesToRemove; i++) {
@@ -1042,14 +1064,16 @@ function appendEmptyLineToPrevSectionOrPoemOrStanza() {
 }
 
 function createTargetContainer() {
- debugAlert("Вход в createTargetContainer.\n\nsectionOrPoemOrStanza: \n\n"+sectionOrPoemOrStanza.outerHTML);
+ //alert("Вход в createTargetContainer.\n\nsectionOrPoemOrStanza: \n\n"+sectionOrPoemOrStanza.outerHTML);
  if (isSection(sectionOrPoemOrStanza)) {
   // эта ветвь выполняется, если обрабатываемые абзацы заголовка
   // принадлежат заголовку раздела, а не стиха или строфы
+  //alert("Действительно isSection==true.");
   el9=sectionOrPoemOrStanza;
-  while (prevNotSection(el9))
+  while (prevNotSection(el9) && el9.parentNode.className!="body")
    el9=el9.parentNode;
   if (el9.id=="fbw_body") return;
+  //alert('Зашли за if (el9.id=="fbw_body")');
   if (isSection(el9.previousSibling))
    prevSectionOrPoemOrStanza=el9.previousSibling;
   else {
@@ -1112,6 +1136,7 @@ function moveBlockIntoPreviousBlock() {
  lastMovingWasNotSubtitleMoving=false;
 
  createTargetContainer();
+ //alert("После createTargetContainer.\n\nfbwBody:\n\n"+fbwBody.outerHTML);
 
  while (tt) {
   debugAlert("Очередная итерация while (tt). \n\n"+
@@ -1119,13 +1144,18 @@ function moveBlockIntoPreviousBlock() {
         "tt.outerHTML: \n\n"+tt.outerHTML);
   weMovedAlready=false;
 
+  //alert("prevSectionOrPoemOrStanza перед присваиванием pInPreviousContainer: "+prevSectionOrPoemOrStanza.outerHTML);
   pInPreviousContainer=prevSectionOrPoemOrStanza.lastChild;
+  //alert("pInPreviousContainer: "+pInPreviousContainer+"\n\nfbwBody:\n"+fbwBody.outerHTML);
   doNotAddEmptyLine=false;
 
   moving1(true);
 
   if (currentTargetElementType=="subtitles with empty lines before and after") {
-   pInPreviousContainer=prevSectionOrPoemOrStanza.lastChild;
+   if (prevSectionOrPoemOrStanza && prevSectionOrPoemOrStanza.lastChild)
+    pInPreviousContainer=prevSectionOrPoemOrStanza.lastChild;
+   else
+    pInPreviousContainer=sectionOrPoemOrStanza.previousSibling;
    while (isEmptyLine(pInPreviousContainer))
      pInPreviousContainer=pInPreviousContainer.previousSibling;
    if (isSubtitle(pInPreviousContainer)) {
@@ -1198,7 +1228,12 @@ function moveBlockIntoPreviousBlock() {
    while (isSubtitle(tt)) {
     nextTt=tt.nextSibling;
     debugAlert("4. Перенесем элемент: \n\n"+tt.outerHTML);
-    prevSectionOrPoemOrStanza.insertAdjacentElement("beforeEnd",tt.removeNode(true));
+    tt3=prevSectionOrPoemOrStanza.insertAdjacentElement("beforeEnd",tt.removeNode(true));
+    if (!tt3.previousSibling && "subtitles with empty lines before and after") {
+     var newEmptyLine=mainDoc.createElement("P");
+     newEmptyLine=tt3.insertAdjacentElement("beforeBegin",newEmptyLine);
+     InflateIt(newEmptyLine);
+    }
     weMovedSubtitles=true;
     lastMovingWasNotSubtitleMoving=false;
     tt=nextTt;
@@ -1237,8 +1272,14 @@ function moveBlockIntoPreviousBlock() {
   // into prevSectionOrPoemOrStanza
   while (tt && !isSection(tt)) {
    nextTt=tt.nextSibling;
-   // debugAlert("3. Перенесем элемент: \n\n"+tt.outerHTML);
-   prevSectionOrPoemOrStanza.insertAdjacentElement("beforeEnd",tt.removeNode(true));
+   debugAlert("3. Перенесем элемент: \n\n"+tt.outerHTML);
+   // ниже идет код для превращения эпиграфов в простой текст
+   if (prevSectionOrPoemOrStanza)
+    tt=prevSectionOrPoemOrStanza.insertAdjacentElement("beforeEnd",tt.removeNode(true));
+   else
+    tt=sectionOrPoemOrStanza.insertAdjacentElement("beforeBegin",tt.removeNode(true));
+   if (isEpigraph(tt)) removeEpigraphAuthors(tt);
+   if (isEpigraph(tt) || isAnnotation(tt)) tt.removeNode(false);
    weMovedSubtitles=false;
    tt=nextTt;
    lastMovingWasNotSubtitleMoving=true;
@@ -1355,11 +1396,11 @@ function changingOfSelect(whatSelected) {
  parent.frame3.document.getElementById("inAllInput").value=elementsInAll.toString();
  var el=parent.frame3.document.getElementById("reformatTo_select");
  var val=el.value;
- if (currentElementType.substr(0,6)=="titles" && oldCurrentElementType.substr(0,6)!="titles") {
+ if (currentElementType.substr(0,6)=="titles" /* && oldCurrentElementType.substr(0,6)!="titles"*/ ) {
   el.outerHTML=
    "<SELECT id=reformatTo_select>"+
    "<OPTION value=subtitles>Подзаголовки</OPTION>"+
-   "<OPTION value='subtitles with empty lines before and after' selected>Подзаголовки, обрамленные пустыми строками</OPTION>"+
+   (currentElementType=="titles" || currentElementType=="titles of sections"?"<OPTION value='subtitles with empty lines before and after' selected>Подзаголовки, обрамленные пустыми строками</OPTION>":"")+
    "<OPTION value=text>Текст</OPTION></SELECT>";
   if (val=="text") parent.frame3.document.getElementById("reformatTo_select").value=val;
  } else if (currentElementType=="subtitles" && oldCurrentElementType!="subtitles") {
@@ -1615,7 +1656,12 @@ function reformatTitlesToSubtitlesOrText() {
   myEl.id=p.id;
   if (currentTargetElementType=="p")
    removeFromClassName(myEl,/\btitle\b/gi);
-  if (currentTargetElementType=="subtitle" || currentTargetElementType=="subtitles with empty lines before and after") myEl.className="subtitle";
+  if (currentTargetElementType=="subtitle" || currentTargetElementType=="subtitles with empty lines before and after") {
+   myEl.className="subtitle";
+   //var newEmptyLine=mainDoc.createElement("P");
+   //newEmptyLine=myEl.parentNode.insertBefore(newEmptyLine,myEl.nextSibling);
+   //InflateIt(newEmptyLine);
+  }
   htmlStr+=myEl.outerHTML;
   p.removeNode(true);
  }
@@ -1640,7 +1686,7 @@ function reformatTitlesToSubtitlesOrText() {
 
  function moveHtmlCodeIntoTargetContainer(flag1) {
   var poemFlag, stanzaFlag;
-  debugAlert("Вошли в moveHtmlCodeIntoTargetContainer.");
+  debugAlert("Вошли в moveHtmlCodeIntoTargetContainer.\n\nfbwBody: "+fbwBody.outerHTML+"\n\nhtmlStr: "+htmlStr);
   el3=getSectionOrPoemOrStanzaByElement(parentTitle);
   poemFlag=isPoem(el3) && currentTargetElementType=="p";
   stanzaFlag=false /*isStanza(el3)*/;
@@ -1649,6 +1695,20 @@ function reformatTitlesToSubtitlesOrText() {
    debugAlert("Ветвь 1.");
    debugAlert("el3: \n\n"+el3.outerHTML);
    flag3=false; /*el3.parentNode && el3.parentNode.className && el3.parentNode.className=="section" && el3.parentNode.lastChild && el3.parentNode.lastChild.nodeName=="DIV" && el3.parentNode.lastChild.className && el3.parentNode.lastChild.className=="section";*/
+   if (currentTargetElementType=="subtitles with empty lines before and after" && (!el3.previousSibling || el3.previousSibling.className!=el3.className)) {
+    if (!parentTitle.previousSibling || !isEmptyLine(parentTitle.previousSibling)) {
+     var newEmptyLine=mainDoc.createElement("P");
+     newEmptyLine=parentTitle.parentNode.insertBefore(newEmptyLine,parentTitle);
+     InflateIt(newEmptyLine);
+     //alert("Ща как добавили пустую строку!\n\n"+fbwBody.outerHTML);
+    }
+    if (!parentTitle.nextSibling || !isEmptyLine(parentTitle.nextSibling)) {
+     var newEmptyLine=mainDoc.createElement("P");
+     newEmptyLine=parentTitle.parentNode.insertBefore(newEmptyLine,parentTitle.nextSibling);
+     InflateIt(newEmptyLine);
+    }
+   }
+   //alert("После вставки пустых строк.\n\nfbwBody: "+fbwBody.outerHTML);
    parentTitle.insertAdjacentHTML("beforeBegin",
     "<SPAN id='"+randomId+"_begin'></SPAN>"+
     (stanzaFlag?"<DIV class=stanza>":"")+
@@ -1665,7 +1725,7 @@ function reformatTitlesToSubtitlesOrText() {
     weRemovedEpigraphs=true;
    }
    sectionOrPoemOrStanza=el3;
-   debugAlert("fbwBody: \n\n"+fbwBody.innerHTML);
+   debugAlert("fbwBody после ветви 1: \n\n"+fbwBody.innerHTML);
   }
   else { // flag1==false
    // в этой ветви вставляем HTML-код в предыдущий контейнер
@@ -1738,6 +1798,7 @@ function reformatTitlesToSubtitlesOrText() {
     previousSection.insertAdjacentHTML("beforeEnd","<SPAN id='"+randomId+"_begin'></SPAN>"+(flag2?"<DIV class=stanza>":"")+htmlStr+(flag2?"</DIV>":"")+"<SPAN id='"+randomId+"_end'></SPAN>");
     markerBegin=mainDoc.getElementById(randomId+"_begin");
     markerEnd=mainDoc.getElementById(randomId+"_end");
+    //alert("А вот у нас тут markerBegin: "+markerBegin.outerHTML+"\n\nfbwBody: "+fbwBody.outerHTML);
     if (currentTargetElementType=="subtitles with empty lines before and after") {
      el2=markerBegin;
      // получим элемент перед маркером начала
@@ -1846,6 +1907,8 @@ function reformatTitlesToSubtitlesOrText() {
  sortElements();
  nPtr=0;
  var parentTitle=null;
+ thereWasTitlesInPoem=false;
+ thereWasTitlesInStanza=false;
  while (nPtr<sortedElementArray.length) {
   firstElFromCurrentBlock=myLinks[sortedElementArray[nPtr]];
   parentTitle=getTitleByElement(firstElFromCurrentBlock);
@@ -1853,6 +1916,20 @@ function reformatTitlesToSubtitlesOrText() {
   //alert(parentTitle.outerHTML);
 
   elemInMainDoc=parentTitle.firstChild;
+  if ((currentTargetElementType=="subtitles with empty lines before and after") && parentTitle.parentNode.nodeName=="DIV" &&
+   parentTitle.parentNode.className=="poem") {
+   thereWasTitlesInPoem=true;
+   document.getElementById("n_"+sortedElementArray[nPtr]).setAttribute("NoDel","");
+   nPtr++;
+   continue;
+  }
+  if (currentTargetElementType=="subtitles with empty lines before and after" && parentTitle.parentNode.nodeName=="DIV" &&
+   parentTitle.parentNode.className=="stanza") {
+   thereWasTitlesInStanza=true;
+   document.getElementById("n_"+sortedElementArray[nPtr]).setAttribute("NoDel","");
+   nPtr++;
+   continue;
+  }
   //var childsOfParentBlock=[];
   /*while (!(elemInMainDoc.nodeName=="DIV" && elemInMainDoc.className!="title")) {
    childsOfParentBlock.push(elemInMainDoc);*/
@@ -1910,7 +1987,7 @@ function reformatTitlesToSubtitlesOrText() {
    moveHtmlCodeIntoTargetContainer(elemInMainDoc==parentTitle);
    sectionOrPoemOrStanza=getSectionOrPoemOrStanzaByElement(parentTitle);
    if (!parentTitle.firstChild || elemInMainDoc==parentTitle) parentTitle.removeNode(true);
-   //если условие верно, нужно перенести остаток раздел в предыдущий раздел
+   //если условие верно, нужно перенести остаток раздела в предыдущий раздел
    if (!sectionOrPoemOrStanza) {alert("Ошибка!\nКод ошибки g5d8bc5nd."); return;}
   } //if (elemInMainDoc==firstElFromCurrentBlock)
   else {
@@ -1918,8 +1995,11 @@ function reformatTitlesToSubtitlesOrText() {
    sectionOrPoemOrStanza=getSectionOrPoemOrStanzaByElement(parentTitle);
   }
 
-  if (elemInMainDoc==parentTitle) { 
+  //alert("elemInMainDoc: "+elemInMainDoc.outerHTML+"\n\nparentTitle: "+parentTitle.outerHTML+"\n\nfbwBody: "+fbwBody.outerHTML);
+  if (elemInMainDoc==parentTitle) {
    debugAlert("Вызов moveBlockIntoPreviousBlock № 1.");
+   // if (sectionOrPoemOrStanza.previousSibling && sectionOrPoemOrStanza.previousSibling.className==sectionOrPoemOrStanza.className)
+   //alert("Будем двигать.");
    moveBlockIntoPreviousBlock();
   }
   else {
@@ -1992,6 +2072,16 @@ function reformatTitlesToSubtitlesOrText() {
  } //while (nPtr<sortedElementArray.length)
  //удалим элементы из списка
  removeReformattedElementsFromList();
+ var msgStr="Среди выделенных заголовков имелись заголовки ";
+ if (thereWasTitlesInPoem && thereWasTitlesInStanza)
+  msgStr+="стихов и строф.";
+ else if (thereWasTitlesInPoem)
+  msgStr+="стихов.";
+ else if (thereWasTitlesInStanza)
+  msgStr+="строф.";
+ msgStr+=" Они (заголовки) в процессе обработки не были превращены в подзаголовки, обрамленные пустыми строками, т.к. такое превращение данным скриптом не поддерживается.";
+ if (thereWasTitlesInPoem || thereWasTitlesInStanza)
+  alert(msgStr);
 } //reformatTitlesToSubtitlesOrText();
 
 function reformat(reformatToWhat) {
