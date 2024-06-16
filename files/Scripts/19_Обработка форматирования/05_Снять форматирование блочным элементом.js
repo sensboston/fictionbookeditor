@@ -1,30 +1,6 @@
 function Run() {
+ var versionNum="2.1";
 
- var versionNum="2.0";
-
- function thereIsParentBodyDiv(ptr) {
-  while (ptr && ptr.nodeName && ptr.nodeName!="BODY" &&
-   !(ptr.nodeName=="DIV" && ptr.className && ptr.className=="body"))
-   ptr=ptr.parentNode;
-  if (ptr.nodeName=="DIV" && ptr.className && ptr.className=="body")
-   return true;
-  else
-   return false;
- }
-
- function unformatDivsAndParagraphsInsideElement(elem) {
-  var divs, ps, i;
-  divs=elem.getElementsByTagName("DIV");
-  ps=elem.getElementsByTagName("P");
-  for (i=0;i<ps.length;i++) {
-   ps[i].removeAttribute("class");
-   ps[i].removeAttribute("className");
-  }
-  for (i=divs.length-1;i>=0;i--) {
-   if (divs[i].className!="image") divs[i].removeNode(false);
-  }
- }
- 
  var range,el,el2,saveNextAfterEl,saveNextAfterEl2;
  var elParent,i,j,divs,ps,saveClassName;
  var randomNum=Math.floor((Math.random()*9)).toString()+Math.floor((Math.random()*9)).toString()+
@@ -34,12 +10,9 @@ function Run() {
  var selectionEndId="removePoemOrCiteEndId"+randomNum;
  var fbw_body=document.getElementById("fbw_body");
  if (!fbw_body) return;
- if (document.selection.type.toLowerCase()!="none") {
-//  alert("При запуске скрипта не должно быть выделения. Должен быть просто курсор.");
-  return;
- } 
+ if (document.selection.type.toLowerCase()!="none") return;
  var tr=document.selection.createRange();
- window.external.BeginUndoUnit(document,"снятие форматирования блочным элементом (v"+versionNum+")"); 
+ window.external.BeginUndoUnit(document,"снятие форматирования блочным элементом (v"+versionNum+")");
  tr.pasteHTML("<B id="+selectionBeginId+"></B>");
  el=document.getElementById(selectionBeginId);
  var selectionIsNone=tr.compareEndPoints("StartToEnd",tr)==0;
@@ -57,31 +30,31 @@ function Run() {
     el2=el.firstChild;
     while (el2!=el) {
      saveNextAfterEl2=el2;
-     if (saveNextAfterEl2.firstChild && saveNextAfterEl2.nodeName!="P") 
+     if (saveNextAfterEl2.firstChild && saveNextAfterEl2.nodeName!="P")
       saveNextAfterEl2=saveNextAfterEl2.firstChild;
      else {
       while (saveNextAfterEl2!=el && saveNextAfterEl2.nextSibling==null)
        saveNextAfterEl2=saveNextAfterEl2.parentNode;
       if (saveNextAfterEl2!=el) saveNextAfterEl2=saveNextAfterEl2.nextSibling;
-     } 
+     }
      if (el2.nodeName=="DIV" && el2.className=="stanza") {
       if (el2.nextSibling)
         if (el2.nextSibling.nodeName=="DIV" && el2.nextSibling.className=="stanza") {
-         el2.insertAdjacentHTML("beforeEnd","<P>&nbsp;</P>");
+         el2.insertAdjacentHTML("beforeEnd","<P"+">&nbsp;<"+"/P>");
          InflateIt(el2);
         }
       el2.removeNode(false);
      }
      el2=saveNextAfterEl2;
     }
-    unformatDivsAndParagraphsInsideElement(el);
+    unformatDivsAndParagraphs(el);
    } else if (el.className=="cite") {
-    unformatDivsAndParagraphsInsideElement(el);
+    unformatDivsAndParagraphs(el);
    } else if (el.className=="epigraph") {
     var el3=el;
     var nextNode3=el3.nextSibling;
     while (el3 && el3.className && (el3.className=="epigraph" || el3.className=="annotation")) {
-     unformatDivsAndParagraphsInsideElement(el3);
+     unformatDivsAndParagraphs(el3);
      el3.removeNode(false);
      el3=nextNode3;
      nextNode3=el3.nextSibling;
@@ -90,12 +63,12 @@ function Run() {
     var el3=el.nextSibling;
     var nextNode3=el3.nextSibling;
     while (el3 && el3.className && (el3.className=="epigraph" || el3.className=="annotation")) {
-     unformatDivsAndParagraphsInsideElement(el3);
+     unformatDivsAndParagraphs(el3);
      el3.removeNode(false);
      el3=nextNode3;
      nextNode3=el3.nextSibling;
     }
-    unformatDivsAndParagraphsInsideElement(el);
+    unformatDivsAndParagraphs(el);
    } else if (el.className=="table") {
     divs=el.getElementsByTagName("DIV");
     for (var i=divs.length-1; i>=0; i--)
@@ -122,14 +95,41 @@ function Run() {
    if (saveNextAfterEl==null)
     InflateIt(elParent.lastChild);
    else
-    InflateIt(saveNextAfterEl.previousSibling);     
+    InflateIt(saveNextAfterEl.previousSibling);
    InflateIt(elParent);
-  } 
+  }
   document.getElementById(selectionBeginId).removeNode(true);
  }
  else {
   alert("При запуске скрипта не должно быть выделения. Должен быть просто курсор.");
   el.removeNode(false);
  }
- window.external.EndUndoUnit(document); 
+ window.external.EndUndoUnit(document);
+ 
+ // нижеследующие функции пришлось перенести в конец скрипта,
+ // т.к. иначе IE выдавал ошибку "Незавершенная строковая константа"
+ function unformatDivsAndParagraphs(elem) {
+  var divs, ps, i;
+  divs=elem.getElementsByTagName("DIV");
+  ps=elem.getElementsByTagName("P");
+  for (i=0;i<ps.length;i++) {
+   ps[i].removeAttribute("class");
+   ps[i].removeAttribute("className");
+  }
+  for (i=divs.length-1;i>=0;i--) {
+   if (divs[i].className!="image") divs[i].removeNode(false);
+  }
+  return;
+ }
+  
+ function thereIsParentBodyDiv(ptr) {
+  while (ptr && ptr.nodeName && ptr.nodeName!="BODY" &&
+   !(ptr.nodeName=="DIV" && ptr.className && ptr.className=="body"))
+   ptr=ptr.parentNode;
+  if (ptr.nodeName=="DIV" && ptr.className && ptr.className=="body")
+   return true;
+  else
+   return false;
+ }
+ 
 }
