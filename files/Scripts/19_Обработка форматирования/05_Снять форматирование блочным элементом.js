@@ -1,5 +1,5 @@
 function Run() {
- var versionNum="2.1";
+ var versionNum="2.2";
 
  var range,el,el2,saveNextAfterEl,saveNextAfterEl2;
  var elParent,i,j,divs,ps,saveClassName;
@@ -23,6 +23,10 @@ function Run() {
              el.className=="title" || el.className=="annotation" || el.className=="table")
            )
          )) el=el.parentNode;
+  if (el.nodeName=="DIV" && el.className=="title" && el.parentNode.nodeName=="DIV" && el.parentNode.className=="poem")
+   el=el.parentNode;
+  else if (el.nodeName=="DIV" && el.className=="epigraph" && el.parentNode.nodeName=="DIV" && el.parentNode.className=="poem")
+   el=el.parentNode;
   if (el.nodeName!="BODY") {
    saveClassName=el.className;
    elParent=el.parentNode;
