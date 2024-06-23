@@ -1,7 +1,7 @@
 function Run() {
- var versionNum="2.2";
+ var versionNum="2.3";
 
- var range,el,el2,saveNextAfterEl,saveNextAfterEl2;
+ var range,el,el2,el3,saveNextAfterEl,saveNextAfterEl2;
  var elParent,i,j,divs,ps,saveClassName;
  var randomNum=Math.floor((Math.random()*9)).toString()+Math.floor((Math.random()*9)).toString()+
          Math.floor((Math.random()*9)).toString()+Math.floor((Math.random()*9)).toString()+
@@ -27,10 +27,32 @@ function Run() {
    el=el.parentNode;
   else if (el.nodeName=="DIV" && el.className=="epigraph" && el.parentNode.nodeName=="DIV" && el.parentNode.className=="poem")
    el=el.parentNode;
+
   if (el.nodeName!="BODY") {
    saveClassName=el.className;
    elParent=el.parentNode;
-   if (el.className=="poem") {
+   var el3=el;
+   if ((el.className=="title" || el.className=="epigraph" || el.className=="annotation")
+        && elParent.className=="section") {
+    var el3=el;
+    while (el3 && el3.nodeName=="DIV" && (el3.className=="title" || el3.className=="epigraph" || el3.className=="annotation"))
+     el3=el3.nextSibling;
+   } else el3=null;
+   if (el3 && el3.nodeName=="DIV" && el3.className=="section") {
+    var newSection=document.createElement("DIV");
+    newSection.className="section";
+    newSection=el3.insertAdjacentElement("beforeBegin",newSection);
+    var el4=newSection.previousSibling;
+    var previousNode;
+    while (el4) {
+     previousNode=el4.previousSibling;
+     el4=el4.removeNode(true);
+     newSection.insertAdjacentElement("afterBegin",el4);
+     el4=previousNode;
+    }
+    unformatDivsAndParagraphsInsideElement(newSection);
+   }
+   else if (el.className=="poem") {
     el2=el.firstChild;
     while (el2!=el) {
      saveNextAfterEl2=el2;
@@ -51,14 +73,14 @@ function Run() {
      }
      el2=saveNextAfterEl2;
     }
-    unformatDivsAndParagraphs(el);
+    unformatDivsAndParagraphsInsideElement(el);
    } else if (el.className=="cite") {
-    unformatDivsAndParagraphs(el);
+    unformatDivsAndParagraphsInsideElement(el);
    } else if (el.className=="epigraph") {
     var el3=el;
     var nextNode3=el3.nextSibling;
     while (el3 && el3.className && (el3.className=="epigraph" || el3.className=="annotation")) {
-     unformatDivsAndParagraphs(el3);
+     unformatDivsAndParagraphsInsideElement(el3);
      el3.removeNode(false);
      el3=nextNode3;
      nextNode3=el3.nextSibling;
@@ -67,12 +89,12 @@ function Run() {
     var el3=el.nextSibling;
     var nextNode3=el3.nextSibling;
     while (el3 && el3.className && (el3.className=="epigraph" || el3.className=="annotation")) {
-     unformatDivsAndParagraphs(el3);
+     unformatDivsAndParagraphsInsideElement(el3);
      el3.removeNode(false);
      el3=nextNode3;
      nextNode3=el3.nextSibling;
     }
-    unformatDivsAndParagraphs(el);
+    unformatDivsAndParagraphsInsideElement(el);
    } else if (el.className=="table") {
     divs=el.getElementsByTagName("DIV");
     for (var i=divs.length-1; i>=0; i--)
@@ -112,7 +134,7 @@ function Run() {
  
  // нижеследующие функции пришлось перенести в конец скрипта,
  // т.к. иначе IE выдавал ошибку "Незавершенная строковая константа"
- function unformatDivsAndParagraphs(elem) {
+ function unformatDivsAndParagraphsInsideElement(elem) {
   var divs, ps, i;
   divs=elem.getElementsByTagName("DIV");
   ps=elem.getElementsByTagName("P");
@@ -130,7 +152,7 @@ function Run() {
   while (ptr && ptr.nodeName && ptr.nodeName!="BODY" &&
    !(ptr.nodeName=="DIV" && ptr.className && ptr.className=="body"))
    ptr=ptr.parentNode;
-  if (ptr.nodeName=="DIV" && ptr.className && ptr.className=="body")
+  if (ptr && ptr.nodeName=="DIV" && ptr.className && ptr.className=="body")
    return true;
   else
    return false;
