@@ -1,5 +1,5 @@
 function Run() {
- var versionNum="2.3";
+ var versionNum="2.4";
 
  var range,el,el2,el3,saveNextAfterEl,saveNextAfterEl2;
  var elParent,i,j,divs,ps,saveClassName;
@@ -44,7 +44,8 @@ function Run() {
     newSection=el3.insertAdjacentElement("beforeBegin",newSection);
     var el4=newSection.previousSibling;
     var previousNode;
-    while (el4) {
+    var savedPrevousNode=el.previousSibling;
+    while (el4 && el4!=savedPrevousNode) {
      previousNode=el4.previousSibling;
      el4=el4.removeNode(true);
      newSection.insertAdjacentElement("afterBegin",el4);
