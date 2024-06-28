@@ -1,5 +1,5 @@
 function Run() {
- var versionNum="2.4";
+ var versionNum="2.5";
 
  var range,el,el2,el3,saveNextAfterEl,saveNextAfterEl2;
  var elParent,i,j,divs,ps,saveClassName;
@@ -39,19 +39,37 @@ function Run() {
      el3=el3.nextSibling;
    } else el3=null;
    if (el3 && el3.nodeName=="DIV" && el3.className=="section") {
-    var newSection=document.createElement("DIV");
-    newSection.className="section";
-    newSection=el3.insertAdjacentElement("beforeBegin",newSection);
-    var el4=newSection.previousSibling;
+    var sectionChild=el3.firstChild;
+    var targetSection;
+    //alert("sectionChild: "+sectionChild.outerHTML);
+    if (sectionChild &&
+        (sectionChild.nodeName!="DIV" || sectionChild.className=="cite" || sectionChild.className=="poem" || sectionChild.className=="table")) {
+     targetSection=el3;
+     var el4=el3.previousSibling;
+     //alert("lkj1");
+     //alert("el4: "+el4.outerHTML);
+    }
+    else {
+     //alert("lkj2");
+     var newSection=document.createElement("DIV");
+     newSection.className="section";
+     newSection=el3.insertAdjacentElement("beforeBegin",newSection);
+     targetSection=newSection;
+     var el4=targetSection.previousSibling;
+    }
+    //alert("targetSection: "+targetSection.outerHTML);
     var previousNode;
     var savedPrevousNode=el.previousSibling;
+    var newNode;
     while (el4 && el4!=savedPrevousNode) {
+     //alert("el4 в цикле: "+el4.outerHTML);
      previousNode=el4.previousSibling;
      el4=el4.removeNode(true);
-     newSection.insertAdjacentElement("afterBegin",el4);
+     newNode=targetSection.insertAdjacentElement("afterBegin",el4);
+     unformatDivsAndParagraphsInsideElement(newNode);
+     if (newNode.className!="image" && newNode.className!="section") newNode.removeNode(false);
      el4=previousNode;
     }
-    unformatDivsAndParagraphsInsideElement(newSection);
    }
    else if (el.className=="poem") {
     el2=el.firstChild;
@@ -144,7 +162,7 @@ function Run() {
    ps[i].removeAttribute("className");
   }
   for (i=divs.length-1;i>=0;i--) {
-   if (divs[i].className!="image") divs[i].removeNode(false);
+   if (divs[i].className!="image" && divs[i].className!="section") divs[i].removeNode(false);
   }
   return;
  }
