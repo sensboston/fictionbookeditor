@@ -1,5 +1,5 @@
 function Run() {
- var versionNum="2.5";
+ var versionNum="2.6";
 
  var range,el,el2,el3,saveNextAfterEl,saveNextAfterEl2;
  var elParent,i,j,divs,ps,saveClassName;
@@ -33,7 +33,7 @@ function Run() {
    elParent=el.parentNode;
    var el3=el;
    if ((el.className=="title" || el.className=="epigraph" || el.className=="annotation")
-        && elParent.className=="section") {
+        && (elParent.className=="section" || elParent.className=="body")) {
     var el3=el;
     while (el3 && el3.nodeName=="DIV" && (el3.className=="title" || el3.className=="epigraph" || el3.className=="annotation"))
      el3=el3.nextSibling;
