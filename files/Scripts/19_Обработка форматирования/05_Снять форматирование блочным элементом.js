@@ -1,5 +1,5 @@
 function Run() {
- var versionNum="2.6";
+ var versionNum="2.7";
 
  var range,el,el2,el3,saveNextAfterEl,saveNextAfterEl2;
  var elParent,i,j,divs,ps,saveClassName;
@@ -10,8 +10,9 @@ function Run() {
  var selectionEndId="removePoemOrCiteEndId"+randomNum;
  var fbw_body=document.getElementById("fbw_body");
  if (!fbw_body) return;
- if (document.selection.type.toLowerCase()!="none") return;
+ if (document.selection.type.toLowerCase()!="none" && document.selection.type.toLowerCase()!="text") return;
  var tr=document.selection.createRange();
+ tr.collapse(true);
  window.external.BeginUndoUnit(document,"снятие форматирования блочным элементом (v"+versionNum+")");
  tr.pasteHTML("<B id="+selectionBeginId+"></B>");
  el=document.getElementById(selectionBeginId);
