@@ -1,5 +1,5 @@
 function Run() {
- var versionNum="1.0";
+ var versionNum="1.1";
 
  var range,el,el2,el3,saveNextAfterEl,saveNextAfterEl2;
  var elParent,i,j,divs,ps,saveClassName;
@@ -13,18 +13,13 @@ function Run() {
  if (document.selection.type.toLowerCase()!="none" && document.selection.type.toLowerCase()!="text") return;
  var tr=document.selection.createRange();
  tr.collapse(true);
- window.external.BeginUndoUnit(document,"расформатирование подзаголовком (v"+versionNum+")");
+ window.external.BeginUndoUnit(document,"расформатирование подзаголовка (v"+versionNum+")");
  tr.pasteHTML("<B id="+selectionBeginId+"></B>");
  el=document.getElementById(selectionBeginId);
  if (fbw_body.contains(el)) {
   while (el.nodeName!="BODY" && el.nodeName!="P") el=el.parentNode;
   if (el.nodeName=="P" && el.className=="subtitle") {
-   // ниже пришлось написать несколько сложный код,
-   // т.к. более простой вариант в IE6 работал с ошибкой
-   var el2=el.cloneNode(true);  
-   el2.removeAttribute("className");
-   el.outerHTML=el2.outerHTML;
-   el.innerHTML=el2.innerHTML;
+   window.external.SetStyleEx(document, el, "normal");
   }
  }
  if (document.getElementById(selectionBeginId))
