@@ -1,5 +1,5 @@
 // Скрипт «Поиск по набору регэкспов» для редактора Fiction Book Editor (FBE).
-// Версия 4.9
+// Версия 5.0
 // Автор Sclex, набор RegExp-ов - TaKir, Sclex, 06.04.2023
 // 30 января 2023 года исправлены недочеты поисковых команд, на которые (недочеты) указал пользователь stokber
 // 06 апреля 2023 года исправлены недочеты поисковых команд, на которые (недочеты) указал пользователь stokber
@@ -143,7 +143,6 @@ function Run() {
 
  //                                     РАБОЧИЕ:
   
-
  addRegExp("\\b(?:(?:https?|ftp|file)://|www\\.|ftp\\.)[-A-Z0-9+&@#/%=~_|$?!:,.]*[A-Z0-9+&@#/%=~_|$]","i","Пропустить: URL-ы");
  addRegExp("\\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}\\b","i","Пропустить: E-MAIL-ы.");
   addRegExp("^ISBN[\\x20\\xA0](\\d(-?\\d){8,15})$","i","Пропустить: ISBN."); 
@@ -1185,6 +1184,8 @@ function Run() {
   tr2.move("character",foundLen);
   tr.setEndPoint("EndToStart",tr2);
   if (foundLen==0 && tr.move("character",1)==1) tr.move("character",-1);
+  if (tr.moveStart("character",1)==1)
+   tr.moveStart("character",-1);
   tr.select();
   scrollIfItNeeds();
  }
