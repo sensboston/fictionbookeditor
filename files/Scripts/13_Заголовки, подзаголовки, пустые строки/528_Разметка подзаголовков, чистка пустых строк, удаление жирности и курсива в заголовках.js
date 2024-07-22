@@ -4,7 +4,7 @@
 function Run() {
  try { var nbspChar=window.external.GetNBSP(); var nbspEntity; if (nbspChar.charCodeAt(0)==160) nbspEntity="&nbsp;"; else nbspEntity=nbspChar;}
  catch(e) { var nbspChar=String.fromCharCode(160); var nbspEntity="&nbsp;";}
- var verStr="v4.5";
+ var verStr="v4.6";
  var DebugMode=0;
  var DestrongTitles=true; //делать ли удаление жирности в заголовках
  var DeitalicTitles=true; //удалять ли курсив в заголовках
@@ -237,7 +237,7 @@ function Run() {
    if (ptr.nodeName=="P") {
      var chld=ptr.firstChild;
      if (chld!=null) {
-      if (IsLineSubtitle(ptr)) {
+      if (IsLineSubtitle(ptr) && ptr.parentNode.className!="stanza") {
        ptr.className="subtitle";
        ptr.innerHTML="* * *";
        destrongAndDeitalic(ptr,DestrongTitles,DeitalicTitles);
@@ -317,7 +317,7 @@ function Run() {
       if (chld.nodeName=="DIV" && chld.className=="title" &&
           chld.firstChild!=null) {
        chld2=chld.firstChild;
-       if (chld2.nodeName=="P" && IsLineSubtitle(chld2)) {
+       if (chld2.nodeName=="P" && IsLineSubtitle(chld2) && ptr.parentNode.className!="stanza") {
         chld2.innerHTML="* * *";
         chld2.className="subtitle";
         chld.removeNode(false);
