@@ -1,6 +1,6 @@
 // Скрипт «Перейти на следующих авторов текста»
 // Автор Sclex
-// Версия 1.3
+// Версия 1.4
 
 function Run() {
 
@@ -81,17 +81,21 @@ function Run() {
  var tr3=document.selection.createRange();
  tr3.collapse(false);
  var ptr=tr3.parentElement();
+ if (ptr.nodeName=="P" && ptr.className=="text-author")
+  state=-1;
  //alert("blockEndNode: "+ptr.outerHTML);
  ptr=getNextP(ptr);
  
  while (ptr && fbwBody.contains(ptr)) {
-  if (state==0 && checkP(ptr)) {
+  if (state==-1 && !checkP(ptr))
+   state=0;
+  else if (state==0 && checkP(ptr)) {
    state=1;
    firstP=ptr;
   }
-  if (state==1 && checkP(ptr))
+  else if (state==1 && checkP(ptr))
    lastP=ptr;
-  if (state==1 && !checkP(ptr)) {
+  else if (state==1 && !checkP(ptr)) {
    state=2;
    break;
   }
