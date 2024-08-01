@@ -1,5 +1,5 @@
 //======================================
-//            Скрипт «Проставить ударения над буквами, выделенными жирностью, курсивом либо регистром» v.1.08 (04.12.2024)
+//            Скрипт «Проставить ударения над буквами, выделенными жирностью, курсивом или регистром» v.1.1 (08.07.2024)
 //            Создан на базе скрипта «Генеральная уборка» (автор скрипта - jurgennt)
 //                                             Engine by ©Sclex
 //                                                    01.05.2007 – 07.05.2008
@@ -8,7 +8,7 @@
 // Скрипт ищет одиночные гласные буквы размеченные курсивом или жирным шрифтом и заменяет их на у́да́рны́е́ гла́сны́е́. Во втором режиме ищет ПРОПИСНЫЕ гласные в середине слова и тоже меняет на у́да́рны́е́ гла́сны́е́.
 //~~~~~~~~~~~~~~~~~~
 
-var VersionNumber="1.08";
+var VersionNumber="1.1";
 
 //обрабатывать ли history
 var ObrabotkaHistory=true;
@@ -18,8 +18,8 @@ var ObrabotkaAnnotation=true;
 // var Snoska=false;
 //  var PromptSnoska=true;
 
-var sIB="<EM>|<STRONG>|<EM><STRONG>|<STRONG><EM>";
-var fIB="</EM>|</STRONG>|</EM></STRONG>|</STRONG></EM>";
+var sIB="<EM><STRONG>|<STRONG><EM>|<EM>|<STRONG>";
+var fIB="</EM></STRONG>|</STRONG></EM>|</EM>|</STRONG>";
 var aIB="<EM>|<STRONG>|<EM><STRONG>|<STRONG><EM>|</EM>|</STRONG>|</EM></STRONG>|</STRONG></EM>";
 
 function Run() {
@@ -29,7 +29,9 @@ function Run() {
  
   var Ts=new Date().getTime();
   var TimeStr=0;
-
+  
+  var znPrepin = "[-—–\.\*,;:?!…«»“”„\(\) \xA0\'\"]";
+'мой папа́'
 var letters = {
   а: "а́",  е: "е́",
   ё: "ё́",  и: "и́",
@@ -65,12 +67,24 @@ function tagCase() {
  var re102 = new RegExp("<STRONG><EM>"+key+"</EM></STRONG>","g");
  var re102_ = accent;
 
- var re103 = new RegExp("<(STRONG|EM)>(\\\s|"+nbspEntity+")?"+key+"(\\\s|"+nbspEntity+")?</\\1>","g");
+ // var re103 = new RegExp("<(STRONG|EM)>(\\\s|"+nbspEntity+")?"+key+"(\\\s|"+nbspEntity+")?</\\1>","g");
+ // var re103 = new RegExp("<(STRONG|EM)>([^а-яё])?"+key+"([^а-яё])?</\\1>","g");
+ var re103 = new RegExp("<(STRONG|EM)>("+znPrepin+"*)"+key+"("+znPrepin+"*)</\\1>","g");
  var re103_ = "$2"+accent+"$3";
+ 
+ // var re103a = new RegExp("([а-яё])(<(?:STRONG|EM)>)"+key+"("+znPrepin+"+)","g");
+ var re103a = new RegExp("([а-яё])("+sIB+")"+key+"("+znPrepin+"+)","g");
+ var re103a_ = "$1"+accent+"$3$2";
+ 
+ 
+ 
+ 
+ 
  
  var re104 = new RegExp("("+sIB+")"+key+"(\\\s|"+nbspEntity+")("+fIB+")","g");
  var re104_ = accent+"$2$1$3"; 
- 
+  // var re104_ = accent+"$2"; 
+  
  var re105 = new RegExp("("+sIB+")(\\\s|"+nbspEntity+")"+key+"("+fIB+")","g");
  var re105_ = "$1$2"+accent; 
  
@@ -79,6 +93,7 @@ function tagCase() {
    if (s.search(re101)!=-1)         { s=s.replace(re101, re101_);}
    if (s.search(re102)!=-1)         { s=s.replace(re102, re102_);}
    if (s.search(re103)!=-1)         { s=s.replace(re103, re103_);}
+   if (s.search(re103a)!=-1)         { s=s.replace(re103a, re103a_);}
    if (s.search(re104)!=-1)         { s=s.replace(re104, re104_);}
    if (s.search(re105)!=-1)         { s=s.replace(re105, re105_);}
  }
@@ -88,44 +103,74 @@ function upCase() {
 
  var re110 = new RegExp("([а-яё])А","g");
  var re110_ = "$1а́";
+ var re110a = new RegExp("((^|[^а-яё])[А-ЯЁ])А","g");
+ var re110a_ = "$1а́";
  
  var re111 = new RegExp("([а-яё])Е","g");
  var re111_ = "$1е́";
+ var re111a = new RegExp("((^|[^а-яё])[А-ЯЁ])Е","g");
+ var re111a_ = "$1е́";
  
  var re112 = new RegExp("([а-яё])Ё","g");
  var re112_ = "$1ё́";
+  var re112a = new RegExp("((^|[^а-яёА-ЯЁ])[А-ЯЁ])Ё","g");
+ var re112a_ = "$1ё́";
 
  var re113 = new RegExp("([а-яё])И","g");
  var re113_ = "$1и́";
+  var re113a = new RegExp("((^|[^а-яёА-ЯЁ])[А-ЯЁ])И","g");
+ var re113a_ = "$1и́";
 
  var re114 = new RegExp("([а-яё])О","g");
  var re114_ = "$1о́";
+  var re114a = new RegExp("((^|[^а-яёА-ЯЁ])[А-ЯЁ])О","g");
+ var re114a_ = "$1о́";
 
  var re115 = new RegExp("([а-яё])У","g");
  var re115_ = "$1у́";
+  var re115a = new RegExp("((^|[^а-яёА-ЯЁ])[А-ЯЁ])У","g");
+ var re115a_ = "$1у́";
 
  var re116 = new RegExp("([а-яё])Ы","g");
  var re116_ = "$1ы́";
+  var re116a = new RegExp("((^|[^а-яёА-ЯЁ])[А-ЯЁ])Ы","g");
+ var re116a_ = "$1ы́";
 
  var re117 = new RegExp("([а-яё])Э","g");
  var re117_ = "$1э́";
+  var re117a = new RegExp("((^|[^а-яёА-ЯЁ])[А-ЯЁ])Э","g");
+ var re117a_ = "$1э́";
 
  var re118 = new RegExp("([а-яё])Ю","g");
  var re118_ = "$1ю́";
+  var re118a = new RegExp("((^|[^а-яёА-ЯЁ])[А-ЯЁ])Ю","g");
+ var re118a_ = "$1ю́";
 
  var re119 = new RegExp("([а-яё])Я","g");
  var re119_ = "$1я́";
+  var re119a = new RegExp("((^|[^а-яёА-ЯЁ])[А-ЯЁ])Я","g");
+ var re119a_ = "$1я́";
 
- if (s.search(re110)!=-1)         { s=s.replace(re110, re110_);}
- if (s.search(re111)!=-1)         { s=s.replace(re111, re111_);}
- if (s.search(re112)!=-1)         { s=s.replace(re112, re112_);}
- if (s.search(re113)!=-1)         { s=s.replace(re113, re113_);}
- if (s.search(re114)!=-1)         { s=s.replace(re114, re114_);}
- if (s.search(re115)!=-1)         { s=s.replace(re115, re115_);}
- if (s.search(re116)!=-1)         { s=s.replace(re116, re116_);}
- if (s.search(re117)!=-1)         { s=s.replace(re117, re117_);}
- if (s.search(re118)!=-1)         { s=s.replace(re118, re118_);}
- if (s.search(re119)!=-1)         { s=s.replace(re119, re119_);}
+  if (s.search(re110)!=-1)         { s=s.replace(re110, re110_);}
+  if (s.search(re110a)!=-1)         { s=s.replace(re110a, re110a_);}
+  if (s.search(re111)!=-1)         { s=s.replace(re111, re111_);}
+  if (s.search(re111a)!=-1)         { s=s.replace(re111a, re111a_);}
+  if (s.search(re112)!=-1)         { s=s.replace(re112, re112_);}
+  if (s.search(re112a)!=-1)         { s=s.replace(re112a, re112a_);}
+  if (s.search(re113)!=-1)         { s=s.replace(re113, re113_);}
+  if (s.search(re113a)!=-1)         { s=s.replace(re113a, re113a_);}
+  if (s.search(re114)!=-1)         { s=s.replace(re114, re114_);}
+  if (s.search(re114a)!=-1)         { s=s.replace(re114a, re114a_);}
+  if (s.search(re115)!=-1)         { s=s.replace(re115, re115_);}
+  if (s.search(re115a)!=-1)         { s=s.replace(re115a, re115a_);}
+  if (s.search(re116)!=-1)         { s=s.replace(re116, re116_);}
+  if (s.search(re116a)!=-1)         { s=s.replace(re116a, re116a_);}
+  if (s.search(re117)!=-1)         { s=s.replace(re117, re117_);}
+  if (s.search(re117a)!=-1)         { s=s.replace(re117a, re117a_);}
+  if (s.search(re118)!=-1)         { s=s.replace(re118, re118_);}
+  if (s.search(re118a)!=-1)         { s=s.replace(re118a, re118a_);}
+  if (s.search(re119)!=-1)         { s=s.replace(re119, re119_);}
+  if (s.search(re119a)!=-1)         { s=s.replace(re119a, re119a_);}
 }
 
 //~~~~~~~~~~~~~~~~~~~~~~
@@ -149,7 +194,7 @@ else {
  var id;
  var s="";
  
-var key1 = "[аеёиоуыэюяАЕЁИОУЫЭЮЯ]";
+ var key1 = "[аеёиоуыэюяАЕЁИОУЫЭЮЯ]";
 
  // двойное форматирование вокруг конструкций типа "слов<EM>о о</EM>лово":
  var re1 = new RegExp("(<EM><STRONG>)(.+?)(\\\s|"+nbspEntity+")("+key1+")(</STRONG></EM>)","g");
@@ -158,10 +203,10 @@ var key1 = "[аеёиоуыэюяАЕЁИОУЫЭЮЯ]";
  var re2 = new RegExp("(<STRONG><EM>)(.+?)(\\\s|"+nbspEntity+")("+key1+")(</EM></STRONG>)","g");
  var re2_ = "$1$2$5$3$1$4$5";
 
- var re3 = new RegExp("(<EM><STRONG>)("+key1+")(\\\s|"+nbspEntity+")(.+?)(</STRONG></EM>)","g");
+ var re3 = new RegExp("(<EM><STRONG>)("+key1+")(\\\s|"+nbspEntity+")(.*?)(</STRONG></EM>)","g");
  var re3_ = "$1$2$5$3$1$4$5";
  
- var re4 = new RegExp("(<STRONG><EM>)("+key1+")(\\\s|"+nbspEntity+")(.+?)(</EM></STRONG>)","g");
+ var re4 = new RegExp("(<STRONG><EM>)("+key1+")(\\\s|"+nbspEntity+")(.*?)(</EM></STRONG>)","g");
  var re4_ = "$1$2$5$3$1$4$5";
 
  var re5 = new RegExp("(<EM>)("+key1+")(\\\s|"+nbspEntity+")(.+?)(</EM>)","g");
@@ -177,18 +222,18 @@ var key1 = "[аеёиоуыэюяАЕЁИОУЫЭЮЯ]";
  var re8_ = "$1$2$5$3$1$4$5";
  
 // убираем форматирование пробелов вокруг одиночной буквы:
-var re9 = new RegExp("("+sIB+")(\\\s|"+nbspEntity+")?("+key1+")(\\\s|"+nbspEntity+")("+aIB+")","g");
-var re9_ = "$2$1$3$5$4";
+ var re9 = new RegExp("("+sIB+")(\\\s|"+nbspEntity+")?("+key1+")(\\\s|"+nbspEntity+")("+aIB+")","g");
+ var re9_ = "$2$1$3$5$4";
 // ???????????:
-var re10 = new RegExp("("+aIB+")("+key1+")?(\\\s|"+nbspEntity+")("+key1+")("+aIB+")","g");
-var re10_ = "$1$2$5$3$1$4$5";
+ var re10 = new RegExp("("+aIB+")("+key1+")?(\\\s|"+nbspEntity+")("+key1+")("+aIB+")","g");
+ var re10_ = "$1$2$5$3$1$4$5";
 
 // помечаем отдельно стоящие курсивно-жирные гласные буквы:
-var re100s = new RegExp("(^|[^а-яА-ЯёЁ>])("+sIB+")(\\\s|"+nbspEntity+")?("+key1+")(\\\s|"+nbspEntity+")?("+fIB+")(?![<а-яА-ЯёЁ])","g");
-var re100s_ = "$1$2$3<b>$4</b>$5$6";
+ var re100s = new RegExp("(^|[^а-яА-ЯёЁ>])("+sIB+")(\\\s|"+nbspEntity+")?("+key1+")(\\\s|"+nbspEntity+")?("+fIB+")(?![<а-яА-ЯёЁ])","g");
+ var re100s_ = "$1$2$3<b>$4</b>$5$6";
 // удаляем метки:
-var re100e = new RegExp("</?b>","g");
-var re100e_ = "";
+ var re100e = new RegExp("</?b>","g");
+ var re100e_ = "";
  
  // функция, обрабатывающая абзац P
   function HandleP(ptr) {
@@ -216,7 +261,7 @@ var re100e_ = "";
   ptr.innerHTML=s;      
   } 
 
-    window.external.BeginUndoUnit(document,"Проставить ударения над буквами, выделенными жирностью, курсивом либо регистром");                               // ОТКАТ (UNDO) начало
+    window.external.BeginUndoUnit(document,"Проставить ударения над буквами, выделенными жирностью, курсивом или регистром");                               // ОТКАТ (UNDO) начало
 
  var body=document.getElementById("fbw_body");
  
@@ -272,7 +317,7 @@ var Tsec3 = Math.ceil(1000*((Tf-Ts)/1000-Tmin*60))/1000;
  if (st2!="") st2="\n"+st2;
 
  MsgBox ('                  –= Jurgen Script =– \n'+
-        ' «Проставить ударения над буквами, выделенными жирностью, курсивом либо регистром» v.'+VersionNumber+' stokber Edition       \n\n'+
+        ' «Проставить ударения над буквами, выделенными жирностью, курсивом или регистром» v.'+VersionNumber+' stokber Edition       \n\n'+
         'Заменено букв: '+countReplace+'.\n\n'+
         ' Время: ' +TimeStr+'.'+st2); 
 
