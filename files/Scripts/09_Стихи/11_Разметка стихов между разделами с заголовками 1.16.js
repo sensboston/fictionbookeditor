@@ -1,4 +1,4 @@
-// Скрипт «Разметка стихов между секциями с заголовками» для редактора Fiction Book Editor (FBE).
+// Скрипт «Разметка стихов между разделами с заголовками» для редактора Fiction Book Editor (FBE).
 // // Версия 1.16.
 // Автор stokber.
 //
@@ -50,7 +50,7 @@ function Run() {
 		var poemCount = poemCountEnd - poemCountStart;
 		var stanzaCount = stanzaCountEnd - stanzaCountStart;
 		var authorCount = authorCountEnd - authorCountStart;
-		alert("Размечено:\nСтихов: " + poemCount + "\nСтроф: " + stanzaCount + "\nДат: " + authorCount + "\n\n«Разметка стихов между секциями с заголовками» v." + version);
+		alert("Размечено:\nСтихов: " + poemCount + "\nСтроф: " + stanzaCount + "\nДат: " + authorCount + "\n\n«Разметка стихов между разделами с заголовками» v." + version);
 	}
 
 	function counterBefore() {
@@ -168,7 +168,7 @@ function Run() {
 	var body = fbwBody.firstChild;
 	while(body && body.className != "body") body = body.nextSibling;
 	counterBefore();
-	window.external.BeginUndoUnit(document, "Разметка стихов между секциями с заголовками");
+	window.external.BeginUndoUnit(document, "Разметка стихов между разделами с заголовками");
 	zamena();
 	correction();
 	window.external.EndUndoUnit(document);
