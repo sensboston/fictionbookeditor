@@ -1,6 +1,6 @@
 // Скрипт «Перейти на следующих авторов текста»
 // Автор Sclex
-// Версия 1.4
+// Версия 1.5
 
 function Run() {
 
@@ -92,6 +92,7 @@ function Run() {
   else if (state==0 && checkP(ptr)) {
    state=1;
    firstP=ptr;
+   lastP=ptr;
   }
   else if (state==1 && checkP(ptr))
    lastP=ptr;
