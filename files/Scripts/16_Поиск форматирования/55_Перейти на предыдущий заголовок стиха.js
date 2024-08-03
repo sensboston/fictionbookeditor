@@ -1,6 +1,6 @@
 // Скрипт «Перейти на предыдущий заголовок стиха» (title)
 // Автор Sclex, сборка TaKir
-// Версия 1.1
+// Версия 1.2
 
 function Run() {
 
@@ -14,7 +14,7 @@ function Run() {
  var re2=new RegExp(" |&nbsp;|"+nbspChar,"g");
  
 function checkP(elem1) {
-  if (hasAmongParents(elem1,"title") && hasAmongParents(elem1,"poem")) return true;
+  if (hasAmongParents(elem1,"title") && hasAmongParents(elem1,"poem") && !hasAmongParents(elem1,"stanza")) return true;
   return false;
  }
 
