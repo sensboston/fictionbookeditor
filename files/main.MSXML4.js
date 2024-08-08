@@ -1,4 +1,4 @@
-// Object reference maker
+﻿// Object reference maker
 Object.prototype.$=function $(val){if(val)this.valueOf=this.toSource=this.toString=function(){return val};return val;};
 
 var IDOK     = 1;
@@ -377,10 +377,9 @@ function SaveImage(source)
 
 function LoadXSL(path, lang)
 {
-	var xslt = new ActiveXObject("Msxml2.XSLTemplate.6.0");  // 4.0->6.0 TaF issues 201
-	var xsl = new ActiveXObject("Msxml2.FreeThreadedDOMDocument.6.0"); // 4.0->6.0 TaF issues 201
+	var xslt = new ActiveXObject("Msxml2.XSLTemplate.4.0");
+	var xsl = new ActiveXObject("Msxml2.FreeThreadedDOMDocument.4.0");
 	xsl.async = false;
-    xsl.setProperty("ResolveExternals", true);  // added by TaF issues 201
 	var proc;
 
 	xsl.load(path);
@@ -449,7 +448,7 @@ function TransformXML(xslt, dom)
 	desc.onclick=ClickOnDesc;
 	proc.setStartMode("body");
 	proc.transform();
-	body.innerHTML=proc.output;
+        body.innerHTML=proc.output;
 	window.external.InflateParagraphs(body);
 	document.fbwFilename=name;
 	document.urlprefix="fbw-internal:";
@@ -484,7 +483,7 @@ function LoadFromDOM(dom, lang)
 
 function XmlFromText(text)
 {
-	var xml = new ActiveXObject("Msxml2.DOMDocument.6.0"); // 4.0->6.0 TaF issues 201
+	var xml = new ActiveXObject("Msxml2.DOMDocument.4.0");
 	xml.async=false;
 	xml.preserveWhiteSpace = true;
 	xml.loadXML(text);
@@ -510,7 +509,7 @@ function apiLoadFB2(path, lang)
 	var css=document.getElementById("css");
 	var css_filename = css.href;
 	css.href="";
-	var xml = new ActiveXObject("Msxml2.DOMDocument.6.0"); // 4.0->6.0 TaF issues 201
+	var xml = new ActiveXObject("Msxml2.DOMDocument.4.0");
 	xml.async=false;
 	xml.preserveWhiteSpace = true;
 
