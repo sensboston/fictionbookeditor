@@ -582,6 +582,8 @@ function Run() {
     
  while (searchNext()) ;
  
+ var scriptResult="NotFound";
+ 
  if (foundMatch) {
   tr=document.body.createTextRange();
   tr.moveToElementText(ptr);
@@ -594,10 +596,12 @@ function Run() {
    tr.moveStart("character",-1);
   tr.select();
   scrollIfItNeeds();
+  var scriptResult="Found";
  }
  //clipboardData.setData("Text",log);
  //var s="";
  //for (var i=0; i<arr.length; i++)
    //s+=arr[i]+"."+regExps[i]+"\n";
  //MsgBox(s);
+ return scriptResult;
 }

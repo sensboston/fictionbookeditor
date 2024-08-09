@@ -4,7 +4,7 @@
 //Мой сайт про мои скрипты: http://scripts.fictionbook.org
 
 function Run() {
- var versionStr="Переход на предыдущий нижний индекс v1.1.";
+ var versionStr="Переход на предыдущий нижний индекс v1.2.";
  var scriptDirection="backward";
  var isItTagWeLookingFor=function (t) { if (t.nodeName=="SUB") return true; else return false;}
  var paragraphIndent=false;
@@ -129,7 +129,7 @@ function Run() {
      if (range1.parentElement!==el && range1.move("character",-1)==1) range1.move("character",1);
     if (scriptDirection=="backward") range1.move("character",1);
     range1.select();
-    return;
+    return "Found";
    }
   }
  }
@@ -156,7 +156,7 @@ function Run() {
  placeWhereToStop=(scriptDirection=="forward")?beginMarkerEl:endMarkerEl;
 
  try {
-  mySearch();
+  var scriptResult=mySearch();
  }
  catch(e) {
   alert(versionStr+"\n\nПроизошла какая-то ошибка.");
@@ -164,5 +164,7 @@ function Run() {
 
  beginMarkerEl.removeNode(true);
  endMarkerEl.removeNode(true);
- window.external.EndUndoUnit(document); 
+ window.external.EndUndoUnit(document);
+ if (scriptResult=="Found") return scriptResult;
+ return "NotFound";
 }

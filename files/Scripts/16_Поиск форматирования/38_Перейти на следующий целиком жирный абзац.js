@@ -135,8 +135,10 @@ function Run() {
   if (tr1.moveStart("character",1)==1)
    tr1.moveStart("character",-1);
   tr1.select();
+  var scriptResult="Found";
  }
  else {
+  var scriptResult="NotFound";
   MsgBox(notFoundMsg);
  }
 
@@ -144,4 +146,5 @@ function Run() {
  try { window.external.SetStatusBarText("ОК"); }
  catch(e) {} 
  window.external.EndUndoUnit(document);
+ return scriptResult;
 }

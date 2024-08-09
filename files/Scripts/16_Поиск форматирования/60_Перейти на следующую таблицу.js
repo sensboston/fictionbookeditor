@@ -1,6 +1,6 @@
 // Скрипт «Перейти на следующую таблицу» (table)
 // Автор Sclex, сборка TaKir
-// Версия 1.1
+// Версия 1.2
 
 function Run() {
 
@@ -107,13 +107,16 @@ function Run() {
     tr1.moveStart("character",-1);
    tr1.select();
    scrollIfItNeeds();
+   var scriptResult="Found";
   }
  }
  else {
+  var scriptResult="NotFound";
   MsgBox(notFoundMsg);
  }
 
  try { window.external.SetStatusBarText("ОК"); }
  catch(e) {} 
  window.external.EndUndoUnit(document);
+ return scriptResult;
 }

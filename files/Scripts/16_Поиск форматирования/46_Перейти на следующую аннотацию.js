@@ -107,13 +107,16 @@ try { var nbspChar=window.external.GetNBSP(); var nbspEntity; if (nbspChar.charC
     tr1.moveStart("character",-1);
    tr1.select();
    scrollIfItNeeds();
+   var scriptResult="Found";
   }
  }
  else {
+  var scriptResult="NotFound";
   MsgBox(notFoundMsg);
  }
 
  try { window.external.SetStatusBarText("ОК"); }
  catch(e) {} 
  window.external.EndUndoUnit(document);
+ return scriptResult;
 }

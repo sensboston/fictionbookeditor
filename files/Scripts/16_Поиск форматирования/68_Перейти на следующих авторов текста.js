@@ -1,6 +1,6 @@
 // Скрипт «Перейти на следующих авторов текста»
 // Автор Sclex
-// Версия 1.5
+// Версия 1.6
 
 function Run() {
 
@@ -115,12 +115,15 @@ function Run() {
   tr1.setEndPoint("StartToStart",tr2);
   tr1.select();
   scrollIfItNeeds();
+  var scriptResult="Found";
  }
  else {
+  var scriptResult="NotFound";
   MsgBox(notFoundMsg);
  }
 
  try { window.external.SetStatusBarText("ОК"); }
  catch(e) {} 
  window.external.EndUndoUnit(document);
+ return scriptResult;
 }
