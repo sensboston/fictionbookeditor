@@ -1,6 +1,6 @@
 // Скрипт «Перейти на предыдущий целиком курсивный абзац»
 // Автор Sclex
-// Версия 1.1
+// Версия 1.2
 
 function Run() {
 
@@ -103,6 +103,7 @@ function Run() {
   tr1.moveToElementText(ptr);
   if (tr1.moveStart("character",1)==1)
    tr1.moveStart("character",-1);
+  tr1.moveEnd("character",-1);
   tr1.select();
   var scriptResult="Found";
  }

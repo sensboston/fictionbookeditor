@@ -1,6 +1,6 @@
 // Скрипт «Перейти на следующую аннотацию» (annotation)
 // Автор Sclex, сборка TaKir
-// Версия 1.1
+// Версия 1.2
 
 function Run() {
 
@@ -105,6 +105,7 @@ try { var nbspChar=window.external.GetNBSP(); var nbspEntity; if (nbspChar.charC
    tr1.moveToElementText(parentElem);
    if (tr1.moveStart("character",1)==1)
     tr1.moveStart("character",-1);
+   tr1.moveEnd("character",-1);
    tr1.select();
    scrollIfItNeeds();
    var scriptResult="Found";

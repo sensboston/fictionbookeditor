@@ -1,7 +1,7 @@
 // Скрипт «Перейти на следующий нетекстовый подзаголовок» 
 // Возможные варианты оформления: звездочки, решетки, буллеты, плюсы с пробелами и без
 // Автор Sclex, сборка TaKir
-// Версия 1.3
+// Версия 1.4
 
 function Run() {
 
@@ -95,6 +95,7 @@ function Run() {
   tr1.moveToElementText(ptr);
   if (tr1.moveStart("character",1)==1)
    tr1.moveStart("character",-1);
+  tr1.moveEnd("character",-1);
   tr1.select();
   scrollIfItNeeds();
   var scriptResult="Found";

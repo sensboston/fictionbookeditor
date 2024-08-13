@@ -1,6 +1,6 @@
 // Скрипт «Перейти на предыдущий заголовок стиха» (title)
 // Автор Sclex, сборка TaKir
-// Версия 1.3
+// Версия 1.4
 
 function Run() {
 
@@ -116,6 +116,7 @@ function checkP(elem1) {
    tr1.moveToElementText(parentElem);
    if (tr1.moveStart("character",1)==1)
     tr1.moveStart("character",-1);
+   tr1.moveEnd("character",-1);
    tr1.select();
    scrollIfItNeeds();
    var scriptResult="Found";

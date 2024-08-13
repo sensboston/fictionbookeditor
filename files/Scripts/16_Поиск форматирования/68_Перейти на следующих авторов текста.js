@@ -1,6 +1,6 @@
 // Скрипт «Перейти на следующих авторов текста»
 // Автор Sclex
-// Версия 1.6
+// Версия 1.7
 
 function Run() {
 
@@ -113,6 +113,7 @@ function Run() {
   var tr2=document.body.createTextRange();
   tr2.moveToElementText(firstP);
   tr1.setEndPoint("StartToStart",tr2);
+  tr1.moveEnd("character",-1);
   tr1.select();
   scrollIfItNeeds();
   var scriptResult="Found";

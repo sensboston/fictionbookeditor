@@ -1,6 +1,6 @@
 // Скрипт «Перейти на предыдущий заголовок» (title)
 // Автор Sclex, сборка TaKir
-// Версия 1.1
+// Версия 1.2
 
 function Run() {
 
@@ -117,6 +117,7 @@ function Run() {
    tr1.moveToElementText(parentElem);
    if (tr1.moveStart("character",1)==1)
     tr1.moveStart("character",-1);
+   tr1.moveEnd("character",-1);
    tr1.select();
    scrollIfItNeeds();
    var scriptResult="Found";

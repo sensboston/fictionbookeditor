@@ -1,6 +1,6 @@
 // Скрипт «Перейти на следующую цитату» (cite)
 // Автор Sclex, сборка TaKir
-// Версия 1.3
+// Версия 1.5
 
 function Run() {
 
@@ -105,6 +105,7 @@ function Run() {
    tr1.moveToElementText(parentElem);
    if (tr1.moveStart("character",1)==1)
     tr1.moveStart("character",-1);
+   tr1.moveEnd("character",-1);
    tr1.select();
    scrollIfItNeeds();
   }
