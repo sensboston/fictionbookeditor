@@ -1,6 +1,6 @@
 // Скрипт «Расформатировать подзаголовок(-ки)»
 // Автор Sclex
-// Версия 1.5
+// Версия 1.6
 
 function Run() {
 
@@ -11,8 +11,10 @@ function Run() {
 
  function processPs() {
   for (var i=0; i<ps.length; i++)
-   if (ps[i].className=="subtitle")
+   if (ps[i].className=="subtitle") {
     window.external.SetStyleEx(document, ps[i], "normal");
+    ps[i].removeAttribute("className");
+   }
  }
  
  function getNextNode(el) {

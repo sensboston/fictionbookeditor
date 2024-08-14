@@ -1,5 +1,5 @@
 function Run() {
- var versionNum="1.1";
+ var versionNum="1.2";
 
  var range,el,el2,el3,saveNextAfterEl,saveNextAfterEl2;
  var elParent,i,j,divs,ps,saveClassName;
@@ -20,6 +20,7 @@ function Run() {
   while (el.nodeName!="BODY" && el.nodeName!="P") el=el.parentNode;
   if (el.nodeName=="P" && el.className=="subtitle") {
    window.external.SetStyleEx(document, el, "normal");
+   el.removeAttribute("className");
   }
  }
  if (document.getElementById(selectionBeginId))
