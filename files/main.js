@@ -1,3 +1,5 @@
+// Версия файла - 2.0
+
 // Object reference maker
 Object.prototype.$=function $(val){if(val)this.valueOf=this.toSource=this.toString=function(){return val};return val;};
 
@@ -1619,7 +1621,21 @@ function GoTo(elem)
  r.select();
 }
 //-----------------------------------------------
-
+function GoToEndOfElement(elem)
+{
+ if(!elem) return;
+ var b=elem.getBoundingClientRect();
+ if (b.bottom-b.top<=window.external.getViewHeight())
+  window.scrollBy(0,(b.top+b.bottom-window.external.getViewHeight())/2);
+ else
+  window.scrollBy(0,b.top);
+ var r=document.selection.createRange();
+ if (!r || !("compareEndPoints" in r)) return;
+ r.moveToElementText(elem);
+ r.collapse(false);
+ r.select();
+}
+//-----------------------------------------------
 function SkipOver(np,n1,n2,n3)
 {
  while (np)
@@ -2176,7 +2192,8 @@ function AddEpigraph(cp,check)
   if(pp && (!pp.innerText || pp.innerText == "" || pp.innerText == " ") && pp.className!="image")
     pp.removeNode(true);
   window.external.EndUndoUnit(document);
-  GoTo(ep);
+
+  GoToEndOfElement(ep);
 }
 //-----------------------------------------------
 
