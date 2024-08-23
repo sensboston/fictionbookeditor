@@ -161,7 +161,7 @@ div#fbw_desc textarea#stylesheetId
 {
 	width: 60em;
 	font-family: "Tahoma",sans-serif;
-	font-size: 8pt;
+	font-size: 10pt;
 	border: 1px solid Black;
 }
 
@@ -193,13 +193,13 @@ div#fbw_body div.body {
 }
 
 div.section{
-	border-color: #009600;
+	border-color: #008000;
 }
 div.cite{
 	padding-left: 2em;
 	padding-right: 2em;
-	color: #B46400;
-	border-color: #B46400;
+	color: #660000;
+	border-color: #660000;
 }
 
 em{
@@ -208,8 +208,8 @@ em{
 div.epigraph{
 	font-size: 80%;
 	/*font-style: italic;*/
-	border-color: #0000F0;
-	color: #0000F0;
+	border-color: #00FFFF;
+	color: #FF0066;
 }
 
 div.epigraph p{
@@ -217,8 +217,8 @@ div.epigraph p{
 	margin: 0 1em 0.5em 25%;
 }
 div.annotation{
-	border-color: #2C6B7B;
-	color: #2C6B7B;
+	border-color: #00CC99;
+	color: #6633FF;
 }
 div.history{
 	border-color: #FF1515;
@@ -234,11 +234,12 @@ div.stanza p{
 	text-align: left;
 	text-indent: 3em;
 	margin-bottom: 0em;
+	color: #006600;
 }
 div.title{
 	font-size: 130%;
-	border-color: rgb(0,150,0);
-	background: rgb(0,150,0);
+	border-color: #008080;
+	background: #008080;
 	color: white;
 	padding: 0.3em;
 }
@@ -256,15 +257,15 @@ p.subtitle{
 	text-align: center;
 	font-weight: bold;
 	text-indent: 0em;
+	color: #003300;
 }
 p.text-author{
 	margin-left: 3em;
 	margin-bottom: 1em;
-	color: rgb(192,64,64);
+	color: #9900CC;
 }
 span.code{
 	font-family: monospace;
-	font-style: normal;
 	background: rgb(238,238,238);
 }
 a.note{
@@ -322,4 +323,14 @@ span.image{
 	overflow: hidden;
 	clear: both;
 	text-align: center;
+}
+
+em{
+font-style: italic;
+color: #0000E0;
+}
+
+strong{
+font-style: bold;
+color: #660066;
 }
