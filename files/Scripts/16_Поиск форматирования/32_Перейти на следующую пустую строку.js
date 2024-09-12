@@ -1,6 +1,6 @@
 // Скрипт «Перейти на следующую пустую строку» для редактора Fiction Book Editor (FBE).
-// Версия 5.1 (СТАРАЯ, используется для корректной работы с пустыми строками)
-// Автор Sclex
+// Версия 5.2 (СТАРАЯ, используется для корректной работы с пустыми строками)
+// Автор Sclex.
 // Идеи скрипта и регекспов TaKir.
 //  _________________________________________________________________________
 
@@ -21,7 +21,7 @@ function Run() {
    var selection = document.selection;
      if (selection) {
        var range = selection.createRange();
-       var rect = range.getBoingClientRect();
+       var rect = range.getBoundingClientRect();
        // var correction = (rect.bottom - document.documentElement.clientHeight/2); // центр
       var correction = (rect.bottom - document.documentElement.clientHeight/6); // верх
       // var popravka = (rect.bottom - document.documentElement.clientHeight/8* 6); // низ
@@ -118,7 +118,7 @@ function Run() {
   regExpCnt++;
   regExps[regExpCnt]=re;
   itsTagRegExp[regExpCnt]=false;
-  if (desc!=efined && desc!="") descs[regExpCnt]=desc;
+  if (desc!=undefined && desc!="") descs[regExpCnt]=desc;
   if (lookBehCnt!=0) {
    lookBehinds[regExpCnt]=lookBeh;
    positive[regExpCnt]=posit;
@@ -159,7 +159,7 @@ function Run() {
   regExpCnt++;
   regExps[regExpCnt]=re;
   itsTagRegExp[regExpCnt]=true;
-  if (desc!=efined && desc!="") descs[regExpCnt]=desc;
+  if (desc!=undefined && desc!="") descs[regExpCnt]=desc;
   if (lookBehCnt!=0) {
    lookBehinds[regExpCnt]=lookBeh;
    positive[regExpCnt]=posit;
@@ -169,7 +169,7 @@ function Run() {
   if (beforeLimit && typeof(beforeLimit)=="number") lookBehLimit[regExpCnt]=beforeLimit;
  }
 
- function cmpFos(a,b) {
+ function cmpFounds(a,b) {
   return a["pos"]-b["pos"];
  }
 
@@ -305,9 +305,9 @@ function Run() {
   alert("Ошибки при компиляции регэкспов, заданных в таких строках:\n\n"+errorList+"\n\nПожалуйста, поправьте ошибки, прежде чем использовать скрипт.");
   return;
  }
- var fbwBody,tmpNode,s1WithTagsRemoved,s2WithTagsRemoved,minPos,minHtmlPos,currPos,i,rslt,foLen;
+ var fbwBody,tmpNode,s1WithTagsRemoved,s2WithTagsRemoved,minPos,minHtmlPos,currPos,i,rslt,foundLen;
  var tr,tr2,el,el2,el3,myIndex,s,s_html,s1_len,ignoreNullPosition,desc,rslt,newPos,re,macrosRE;
- var k,flag1,rslt_replaced,fos,fosCnt;
+ var k,flag1,rslt_replaced,founds,foundsCnt;
 
  var removeTagsRE=new RegExp("<(?!IMG\\b).*?(>|$)","ig");
  var removeTagsRE_="";
@@ -353,8 +353,8 @@ function Run() {
  }
  while (el && el!=fbwBody) {
   if (el.nodeName=="P") {
-   fos=[];
-   fosCnt=0;
+   founds=[];
+   foundsCnt=0;
    minPos=-1;
    for (i=1;i<=regExpCnt;i++) {
   getTags(el);
@@ -365,8 +365,8 @@ function Run() {
    rslt=regExps[i].exec(s);
    while (rslt && !checkLookBehs(i, s, rslt.index, false)) rslt=regExps[i].exec(s);
    if (rslt) {
-  fos[fosCnt]={"pos":rslt.index, "len":rslt[0].length, "re":i};
-  fosCnt++;
+  founds[foundsCnt]={"pos":rslt.index, "len":rslt[0].length, "re":i};
+  foundsCnt++;
   //if (ignoreNullPosition ? minPos==s1_len+1 : minPos==s1_len) break;
    }
   }
@@ -394,8 +394,8 @@ function Run() {
   if (!flag1) {
    if (!checkLookBehs(i, s_html, rslt.index, true)) flag1=true;
    else {
-  fos[fosCnt]={"pos":newPos, "len":rslt_replaced.length, "re":i};
-  fosCnt++;
+  founds[foundsCnt]={"pos":newPos, "len":rslt_replaced.length, "re":i};
+  foundsCnt++;
    }
   }
   } // if
@@ -403,24 +403,24 @@ function Run() {
   } // else
   } //if (checkAreWeInRightTags)
    } // for (i=1;i<=regExpCnt;i++)
-   fos.sort(cmpFos);
-   var currFo=0;
-   while (currFo<fosCnt) {
-  i=fos[currFo]["re"];
-  if (!(ignoreNullPosition && fos[currFo].pos==s1_len)) {
+   founds.sort(cmpFounds);
+   var currFound=0;
+   while (currFound<foundsCnt) {
+  i=founds[currFound]["re"];
+  if (!(ignoreNullPosition && founds[currFound].pos==s1_len)) {
   var desc=descs[i];
-  if (desc!=efined && desc!="")
+  if (desc!=undefined && desc!="")
    try {
   window.external.SetStatusBarText(desc);
    }
    catch(e)
   {}
   tr.moveToElementText(el);
-  tr.move("character",fos[currFo]["pos"]);
+  tr.move("character",founds[currFound]["pos"]);
   tr2=tr.duplicate();
-  tr2.move("character",fos[currFo]["len"]);
+  tr2.move("character",founds[currFound]["len"]);
   tr.setEndPoint("EndToStart",tr2);
-  if (foLen==0 && tr.move("character",1)==1) tr.move("character",-1);
+  if (foundLen==0 && tr.move("character",1)==1) tr.move("character",-1);
   tr.select();
 
    cursorShift();
@@ -431,7 +431,7 @@ function Run() {
 
   }
 
-  currFo++;
+  currFound++;
    }
    ignoreNullPosition=false;
   }
