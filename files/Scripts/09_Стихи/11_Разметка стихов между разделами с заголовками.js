@@ -1,9 +1,9 @@
 // Скрипт «Разметка стихов между разделами с заголовками» для редактора Fiction Book Editor (FBE).
-// // Версия 1.19.
+// Версия 1.21. (сентябрь 2024)
 // Автор stokber.
 //
 function Run() {
-	var version = 1.19;
+	var version = 1.21;
 	
 	var fbwBody = document.getElementById("fbw_body");
 	var body = fbwBody.firstChild;
@@ -25,7 +25,7 @@ function Run() {
 	var questImages = confirm(question1);
 	var question2 = "Удалять ли курсив (жирность) из СТРОК С ДАТИРОВКОЙ СТИХОВ, если вся строка изначально ими сделана?";
 	var questFont = confirm(question2);
-	var question3 = "Расформатировать ли внутрисекционные подзаголовки-звёздочки, кроме находящихся:\n в начале раздела;\nсразу за заголовком раздела;\nсразу за датами стихотворений?";
+	var question3 = "Расформатировать ли внутрисекционные подзаголовки-звёздочки, КРОМЕ находящихся:\n в начале раздела;\nсразу за заголовком раздела;\nсразу за датами стихотворений?";
 	var questAst = confirm(question3);
 	var colStr = prompt("Введите минимальное количество строк, которое скрипт будет считать стихом.", 3);
 	if(colStr == null) {alert("Вы отменили запуск скрипта\n«Разметка стихов между разделами с заголовками» v."+version+".\n\nСтихи размечены не будут."); return true}
@@ -108,7 +108,7 @@ function Run() {
 		var stanzaCount = stanzaCountEnd - stanzaCountStart;
 		var authorCount = authorCountEnd - authorCountStart;
 		secToMsec();
-		alert("Размечено:\nСтихов: " + poemCount + "\nСтроф: " + stanzaCount + "\nДат: " + authorCount + "\n\nВремя выполнения скрипта: "+TimeStr+"\n\n«Разметка стихов между разделами с заголовками» v." + version);
+		MsgBox("\tРазмечено:\nСтихов: \t" + poemCount + "\nСтроф:  \t" + stanzaCount + "\nДат:    \t" + authorCount + "\n\nВремя выполнения скрипта: \t"+TimeStr+"\n\n«Разметка стихов между разделами с заголовками» v." + version);
 	}
 	
 	// функция определения количества символов самой длинной строки (Text) в фрагменте:
@@ -133,12 +133,12 @@ function Run() {
 		if(questAst == true) {
 		//разбираемся с подзаголовками-звёздочками:
 		//вплотную к дате:
-		body.innerHTML = body.innerHTML.replace(new RegExp("(<P>"+data+"</P>)\\r\\n"+empty_Line+"(<P class=subtitle>)("+ast+")</P>", "mgi"), "$1$2%$3%</P>");
+		body.innerHTML = body.innerHTML.replace(new RegExp("(<P>"+data+"</P>)\\r\\n"+empty_Line+"(<P class=subtitle>)("+ast+")</P>", "mgi"), "$1$2☺$3☺</P>");
 		//вплотную к разделу:
-		body.innerHTML = body.innerHTML.replace(new RegExp("(<DIV class=section>)\\r\\n"+empty_Line+"(<P class=subtitle>)("+ast+")</P>", "mgi"), "$1$2%$3%</P>");
+		body.innerHTML = body.innerHTML.replace(new RegExp("(<DIV class=section>)\\r\\n"+empty_Line+"(<P class=subtitle>)("+ast+")</P>", "mgi"), "$1$2☺$3☺</P>");
 		//вплотную к заголовку:
-		body.innerHTML = body.innerHTML.replace(new RegExp("(<DIV class=title>(?:\\r\\n<P>.+</P>){1,5}</DIV>)\\r\\n"+empty_Line+"(<P class=subtitle>)("+ast+")</P>", "mgi"), "$1$2%$3%</P>");
-		body.innerHTML = body.innerHTML.replace(new RegExp("(<P class=subtitle>)("+ast+")</P>", "gi"), "<P>=$2=</P>");
+		body.innerHTML = body.innerHTML.replace(new RegExp("(<DIV class=title>(?:\\r\\n<P>.+</P>){1,5}</DIV>)\\r\\n"+empty_Line+"(<P class=subtitle>)("+ast+")</P>", "mgi"), "$1$2☺$3☺</P>");
+		body.innerHTML = body.innerHTML.replace(new RegExp("(<P class=subtitle>)("+ast+")</P>", "gi"), "<P>☻$2☻</P>");
 		}
 		
 		// проставить теги poem: 
@@ -154,13 +154,15 @@ function Run() {
 			var colEmptyLine = (txt.match(/<P>&nbsp;<\/P>/g) || []).length;
 			// alert(colEmptyLine);
 			if(colLine < colStr + 2 && colLine - colEmptyLine < colStr) {
-			return match.replace(new RegExp(".", "i"), "$&"); 
+			// return match.replace(new RegExp(".", "i"), "$&"); 
+			return match; 
 			}
 			// --------------------------------------------------------------------------------------------
 			
 			if(findLongestStringLength(txt) < colSymbStrMaxText) {
 				return match.replace(new RegExp("(.|[\\r\\n])+", "igm"), p1 + "<DIV class=poem><DIV class=stanza>" + p2 + "</DIV></DIV>"); //
-			} else return match.replace(new RegExp(".", "i"), "$&"); //
+			// } else return match.replace(new RegExp(".", "i"), "$&"); //
+			} else return match; //
 		});
 		
 		//=======================================================
@@ -168,10 +170,10 @@ function Run() {
 		if(questAst = true) {
 		// поправить звездочки внутри стихов:
 		body.innerHTML = body.innerHTML.replace(new RegExp("<DIV class=poem>(.|[\\r\\n])+?</DIV>", "igm"), function(match) {
-			return match.replace(new RegExp("<P>=("+ast+")=</P>", "ig"), "<P>$1</P>"); //
+			return match.replace(new RegExp("<P>☻("+ast+")☻</P>", "ig"), "<P>$1</P>"); //
 		});
-		body.innerHTML = body.innerHTML.replace(new RegExp("<P>=("+ast+")=</P>", "gi"), "<P class=subtitle>$1</P>");
-		body.innerHTML = body.innerHTML.replace(new RegExp("<P class=subtitle>%("+ast+")%</P>", "gi"), "<P class=subtitle>$1</P>");
+		body.innerHTML = body.innerHTML.replace(new RegExp("<P>☻("+ast+")☻</P>", "gi"), "<P class=subtitle>$1</P>");
+		body.innerHTML = body.innerHTML.replace(new RegExp("<P class=subtitle>☺("+ast+")☺</P>", "gi"), "<P class=subtitle>$1</P>");
 		
 				// обрамить пустыми строками обычные строки-звёздочки::
 		body.innerHTML = body.innerHTML.replace(new RegExp("<DIV class=poem>(.|[\\r\\n])+?</DIV>", "igm"), function(match) {
@@ -215,59 +217,69 @@ function Run() {
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	// =================================================================
 	
-	function correction() {
-		// (подсмотрел у Александра Ка)
-		// Замена кода н/р пробела на принятое обозначение в FBE
-		// Устраняет небольшой глюк, который получается после вставки в FBE нескольких строк, или после некоторых скриптов
-		var re211 = new RegExp("&nbsp;", "g");
-		var re211_ = nbspChar;
-		var count_211 = 0;
-		// Чистка пустых строк от пробелов и внутренних тегов
-		var re212 = new RegExp("^(\\\s|" + nbspEntity + "|<[^>]{1,}>){1,}$", "g");
-		var re212ex = new RegExp("<SPAN class=image", "g");
-		var re212_ = "";
-		var count_212 = 0;
-
+		function correction() { // исправление глюков с неразрывными в пустых строках.
+		//  заимствовано у Александр Ка.
+		function Opertiones() {
+			n = 1; //  Номер операции
+			if(nachalo) {
+				re[n] = new RegExp("&nbsp;", "g");
+				re_[n] = nbspChar;
+			}
+			if(s.search(re[n]) != -1) {
+				s = s.replace(re[n], re_[n]); //  для замены
+			}
+			n = 2; //  Номер операции
+			if(nachalo) {
+				re[n] = new RegExp("^(\\\s|" + nbspEntity + "|<[^>]{1,}>){1,}$", "g");
+				re_[n] = "";
+			}
+			if(s.search(re[n]) != -1) {
+				s = s.replace(re[n], re_[n]); //  для замены
+			}
+		}
+		//      (сборка функции "HandleP")
+		var ptr; // Параграф <P> в виде структуры
+		var s = ""; // Копия строки из параграфа <P>  (<P>строка</P>)
+		var re = []; // Регулярные выражения для поиска
+		var re_ = []; // Регулярные выражения для замены
+		var n; // Номер операции
 		function HandleP(ptr) {
-			s = ptr.innerHTML;
-			// Коррекция неразрывных пробелов
-			if(nbspEntity != "&nbsp;" && s.search(re211) != -1) {
-				count_211 += s.match(re211).length;
-				s = s.replace(re211, re211_)
+			s = ptr.innerHTML; //  получение текста параграфа (с внутренними тегами)
+			Opertiones(); //  Выполнение пользовательских операций
+			//  Сохранение текста абзаца в оригинале только в том случае, если он действительно изменен
+			if(ptr.innerHTML != s) {
+				ptr.innerHTML = s
 			}
-			// Чистка пустых строк от пробелов и внутренних тегов
-			if(s.search(re212) != -1 && s.search(re212ex) == -1) {
-				s = s.replace(re212, re212_);
-				count_212++
-			}
-			ptr.innerHTML = s;
 		}
-		var ptr = body;
-		var ProcessingEnding = false;
-		while(!ProcessingEnding && ptr) {
-			SaveNext = ptr;
-			if(SaveNext.firstChild != null && SaveNext.nodeName != "P" && !(SaveNext.nodeName == "DIV" && ((SaveNext.className == "history" && !ObrabotkaHistory) || (SaveNext.className == "annotation" && !ObrabotkaAnnotation)))) {
-				SaveNext = SaveNext.firstChild;
-			} // либо углубляемся...
-			else {
-				while(SaveNext.nextSibling == null) {
-					SaveNext = SaveNext.parentNode; // ...либо поднимаемся (если уже сходили вглубь)
-					// поднявшись до элемента P, не забудем поменять флаг
-					if(SaveNext == body) {
-						ProcessingEnding = true;
-					}
-				}
-				SaveNext = SaveNext.nextSibling; //и переходим на соседний элемент
+		//      (применение функции "HandleP")
+		var div;
+		var mP;
+		var mPLength;
+		var j;
+		var jj;
+		var nachalo = true;
+		// window.external.BeginUndoUnit(document,"конструктор-мини"); 
+		var mChild = fbw_body.children; //  Получение всех первых разделов "fbw_body"
+		for(j = 0; j < mChild.length; j++) { //  Последовательный просмотр этих разделов
+			div = mChild[j];
+			if(div.nodeName == "DIV") {
+				mP = div.getElementsByTagName("P"); //  Получение всех строк в найденном разделе
+				mPLength = mP.length; //  Получение количества строк
+				if(mPLength > 0) {
+					HandleP(mP[0]); //  Отдельная обработка первой строки функцией "HandleP"
+					nachalo = false;
+				} //  ... после которой "nachalo" уже не "начало"
+				for(jj = 1; jj < mPLength; jj++) //  Последовательный просмотр остальных строк
+					HandleP(mP[jj]); //   ... и применение к ним функции "HandleP"
 			}
-			if(ptr.nodeName == "P") HandleP(ptr);
-			ptr = SaveNext;
 		}
+		// window.external.EndUndoUnit(document); 
 	}
 	
-	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	
 	counterBefore();
-	window.external.BeginUndoUnit(document, "Разметка стихов между разделами с заголовками");
+	window.external.BeginUndoUnit(document, "разметку стихов");
 	zamena();
 	correction();
 	window.external.EndUndoUnit(document);
