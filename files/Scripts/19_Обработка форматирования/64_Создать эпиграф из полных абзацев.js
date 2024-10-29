@@ -1,5 +1,5 @@
 // Скрипт "Создать эпиграф из полных абзацев"
-// Версия 1.1
+// Версия 1.2
 // Автор Sclex
 
 function Run(cp,check) {
@@ -130,17 +130,43 @@ function Run(cp,check) {
   else
     ep.appendChild(document.createElement("P"));
 
+  var el=startEl;
+  var psArr=[];
+  psArr.push(el);
+  while (el!=endEl) {
+   if (el.firstChild)
+    el=el.firstChild;
+  else {
+    while (el.nextSibling==null)
+     el=el.parentNode;                                                 
+    el=el.nextSibling; //и переходим на соседний элемент
+   }
+   if (el.nodeName=="P") psArr.push(el);
+  }
+
   InsBefore(cp, pp, ep);
   InflateIt(ep);
-  var rng2=document.body.createTextRange();
-  rng2.moveToElementText(startEl);
-  tr.setEndPoint("StartToStart",rng2);
-  rng2=document.body.createTextRange();
-  rng2.moveToElementText(endEl);
-  tr.setEndPoint("EndToEnd",rng2);
-  tr.pasteHTML("");
-  if(pp && (!pp.innerText || pp.innerText == "" || pp.innerText == " ") && pp.className!="image")
-    pp.removeNode(true);
+
+  //tr.pasteHTML("");
+  var el2, parentOfEl2;
+  while (psArr.length>0) {
+   el2=psArr.pop();
+   parentOfEl2=el2.parentNode;
+   if (el2 && (el2.nextSibling || el2.parentNode.className!="section")) {
+    el2.removeNode(true);
+   }
+   else {
+    el2.innerHTML="";
+    InflateIt(el2);
+   }
+   if (parentOfEl2.nodeName=="DIV" && 
+       (parentOfEl2.className=="title" || parentOfEl2.className=="epigraph" || parentOfEl2.className=="cite") &&
+       !parentOfEl2.firstChild)
+    parentOfEl2.removeNode(true);
+  }
+  //alert("Точка 3.");
+  //if(pp && (!pp.innerText || pp.innerText == "" || pp.innerText == " ") && pp.className!="image")
+  //  pp.removeNode(true);
   window.external.EndUndoUnit(document);
 
   GoToEndOfElement(ep);
