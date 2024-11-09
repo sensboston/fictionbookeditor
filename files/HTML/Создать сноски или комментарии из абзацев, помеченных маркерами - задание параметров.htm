@@ -1,7 +1,7 @@
 <html>
 <head>
  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
- <!-- version 5.6 -->
+ <!-- version 6.4 -->
  <meta http-equiv="MSThemeCompatible" content="yes">
  <style>
   body, input{font-family:Tahoma; font-size:16px;margin:2px;}
@@ -65,7 +65,7 @@
     ' }');
    myWin.eval(
     ' function unmakeEntities(s) {'+
-    '  return s.replace(/&lt;/gi,"<").replace(/&gt;/gi,">").replace(/&amp;/gi,"&");'+
+    '  return s.replace(/&lt;/gi,"<").replace(/&gt;/gi,">").replace(/&amp;/gi,"&").replace(/&nbsp;/gi,nbspChar);'+
     ' }');
    myWin.eval(
     ' function unsupReferences(p) {'+
@@ -237,17 +237,19 @@
     ' }');
    myWin.eval(
     ' function containsRefMarker(myInnerHTML,thereAreSkippedSymbols) {'+
-    '  myIndex1=myInnerHTML.replace(removeAllTagsRegExp,"").indexOf(refMarkerStr);'+
-//    '  alert("myInnerHTML: "+myInnerHTML+"   myIndex1: "+myIndex1);'+
+    '  myIndex1=myInnerHTML.indexOf(refMarkerStr);'+
+//    '  alert("Вошли в containsRefMarker.\\n\\nmyInnerHTML:\\n\\n"+myInnerHTML+"\\n\\nmyIndex1: "+myIndex1+"\\n\\nrefMarkerStr:\\n\\n"+refMarkerStr);'+
     '  if (myIndex1==-1) return false;'+
     '  if (myIndex1>0) return true;'+
     '  if (thereAreSkippedSymbols && myIndex1==0) return true;'+
-//    '  alert(myInnerHTML+"\n\nВозвращаем "+myInnerHTML.replace(removeAllTagsRegExp,"").substr(refMarkerStr).indexOf(refMarkerStr)>=0);'+
+//    '  alert(myInnerHTML+"\\n\\nВозвращаем "+myInnerHTML.replace(removeAllTagsRegExp,"").substr(refMarkerStr).indexOf(refMarkerStr)>=0);'+
     '  return myInnerHTML.replace(removeAllTagsRegExp,"").substr(refMarkerStr.length).indexOf(refMarkerStr)>=0;'+
     ' }');
    myWin.eval(
     ' function containsFirstNotePMarker(myInnerHTML) {'+
     '  if (!interpretAsRegExp2) {'+
+//    '    firstNotePMarkerStr="\\\\";'+
+//    '    alert("На входе в containsFirstNotePMarker.\\n\\nfirstNotePMarkerStr: "+firstNotePMarkerStr+"\\n\\nmyInnerHTML: "+myInnerHTML);'+
     '    myIndex3=myInnerHTML.replace(/<[^>]*>/g,"").replace(spacesAtBeginningRegExp,"").indexOf(firstNotePMarkerStr);'+
     '    if (myIndex3==0) return true;'+
     '    else return false;'+
@@ -268,6 +270,7 @@
     '  firstNotePMarkerRegExp=new RegExp(firstNotePMarkerREStr,"gm");'+
     '  var myPos=unmakeEntities(myInnerHTML.replace(/<[^>]*>/g,"").replace(spacesAtBeginningRegExp,"")).search(firstNotePMarkerRegExp);'+
 //    '  alert("myPos: "+myPos);'+
+//    '  alert("Место DEF.\\n\\nmyInnerHTML:\\n\\n"+myInnerHTML+"\\n\\nmyPos: "+myPos);'+
     '  if (myPos==0) {'+
     '   var htmlStr12=myInnerHTML.replace(/<[^>]*>/g,"").replace(spacesAtBeginningRegExp,"");'+
     '   firstNotePMarkerRegExp.lastIndex=0;'+
@@ -307,6 +310,9 @@
     'function removeSpacesBeyondTags(str,beginIndex) {'+
     '  var nbspOneChar_1=String.fromCharCode(160);'+
     '  var nbspOneChar_2=nbspChar;'+
+//    '  alert("str до: "+str+"\\n\\nbeginIndex: "+beginIndex);'+
+    '  str=str.replace(/&nbsp;/gi,String.fromCharCode(160));'+
+//    '  alert("str после: "+str);'+
     '  var i=0;'+
     '  var removedSymbolsCnt=0;'+
     '  var insideTag=false;'+
@@ -370,6 +376,7 @@
     '}');
    myWin.eval(
     ' function removeSymbolsBeyondTags(str,beginIndex,howManySymbolsToRemove,substrToInsert) {'+
+//    '  alert("На входе в removeSymbolsBeyondTags.\\n\\nstr:\\n"+str+"\\n\\nbeginIndex: "+beginIndex+"\\n\\nsubstrToInsert:"+substrToInsert);'+
     '  var i=0;'+
     '  var removedSymbolsCnt=0;'+
     '  var insideTag=false;'+
@@ -379,6 +386,7 @@
     '  var ch;'+
     '   while (i<len) {'+
     '   ch=str.charAt(i);'+
+//    '    alert("В цикле while (i<len)\\n\\ni: "+i+"\\n\\ch: "+ch);'+
     '    if (ch=="<") {'+
     '     insideTag=true;'+
     '     str2+=ch;'+
@@ -386,7 +394,17 @@
     '    if (!insideTag && ch!="<" && ch!=">") {'+
     '     symbolBeyondTagsCnt++;'+
     '     if (symbolBeyondTagsCnt<beginIndex || symbolBeyondTagsCnt+1>beginIndex+howManySymbolsToRemove)'+
-    '      str2+=ch;'+
+    '      if (ch!="&")'+
+    '       str2+=ch;'+
+    '      else {'+
+    '       while (str.charAt(i)!=";") {'+
+    '        str2+=ch;'+
+    '        i++;'+
+    '        symbolBeyondTagsCnt++;'+
+    '        ch=str.charAt(i);'+
+    '       }'+
+    '       str2+=str.charAt(i);'+
+    '      }'+
     '     else {'+
     '      if (removedSymbolsCnt==0) str2+=substrToInsert;'+
     '      removedSymbolsCnt++;'+
@@ -399,7 +417,9 @@
     '     str2+=ch;'+
     '    }'+
     '    i++;'+
+//    '   alert("В конце цикла while.\\n\\nstr:\\n"+str+"\\n\\nstr2:\\n"+str2);'+
     '  }'+
+//    '  alert("На выходе из removeSymbolsBeyondTags.\\n\\nstr2:\\n"+str2);'+
     '  return str2;'+
     ' }'
    );
@@ -430,7 +450,7 @@
     ' function processContainer(p) {'+
     '  var pInnerHTML, foundMarkerLen;'+
     '  var divInnerHTML=p.innerHTML;'+
-    '  var notFirstParagraphMarker=makeEntities("'+document.getElementById("notFirstParagraphStr").value+'");'+
+    '  var notFirstParagraphMarker=makeEntities("'+document.getElementById("notFirstParagraphStr").value.replace(/\\/g,"\\\\").replace(/"/g,'\\"')+'");'+
     '  var ps=p.getElementsByTagName("P");'+
     '  if (ps.length==0) return;'+
     '  var firstP=ps[0];'+
@@ -443,12 +463,14 @@
     '   notesTextCnt++;'+
     '   notesTexts[notesTextCnt.toString()]="";'+
     '  }'+
+//    '  alert("Вызов removeSymbolsBeyondTags номер 01.");'+
     '  if (foundMarkerLen>0)'+
     '   pInnerHTML=removeSymbolsBeyondTags(pInnerHTML,1,notFirstParagraphMarker.length,"");'+
     '  var pNew=p.cloneNode(true);'+
     '  var ps=pNew.getElementsByTagName("P");'+
     '  for (var i=0; i<ps.length; i++) {'+
     '   foundMarkerLen=findMarkerLen(ps[i].innerText,notFirstParagraphMarker);'+
+//    '  alert("Вызов removeSymbolsBeyondTags номер 02.");'+
     '   if (foundMarkerLen>0)'+
     '    ps[i].innerHTML=removeSymbolsBeyondTags(ps[i].innerHTML.replace(/&nbsp;(?=[^<]*($|<))/g,nbspChar),1,foundMarkerLen,"");'+
     '   else {'+
@@ -469,7 +491,7 @@
     '    return;'+
     '  }'+
     '  var pInnerHTML=p.innerHTML;'+
-    '  var notFirstParagraphMarker=makeEntities("'+document.getElementById("notFirstParagraphStr").value+'");'+
+    '  var notFirstParagraphMarker=makeEntities("'+document.getElementById("notFirstParagraphStr").value.replace(/\\/g,"\\\\").replace(/"/g,'\\"')+'");'+
 //    '  alert("Not First Paragraph Str\\n\\n"+notFirstParagraphMarker);'+
 //    '  alert("pInnerHTML с удаленными тегами:\\n\\n"+pInnerHTML.replace(removeTagsRegExp,""));'+
     '  var foundMarkerLen=findMarkerLen(p.innerText,notFirstParagraphMarker);'+
@@ -482,6 +504,7 @@
     '   notesTextCnt++;'+
     '   notesTexts[notesTextCnt.toString()]="";'+
     '  }'+
+//    '  alert("Вызов removeSymbolsBeyondTags номер 03.");'+
     '  if (foundMarkerLen>0) '+
     '    pInnerHTML=removeSymbolsBeyondTags(pInnerHTML.replace(/&nbsp;(?=[^<]*($|<))/g,nbspChar),1,foundMarkerLen,"");'+
 //    '  if (pInnerHTML.replace(removeTagsRegExp,"").indexOf(notFirstParagraphMarker)==0) {'+
@@ -650,25 +673,28 @@
     '  s.replace(regExp10,replaceFunc1);'+
     '  return containsTagFlag;'+
     ' }');
+//  alert("B1");
    myWin.eval(
     ' function processP_2(p) {'+
 //    Эта функция добавляет сноски или комментарии
 //    '  alert("processP_2:\\n\\n"+p.outerHTML);'+
 //    '  alert("Вошли в processp_2");'+
+//    '  alert("cga2");'+
     '  if (p.innerText.search(pIsSubtitleRegExp)==0) return;'+
     '  if (containsFirstNotePMarker(p.innerHTML)) return;'+
-    '  var i,myPos,newRef,previousNote,previousNoteHref,previousNoteSection,str3,rndm2,rndm3,el;'+
+    '  var i,myPos,myPos2,newRef,previousNote,previousNoteHref,previousNoteSection,str3,rndm2,rndm3,el;'+
     '  var matchLen;'+
-    '  var pInnerHTML=p.innerHTML;'+
+    '  var pInnerHTML=p.innerHTML.replace(/&nbsp;/g,nbspChar);'+
     '  var pInnerHTML_begin="";'+
     '  var symbolsBeforeCnt=0;'+
     '  var checkResult=false;'+
     '  var howManySymbolsSkip=0;'+
     '  var srchResult=null;'+
     '  var removeNotAllTagsRegExp=new RegExp("<\\/?(?!(IMG|A))[a-z]+( [^>]+)?>","ig");'+
-    '  refMarkerStr="'+document.getElementById("refMarkerStr").value+'";'+
+    '  refMarkerStr="'+document.getElementById("refMarkerStr").value.replace(/\\/g,"\\\\").replace(/"/g,'\\"')+'";'+
     '  refMarkerStrLen=refMarkerStr.length;'+
-    '  firstNotePMarkerStr=makeEntities("'+document.getElementById("firstNotePMarkerStr").value+'");'+
+//    '  alert("cga3");'+
+    '  firstNotePMarkerStr=makeEntities("'+document.getElementById("firstNotePMarkerStr").value.replace(/\\/g,"\\\\").replace(/"/g,'\\"')+'");'+
     '  firstNotePMarkerStrLen=firstNotePMarkerStr.length;'+
     '  removeAllTagsRegExp=new RegExp("<\\/?[a-z]+( [^>]+)?>","ig");'+
 //    '  alert("a: "+pInnerHTML.replace(removeAllTagsRegExp,""));'+
@@ -679,14 +705,18 @@
     '   var htmlStr10=unmakeEntities(pInnerHTML.replace(removeAllTagsRegExp,""));'+
 //    '  alert("htmlStr10: "+htmlStr10);'+
     '  if (interpretAsRegExp && matchNotFromBeginning && htmlStr10.search(refMarkerRegExp)==0)'+
-    '   if(!upperIndex1)'+
-    '    refMarkerRegExp.exec(unmakeEntities(pInnerHTML.replace(removeAllTagsRegExp,"")));'+
+    '   if(upperIndex1)'+
+    '    refMarkerRegExp.exec(unmakeEntities(leaveOnlyFirstLevelSups(pInnerHTML.replace(leaveOnlySupsRegExp,""))));'+
     '   else'+
-    '    refMarkerRegExp.exec(leaveOnlyFirstLevelSups(pInnerHTML.replace(leaveOnlySupsRegExp,"")));'+
+    '    refMarkerRegExp.exec(unmakeEntities(pInnerHTML.replace(removeAllTagsRegExp,"")));'+
+//    '   alert("refMarkerRegExp.lastIndex: "+refMarkerRegExp.lastIndex);'+
     '  var firstRefMarker=true;'+
 //    '  alert("Еще htmlStr10: "+htmlStr10);'+
-    '  while (interpretAsRegExp ? (!containsFirstNotePMarker(p.innerText) && refMarkerRegExp.test(htmlStr10)) : '+
-    '    containsRefMarker(unmakeEntities(pInnerHTML))) {'+
+//    '  alert("pInnerHTML: "+pInnerHTML);'+
+//    '  alert("Перед вызовом containsRefMarker номер 1.");'+
+    '  while (interpretAsRegExp ? (!containsFirstNotePMarker(makeEntities(p.innerText)) && refMarkerRegExp.test(htmlStr10)) : '+
+    '    containsRefMarker(unmakeEntities(pInnerHTML.replace(removeAllTagsRegExp,"")))) {'+
+//    '   alert("cga4");'+
 //    '   alert("Внутри уайла получаем такой htmlStr10:\\n\\n"+htmlStr10);'+
     '   if (interpretAsRegExp) {'+
     '    refMarkerRegExp.lastIndex=0;'+
@@ -694,15 +724,21 @@
     '      refMarkerRegExp.lastIndex=0;'+
     '      refMarkerRegExp.exec(htmlStr10);'+
     '    }'+
+//    '   alert("cga6");'+
 //    '    alert("Искать будем вот по чем:\\n\\n"+pInnerHTML.replace(removeAllTagsRegExp,""));'+
     '    var checkResult=true;'+
     '    while (checkResult) {'+
     '     srchResult=refMarkerRegExp.exec(htmlStr10);'+
     '     if (!srchResult) return;'+
+//    '     alert("Присваивание pos номер 1.");'+
     '     myPos=srchResult.index;'+
 //    '     alert("myPos: "+myPos);'+
     '     var strBeginning=htmlStr10.substr(0,myPos).replace(removeAllTagsRegExp,"");'+
-    '     myPos=makeEntities(strBeginning).length;'+
+//    '     alert("Присваивание pos номер 2.\\n\\nstrBeginning:"+strBeginning+"\\n\\nmakeEntities(strBeginning):"+makeEntities(strBeginning));'+
+    '     if (upperIndex1)'+
+    '      myPos=strBeginning.length;'+
+    '     else'+
+    '      myPos=makeEntities(strBeginning).length;'+
 //    '     matchLen=srchResult[0].replace(/<[^>]*>/g,"").length;'+
     '     matchLen=makeEntities(srchResult[0]).length;'+
 //    '     alert("matchLen: "+matchLen);'+
@@ -711,13 +747,17 @@
     '    refMarkerRegExp.lastIndex=0;'+
     '   }'+
     '   else {'+
-    '    myPos=pInnerHTML.replace(removeAllTagsRegExp,"").indexOf(makeEntities(refMarkerStr));'+
+//    '     alert("Присваивание myPos номер 3.\\n\\nunmakeEntities(pInnerHTML.replace(removeAllTagsRegExp,...)):\\n"+unmakeEntities(pInnerHTML.replace(removeAllTagsRegExp,""))+"\\n\\nrefMarkerStr:\\n"+refMarkerStr);'+
+    '    myPos2=unmakeEntities(pInnerHTML.replace(removeAllTagsRegExp,"")).indexOf(refMarkerStr);'+
+    '    myPos=makeEntities(unmakeEntities(pInnerHTML.replace(removeAllTagsRegExp,"")).substr(0,myPos2)).length;'+
+//    '     alert("ПОСЛЕ присваивания myPos номер 3.\\n\\nmyPos: "+myPos);'+
     '    if (matchNotFromBeginning && myPos==0) '+
-    '     myPos=refMarkerStr.length+pInnerHTML.replace(removeAllTagsRegExp,"").substr(refMarkerStr.length).indexOf(refMarkerStr);'+
+//    '     alert("Присваивание pos номер 4.");'+
+    '     myPos=refMarkerStr.length+pInnerHTML.replace(removeAllTagsRegExp,"").substr(refMarkerStr.length).indexOf(makeEntities(refMarkerStr));'+
     '    matchLen=makeEntities(refMarkerStr).length;'+
     '   }'+
-//    '   alert("myPos: "+myPos+"\\n\\npInnerHTML:\\n\\n"+ pInnerHTML+ "\\n\\nrefMarkerStr:\\n\\n"+refMarkerStr+"\\n\\nrefMarkerStrLen: "+refMarkerStrLen+"\\n\\n"+'+
- //   '    checkIfTagsAreInFoundSubstr(pInnerHTML,myPos+1,refMarkerStrLen));'+
+//    '   alert("cga7");'+
+//   '   alert("myPos: "+myPos+"\\n\\npInnerHTML:\\n\\n"+ pInnerHTML+ "\\n\\nrefMarkerStr:\\n\\n"+refMarkerStr+"\\n\\nrefMarkerStrLen: "+refMarkerStrLen+"\\n\\n"+ checkIfTagsAreInFoundSubstr(pInnerHTML,myPos+1,refMarkerStrLen));'+
     '   var checkResult=checkIfTagsAreInFoundSubstr(pInnerHTML,myPos+1,matchLen);'+
     '   rndm2=Math.round(Math.random()*100000).toString();'+
     '   while(document.getElementById("tmpId_"+rndm2))'+
@@ -726,23 +766,30 @@
     '   while(document.getElementById("tmpId_"+rndm3))'+
     '    rndm3=Math.round(Math.random()*100000).toString();'+
 //    '   alert("refMarkerStr: "+refMarkerStr+"\\n\\nmyPos: "+myPos+"\\n\\nmatchLen: "+matchLen+"\\n\\npInnerHTML: "+pInnerHTML);'+
+//    '  alert("Вызов removeSymbolsBeyondTags номер 04.");'+
     '   if (checkResult || (matchNotFromBeginning && myPos==0)) {'+
     '    pInnerHTML=removeSymbolsBeyondTags(pInnerHTML,myPos+1,matchLen,"RReeffMMaarrkkeerrSSttrr");'+
 //    '    alert("pInnerHTML после замены:\\n\\n"+pInnerHTML);'+
     '    continue;'+
     '   }'+
+//    '   alert("myPos+1: "+(myPos+1));'+
+//    '  alert("Вызов removeSymbolsBeyondTags номер 05.");'+
+//    '   alert("cga8");'+
     '   pInnerHTML=removeSymbolsBeyondTags(pInnerHTML,myPos+1,matchLen,"<A id=\'tmpId_"+rndm2+"\'"+noteClass+" href=\'#tmpId_"+rndm3+"\'>"+refText+"</A>");'+
-    '   pInnerHTML=pInnerHTML.replace(/&nbsp;/g,nbspChar);'+
+//    '  alert("Вызов removeSymbolsBeyondTags номер 05 - ПОСЛЕ.");'+
     '   pInnerHTML=removeSpacesBeyondTags(pInnerHTML,myPos+1);'+
+//    '   alert("Сейчас присвоим p.innerHTML такое значение:\\n\\n"+pInnerHTML.replace(openingAndClosingTagRegExp,""));'+
     '   p.innerHTML=pInnerHTML.replace(openingAndClosingTagRegExp,"");'+
     '   newRef=document.getElementById("tmpId_"+rndm2);'+
     '   newRef.removeAttribute("id");'+
-    '   pInnerHTML=p.innerHTML;'+
+    '   pInnerHTML=p.innerHTML.replace(/&nbsp;/g,nbspChar);'+
     '   if (upperIndex1)'+
     '    htmlStr10=leaveOnlyFirstLevelSups(pInnerHTML.replace(leaveOnlySupsRegExp,""));'+
     '   else '+
     '    htmlStr10=unmakeEntities(pInnerHTML.replace(removeAllTagsRegExp,""));'+
+//    '   alert("Новое значение htmlStr10:\\n\\n"+htmlStr10+"\\n\\nПри этом значение pInnerHTML:\\n\\n"+pInnerHTML);'+
 //    '   alert("Перед вызовом findPreviousNote.");'+
+//    '   alert("cga9");'+
     '   previousNote=findPreviousNote(newRef);'+
 //    '   alert("После вызова findPreviousNote.\\n\\nРезультат:\\n\\n"+previousNote.outerHTML);'+
 //    '   window.clipboardData.setData("text","previousNote: "+previousNote);'+
@@ -812,6 +859,7 @@
 //    '   alert("previousNoteHref:\\n\\n"+previousNoteHref);'+
     '   if (interpretAsRegExp) refMarkerRegExp.lastIndex=0;'+
     '   if (interpretAsRegExp && matchNotFromBeginning && pInnerHTML.replace(removeAllTagsRegExp,"").search(refMarkerRegExp)==0) refMarkerRegExp.exec(pInnerHTML.replace(removeAllTagsRegExp,""));'+
+//    '  alert("cga5");'+
     '  }'+ // конец цикла while (pInnerHTML.replace(removeAllTagsRegExp,"").indexOf(refMarkerStr)>=0)
     '  p.innerHTML=pInnerHTML.replace(/RReeffMMaarrkkeerrSSttrr/g,refMarkerStr);'+
 //    '  alert("вышли из processp_2");'+
@@ -822,6 +870,7 @@
 //    '  return p1+p3.replace(/.|\\r|\\n/g,"x")+p4;'+
 //    ' }'
 //   );
+//  alert("B2");
    myWin.eval(
     ' function processP_3(p) {'+
 //   Эта функция считает маркеры знака сноски
@@ -841,28 +890,34 @@
     '  var pInnerHTMLSrc=p.innerHTML;'+
     '  var pInnerHTML2=null;'+
     '  var pInnerHTML;'+
-    '  refMarkerStr="'+document.getElementById("refMarkerStr").value+'";'+
+    '  refMarkerStr="'+document.getElementById("refMarkerStr").value.replace(/\\/g,"\\\\").replace(/"/g,'\\"')+'";'+
     '  refMarkerStrLen=refMarkerStr.length;'+
-    '  firstNotePMarkerStr=makeEntities("'+document.getElementById("firstNotePMarkerStr").value+'");'+
+    '  firstNotePMarkerStr=makeEntities("'+document.getElementById("firstNotePMarkerStr").value.replace(/\\/g,"\\\\").replace(/"/g,'\\"')+'");'+
     '  firstNotePMarkerStrLen=firstNotePMarkerStr.length;'+
     '  removeAllTagsRegExp=new RegExp("<\\/?[a-z]+( [^>]+)?>","ig");'+
     '  var removeNotAllTagsRegExp=new RegExp("<\\/?(?!(IMG|A))[a-z]+( [^>]+)?>","ig");'+
     '  var symbolsBefore=0;'+
     '  pInnerHTML=unmakeEntities(pInnerHTMLSrc.replace(removeAllTagsRegExp,""));'+
-    '  if (containsFirstNotePMarker(p.innerText)) return;'+
+//    '  alert("Перед if номер 3.\\n\\nmakeEntities(p.innerText):\\n\\n"+makeEntities(p.innerText)+"\\n\\n(containsFirstNotePMarker(makeEntities(p.innerText))): "+(containsFirstNotePMarker(makeEntities(p.innerText))));'+
+    '  if (containsFirstNotePMarker(makeEntities(p.innerText))) return;'+
     '  pInnerHTML2=pInnerHTMLSrc.replace(removeNotAllTagsRegExp,"");'+
     '  if (interpretAsRegExp) refMarkerRegExp.lastIndex=0;'+
 //    '  alert("pInnerHTML: "+pInnerHTML);'+
+//    '  alert("Перед if номер 2.\\n\\npInnerHTML:\\n\\n"+pInnerHTML);'+
+//    '  alert("Перед вызовом containsRefMarker номер 2.");'+
     '  if (interpretAsRegExp ? refMarkerRegExp.test(pInnerHTML) :'+
     '      containsRefMarker(pInnerHTML)) {'+
+//    '   alert("После if номер 2.");'+
     '   if (interpretAsRegExp) refMarkerRegExp.lastIndex=0;'+
     '   if (interpretAsRegExp && matchNotFromBeginning && pInnerHTML.replace(removeAllTagsRegExp,"").search(refMarkerRegExp)==0) {'+
     '     refMarkerRegExp.lastIndex=0;'+
     '     refMarkerRegExp.exec(pInnerHTML);'+
     '   }'+
     '   var firstRefMarker=true;'+
+//    '  alert("Перед вызовом containsRefMarker номер 3.");'+
     '   while (interpretAsRegExp ? refMarkerRegExp.test(pInnerHTML) :'+
     '          containsRefMarker(pInnerHTML,symbolsBefore!=0)) {'+
+//    '    alert("Внутри while номер 2.");'+
     '    if (interpretAsRegExp) {'+
     '     refMarkerRegExp.lastIndex=0;'+
     '     if (matchNotFromBeginning && pInnerHTML.replace(removeAllTagsRegExp,"").search(refMarkerRegExp)==0) {'+
@@ -877,15 +932,18 @@
     '    }'+
     '    else {'+
     '     myPos2=pInnerHTML.indexOf(refMarkerStr);'+
+//    '     alert("myPos2: "+myPos2+"\\n\\npInnerHTML: "+pInnerHTML);'+
     '     if (matchNotFromBeginning && symbolsBefore==0) {'+
-    '        myIndex2=pInnerHTML.replace(removeAllTagsRegExp,"").indexOf(refMarkerStr);'+
+    '        myIndex2=pInnerHTML.indexOf(refMarkerStr);'+
     '       if (myIndex2==0)'+
-    '         myPos2=refMarkerStr.length+pInnerHTML.replace(removeAllTagsRegExp,"").substr(refMarkerStr.length).indexOf(refMarkerStr);'+
+    '         myPos2=refMarkerStr.length+pInnerHTML.substr(refMarkerStr.length).indexOf(refMarkerStr);'+
     '       else'+
     '         myPos2=myIndex2;'+
     '     }'+
     '     matchLen=refMarkerStrLen;'+
     '    }'+
+//    '    alert("!checkIfTagsAreInFoundSubstr: "+(!checkIfTagsAreInFoundSubstr(pInnerHTML2,symbolsBefore+myPos2+1,matchLen))+'+
+//    '          "!(matchNotFromBeginning && symbolsBefore==0 && myPos2==0): "+(!(matchNotFromBeginning && symbolsBefore==0 && myPos2==0)));'+
     '    if (!checkIfTagsAreInFoundSubstr(pInnerHTML2,symbolsBefore+myPos2+1,matchLen) &&'+
     '       !(matchNotFromBeginning && symbolsBefore==0 && myPos2==0))'+
     '     refMarkersCnt++;'+
@@ -895,11 +953,12 @@
     '   }'+
     '  }'+
     ' }'); // конец функции processP_3
+//  alert("B3");
    myWin.eval(
     'function addNotesInMyWin() {'+
     ''+
-    ' var refMarkerStr="'+document.getElementById("refMarkerStr").value+'";'+
-    ' firstNotePMarkerStr=makeEntities("'+document.getElementById("firstNotePMarkerStr").value+'");'+
+    ' var refMarkerStr="'+document.getElementById("refMarkerStr").value.replace(/\\/g,"\\\\").replace(/"/g,'\\"')+'";'+
+    ' firstNotePMarkerStr=makeEntities("'+document.getElementById("firstNotePMarkerStr").value.replace(/\\/g,"\\\\").replace(/"/g,'\\"')+'");'+
     ' firstNotePMarkerStrLen=firstNotePMarkerStr.length;'+
     ' var removeNotAllTagsRegExp=new RegExp("<\\/?(?!(IMG|A))[a-z]+( [^>]+)?>","ig");'+
     ' var removeAllTagsRegExp=new RegExp("<\\/?[a-z]+( [^>]+)?>","ig");'+
@@ -909,6 +968,7 @@
     ' var ptr=fbwBody.firstChild;'+
     ' var saveNext;'+
     ' var processingEnding=false;'+
+//    ' alert("cga1\\n\\nwhatDoWeDo: "+whatDoWeDo);'+
     ' while (!processingEnding && ptr) {'+
     '  saveNext=ptr;'+
     '  if (saveNext.firstChild!=null && saveNext.nodeName!="P" && '+
@@ -936,10 +996,6 @@
 //    '  alert("ptr: \\n\\n"+ptr.outerHTML+"\\n\\nBlockStartNode: \\n\\n"+BlockStartNode.outerHTML+"\\n\\nfbwBody:\\n\\n"+fbwBody.innerHTML);'+
     ' }'+
     '}'); //конец функции addNotesInMyWin
-   myWin.eval(
-    ' function getVersionStr() {'+
-    '  return "Создать сноски или комментарии из абзацев, помеченных маркерами v"+notesFromSelectedParagraphs_versionNum+".\\nАвтор Sclex.";'+
-    ' }');
    myWin.eval(
     ' function renumberNotes() {'+
 //    '  alert("Входим в renumberNotes();");'+
@@ -983,20 +1039,6 @@
     ' }'
     );
   }
-  //   ' catch(e) {'+
-  //  '  if (e instanceof RegExpError) {'+
-  //  '   alert(getVersionStr()+"\\n\\nОшибка при компиляции регэкспа.\\nПожалуйста, проверьте, скорей всего вы ввели некорректный регэксп.");'+
-  //   '   return;'+
-  //   '  }'+
-  //    ' }'+
-  /*   );}
-     catch (e) {
-      alert("Произошла ошибка. Возможная причина –\nвы запускаете обработку после\nтого, как создали новый документ\nв основном окне FBE. В таком\nслучае перезапустите скрипт.");
-      alert("Возникла ошибка при выполнении evalMyCode().\n\nИмя ошибки: "+e.name+"\n\n"+
-            "Сообщение об ошибке: "+e.message);
-      return;
-     }
-    }*/
   /**
    * Возвращает единицу измерения с правильным окончанием
    * 
@@ -1169,10 +1211,10 @@
     myWin.matchNotFromBeginning=document.getElementById("matchNotFromBeginning").checked;
    }
    catch(e) {
-    alert("Произошла ошибка при компиляции регэкспа.\n\n"+
+    alert("Произошла ошибка при компиляции регэкспа для маркера знака сноски.\n\n"+
           "Имя ошибки: "+e.name+"\n"+
           "Сообщение об ошибке: "+e.message);
-    return;
+    return "error";
    }
    try {
     myWin.interpretAsRegExp2=document.getElementById("interpretAsRegExpCheckbox2").checked;
@@ -1210,10 +1252,10 @@
     }
    }
    catch(e) {
-    alert("Произошла ошибка при компиляции регэкспа. Код 93637326.\n\n"+
+    alert("Произошла ошибка при компиляции регэкспа для маркера первого абзаца текста сноски.\n\n"+
           "Имя ошибки: "+e.name+"\n"+
           "Сообщение об ошибке: "+e.message);
-    return;
+    return "error";
    }
   }
   function createNotes() {
@@ -1253,7 +1295,7 @@
           "Имя ошибки: "+e.name+"\n"+
           "Сообщение об ошибке: "+e.message);
    }
-   adjustVars();
+   if (adjustVars()=="error") return;
    try {
     extractNotesTexts();
    }
@@ -1287,7 +1329,11 @@
     return;
    }
    try {
-    if (confirm("Удалить ли абзацы-исходники текстов-сносок?"))
+    if (targetBodyName!="comments")
+     var msgStr1="Удалить ли абзацы-исходники текстов сносок?";
+    else
+     var msgStr1="Удалить ли абзацы-исходники текстов комментариев?";
+    if (confirm(msgStr1))
      myWin.removeSourceNodes();
     myWin.external.EndUndoUnit(myWin.document);
    }
@@ -1340,7 +1386,6 @@
     }
    }
   }
-
   alert("ВНИМАНИЕ!\n\n"+
         "Откат (Undo, Ctrl+Z) изменений, сделанных данным сценарием после его выполнения, может не работать корректно.\n\n"+
         "Во избежание потери данных, возможно, стоит СОХРАНИТЬ FB2-ФАЙЛ перед запуском данного скрипта!\n\n"+
@@ -1348,7 +1393,7 @@
  </script>
 </head>
 <body onbeforeunload="myBeforeUnload();">
- Задайте маркер для поиска знаков сноски:<br>
+ Задайте маркер знака сноски:<br>
  <label for="radio1"><input type=radio id="radio1" name=noteSign> вида [1]</label>
  <label for="radio2"><input type=radio id="radio2" name=noteSign> вида {1}</label>
  <label for="radio3"><input type=radio id="radio3" name=noteSign> вида [~1~]</label>
@@ -1362,7 +1407,7 @@
  </div>
  <label for=matchNotFromBeginning><input type=checkbox id=matchNotFromBeginning checked> совпадение должно быть не от начала абзаца</label>
  <hr>
- Задайте маркер для первых абзацев текста сноски:<br>
+ Задайте маркер первого абзаца текста сноски:<br>
  <label for="radio30"><input type=radio id="radio30" name=firstNoteP> вида [1]</label>
  <label for="radio31"><input type=radio id="radio31" name=firstNoteP> вида {1}</label>
  <label for="radio32"><input type=radio id="radio32" name=firstNoteP> вида [~1~]</label>
@@ -1379,6 +1424,6 @@
  Маркер 2-го, 3-го и т.д. абзацев текста сноски (не регэксп, а простой текст):<br>
  <input type=text style="width:600px;" id=notFirstParagraphStr value="++"><br><br>
  
- <input type=button value="Создать сноски" onclick="initVarsForNotes(); createNotes();" style="width:200px;"><input type=button value="Создать сноски и выйти" onclick="initVarsForNotes(); var rslt=createNotes(); if (rslt!='Ноль сносок' && rslt!='Числа не совпадают') window.close();" style="width:260px;"><input type=button onclick="window.close();" value="Выйти" style="width:120px;"><BR><input type=button style="width:550px;" value="Предпросмотр текстов сносок, помеченных маркерами" onclick="evalMyCode(); adjustVars(); extractNotesTexts(); showNotesTexts();"><BR> <input type=button value="Создать комментарии" onclick="initVarsForComments(); createNotes();" style="width:200px;"><input type=button value="Создать комментарии и выйти" onclick="initVarsForComments(); var rslt=createNotes(); if (rslt!='Ноль сносок' && rslt!='Числа не совпадают') window.close();" style="width:260px;"><input type=button onclick="window.close();" value="Выйти" style="width:120px;">
+ <input type=button value="Создать сноски" onclick="initVarsForNotes(); createNotes();" style="width:200px;"><input type=button value="Создать сноски и выйти" onclick="initVarsForNotes(); var rslt=createNotes(); if (rslt!='Ноль сносок' && rslt!='Числа не совпадают') window.close();" style="width:260px;"><input type=button onclick="window.close();" value="Выйти" style="width:120px;"><BR><input type=button style="width:550px;" value="Предпросмотр текстов сносок, помеченных маркерами" onclick="evalMyCode(); if (adjustVars()=='error') return; extractNotesTexts(); showNotesTexts();"><BR> <input type=button value="Создать комментарии" onclick="initVarsForComments(); createNotes();" style="width:200px;"><input type=button value="Создать комментарии и выйти" onclick="initVarsForComments(); var rslt=createNotes(); if (rslt!='Ноль сносок' && rslt!='Числа не совпадают') window.close();" style="width:260px;"><input type=button onclick="window.close();" value="Выйти" style="width:120px;">
  </body>
 </html>
