@@ -1,7 +1,7 @@
 <html>
 <head>
  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
- <!-- version 6.4 -->
+ <!-- version 6.5 -->
  <meta http-equiv="MSThemeCompatible" content="yes">
  <style>
   body, input{font-family:Tahoma; font-size:16px;margin:2px;}
@@ -642,7 +642,8 @@
    );
   myWin.eval(
     ' function checkIfTagsAreInFoundSubstr(s,fromIndex,substrLen) {'+
-    //'  alert("s: "+s+"\\n\\nfromIndex: "+fromIndex+"\\n\\nsubstrLen: "+substrLen);'+
+    '  s=s.replace(/&nbsp;/gi," ");'+
+//    '  alert("На входе в checkIfTagsAreInFoundSubstr.\\n\\ns:\\n"+s+"\\n\\nfromIndex: "+fromIndex+"\\n\\nsubstrLen: "+substrLen);'+
     ' '+
     '  var regExp10=/<[^>]*>|[^<>]+/gi;'+
     '  var srchConst1=/^<A /ig;'+
@@ -671,6 +672,7 @@
     '  insideATag=false;'+
     '  containsTagFlag=false;'+
     '  s.replace(regExp10,replaceFunc1);'+
+//    '  alert("На выходе из checkIfTagsAreInFoundSubstr.\\n\\nreturn: "+containsTagFlag);'+
     '  return containsTagFlag;'+
     ' }');
 //  alert("B1");
