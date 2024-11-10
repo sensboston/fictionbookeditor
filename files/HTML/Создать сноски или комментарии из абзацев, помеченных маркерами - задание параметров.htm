@@ -280,7 +280,7 @@
     '   if (srchResult2) nSpaces=srchResult2[0].length;'+
     '   var srchResult=firstNotePMarkerRegExp.exec(unmakeEntities(htmlStr12));'+
 //    '   alert("myInnerHTML: #"+myInnerHTML+"#\\n\\nhtmlStr12:\\n\\n#"+htmlStr12+"#\\n\\nfromIndex: "+(myInnerHTML.length-htmlStr12.length-srchResult[0].length-1)+"\\n\\nlen: "+srchResult[0].length);'+
-    '   alert("Перед вызовом checkIfTagsAreInFoundSubstr номер 1.");'+
+//    '   alert("Перед вызовом checkIfTagsAreInFoundSubstr номер 1.");'+
     '   if (checkIfTagsAreInFoundSubstr(myInnerHTML,nSpaces,srchResult[0].length-1)) return false;'+
     '   return true;'+
     '  }'+
@@ -644,7 +644,7 @@
   myWin.eval(
     ' function checkIfTagsAreInFoundSubstr(s,fromIndex,substrLen) {'+
     '  s=s.replace(/&nbsp;/gi," ");'+
-    '  alert("На входе в checkIfTagsAreInFoundSubstr.\\n\\ns:\\n"+s+"\\n\\nfromIndex: "+fromIndex+"\\n\\nsubstrLen: "+substrLen);'+
+//    '  alert("На входе в checkIfTagsAreInFoundSubstr.\\n\\ns:\\n"+s+"\\n\\nfromIndex: "+fromIndex+"\\n\\nsubstrLen: "+substrLen);'+
     ' '+
     '  var regExp10=/<[^>]*>|[^<>]+/gi;'+
     '  var srchConst1=/^<A /ig;'+
@@ -673,7 +673,7 @@
     '  insideATag=false;'+
     '  containsTagFlag=false;'+
     '  s.replace(regExp10,replaceFunc1);'+
-    '  alert("На выходе из checkIfTagsAreInFoundSubstr.\\n\\nreturn: "+containsTagFlag);'+
+//    '  alert("На выходе из checkIfTagsAreInFoundSubstr.\\n\\nreturn: "+containsTagFlag);'+
     '  return containsTagFlag;'+
     ' }');
 //  alert("B1");
@@ -745,7 +745,7 @@
 //    '     matchLen=srchResult[0].replace(/<[^>]*>/g,"").length;'+
     '     matchLen=makeEntities(srchResult[0]).length;'+
 //    '     alert("matchLen: "+matchLen);'+
-    '   alert("Перед вызовом checkIfTagsAreInFoundSubstr номер 2.");'+
+//    '   alert("Перед вызовом checkIfTagsAreInFoundSubstr номер 2.");'+
     '     checkResult=checkIfTagsAreInFoundSubstr(pInnerHTML,myPos+1,matchLen);'+
     '    }'+
     '    refMarkerRegExp.lastIndex=0;'+
@@ -762,7 +762,7 @@
     '   }'+
 //    '   alert("cga7");'+
 //   '   alert("myPos: "+myPos+"\\n\\npInnerHTML:\\n\\n"+ pInnerHTML+ "\\n\\nrefMarkerStr:\\n\\n"+refMarkerStr+"\\n\\nrefMarkerStrLen: "+refMarkerStrLen+"\\n\\n"+ checkIfTagsAreInFoundSubstr(pInnerHTML,myPos+1,refMarkerStrLen));'+
-    '   alert("Перед вызовом checkIfTagsAreInFoundSubstr номер 3.");'+
+//    '   alert("Перед вызовом checkIfTagsAreInFoundSubstr номер 3.");'+
     '   var checkResult=checkIfTagsAreInFoundSubstr(pInnerHTML,myPos+1,matchLen);'+
     '   rndm2=Math.round(Math.random()*100000).toString();'+
     '   while(document.getElementById("tmpId_"+rndm2))'+
@@ -949,7 +949,7 @@
     '    }'+
 //    '    alert("!checkIfTagsAreInFoundSubstr: "+(!checkIfTagsAreInFoundSubstr(pInnerHTML2,symbolsBefore+myPos2+1,matchLen))+'+
 //    '          "!(matchNotFromBeginning && symbolsBefore==0 && myPos2==0): "+(!(matchNotFromBeginning && symbolsBefore==0 && myPos2==0)));'+
-    '   alert("Перед вызовом checkIfTagsAreInFoundSubstr 4.");'+
+//    '   alert("Перед вызовом checkIfTagsAreInFoundSubstr 4.");'+
     '    if (!checkIfTagsAreInFoundSubstr(pInnerHTML2.replace(/&(gt|lt|amp);/gi,"A"),symbolsBefore+myPos2+1,matchLen) &&'+
     '       !(matchNotFromBeginning && symbolsBefore==0 && myPos2==0))'+
     '     refMarkersCnt++;'+
