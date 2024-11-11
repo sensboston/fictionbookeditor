@@ -1,7 +1,7 @@
 <html>
 <head>
  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
- <!-- version 3.9 -->
+ <!-- version 4.1 -->
  <meta http-equiv="MSThemeCompatible" content="yes">
  <style>
   body, input{font-family:Tahoma; font-size:16px;margin:2px;}
@@ -58,6 +58,10 @@
    myWin.eval(
     ' function makeEntities(s) {'+
     '  return s.replace(/&/gi,"&amp;").replace(/</gi,"&lt;").replace(/>/gi,"&gt;");'+
+    ' }');
+   myWin.eval(
+    ' function unmakeEntities(s) {'+
+    '  return s.replace(/&lt;/gi,"<").replace(/&gt;/gi,">").replace(/&amp;/gi,"&").replace(/&nbsp;/gi,nbspChar);'+
     ' }');
    myWin.eval(
     ' function unsupReferences(p) {'+
@@ -202,6 +206,9 @@
     'function removeSpacesBeyondTags(str,beginIndex) {'+
     '  var nbspOneChar_1=String.fromCharCode(160);'+
     '  var nbspOneChar_2=nbspChar;'+
+    '  str=str.replace(/&nbsp;/gi,String.fromCharCode(160));'+
+//    '  alert("На входе в removeSpacesBeyondTags.\\n\\nstr до:\\n"+str+"\\n\\nbeginIndex: "+beginIndex);'+
+//    '  alert("str после: "+str);'+
     '  var i=0;'+
     '  var removedSymbolsCnt=0;'+
     '  var insideTag=false;'+
@@ -260,11 +267,79 @@
     '    }'+
     '    i--;'+
     '  }'+
-    /*  //alert('savePos: '+savePos+'\nstr: "'+str+'"\n\nstr3: "'+str3+'"\n\nstr.substr(savePos,str.length):\n\n"'+str.substr(savePos+1,str.length)+'"\n\nreturn:'+str3+str.substr(savePos+1,str.length));*/
+//    '  alert("На выходе из removeSpacesBeyondTags.\\n\\nreturn:\\n"+str3+str.substr(savePos+1,str.length));'+
     '  return str3+str.substr(savePos+1,str.length);'+
     '}');
+/*   myWin.eval(
+    'function removeSpacesBeyondTags(str,beginIndex) {'+
+    '  str=str.replace(/ /g,"&nbsp;");'+
+    '  alert("На входе в removeSpacesBeyondTags.\\n\\nstr:\\n"+str+"\\n\\nbeginIndex: "+beginIndex);'+
+    '  var nbspOneChar_1=String.fromCharCode(160);'+
+    '  var nbspOneChar_2=nbspChar;'+
+    '  var i=0;'+
+    '  var removedSymbolsCnt=0;'+
+    '  var insideTag=false;'+
+    '  var len=str.length;'+
+    '  var symbolBeyondTagsCnt=0;'+
+    '  var str2="";'+
+    '  var savePos;'+
+    '  var ch;'+
+    '  while (i<len) {'+
+    '    ch=str.charAt(i);'+
+    '    if (ch=="<") {'+
+    '     insideTag=true;'+
+    '     str2+=ch;'+
+    '    }'+
+    '    if (!insideTag && ch!="<" && ch!=">") {'+
+    '     symbolBeyondTagsCnt++;'+
+    '     if (symbolBeyondTagsCnt==beginIndex) {'+
+    '      savePos=i-1;'+
+    '      break;'+
+    '     }'+
+    '   }'+
+    '    if (insideTag && ch!="<" && ch!=">")'+
+    '     str2+=ch;'+
+    '   if (ch==">") {'+
+    '     insideTag=false;'+
+    '     str2+=ch;'+
+    '    }'+
+    '    i++;'+
+    '  }'+
+    '  i=savePos;'+
+    '  str2=str;'+
+    '  str3="";'+
+    '  insideTag=false;'+
+    '  var removeSpaces=true;'+
+    '  '+
+    '  while (i>=0) {'+
+    '   ch=str.charAt(i);'+
+    '   if (ch==">") {'+
+    '     insideTag=true;'+
+    '     str3=">"+str3;'+
+    '    }'+
+    '    if (insideTag && ch!="<" && ch!=">")'+
+    '     str3=ch+str3;'+
+    '    if (!insideTag && ch!="<" && ch!=">") {'+
+    '     if (ch==" " || ch==nbspOneChar_1 || ch==nbspOneChar_2)'+
+    '      if (removeSpaces);'+
+    '      else str3=ch+str3;'+
+    '     else {'+
+    '      removeSpaces=false;'+
+    '      str3=ch+str3;'+
+    '      }'+
+    '    }'+
+    '    if (ch=="<") {'+
+    '     insideTag=false;'+
+    '     str3="<"+str3;'+
+    '    }'+
+    '    i--;'+
+    '  }'+
+    '  alert("На выходе из removeSpacesBeyondTags.\\n\\nreturn:\\n"+str3+str.substr(savePos+1,str.length));'+
+    '  return str3+str.substr(savePos+1,str.length);'+
+    '}');*/
    myWin.eval(
     ' function removeSymbolsBeyondTags(str,beginIndex,howManySymbolsToRemove,substrToInsert) {'+
+//    '  alert("На входе в removeSymbolsBeyondTags.\\n\\nstr:\\n"+str+"\\n\\nbeginIndex: "+beginIndex+"\\n\\nsubstrToInsert:"+substrToInsert);'+
     '  var i=0;'+
     '  var removedSymbolsCnt=0;'+
     '  var insideTag=false;'+
@@ -274,6 +349,7 @@
     '  var ch;'+
     '   while (i<len) {'+
     '   ch=str.charAt(i);'+
+//    '    alert("В цикле while (i<len)\\n\\ni: "+i+"\\n\\ch: "+ch);'+
     '    if (ch=="<") {'+
     '     insideTag=true;'+
     '     str2+=ch;'+
@@ -281,7 +357,17 @@
     '    if (!insideTag && ch!="<" && ch!=">") {'+
     '     symbolBeyondTagsCnt++;'+
     '     if (symbolBeyondTagsCnt<beginIndex || symbolBeyondTagsCnt+1>beginIndex+howManySymbolsToRemove)'+
-    '      str2+=ch;'+
+    '      if (ch!="&")'+
+    '       str2+=ch;'+
+    '      else {'+
+    '       while (str.charAt(i)!=";") {'+
+    '        str2+=ch;'+
+    '        i++;'+
+    '        symbolBeyondTagsCnt++;'+
+    '        ch=str.charAt(i);'+
+    '       }'+
+    '       str2+=str.charAt(i);'+
+    '      }'+
     '     else {'+
     '      if (removedSymbolsCnt==0) str2+=substrToInsert;'+
     '      removedSymbolsCnt++;'+
@@ -294,7 +380,9 @@
     '     str2+=ch;'+
     '    }'+
     '    i++;'+
+//    '   alert("В конце цикла while.\\n\\nstr:\\n"+str+"\\n\\nstr2:\\n"+str2);'+
     '  }'+
+//    '  alert("На выходе из removeSymbolsBeyondTags.\\n\\nstr2:\\n"+str2);'+
     '  return str2;'+
     ' }'
    );
@@ -560,7 +648,7 @@
     '  if (p.innerText.search(pIsSubtitleRegExp)==0) return;'+
     '  var i,myPos,newRef,previousNote,previousNoteHref,previousNoteSection,str3,rndm2,rndm3,el;'+
     '  var matchLen;'+
-    '  var pInnerHTML=p.innerHTML;'+
+    '  var pInnerHTML=p.innerHTML.replace(/&nbsp;/g,nbspChar);'+
     '  var pInnerHTML_begin="";'+
     '  var symbolsBeforeCnt=0;'+
     '  var checkResult=false;'+
@@ -572,15 +660,33 @@
     '  removeAllTagsRegExp=new RegExp("<\\/?[a-z]+( [^>]+)?>","ig");'+
 //    '  alert("a: "+pInnerHTML.replace(removeAllTagsRegExp,""));'+
     '  if (interpretAsRegExp) refMarkerRegExp.lastIndex=0;'+
+    '  var htmlStr10=unmakeEntities(pInnerHTML.replace(removeAllTagsRegExp,""));'+
     '  while (interpretAsRegExp ? (p.innerText.search(starsAtBegin_RE)!=0 && refMarkerRegExp.test(pInnerHTML.replace(removeAllTagsRegExp,""))) : '+
     '    pInnerHTML.replace(removeAllTagsRegExp,"").indexOf(refMarkerStr)>=0) {'+
 //    '   alert("Внутри уайла получаем такой pInnerHTML:\\n\\n"+pInnerHTML);'+
     '   if (interpretAsRegExp) {'+
     '    refMarkerRegExp.lastIndex=0;'+
+    '    if (htmlStr10.search(refMarkerRegExp)==0)  {'+
+    '      refMarkerRegExp.lastIndex=0;'+
+    '      refMarkerRegExp.exec(htmlStr10);'+
+    '    }'+
+//    '   alert("cga6");'+
 //    '    alert("Искать будем вот по чем:\\n\\n"+pInnerHTML.replace(removeAllTagsRegExp,""));'+
-    '    srchResult=refMarkerRegExp.exec(pInnerHTML.replace(removeAllTagsRegExp,""));'+
-    '    myPos=srchResult.index;'+
-    '    matchLen=srchResult[0].length;'+
+    '    var checkResult=true;'+
+    '    while (checkResult) {'+
+    '     srchResult=refMarkerRegExp.exec(htmlStr10);'+
+    '     if (!srchResult) return;'+
+//    '     alert("Присваивание pos номер 1.");'+
+    '     myPos=srchResult.index;'+
+//    '     alert("myPos: "+myPos);'+
+    '     var strBeginning=htmlStr10.substr(0,myPos).replace(removeAllTagsRegExp,"");'+
+//    '     alert("Присваивание pos номер 2.\\n\\nstrBeginning:"+strBeginning+"\\n\\nmakeEntities(strBeginning):"+makeEntities(strBeginning));'+
+    '     myPos=makeEntities(strBeginning).length;'+
+//    '     matchLen=srchResult[0].replace(/<[^>]*>/g,"").length;'+
+    '     matchLen=makeEntities(srchResult[0]).length;'+
+//    '     alert("matchLen: "+matchLen);'+
+    '     checkResult=checkIfTagsAreInFoundSubstr(pInnerHTML,myPos+1,matchLen);'+
+    '    }'+
     '    refMarkerRegExp.lastIndex=0;'+
     '   }'+
     '   else {'+
@@ -602,12 +708,12 @@
     '    continue;'+
     '   }'+
     '   pInnerHTML=removeSymbolsBeyondTags(pInnerHTML,myPos+1,matchLen,"<A id=\'tmpId_"+rndm2+"\'"+noteClass+" href=\'#tmpId_"+rndm3+"\'>"+refText+"</A>");'+
-    '   pInnerHTML=pInnerHTML.replace(/&nbsp;/g,nbspChar);'+
     '   pInnerHTML=removeSpacesBeyondTags(pInnerHTML,myPos+1);'+
     '   p.innerHTML=pInnerHTML.replace(openingAndClosingTagRegExp,"");'+
     '   newRef=document.getElementById("tmpId_"+rndm2);'+
     '   newRef.removeAttribute("id");'+
-    '   pInnerHTML=p.innerHTML;'+
+    '   pInnerHTML=p.innerHTML.replace(/&nbsp;/g,nbspChar);'+
+    '    htmlStr10=unmakeEntities(pInnerHTML.replace(removeAllTagsRegExp,""));'+
 //    '   alert("Перед вызовом findPreviousNote.");'+
     '   previousNote=findPreviousNote(newRef);'+
 //    '   alert("После вызова findPreviousNote.\\n\\nРезультат:\\n\\n"+previousNote.outerHTML);'+
