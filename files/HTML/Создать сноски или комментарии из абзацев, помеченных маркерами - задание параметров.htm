@@ -1,7 +1,7 @@
 <html>
 <head>
  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
- <!-- version 6.6 -->
+ <!-- version 6.7 -->
  <meta http-equiv="MSThemeCompatible" content="yes">
  <style>
   body, input{font-family:Tahoma; font-size:16px;margin:2px;}
@@ -281,7 +281,7 @@
     '   var srchResult=firstNotePMarkerRegExp.exec(unmakeEntities(htmlStr12));'+
 //    '   alert("myInnerHTML: #"+myInnerHTML+"#\\n\\nhtmlStr12:\\n\\n#"+htmlStr12+"#\\n\\nfromIndex: "+(myInnerHTML.length-htmlStr12.length-srchResult[0].length-1)+"\\n\\nlen: "+srchResult[0].length);'+
 //    '   alert("Перед вызовом checkIfTagsAreInFoundSubstr номер 1.");'+
-    '   if (checkIfTagsAreInFoundSubstr(myInnerHTML,nSpaces,srchResult[0].length-1)) return false;'+
+    '   if (checkIfTagsAreInFoundSubstr(myInnerHTML,nSpaces+1,srchResult[0].length)) return false;'+
     '   return true;'+
     '  }'+
     '  else return false;'+
