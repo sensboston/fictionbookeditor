@@ -1,15 +1,30 @@
 ﻿// Скрипт «Статистика нецензурных слов» для редактора Fiction Book Editor (FBE).
-// Версия 1.4
-// автор — stokber (октябрь 2024).
+// Версия 1.7
+// автор — stokber (ноябрь 2024).
 // В скрипте использован регексп-антимат за авторством imDaniX (https://gist.github.com/imDaniX/8449f40655fcc1b92ae8d756cbca1264#file-swears-javascript-regex) дополненный рядом изменений-добавок.
 
 function Run() {
 
-    var version = "1.4";
+    var version = "1.7";
+    // --------------------------------------------------------------------------------------------
+    
+    // Считать ли все слова со звёздочками вконце (возможно это просто маркеры сносок) подозрительными? Выберите да или нет:
+    var astEnd = false; // нет
+    // var astEnd = true; // да
+    
+    // ===================================================
+    
+    var question;
+          // if(astEnd == true) { question = "";}
+     if(astEnd == false) { question = "бля";}
+     if(astEnd == true) { question = "[а-яё]+[*]+";}
+
+    
     var engFoul = "(?:beaver|bellend|clunge|cock|cunt|dick|fuck|gash|knob|minge|motherfuck|prick|punani|pussy|snatch|twat|twunt)";
     var meta = "Meta|Мета";
     var faceInst = "instagram|inst|инстаграм(?:[аеу]|ом)?|инст[аеоуы]|facebook|faceb|ф[-]бу|ф[еэ]йсбук|фейсб(?:[аеу]|ом)?";
-    var ast = "(?:\\*\\*\\*|\\*|#)";
+    // var ast = "(?:\\*\\*\\*|\\*|#)";
+     var ast = "(?:[*]|#)+";
 
     //                                             СЛОВА-МАТЫ.
     // Если скрипт не считает какое-слово матом, хотя на самом деле оно им является, добавьте его в переменную "mat":
@@ -26,18 +41,34 @@ function Run() {
         // "|муд[еия]" +
         "|(?:не)?вротебуч[аеи][яийх]" +
         "|(?:ни)?и[бп]ацц?[ао]" +
-        "|(на|по)?[хx]ер" +
+        "|(на|по)?[хx][еe][рp]" +
         "|ниип[её]т" +
-        "|хул[еи]" +
+        "|[хx][уy]л[eеи]" +
 
         // звездатый мат:
-        "|[а-яё]*(?:х" + ast + "[еёийлюя]|п" + ast + "зд|" + ast + "у[еёийлюя]|б" + ast + "я|" + ast + "б|бл" + ast + "|[её]" + ast + ")[а-яё]+" +
+     /*    "|[а-яё]*(?:х" + ast + "[еёийлюя]|п" + ast + "зд|" + ast + "у[еёийлюя]|б" + ast + "я|" + ast + "б|бл" + ast + "|[её]" + ast + ")[а-яё]+" +
         
-         "|[а-яё]+(?:х" + ast + "[еёийлюя]|п" + ast + "зд|" + ast + "у[еёийлюя]|б" + ast + "я|" + ast + "б|бл" + ast + "|[её]" + ast + ")[а-яё]*" +
+         "|[а-яё]+(?:х" + ast + "[еёийлюя]|п" + ast + "зд|" + ast + "у[еёийлюя]|б" + ast + "я|" + ast + "б|бл" + ast + "|[аеиоуъ][её]" + ast + ")[а-яё]*" +
 
         // и ещё звездатого:
         "|(?:х" + ast + "й|бл" + ast + "|б" + ast + "я|п" + ast + "зд|(?:на|по)?х" + ast + "р)" +
-         "|(?:" + ast + "у[ийюя]|" + ast + "ля|" + ast + "б|"+ ast + "[еёи]зд)[а-яё]*" +
+         "|(?:" + ast + "у[ийюя]|" + ast + "ля|" + ast + "б|"+ ast + "[еёи]зд)[а-яё]*" + */
+         
+         // все-все слова со звёздочками вначале или середине:
+         // "|[а-яё]*(?:"+ ast + "[а-яё]+)+[*#]*" +
+		 "|[а-яё]*(?:"+ ast + "[а-яё]+)+("+ ast + ")?" +
+         
+         // некоторые слова со звездочками в конце:
+          "|(?:возъ|въ|взъ|вы|до|за|изъ|на|недо|объ|отъ|по|подъ|пере|при|про|разъ|съ)?[еёe]"+ ast +
+          "|(?:воло|долбо|дуро|зло|земле|куро|мозго|мудо|овце|сестро|трах[ао])?[еёe]"+ ast +
+          "|(?:по|на)?[хx][уy]"+ ast +
+          "|[б6]л"+ ast +
+         
+         
+          // "|[а-яё]+[*]+" +
+           // "|бля" +
+           // все-все слова со звездочками в конце по выбору при настройке astEnd в начале скрипта (строки 12-13):
+            "|"+question +
 
         // английские маты сами по себе и внутри других слов:
         "|[a-z]*(?:beaver|bellend|clunge|cock|cunt|dick|fuck|gash|knob|minge|motherfuck|prick|punani|pussy|snatch|twat|twunt)[a-z]*" +
@@ -75,7 +106,7 @@ function Run() {
         "|педикулофоби[а-я]" +
         "|цитопедикул[а-я]*" +
         "|Мударр[а-я]+" +
-		"|Лееб[а-я]+" +
+        "|Лееб[а-я]+" +
 
         //——————————————————————————————————
         // ниже (между двумя горизонтальными линиями) можно добавлять свои слова- и регекспы-исключения:
@@ -84,14 +115,19 @@ function Run() {
         // "|слово-или-регексп"+
         //——————————————————————————————————
         "|[а-яё]*эпидерм[а-я]+)"; 
-        // "|(?:внутри|интра|муко|радио|суб)?эпидерм[а-я]+)"; // Эту последнюю строку лучше не трогать! Она должна остаться последней.
+         // Эту последнюю строку лучше не трогать! Она должна остаться последней.
 
     var sel = document.getElementById("fbw_body");
     var str = sel.innerText; // текст документа
     str = str.replace(new RegExp("[□▫◦]", "g"), " ");
     
+    // ----------------------------------------------------------------------------------------------------------------
+    
+    // ниже подменяем критические буквы для исключения некоторых особенных буквосочетаний:
     str = str.replace(new RegExp("Дранг нах Остен", "g"), "Дранг наЪ Остен");
     str = str.replace(new RegExp("([^а-яё])р[-]нах(?![а-яё])", "gi"), "$1Ъ");
+    
+    // ==============================================================
     
     str = str.replace(new RegExp("([a-zа-яё36])[-](?=[a-zа-яё36])", "ig"), "$1 ");
 
@@ -101,27 +137,29 @@ function Run() {
 
         "(?:(?:([a-zа-яё]*[оаеиуыюяьъ-]))?-?)?(?:" +
 
-        "[её](?:[б6](?!о[рй]|рач)|п[уа](?:ц|тс))|" + //
+        "[еёe](?:[б6](?!о[рй]|рач)|п[уа](?:ц|тс))|" + //
         "и[пб][ае][тцд][ьъ])" +
         ".*?|" +
 
         // "(?:(?:н[иеа]|(?:ра|и)[зс]|[зд]?[ао](?:т|дн[оа])?|с(?:м[еи])?|а[пб]ч|в[ъы]?|пр[еи])-?)?ху(?:[яйиеёю]|л+и(?!ган)).*?|"+
         // "(?:(?:н[иеа]|(?:ра|и)[зс]|[зд]?[ао](?:т|дн[оа])?|с(?:м[еи])?|а[пб]ч|в[ъы]?|пр[еи])-?)?х[уy](?:[яйиеёю].*?)|" + //
-		"(?:(?:н[иеа]|(?:ра|и)[зс]|[зд]?[ао](?:т|дн[оа])?|с(?:м[еи])?|а[пб]ч|в[ъы]?|пр[еи])-?)?х[уy](?:[яйиеёю][а-яё]*)|" +
+        "(?:(?:н[иеа]|(?:ра|и)[зс]|[зд]?[ао](?:т|дн[оа])?|с(?:м[еи])?|а[пб]ч|в[ъы]?|пр[еи])-?)?[хx][уy](?:[яйиеёю][а-яё]*)|" +
 
-        "бл(?:[эя]|еа?)(?:[дт][ьъ]?)?|" +
+        "[б6]л(?:[эя]|еа?)(?:[дт][ьъ]?)?|" +
 
         // "\\S*?(?:" +
-		"[а-яё]*?(?:" +
+        "[а-яё]*?(?:" +
         "п(?:" +
-        "[иеё][з3z]д|" + //
+        "[иеёe][з3z]д|" + //
         "ид[аое]?р|" + "ед(?:р(?!о)|[аое]р|ик)|" +
-        "охую" +
+        "о[хx][уy]ю" +
         ")|" +
-        "бля(?:[дбц]|тс)|" +
-        "[ое]ху[яйиеё]|" +
-        "хуйн" +
-        ").*?|" +
+        "[б6]ля(?:[дбц]|тс)|" +
+        "[ое][хx][уy][яйиеё]|" +
+        "[хx][уy]йн" +
+        // ").*?|" + // ?????????????????
+        ")[а-яё]*|" +
+        
 
         "(?:о[тб]?|про|на|вы)?м(?:" +
         // "анд(?:[ауеыи](?:л(?:и[сзщ])?[ауеиы])?|ой|[ао]в.*?|юк(?:ов|[ауи])?|е[нт]ь|ища)|" +
@@ -129,11 +167,11 @@ function Run() {
         // "уд(?:[яаиое].+?|е?н(?:[ьюия]|ей))|" +
         "уд(?:[яаиое][а-яё]*|е?н(?:[ьюия]|ей))|" +
         "[ао]л[ао]ф[ьъ](?:[яиюе]|[еёо]й)" +
-        ")|" +
+        ")|" + 
 
         "елд[ауые].*?|" +
         "ля[тд]ь|" +
-        "(?:[нз]а|по)х|" +
+        "(?:[нз]а|по)[хx]|" +
 
         mat + "|" +
         meta + "|" + faceInst +
@@ -146,42 +184,63 @@ function Run() {
         alert("В документе не найдено нецензурных слов.\n\n«Статистика нецензурных слов» v."+version);
         return true;
     }
+    // -------------------------------------------------------------------------------------------------------
+    
+    var posl = matches;
+    posl = matches.join(""); // массив в последовательный список.
+    // alert(posl);
+    posl = posl.replace(new RegExp("[^а-яёa-z36*#\\n]+", "img"), "\n");
+    
+    posl = posl.replace(new RegExp("^" + neMat + "\\n", "img"), ""); // убрать исключения.
+    posl = posl.replace(new RegExp("\\n\\n+", "igm"), "\n"); 
+     // готовим html-таблицу последовательную::
+    posl = posl.replace(new RegExp("^([a-zа-яё36*#-]+)$", "img"), "<tr><td>$1</td></tr>");
+    // posl = "<table border=1>" + posl + "</table>"; // список в html.
+    posl = "<table align=left border=1><th>Последовательно</th>" + posl + "</table>"; // список в html.
+    // alert(posl);
+    
+    // ======================================================
+    
     matches.sort();
 
-    var str2 = matches.join(""); // массив в список.
-
-    str2 = str2.replace(new RegExp("[^а-яёa-z36*#\\n]+", "img"), "\n");
+    var alf = matches.join(""); // массив в список по алфавиту.
     
-    // str2 = str2.replace(new RegExp("[-]", "img"),"\n-");
-    str2 = str2 + "\n";
+    
 
- str2 = str2.replace(new RegExp("^" + neMat + "\\n", "img"), ""); // убрать исключения.
+    alf = alf.replace(new RegExp("[^а-яёa-z36*#\\n]+", "img"), "\n");
+    
+     // alf = alf.replace(new RegExp("^\\n+", "im"), "");
+    
+    // alf = alf.replace(new RegExp("[-]", "img"),"\n-");
+    alf = alf + "\n";
 
-    str2 = str2.replace(new RegExp("\\n\\n+", "igm"), "\n"); //
+ alf = alf.replace(new RegExp("^" + neMat + "\\n", "img"), ""); // убрать исключения.
 
-    str2 = str2.replace(new RegExp(meta + "|" + faceInst, "igm"), "♣$&"); //
+    alf = alf.replace(new RegExp("\\n\\n+", "igm"), "\n"); //
+
+    alf = alf.replace(new RegExp(meta + "|" + faceInst, "igm"), "♣$&"); //
 
     // ещё раз сортируем:
-    var arr = str2.split('\n');
+    var arr = alf.split('\n');
     arr.sort();
     // alert( arr );
-    str2 = arr.join('\n'); //
-    str2 = str2 + "\n";
+    alf = arr.join('\n'); //
+    alf = alf + "\n";
 
-    str2 = str2.replace(new RegExp("♣", "igm"), ""); //
+    alf = alf.replace(new RegExp("♣", "igm"), ""); //
 
-    if (!str2) {
+    if (!alf) {
         alert("В документе не найдено нецензурных слов.\n\n«Статистика нецензурных слов» v."+version);
         return true;
     } else {
-        var countMat = (str2.match(/\n/igm) || []).length;
+        var countMat = (alf.match(/\n/igm) || []).length;
         countMat--
         countMat-- //???????
 
         var rX = new RegExp(faceInst, "gi"); // 
-        var countFaceInst = (str2.match(rX) || []).length; // 
+        var countFaceInst = (alf.match(rX) || []).length; // 
         var rX = new RegExp(meta, "gi"); // 
-        var countMeta = (str2.match(rX) || []).length; // 
+        var countMeta = (alf.match(rX) || []).length; // 
         var countMetaFaceInst = countMeta + countFaceInst;
         countMat = countMat - countMetaFaceInst;
 
@@ -194,21 +253,21 @@ function Run() {
     // указываем количество каждого из совпадений:
     for (var i = 100; i >= 0; i--) {
         var dubl = i + 1;
-        str2 = str2.replace(new RegExp("^([a-zа-яё36*#-]+)\\n(\\1\\n){" + i + "}", "img"), "$1\t" + dubl + "\n");
+        alf = alf.replace(new RegExp("^([a-zа-яё36*#-]+)\\n(\\1\\n){" + i + "}", "img"), "$1\t" + dubl + "\n");
     }
 
-    // готовим html-таблицу:
-    var str3 = str2.replace(new RegExp("^([a-zа-яё36*#-]+)\\t(\\d+)$", "img"), "<tr><td>$1</td><td>    </td><td>$2</td></tr>");
-    str3 = "<table>" + str3 + "</table>"; // список в html.
+    // готовим html-таблицу по алфавиту:
+    var alf = alf.replace(new RegExp("^([a-zа-яё36*#-]+)\\t(\\d+)$", "img"), "<tr><td>$1</td><td>$2</td></tr>");
 
-    str3 = str3.replace(new RegExp(engFoul, "img"), "<font color='red'>$&</font>");
-    str3 = str3.replace(new RegExp(meta + "|" + faceInst, "ig"), "<font color='green'>$&</font>");
-    str3 = str3.replace(new RegExp("([а-яё])([a-z36]+)", "ig"), "$1<font color='red'>$2</font>");
-    str3 = str3.replace(new RegExp("([a-z36]+)([а-яё])", "ig"), "<font color='red'>$1</font>$2");
+    alf = "<table align=left border=1><th>По алфавиту</th>" + alf + "</table>"; // список в html.
+    tabl = posl+"<table align=left border=0><tr><td></td></tr></table>"+alf;
+    tabl = tabl.replace(new RegExp(engFoul, "img"), "<font color='red'>$&</font>");
+    tabl = tabl.replace(new RegExp(meta + "|" + faceInst, "ig"), "<font color='green'>$&</font>");
+    tabl = tabl.replace(new RegExp("([а-яё])([a-z36]+)", "ig"), "$1<font color='red'>$2</font>");
+    tabl = tabl.replace(new RegExp("([a-z36]+)([а-яё])", "ig"), "<font color='red'>$1</font>$2");
+    tabl = tabl.replace(new RegExp("[*#]+", "img"), "<font color='red'>$&</font>");
 
-    str3 = str3.replace(new RegExp("[*#]+", "img"), "<font color='red'>$&</font>");
-
-    MyMsgWindow(str3);
+    MyMsgWindow(tabl);
 
     window.external.BeginUndoUnit(document, "добавление записи в аннотацию");
 
@@ -241,10 +300,10 @@ function Run() {
 
     window.external.EndUndoUnit(document);
 
-    function MyMsgWindow(str3) {
-        var MsgWindow = window.open("HTML/Статистика нецензурных слов.html", null, "status=no,toolbar=no,menubar=no,location=no,scrollbars=yes,resizable=yes, width=50"); // ??????????????????????????
+    function MyMsgWindow(tabl) {
+        var MsgWindow = window.open("HTML/Статистика нецензурных слов.html", null, "status=no,toolbar=no,menubar=no,location=no,scrollbars=yes,resizable=yes, width=400"); // ??????????????????????????
 
-        MsgWindow.document.body.innerHTML = str3;
+        MsgWindow.document.body.innerHTML = tabl;
         // MsgWindow.moveTo(0, 0);
     }
 
