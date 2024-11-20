@@ -1,6 +1,6 @@
 // добавление сноски между уже имеющимися
 // написал Sclex
-// версия 2.7
+// версия 3.0
 
 function Run () {
  var Ts=new Date().getTime();
@@ -36,6 +36,8 @@ function Run () {
  //режим ускоренной работы
  var forsazh=false;
  //НАСТРОЙКИ - конец
+ 
+ var addedClassNote=0;
  
  // функция находит номер комментария, соответствующего определенному имени раздела
  // в исходном документе. В name передаем имя раздела, перед ним символ #, если это
@@ -380,6 +382,11 @@ function Run () {
      tmpVar=PoShablonu(strConst4,uic);
      if (document.links[j2].innerHTML!=tmpVar)
       document.links[j2].innerHTML=tmpVar;
+     // добавляем class=note
+     if (!isItNote(document.links[j2])) {
+      makeNoteFromHref(document.links[j2]);
+      addedClassNote++;
+     }
    }
   }
  }
@@ -439,13 +446,16 @@ function Run () {
    else whileFlag=false;
   if (el2=null && el.firstChild!=null) GoTo(el.firstChild);
  }
+ var msgStr="";
+ if (addedClassNote>0) msgStr+='Был добавлен атрибут class="note" такому количеству знаков примечания: '+addedClassNote+".\n\n";
  var Tf=new Date().getTime();
  var Tmin = Math.floor((Tf-Ts)/60000);
  var Tsek = Math.ceil(10*((Tf-Ts)/1000-Tmin*60))/10;
  if (Tmin>0) {var TimeStr=Tmin+" мин. "+Tsek+" с"}
  else {var TimeStr=Tsek+" с"}
+ msgStr+="Перенумерация примечаний успешно завершена.\n\n"+
+         "Время работы скрипта: "+TimeStr;
  if (EndWindow)
-  MsgBox("Перенумерация примечаний успешно завершена.\n\n"+
-         "Время работы скрипта: "+TimeStr);
- window.external.EndUndoUnit(document);  
+ MsgBox(msgStr);
+ window.external.EndUndoUnit(document);
 }

@@ -1,9 +1,8 @@
 // добавление сноски между уже имеющимися
 // написал Sclex
-// версия 2.9
+// версия 3.2
 // Sclex, помни: данный скрипт имеет собственный код, не такой,
 //   как остальные скрипты в этом наборе
-
 function Run () {
  if (!confirm("Вы запустили скрипт «Перенумеровать примечания, удаляя неиспользуемые разделы примечаний».\nВы действительно хотите, чтобы неиспользуемые разделы примечаний были удалены?")) return;
  var Ts=new Date().getTime();
@@ -39,6 +38,8 @@ function Run () {
  //режим ускоренной работы
  var forsazh=false;
  //НАСТРОЙКИ - конец
+ 
+ var addedClassNote=0;
  
  // функция находит номер комментария, соответствующего определенному имени раздела
  // в исходном документе. В name передаем имя раздела, перед ним символ #, если это
@@ -267,7 +268,8 @@ function Run () {
  }
  for (i in sectNumById_) {
   sectNum--;
-  document.getElementById(i).removeNode(true);
+  if (i!="$" && document.getElementById(i))
+   document.getElementById(i).removeNode(true);
  }
  sectNumById_=undefined;
  //прочитаем в массив SectID ID-ы разделов примечаний
@@ -403,6 +405,11 @@ function Run () {
      tmpVar=PoShablonu(strConst4,uic);
      if (document.links[j2].innerHTML!=tmpVar)
       document.links[j2].innerHTML=tmpVar;
+     // добавляем class=note
+     if (!isItNote(document.links[j2])) {
+      makeNoteFromHref(document.links[j2]);
+      addedClassNote++;
+     }
    }
   }
  }
@@ -462,6 +469,8 @@ function Run () {
     else whileFlag=false;
   if (el2=null && el.firstChild!=null) GoTo(el.firstChild);
  }
+ var msgStr="";
+ if (addedClassNote>0) msgStr+='Был добавлен атрибут class="note" такому количеству знаков примечания: '+addedClassNote+". ";
  var Tf=new Date().getTime();
  var Tmin = Math.floor((Tf-Ts)/60000);
  var Tsek = Math.ceil(10*((Tf-Ts)/1000-Tmin*60))/10;
@@ -471,7 +480,7 @@ function Run () {
   if (addSnoska)
    window.external.SetStatusBarText("Добавлена сноска № " +insertN+ ". Время работы скрипта: "+TimeStr);
   else
-    window.external.SetStatusBarText("Перенумерация сносок успешно завершена. Время работы скрипта: "+TimeStr);
+    window.external.SetStatusBarText(msgStr+"Перенумерация сносок успешно завершена. Время работы скрипта: "+TimeStr);
  }
  catch (e)
  {}
