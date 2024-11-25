@@ -1,9 +1,11 @@
-// Поиск некорректных маркеров постраничных сносок с постраничной нумерацией v.1.2
+// Поиск некорректных маркеров концевых сносок v.1.3
 // Находит ошибки нумерации маркеров концевых сносок
 // Автор stokber
 
 function Run() {
 
+var name="Поиск некорректных маркеров концевых сносок";
+var version="1.3";
 // Вывод кода или текста документа.
 var sel=document.getElementById("fbw_body");
 var fromHTML = sel.innerHTML;  // код документа
@@ -247,6 +249,7 @@ function Report() {
    txt = txt.replace(/&gt;/g, ">"); // 
    txt = txt.replace(/&amp;/g, "&"); // 
    txt = txt.replace(/&nbsp;/g, " "); // 
+   txt = txt.replace(/&shy;/g, " "); // мягкий перенос.23.11.2024
    txt = txt.replace(/\r\n/g, "\n");  // 
    
    // txt = txt.replace(/☻([ ]*)☺/g, "$1"); // два маркера подряд или только с пробелами между считать за один ошибочный.
@@ -369,6 +372,21 @@ if (result == null) {
       }
 }
 
+// 10. Поиск нарушений порядка номеров маркеров знаков сносок:
+if (result == null) {
+   var RX = new RegExp("z(\\d+)(?=z(\\d+))","g");
+   while ((result = RX.exec(report)) != null) {
+     var razniza = (result[2] - result[1]);
+     if (razniza != 1) {
+         var textMsg = "После выделенного маркера знака сноски "+result[1]+" следует маркер знака сноски "+result[2]+", что нарушает порядок нумерации. Возможно пропущены или неверно пронумерованы маркеры знака сноски ниже выделенного места или склеенные абзацы. Или (невыделенный скриптом) пробел перед маркером текста сноски." // #10";
+        window.external.SetStatusBarText(textMsg); 
+        result.index += result.length - 1;
+        Perehod();
+        break
+        }
+   }
+}
+
  // 5. Поиск текста сноски-не числа:
 if (result == null) {
    var RX = new RegExp("t[zZt]|t\\d*[^\\dzt\\r\\n]+|t0","m"); // !!!!! 2023.08.20
@@ -380,6 +398,21 @@ if (result == null) {
       result.index++
       Perehod();
       }
+}
+
+// 11. Поиск нарушений порядка номеров маркеров текстов сносок:
+if (result == null) {
+   var RX = new RegExp("t(\\d+)(?=t(\\d+))","g");
+   while ((result = RX.exec(report)) != null) {
+   var razniza = (result[2] - result[1]);
+   if (razniza != 1) {
+      var textMsg = "После выделенного маркера текста сноски "+result[1]+" следует маркер текста сноски "+result[2]+", что нарушает порядок нумерации. Возможно пропущены или неверно пронумерованы маркеры текста сноски ниже выделенного места." // #11";
+      window.external.SetStatusBarText(textMsg); 
+      result.index += result.length - 1;
+      Perehod();
+      break
+      }
+   }
 }
 
 // 6. Проверка отсутствия самого первого в документе маркера знака сноски:
@@ -411,7 +444,7 @@ if (result == null) {
    var RX = new RegExp("(z\\d+)t([^1]|1\\d)","m");
    result = RX.exec(report);
    if (result !== null) {
-     var textMsg = "Некорректный или отсутствующий маркер текста сноски 1. Пропущенный маркер ищите выше или ниже выделенного места. Возможно, он склеился с предыдущим абзацем." // #8";
+     var textMsg = "Некорректный или отсутствующий маркер ТЕКСТА сноски 1. Пропущенный маркер ищите выше или ниже выделенного места. Возможно, он склеился с предыдущим абзацем." // #8";
      window.external.SetStatusBarText(textMsg); 
      result.index += result.length;
      Perehod();
@@ -428,36 +461,6 @@ if (result == null) {
       result.index += result.length;
       Perehod();
       }
-}
-
-// 10. Поиск нарушений порядка номеров маркеров знаков сносок:
-if (result == null) {
-   var RX = new RegExp("z(\\d+)(?=z(\\d+))","g");
-   while ((result = RX.exec(report)) != null) {
-     var razniza = (result[2] - result[1]);
-     if (razniza != 1) {
-         var textMsg = "После выделенного маркера знака сноски "+result[1]+" следует маркер знака сноски "+result[2]+", что нарушает порядок нумерации. Возможно пропущены или неверно пронумерованы маркеры знака сноски ниже выделенного места или склеенные абзацы. Или (невыделенный скриптом) пробел перед маркером текста сноски." // #10";
-        window.external.SetStatusBarText(textMsg); 
-        result.index += result.length - 1;
-        Perehod();
-        break
-        }
-   }
-}
-
-// 11. Поиск нарушений порядка номеров маркеров текстов сносок:
-if (result == null) {
-   var RX = new RegExp("t(\\d+)(?=t(\\d+))","g");
-   while ((result = RX.exec(report)) != null) {
-   var razniza = (result[2] - result[1]);
-   if (razniza != 1) {
-      var textMsg = "После выделенного маркера текста сноски "+result[1]+" следует маркер текста сноски "+result[2]+", что нарушает порядок нумерации. Возможно пропущены или неверно пронумерованы маркеры текста сноски ниже выделенного места." // #11";
-      window.external.SetStatusBarText(textMsg); 
-      result.index += result.length - 1;
-      Perehod();
-      break
-      }
-   }
 }
 
 // 12. Поиск разного количества знаков и текстов сносок на одной странице:
@@ -514,7 +517,7 @@ if (result == null)  {
 }
 
 if (zNaStr == tNaStr && result == null) {
-   alert("Ошибок нумерации маркеров сносок не найдено.");
+   alert("Ошибок нумерации маркеров сносок не найдено.\n\n=================\n\nСкрипт '"+name+"' v."+version);
    // alert("Ну не шмогла я…");
    // return ;
    }

@@ -1,7 +1,9 @@
-﻿// Создать таблицу располоржения имеющихся маркеров сносок. v. 1.1.
+﻿// Создать таблицу расположения имеющихся маркеров сносок. v. 1.2.
 // Автор: stokber
 
 function Run() {
+var name="Создать таблицу расположения имеющихся маркеров сносок";
+var version="1.2";
 var sel=document.getElementById("fbw_body");
 var str = sel.innerHTML;
 var s1 = "☺"; //символ начала маркера сноски.
@@ -131,15 +133,16 @@ function Report() {
    var regexp = new RegExp(s1, "g")
    var colMarker = (str.match(regexp) || []).length;
 if (colMarker == 0) {
-   MsgBox("Не найдено ни одного маркера сносок "+markSign+".\nТаблица создана не будет.");
+   MsgBox("Не найдено ни одного маркера сносок "+markSign+".\nТаблица создана не будет.\n\n=================\n\nСкрипт '"+name+"' v."+version);
    return;
 }
    var regexp = new RegExp("^"+s1, "gm")
    // var t = (str.match(/^☺/gm) || []).length;
    var t = (str.match(regexp) || []).length;
    var z = (colMarker - t);
-if (t == 0 || z ==0) {
-   MsgBox("Вы выбрали маркеры "+markSign+".\n\nНайдено:\nмаркеров знаков сносок: "+z+" \nмаркеров текстов сносок : "+t+"\nТаблица создана не будет. ");
+// if (t == 0 || z ==0) {
+if (t == 0 && z ==0) {
+   MsgBox("Вы выбрали маркеры "+markSign+".\n\nНайдено:\nмаркеров знаков сносок: "+z+" \nмаркеров текстов сносок : "+t+"\nТаблица создана не будет.\n\n=================\n\nСкрипт '"+name+"' v."+version);
    return;
 }
 
