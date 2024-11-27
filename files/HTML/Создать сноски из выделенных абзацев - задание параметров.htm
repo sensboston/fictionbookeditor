@@ -1,6 +1,7 @@
 <html>
 <head>
  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+ <!-- version 3.0 -->
  <meta http-equiv="MSThemeCompatible" content="yes">
  <style>
   body, input{font-family:Tahoma; font-size:16px;margin:2px;}
@@ -284,7 +285,7 @@
     ' function processContainer(p) {'+
     '  var pInnerHTML, foundMarkerLen;'+
     '  var divInnerHTML=p.innerHTML;'+
-    '  var notFirstParagraphMarker=makeEntities("'+document.getElementById("notFirstParagraphStr").value+'");'+
+    '  var notFirstParagraphMarker=makeEntities("'+document.getElementById("notFirstParagraphStr").value.replace(/\\/g,"\\\\").replace(/"/g,'\\"')+'");'+
     '  var openingTagHTML="<"+MyTagName+" id="+startId+"></"+MyTagName+">";'+
     '  var closingTagHTML="<"+MyTagName+" id="+endId+"></"+MyTagName+">";'+
     '  var ps=p.getElementsByTagName("P");'+
@@ -318,7 +319,7 @@
     '  var openingTagHTML="<"+MyTagName+" id="+startId+"></"+MyTagName+">";'+
     '  var closingTagHTML="<"+MyTagName+" id="+endId+"></"+MyTagName+">";'+
     '  var pInnerHTML=p.innerHTML.replace(openingTagHTML,"").replace(closingTagHTML,"");'+
-    '  var notFirstParagraphMarker=makeEntities("'+document.getElementById("notFirstParagraphStr").value+'");'+
+    '  var notFirstParagraphMarker=makeEntities("'+document.getElementById("notFirstParagraphStr").value.replace(/\\/g,"\\\\").replace(/"/g,'\\"')+'");'+
 //    '  alert("Not First Paragraph Str\\n\\n"+notFirstParagraphMarker);'+
 //    '  alert("pInnerHTML с удаленными тегами:\\n\\n"+pInnerHTML.replace(removeTagsRegExp,""));'+
     '  var foundMarkerLen=findMarkerLen(p.innerText,notFirstParagraphMarker);'+
@@ -548,7 +549,7 @@
     '  var howManySymbolsSkip=0;'+
     '  var srchResult=null;'+
     '  var removeNotAllTagsRegExp=new RegExp("<\\/?(?!(IMG|A))[a-z]+( [^>]+)?>","ig");'+
-    '  refMarkerStr=makeEntities("'+document.getElementById("refMarkerStr").value+'");'+
+    '  refMarkerStr=makeEntities("'+document.getElementById("refMarkerStr").value.replace(/\\/g,"\\\\").replace(/"/g,'\\"')+'");'+
     '  refMarkerStrLen=refMarkerStr.length;'+
     '  removeAllTagsRegExp=new RegExp("<\\/?[a-z]+( [^>]+)?>","ig");'+
 //    '  alert("a: "+pInnerHTML.replace(removeAllTagsRegExp,""));'+
@@ -670,7 +671,7 @@
     '  var pInnerHTMLSrc=p.innerHTML;'+
     '  var pInnerHTML2=null;'+
     '  var pInnerHTML;'+
-    '  refMarkerStr=makeEntities("'+document.getElementById("refMarkerStr").value+'");'+
+    '  refMarkerStr=makeEntities("'+document.getElementById("refMarkerStr").value.replace(/\\/g,"\\\\").replace(/"/g,'\\"')+'");'+
     '  refMarkerStrLen=refMarkerStr.length;'+
     '  removeAllTagsRegExp=new RegExp("<\\/?[a-z]+( [^>]+)?>","ig");'+
     '  var removeNotAllTagsRegExp=new RegExp("<\\/?(?!(IMG|A))[a-z]+( [^>]+)?>","ig");'+
@@ -712,7 +713,7 @@
    myWin.eval(
     'function addNotesInMyWin() {'+
     ''+
-    ' var refMarkerStr=makeEntities("'+document.getElementById("refMarkerStr").value+'");'
+    ' var refMarkerStr=makeEntities("'+document.getElementById("refMarkerStr").value.replace(/\\/g,"\\\\").replace(/"/g,'\\"')+'");'
 +
     ' var removeNotAllTagsRegExp=new RegExp("<\\/?(?!(IMG|A))[a-z]+( [^>]+)?>","ig");'+
     ' var removeAllTagsRegExp=new RegExp("<\\/?[a-z]+( [^>]+)?>","ig");'+
@@ -1113,7 +1114,7 @@
  </script>
 </head>
 <body onbeforeunload="myBeforeUnload();">
- Выберите маркер для поиска знаков сноски:<br>
+ Задайте маркер первого абзаца текста сноски:<br>
  <label for="radio1"><input type=radio id="radio1" name=noteSign checked> вида [1]</label>
  <label for="radio2"><input type=radio id="radio2" name=noteSign> вида {1}</label>
  <label for="radio3"><input type=radio id="radio3" name=noteSign"> вида [~1~]</label>
