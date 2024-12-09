@@ -1,7 +1,7 @@
 <html>
 <head>
  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
- <!-- version 4.2 -->
+ <!-- version 4.3 -->
  <meta http-equiv="MSThemeCompatible" content="yes">
  <style>
   body, input{font-family:Tahoma; font-size:16px;margin:2px;}
@@ -62,11 +62,11 @@
     );
    myWin.eval(
     ' function makeEntities(s) {'+
-    '  return s.replace(/&/gi,"&amp;").replace(/</gi,"&lt;").replace(/>/gi,"&gt;");'+
+    '  return s.replace(/&/gi,"&amp;").replace(/</gi,"&lt;").replace(/>/gi,"&gt;").replace(/\xAD/g,"&shy;");'+
     ' }');
    myWin.eval(
     ' function unmakeEntities(s) {'+
-    '  return s.replace(/&lt;/gi,"<").replace(/&gt;/gi,">").replace(/&amp;/gi,"&").replace(/&nbsp;/gi,nbspChar);'+
+    '  return s.replace(/&lt;/gi,"<").replace(/&gt;/gi,">").replace(/&shy;/gi,String.fromCharCode(173)).replace(/&amp;/gi,"&").replace(/&nbsp;/gi,nbspChar);'+
     ' }');
    myWin.eval(
     ' function unsupReferences(p) {'+
@@ -430,7 +430,7 @@
    myWin.eval(
     'function findMarkerLen(innerTextStr,markerStrWithEntities) {'+
     ' var lengthAtBeginning=innerTextStr.length;'+
-    ' var markerStr=markerStrWithEntities.replace(/&lt;/g,"<").replace(/&gt;/g,">").replace(/&amp;/g,"&");'+
+    ' var markerStr=markerStrWithEntities.replace(/&lt;/g,"<").replace(/&gt;/g,">").replace(/&shy;gi/,String.fromCharCode(173)).replace(/&amp;/g,"&");'+
     ' var lengthAddValue=markerStrWithEntities.length-markerStr.length;'+
     ' var innerTextStr=innerTextStr.replace(/nbsp;/g,nbspChar);'+
     ' var spacesRegExp=new RegExp("^( |"+nbspChar+")*");'+
@@ -953,7 +953,7 @@
 //    '    alert("!checkIfTagsAreInFoundSubstr: "+(!checkIfTagsAreInFoundSubstr(pInnerHTML2,symbolsBefore+myPos2+1,matchLen))+'+
 //    '          "!(matchNotFromBeginning && symbolsBefore==0 && myPos2==0): "+(!(matchNotFromBeginning && symbolsBefore==0 && myPos2==0)));'+
 //    '   alert("Перед вызовом checkIfTagsAreInFoundSubstr 4.");'+
-    '    if (!checkIfTagsAreInFoundSubstr(pInnerHTML2.replace(/&(gt|lt|amp);/gi,"A"),symbolsBefore+myPos2+1,matchLen) &&'+
+    '    if (!checkIfTagsAreInFoundSubstr(pInnerHTML2.replace(/&(gt|lt|amp|shy);/gi,"A"),symbolsBefore+myPos2+1,matchLen) &&'+
     '       !(matchNotFromBeginning && symbolsBefore==0 && myPos2==0))'+
     '     refMarkersCnt++;'+
     '    symbolsBefore+=myPos2+matchLen;'+
@@ -1358,7 +1358,7 @@
    }
   }
   function makeEntities(s) {
-   return s.replace(/&/gi,"&amp;").replace(/</gi,"&lt;").replace(/>/gi,"&gt;");
+   return s.replace(/&/gi,"&amp;").replace(/</gi,"&lt;").replace(/>/gi,"&gt;").replace(/\xAD/g,"&shy;");
   }
   function showNotesTexts() {
    if (myWin.notesTextCnt==0) {
