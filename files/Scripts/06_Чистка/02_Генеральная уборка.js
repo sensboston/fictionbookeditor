@@ -89,7 +89,9 @@
 //======================================
 //v.2.2 — убрал Ко
 //======================================
-var VersionNumber="2.2";
+//v.2.3 — закомментировал замену с регэкспом re67
+//======================================
+var VersionNumber="2.3";
 
 //обрабатывать ли history
 var ObrabotkaHistory=true;
@@ -649,7 +651,7 @@ function Run() {
        if (s.search(re64)!=-1)         { s=s.replace(re64, re64_); }
        if (s.search(re65)!=-1)         { s=s.replace(re65, re65_); }
 //       if (s.search(re66)!=-1)         { s=s.replace(re66, re66_); }                        // и компания Ко
-       if (s.search(re67)!=-1)         { s=s.replace(re67, re67_); }
+//       if (s.search(re67)!=-1)         { s=s.replace(re67, re67_); }
        if (s.search(re68)!=-1)         { s=s.replace(re68, re68_); }
        if (s.search(re69)!=-1)         { s=s.replace(re69, re69_); }
        if (s.search(re70)!=-1)         { s=s.replace(re70, re70_); }
