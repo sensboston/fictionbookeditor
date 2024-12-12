@@ -1,10 +1,13 @@
 // Скрипт «Поиск неразмеченных эпиграфов»
-// Версия 1.11. Октябрь, 2024
+// Версия 1.12. Декабрь 2024
 // Автор — stokber.
 // За основу кода взят скрипт «Перейти на предыдущий заголовок стиха» ув. Sclex-а. 
 // Добавлена функция выделения строк будущих эпиграфов и зацикливания их поиска.
+// v.1.12 — добавлены в исключения строки с символами копирайта "©" в начале строки и ®. Исправлено неточное выделение эпиграфа при наличии в нем мягкого переноса. Добавлены имя и версия скрипта в завершающее сообщение скрипта. (декабрь, 2024)
 
 function Run() {
+var name = "Поиск неразмеченных эпиграфов";
+var version = "1.12";
 var nonStop;
 // nonStop = 0 — пропускать, 1 — остановиться:
 
@@ -82,7 +85,7 @@ function Run1() {
 	
 	function selEpi() {
 		if(!tr1) {
-			alert("Поиск завершён!");
+			alert("Поиск завершён!\n\nСкрипт '"+name+"' v. "+version+".");
 			return true;
 		}
 		// var colStr = 6; // макс. кол. строк эпиграфа
@@ -90,6 +93,7 @@ function Run1() {
 		var rxTitle = new RegExp("^(<DIV class=stanza>)?<DIV class=title>", "im");
 		var rxDiv = new RegExp("^<DIV class=(epigraph|annotation|cite|poem)>", "im");
 		var rxP = new RegExp("^<DIV class=section>", "im");
+		var rxCopyright = new RegExp("^©|®", "");
 		tr1.moveEnd("character", 2);
 		tr1.moveEnd("character", -1);
 		tr1.collapse(false);
@@ -106,7 +110,7 @@ function Run1() {
 		var rxNote = new RegExp("<DIV id=([nc]|comment|FbAutId|bookmark)_?\\d+ class=section><DIV class=title>", "im");
 	if((rxNote.test(p)) == true) {
 		window.external.SetStatusBarText("Поиск завершён! Скрипт не ищет эпиграфы после разделов со сносками.");
-			alert("Поиск завершён!");
+			alert("Поиск завершён!\n\nСкрипт '"+name+"' v. "+version+".");
 			nonStop = 1;
 			return true;
 		}
@@ -127,6 +131,12 @@ function Run1() {
 			// alert("Это просто DIV!");
 			nonStop = 0;
 		} 
+		
+		else if(rxCopyright.test(p) == true) {
+			// alert("Это символ копирайта и др.");
+			nonStop = 0;
+		} 
+		
 		else {
 			// alert("А это возможно и эпиграф!");
 			p = p.replace(new RegExp("^<DIV class=section>(?!<DIV class=title>)", "im"), "$&</DIV>\r\n");
@@ -147,6 +157,9 @@ function Run1() {
 			p = p.replace(new RegExp("&lt;", "g"), "<"); //
 			p = p.replace(new RegExp("&gt;", "g"), ">"); //
 			p = p.replace(new RegExp("&amp;", "g"), "&"); //
+			
+			p = p.replace(new RegExp("&shy;", "g"), " "); // мягкие переносы
+			
 			// перемещаем могущие мешать маркеры сносок из концов строк:
 			p = p.replace(new RegExp("([.?…!])([ ]?(\\*+|\\[\\d+\\]|\\{\\d+\\}|☺\\d+☻)[ ]?)$", "gm"), "$2$1"); 
 			p = p.replace(new RegExp("[☺☻]", "g"), ""); // удаляем вр. метки sup.
