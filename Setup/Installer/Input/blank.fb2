@@ -2,12 +2,13 @@
 <FictionBook xmlns="http://www.gribuser.ru/xml/fictionbook/2.0" xmlns:l="http://www.w3.org/1999/xlink">
  <description>
   <title-info>
-   <genre>sf_cyberpunk</genre>
+   <genre></genre>
    <author>
-    <first-name></first-name>
-    <last-name></last-name>
+    <first-name/>
+    <middle-name/>
+    <last-name/>
    </author>
-   <book-title></book-title>
+   <book-title/>
    <annotation>
     <p>Введите сюда краткую аннотацию</p>
    </annotation>
@@ -19,9 +20,10 @@
     <first-name>Your</first-name>
     <last-name>Name</last-name>
    </author>
-   <program-used>FictionBook Editor Release 2.6.7</program-used>
-   <date value="2014-11-10">10 November 2014</date>
-   <id>999E9A00-0EAF-48D3-B792-AFFA96A955A6</id>
+   <program-used/>
+   <date value=""/>
+   <src-ocr/>
+   <id/>
    <version>1.0</version>
    <history>
     <p>1.0 — создание файла</p>
