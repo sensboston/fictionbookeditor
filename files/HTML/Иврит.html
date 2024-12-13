@@ -1,5 +1,6 @@
 <head>
  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+ <!-- version 1.3 -->
  <meta http-equiv="MSThemeCompatible" content="yes">
  <title>...Иврит...   </title>
  <style>
@@ -12,14 +13,17 @@
 function myMain() {
 
  function onClick() {
-  var rng;
+  var ht=event.srcElement.innerHTML;
+
   if (event.srcElement.nodeName=="TD" && fbw_body.contains(fb2doc.selection.createRange().parentElement())) {
-   var rng=fb2doc.selection.createRange();
    var ht=event.srcElement.innerHTML;
-   if (ht=="́ ́") rng.pasteHTML(rng.htmlText+"&#769;");
-   else rng.pasteHTML(rng.htmlText+ht);
-   rng.collapse(false);
-   rng.select();
+   if (ht=="́ ́") ht="&#769;";
+   fb2window.eval('window.external.BeginUndoUnit(document,"Вставка символа");'+
+   'var rng=document.selection.createRange();'+
+   'rng.pasteHTML("' + ht +'");' +  
+   'rng.collapse(false);' +
+   'rng.select();' +
+   'window.external.EndUndoUnit(document);');
   }
  }
  

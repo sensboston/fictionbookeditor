@@ -1,6 +1,6 @@
 //Таблица символов Еврейского алфавита
 //                                jurgennt™, май 2008 г.
-//                          script engene by Sclex v.1.2
+//                          script engene by Sclex v.1.3
 
 function Run() {
  var dialogWidth="80px";                                 //ширина окна таблицы символов

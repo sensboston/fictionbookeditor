@@ -1,6 +1,6 @@
 //Таблица символов английской транскрипции
 //                                jurgennt™, май 2008 г.
-//                          script engene by Sclex v.1.2
+//                          script engene by Sclex v.1.3
 //                          таблица: stokber, май 2024
 
 function Run() {

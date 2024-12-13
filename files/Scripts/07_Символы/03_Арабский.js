@@ -1,6 +1,6 @@
 //Таблица символов Арабского алфавита
 //                                jurgennt™, май 2008 г.
-//                          script engene by Sclex v.1.2
+//                          script engene by Sclex v.1.3
 
 function Run() {
  var dialogWidth="125px"; //ширина окна таблицы символов
