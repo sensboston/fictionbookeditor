@@ -1,5 +1,5 @@
 // Скрипт «Обратный поиск по набору регэкспов (версия с исключениями) (заготовка)» для редактора Fiction Book Editor (FBE).
-// Версия 1.3
+// Версия 1.4
 // Автор Sclex
 
 function Run() {
@@ -381,6 +381,8 @@ function Run() {
  //var gtRE=new RegExp("&gt;","g");
  var gtRE=new RegExp(";tg&","g");
  var gtRE_=">";
+ var shyRE=new RegExp(";yhs&","g");
+ var shyRE_=String.fromCharCode(173);
  //var nbspRE=new RegExp("&nbsp;","g");
  var nbspRE=new RegExp(";psbn&","g");
  var nbspRE_=" ";
@@ -423,7 +425,7 @@ function Run() {
    ignoreNullPosition=false; //tr.compareEndPoints("StartToEnd",tr)==0;
 
    el=ptr;
-   s=el.innerHTML.replace(imgTagRE_01,imgTagRE_01_).replace(removeTagsRE_01,removeTagsRE_01_).replace(/&lt;/g,"<").replace(/&gt;/g,">").replace(/&nbsp;/g,nbspChar).replace(/&amp;/g,"&").split("").reverse().join("");
+   s=el.innerHTML.replace(imgTagRE_01,imgTagRE_01_).replace(removeTagsRE_01,removeTagsRE_01_).replace(/&shy;/g,String.fromCharCode(173)).replace(/&lt;/g,"<").replace(/&gt;/g,">").replace(/&nbsp;/g,nbspChar).replace(/&amp;/g,"&").split("").reverse().join("");
    //alert("s 01:\n"+s);
    s_len=s.length;
    //log+="Входим в searchNext.  s1_len: "+s1_len+"  s_len: "+s_len+"\n\n";
@@ -433,7 +435,7 @@ function Run() {
    tr2.moveStart("character",-s1_len);
    //tr2.select();
    //alert("После select.");
-   s1_len=tr2.htmlText.replace(/^\s+<P(?=[ >])/im,"<P").replace(/\s{2,}/g," ").replace(imgTagRE_01,imgTagRE_01_).replace(removeTagsRE_01,removeTagsRE_01_).replace(/&lt;/g,"<").replace(/&gt;/g,">").replace(/&nbsp;/g,nbspChar).replace(/&amp;/g,"&").length;
+   s1_len=tr2.htmlText.replace(/^\s+<P(?=[ >])/im,"<P").replace(/\s{2,}/g," ").replace(imgTagRE_01,imgTagRE_01_).replace(removeTagsRE_01,removeTagsRE_01_).replace(/&shy;/g,String.fromCharCode(173)).replace(/&lt;/g,"<").replace(/&gt;/g,">").replace(/&nbsp;/g,nbspChar).replace(/&amp;/g,"&").length;
    //alert("s1_len: "+s1_len);
    var s1=tr2.htmlText.replace(/^\s+<P(?=[ >])/im,"<P").replace(/\s{2,}/g," ").replace(imgTagRE_01,imgTagRE_01_).split("").reverse().join("");
    var s1_len2=s1.length;
@@ -491,8 +493,8 @@ function Run() {
         rslt=regExps[i].exec(s_html);
         flag1=false;
         if (rslt) {
-         newPos=s_html.substr(0,rslt.index).replace(imgTagRE,imgTagRE_).replace(removeTagsRE,removeTagsRE_).replace(ltRE,ltRE_).replace(gtRE,gtRE_).replace(ampRE,ampRE_).replace(nbspRE,nbspRE_).length;
-         rslt_replaced=rslt[0].replace(imgTagRE,imgTagRE_).replace(removeTagsRE,removeTagsRE_).replace(ltRE,ltRE_).replace(gtRE,gtRE_).replace(ampRE,ampRE_).replace(nbspRE,nbspRE_);
+         newPos=s_html.substr(0,rslt.index).replace(imgTagRE,imgTagRE_).replace(removeTagsRE,removeTagsRE_).replace(shyRE,shyRE_).replace(ltRE,ltRE_).replace(gtRE,gtRE_).replace(ampRE,ampRE_).replace(nbspRE,nbspRE_).length;
+         rslt_replaced=rslt[0].replace(imgTagRE,imgTagRE_).replace(removeTagsRE,removeTagsRE_).replace(shyRE,shyRE_).replace(ltRE,ltRE_).replace(gtRE,gtRE_).replace(ampRE,ampRE_).replace(nbspRE,nbspRE_);
          if (ignoreNullPosition ? minPos==s1_html_len+1 : minPos==s1_html_len) break;
          if (rslt_replaced.length==0 || (rslt_replaced.length!=0 && rslt_replaced[0]!="<")) {
           k=regExps[i].lastIndex;
@@ -565,7 +567,7 @@ function Run() {
       if (el && el!=fbwBody) el=el.previousSibling;
      }
     if (el && el.nodeName=="P") {
-     s=el.innerHTML.replace(imgTagRE_01,imgTagRE_01_).replace(removeTagsRE_01,removeTagsRE_01_).replace(/&lt;/g,"<").replace(/&gt;/g,">").replace(/&nbsp;/g,nbspChar).replace(/&amp;/g,"&").split("").reverse().join("");
+     s=el.innerHTML.replace(imgTagRE_01,imgTagRE_01_).replace(removeTagsRE_01,removeTagsRE_01_).replace(/&shy;/g,String.fromCharCode(173)).replace(/&lt;/g,"<").replace(/&gt;/g,">").replace(/&nbsp;/g,nbspChar).replace(/&amp;/g,"&").split("").reverse().join("");
      //alert("s 02: "+s);
      s1_len=0;
      s_html_orig=el.innerHTML;
@@ -580,7 +582,7 @@ function Run() {
  }
  
  function getElemTextLen(ptr) {
-   return ptr.innerHTML.replace(imgTagRE_01,imgTagRE_01_).replace(removeTagsRE_01,removeTagsRE_01_).replace(/&lt;/g,"<").replace(/&gt;/g,">").replace(/&nbsp;/g,nbspChar).replace(/&amp;/g,"&").length;
+   return ptr.innerHTML.replace(imgTagRE_01,imgTagRE_01_).replace(removeTagsRE_01,removeTagsRE_01_).replace(/&shy;/g,String.fromCharCode(173)).replace(/&lt;/g,"<").replace(/&gt;/g,">").replace(/&nbsp;/g,nbspChar).replace(/&amp;/g,"&").length;
  }
  
  fbwBody=document.getElementById("fbw_body");
@@ -596,7 +598,7 @@ function Run() {
   tr2=document.body.createTextRange();
   tr2.moveToElementText(el2);
   tr2.setEndPoint("StartToStart",tr);
-  s1_len=tr2.htmlText.replace(/^\s+<P(?=[ >])/im,"<P").replace(/\s{2,}/g," ").replace(imgTagRE_01,imgTagRE_01_).replace(removeTagsRE_01,removeTagsRE_01_).replace(/&lt;/g,"<").replace(/&gt;/g,">").replace(/&nbsp;/g,nbspChar).replace(/&amp;/g,"&").length;
+  s1_len=tr2.htmlText.replace(/^\s+<P(?=[ >])/im,"<P").replace(/\s{2,}/g," ").replace(imgTagRE_01,imgTagRE_01_).replace(removeTagsRE_01,removeTagsRE_01_).replace(/&shy;/g,String.fromCharCode(173)).replace(/&lt;/g,"<").replace(/&gt;/g,">").replace(/&nbsp;/g,nbspChar).replace(/&amp;/g,"&").length;
   //alert("tr2.htmlText: "+tr2.htmlText+"\n\n"+
   //      "tr2.htmlText...: "+tr2.htmlText.replace(/^\s+<P(?=[ >])/im,"<P").replace(/\s{2,}/g," ").replace(imgTagRE_01,imgTagRE_01_).replace(removeTagsRE_01,removeTagsRE_01_).replace(/&lt;/g,"<").replace(/&gt;/g,">").replace(/&nbsp;/g," ").replace(/&amp;/g,"&"));
   //alert("s1_len: "+s1_len);

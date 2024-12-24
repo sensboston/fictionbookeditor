@@ -1,5 +1,5 @@
 ﻿// Скрипт «Поиск нецензурных слов» для редактора Fiction Book Editor (FBE).
-// Версия 1.7 (ноябрь 2024)
+// Версия 1.5 (октябрь 2024)
 // Скрипт создан из заготовки скрипта «Поиск по набору регекспов» ув. Sclex-а.
 // В скрипте использован регексп-антимат за авторством imDaniX (https://gist.github.com/imDaniX/8449f40655fcc1b92ae8d756cbca1264#file-swears-javascript-regex) дополненный рядом изменений-добавок.
 
@@ -9,11 +9,7 @@
 
 function Run() {
 
-var version = "1.7";
-
-    // Считать ли все слова со звёздочками вконце (возможно это просто маркеры сносок) подозрительными? Выберите да или нет:
-    var astEnd = false; // нет
-    // var astEnd = true; // да
+var version = "1.4";
 
     //                                             СЛОВА-МАТЫ.
     // Если скрипт не считает какое-слово матом, хотя на самом деле оно им является, добавьте его в переменную "mat":
@@ -24,16 +20,16 @@ var version = "1.7";
         "|[её]пт" +
         "|ети(?:ть)?" +
         "|замудохать?ся" +
-         "|замудохал(?:[аи]сь|ся)" +
+		 "|замудохал(?:[аи]сь|ся)" +
         "|мандей" +
         "|мля(?:ть)?" +
         // "|муд[еия]" +
         "|(?:не)?вротебуч[аеи][яийх]" +
         "|(?:ни)?и[бп]ацц?[ао]" +
-        "|(?:на|по)?[хx][eе][рp]" +
-        "|ниип[её]т" +
-        "|[хx][уy]л[eеи]" +
-    
+        "|(?:на|по)?[хx]ер" +
+		"|ниип[её]т" +
+		"|хул[еи]" +
+	
 
         // "|(?:ёбaн|ебaть|ебyч|мудa[kк]|хуeм)"+
 
@@ -64,14 +60,14 @@ var version = "1.7";
         "|Педерсен[а-я]*" +
         "|Мандел(?:а|е|ой|у|ы)" +
         "|нах Остен" +
-        "|Мандулис[аеу]" +
-        "|ипатьевск[а-я]+" +
-        "|педикулофоби[а-я]" +
-        "|цитопедикул[а-я]*" +
-        "|р-нах" +
-        "|Мударр[а-я]+" +
-        "|Лееб[а-я]+" +
-        
+		"|Мандулис[аеу]" +
+		"|ипатьевск[а-я]+" +
+		"|педикулофоби[а-я]" +
+		"|цитопедикул[а-я]*" +
+		"|р-нах" +
+		"|Мударр[а-я]+" +
+		"|Лееб[а-я]+" +
+		
         //————————————————————————————————————
         // ниже (между двумя горизонтальными линиями) можно добавлять свои слова- и регекспы-исключения:
         // "|слово-или-регексп"+
@@ -80,9 +76,6 @@ var version = "1.7";
         //———————————————————————————————————
         "|[а-я]*эпидерм[а-я]+";
     // Эту последнюю строку лучше не трогать! Она должна остаться последней.
-    
-    
-    
 
     function init() {
         // ТУТ НАДО НАСТРОИТЬ СПИСОК МАКРОСОВ
@@ -165,31 +158,13 @@ var version = "1.7";
         var engFoul = "(?:beaver|bellend|clunge|cock|cunt|dick|fuck|gash|knob|minge|motherfuck|prick|punani|pussy|snatch|twat|twunt)";
         var meta = "Meta|Мета";
         var faceInst = "instagram|inst|инстаграм(?:[аеу]|ом)?|инст[аеоуы]|facebook|faceb|фейсб|ф[-]бу|ф[еэ]йсбук(?:[аеу]|ом)?";
-        // var ast = "(?:\\*\\*\\*|\\*|#)";
-        var ast = "(?:[*]|#)+";
+        var ast = "(?:\\*\\*\\*|\\*|#)";
 
-      /*   addRegExp("[а-яё]*(?:х" + ast + "[еёийлюя]|п" + ast + "зд|" + ast + "у[еёийлюя]|б" + ast + "я|" + ast + "б|бл" + ast + "|[её]" + ast + ")[а-яё]+", "i", "Найдено: Найдено: Мат звездатый.");
+        addRegExp("[а-яё]*(?:х" + ast + "[еёийлюя]|п" + ast + "зд|" + ast + "у[еёийлюя]|б" + ast + "я|" + ast + "б|бл" + ast + "|[её]" + ast + ")[а-яё]+", "i", "Найдено: Найдено: Мат звездатый.");
         addRegExp("[а-яё]+(?:х" + ast + "[еёийлюя]|п" + ast + "зд|" + ast + "у[еёийлюя]|б" + ast + "я|" + ast + "б|бл" + ast + "|[её]" + ast + ")[а-яё]*", "i", "Найдено: Найдено: Мат звездатый.");
         // addRegExp("(?<![a-z])(?:х" + ast + "[ийюя]|бл" + ast + "|б" + ast + "я|п" + ast + "зд|(?:на|по)?х" + ast + "р)(?![a-z])", "i", "Найдено: Найдено: Мат звездатый."); // ?????????????????
-        addRegExp("(?<![a-zа-яё])(?:х" + ast + "[ийюя]|бл" + ast + "|б" + ast + "я|п" + ast + "зд|(?:на|по)?х" + ast + "р)(?![a-zа-яё])", "i", "Найдено: Найдено: Мат звездатый."); 
-        addRegExp("(?<![a-zа-яё])(?:" + ast + "у[ийюя]|" + ast + "ля|" + ast + "б|"+ ast + "[еёи]зд)[а-яё]*", "i", "Найдено: Найдено: Мат звездатый.");  */
-        
-        // все-все слова со звёздочками вначале или посредине слова:
-        // addRegExp("[а-яё]*"+ast+"[а-яё]+", "i", "Найдено: Найдено: Слово со звёздочками вначале или посредине.");
-		// addRegExp("[а-яё]*(?:"+ ast + "[а-яё]+)+[*#]*", "i", "Найдено: Найдено: Слово со звёздочками вначале или посредине.");
-		addRegExp("[а-яё]*(?:"+ ast + "[а-яё]+)+("+ ast + ")?", "i", "Найдено: Найдено: Слово со звёздочками вначале или посредине.");
-        
-        addRegExp("(?<![a-zа-яё])(?:возъ|въ|взъ|вы|до|за|изъ|на|недо|объ|отъ|по|подъ|пере|при|про|разъ|съ)?[еёe]"+ ast, "i", "Найдено: Найдено: Мат звездатый.");
-        addRegExp("(?<![a-zа-яё])(?:воло|долбо|дуро|зло|земле|куро|мозго|мудо|овце|сестро|трах[ао])?[еёe]"+ ast, "i", "Найдено: Найдено: Мат звездатый.");
-        addRegExp("(?<![a-zа-яё])(?:по|на)?[хx][уy]"+ ast, "i", "Найдено: Найдено: Мат звездатый.");
-        addRegExp("(?<![a-zа-яё])[б6]л"+ ast, "i", "Найдено: Найдено: Мат звездатый.");
-        
-        
-        
-        // все-все слова со звёздочками вконце:
-        if (astEnd == true) {
-        addRegExp("[а-яё]+"+ast, "i", "Найдено: Найдено: Мат звездатый или слова с маркерами сносок");
-        }
+		addRegExp("(?<![a-zа-яё])(?:х" + ast + "[ийюя]|бл" + ast + "|б" + ast + "я|п" + ast + "зд|(?:на|по)?х" + ast + "р)(?![a-zа-яё])", "i", "Найдено: Найдено: Мат звездатый."); 
+		addRegExp("(?<![a-zа-яё])(?:" + ast + "у[ийюя]|" + ast + "ля|" + ast + "б|"+ ast + "[еёи]зд)[а-яё]*", "i", "Найдено: Найдено: Мат звездатый."); 
 
         addRegExp("[а-яё]*(?:6ля|e6|[eё]6|мyд|п(?:иеeё)[3z]д|хy(?:eеийлюя)|xу(?:eеийлюя)|xy(?:eеийлюя)|мудa[kк]|[её]б[ay]|хуe)[а-яё]*", "i", "Найдено: МАТ с вкраплениями латиницей или цифрами.");
         addRegExp("[a-z]*?(?:" + engFoul + ")[a-z]*(?:" + engFoul + ")[a-z]*", "i", "Найдено: Найдено: английское слово с двумя матерными основами в любом месте.");
@@ -212,28 +187,27 @@ var version = "1.7";
 
             // "(?:(?:н[иеа]|(?:ра|и)[зс]|[зд]?[ао](?:т|дн[оа])?|с(?:м[еи])?|а[пб]ч|в[ъы]?|пр[еи])-?)?ху(?:[яйиеёю]|л+и(?!ган)).*?|"+
             // "(?:(?:н[иеа]|(?:ра|и)[зс]|[зд]?[ао](?:т|дн[оа])?|с(?:м[еи])?|а[пб]ч|в[ъы]?|пр[еи])-?)?х[уy](?:[яйиеёю].*?)|" + //
-            "(?:(?:н[иеа]|(?:ра|и)[зс]|[зд]?[ао](?:т|дн[оа])?|с(?:м[еи])?|а[пб]ч|в[ъы]?|пр[еи])-?)?х[уy](?:[яйиеёю][а-яё]*)|" + //
+			"(?:(?:н[иеа]|(?:ра|и)[зс]|[зд]?[ао](?:т|дн[оа])?|с(?:м[еи])?|а[пб]ч|в[ъы]?|пр[еи])-?)?х[уy](?:[яйиеёю][а-яё]*)|" + //
 
             "бл(?:[эя]|еа?)(?:[дт][ьъ]?)?|" +
 
             // "\\S*?(?:" +
-            "[а-яё]*?(?:" +
+			"[а-яё]*?(?:" +
             "п(?:" +
             "[иеё][з3z]д|" + //
             "ид[аое]?р|" + "ед(?:р(?!о)|[аое]р|ик)|" +
-            "о[хx][уy]ю" +
+            "охую" +
             ")|" +
-            "[б6]ля(?:[дбц]|тс)|" +
-            "[ое][хx][уy][яйиеё]|" +
-            "[хx][уy]йн" +
-            // ").*?|" + // ?????????????????????
-            ")[а-яё]*|" +
+            "бля(?:[дбц]|тс)|" +
+            "[ое]ху[яйиеё]|" +
+            "хуйн" +
+            ").*?|" +
 
             "(?:о[тб]?|про|на|вы)?м(?:" +
             // "анд(?:[ауеыи](?:л(?:и[сзщ])?[ауеиы])?|ой|[ао]в.*?|юк(?:ов|[ауи])?|е[нт]ь|ища)|" +
-            "анд(?:[ауеыи](?:л(?:и[сзщ])?[ауеиы])?|ой|[ао]в[а-яё]*|юк(?:ов|[ауи])?|е[нт]ь|ища)|" +
+			"анд(?:[ауеыи](?:л(?:и[сзщ])?[ауеиы])?|ой|[ао]в[а-яё]*|юк(?:ов|[ауи])?|е[нт]ь|ища)|" +
             // "уд(?:[яаиое].+?|е?н(?:[ьюия]|ей))|" +
-             "уд(?:[яаиое][а-яё]*|е?н(?:[ьюия]|ей))|" +
+			 "уд(?:[яаиое][а-яё]*|е?н(?:[ьюия]|ей))|" +
             "[ао]л[ао]ф[ьъ](?:[яиюе]|[еёо]й)" +
             ")|" +
 
@@ -241,7 +215,7 @@ var version = "1.7";
             "ля[тд]ь|" +
             "(?:[нз]а|по)х|" +
             mat +
-            ")(?![a-zа-яё])", "i", "Найдено: МАТ");
+            ")(?![а-яё])", "i", "Найдено: МАТ");
 
     }
 
@@ -541,6 +515,8 @@ var version = "1.7";
     var ltRE_ = "<";
     var gtRE = new RegExp("&gt;", "g");
     var gtRE_ = ">";
+    var shyRE = new RegExp("&shy;","g");
+    var shyRE_ = String.fromCharCode(173);
     var nbspRE = new RegExp("&nbsp;", "g");
     var nbspRE_ = " ";
 
@@ -576,7 +552,7 @@ var version = "1.7";
         ignoreNullPosition = false; //tr.compareEndPoints("StartToEnd",tr)==0;
 
         el = ptr;
-        s = el.innerHTML.replace(removeTagsRE, removeTagsRE_).replace(imgTagRE, imgTagRE_).replace(ltRE, ltRE_).replace(gtRE, gtRE_).replace(ampRE, ampRE_).replace(nbspRE, nbspRE_);
+        s = el.innerHTML.replace(removeTagsRE, removeTagsRE_).replace(imgTagRE, imgTagRE_).replace(shyRE,shyRE_).replace(ltRE, ltRE_).replace(gtRE, gtRE_).replace(ampRE, ampRE_).replace(nbspRE, nbspRE_);
         s_len = s.length;
         //log+="Входим в searchNext.  s1_len: "+s1_len+"  s_len: "+s_len+"\n\n";
         tr.moveToElementText(el);
@@ -643,8 +619,8 @@ var version = "1.7";
                                 rslt = regExps[i].exec(s_html);
                                 flag1 = false;
                                 if (rslt) {
-                                    newPos = s_html.substr(0, rslt.index).replace(removeTagsRE, removeTagsRE_).replace(imgTagRE, imgTagRE_).replace(ltRE, ltRE_).replace(gtRE, gtRE_).replace(ampRE, ampRE_).replace(nbspRE, nbspRE_).length;
-                                    rslt_replaced = rslt[0].replace(removeTagsRE, removeTagsRE_).replace(imgTagRE, imgTagRE_).replace(ltRE, ltRE_).replace(gtRE, gtRE_).replace(ampRE, ampRE_).replace(nbspRE, nbspRE_);
+                                    newPos = s_html.substr(0, rslt.index).replace(removeTagsRE, removeTagsRE_).replace(imgTagRE, imgTagRE_).replace(shyRE, shyRE_).replace(ltRE, ltRE_).replace(gtRE, gtRE_).replace(ampRE, ampRE_).replace(nbspRE, nbspRE_).length;
+                                    rslt_replaced = rslt[0].replace(removeTagsRE, removeTagsRE_).replace(imgTagRE, imgTagRE_).replace(shyRE, shyRE_).replace(ltRE, ltRE_).replace(gtRE, gtRE_).replace(ampRE, ampRE_).replace(nbspRE, nbspRE_);
                                     if (ignoreNullPosition ? minPos == s1_html_len + 1 : minPos == s1_html_len) break;
                                     if (rslt_replaced.length == 0 || (rslt_replaced.length != 0 && rslt_replaced[0] != "<")) {
                                         k = regExps[i].lastIndex;
@@ -719,7 +695,7 @@ var version = "1.7";
                     if (el && el != fbwBody) el = el.nextSibling;
                 }
             if (el && el.nodeName == "P") {
-                s = el.innerHTML.replace(removeTagsRE, removeTagsRE_).replace(imgTagRE, imgTagRE_).replace(ltRE, ltRE_).replace(gtRE, gtRE_).replace(ampRE, ampRE_).replace(nbspRE, nbspRE_);
+                s = el.innerHTML.replace(removeTagsRE, removeTagsRE_).replace(imgTagRE, imgTagRE_).replace(shyRE, shyRE_).replace(ltRE, ltRE_).replace(gtRE, gtRE_).replace(ampRE, ampRE_).replace(nbspRE, nbspRE_);
                 s1_len = 0;
                 s_html = el.innerHTML;
                 s1_html_len = 0;
