@@ -48,6 +48,8 @@ function win1252_search() {
  var ltRE_="<";
  var gtRE=new RegExp("&gt;","g");
  var gtRE_=">";
+ var shyRE=new RegExp("&shy;","g");
+ var shyRE_=String.fromCharCode(173);
  var nbspRE=new RegExp("&nbsp;","g");
  var nbspRE_=" ";
 
@@ -110,7 +112,7 @@ function win1252_search() {
      if (isEngChar && firstRusChar)
       g=firstRusChar_g;
      tr.moveToElementText(el);
-     tr.move("character",s_html.substr(0,g).replace(removeTagsRE,removeTagsRE_).replace(imgTagRE,imgTagRE_).replace(ltRE,ltRE_).replace(gtRE,gtRE_).replace(ampRE,ampRE_).replace(nbspRE,nbspRE_).length);
+     tr.move("character",s_html.substr(0,g).replace(removeTagsRE,removeTagsRE_).replace(imgTagRE,imgTagRE_).replace(shyRE,shyRE_).replace(ltRE,ltRE_).replace(gtRE,gtRE_).replace(ampRE,ampRE_).replace(nbspRE,nbspRE_).length);
      tr2=tr.duplicate();
      tr2.move("character",1);
      tr.setEndPoint("EndToStart",tr2);
@@ -149,7 +151,7 @@ function win1252_search() {
 }
 
 function Run() {
- var elementBrowser_versionNum="1.4";
+ var elementBrowser_versionNum="1.5";
  var dialogWidth="540px";
  var dialogHeight="580px";
  var fbwBody=document.getElementById("fbw_body");

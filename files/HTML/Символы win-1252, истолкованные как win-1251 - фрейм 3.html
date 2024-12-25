@@ -5,6 +5,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=6">
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
   <meta http-equiv="MSThemeCompatible" content="yes">
+  <!-- версия 1.5 -->
   <title>3</title>
   <style> 
   body,input {font-family:tahoma; font-size:11px; padding:0 1px 0 1px; margin:0;}
@@ -41,6 +42,8 @@ var ltRE=new RegExp("&lt;","g");
 var ltRE_="<";
 var gtRE=new RegExp("&gt;","g");
 var gtRE_=">";
+var shyRE=new RegExp("&shy;","g");
+var shyRE_=String.fromCharCode(173);
 var nbspRE=new RegExp("&nbsp;","g");
 var nbspRE_=" ";
 
@@ -51,10 +54,10 @@ function doChange() {
   tr=mainDoc.body.createTextRange();
   tr.moveToElementText(whereToChange);
   tr.collapse(true);
-  changePos=newHTML1.replace(removeTagsRE,removeTagsRE_).replace(imgTagRE,imgTagRE_).replace(ltRE,ltRE_).replace(gtRE,gtRE_).replace(ampRE,ampRE_).replace(nbspRE,nbspRE_).length;
+  changePos=newHTML1.replace(removeTagsRE,removeTagsRE_).replace(imgTagRE,imgTagRE_).replace(shyRE,shyRE_).replace(ltRE,ltRE_).replace(gtRE,gtRE_).replace(ampRE,ampRE_).replace(nbspRE,nbspRE_).length;
   tr.move("character",changePos);
   tr2=tr.duplicate();
-  tr2.move("character",newHTML2.replace(removeTagsRE,removeTagsRE_).replace(imgTagRE,imgTagRE_).replace(ltRE,ltRE_).replace(gtRE,gtRE_).replace(ampRE,ampRE_).replace(nbspRE,nbspRE_).length);
+  tr2.move("character",newHTML2.replace(removeTagsRE,removeTagsRE_).replace(imgTagRE,imgTagRE_).replace(shyRE,shyRE_).replace(ltRE,ltRE_).replace(gtRE,gtRE_).replace(ampRE,ampRE_).replace(nbspRE,nbspRE_).length);
   tr.setEndPoint("EndToStart",tr2);
   tr.select();
   var trTop=tr.boundingTop;
@@ -272,10 +275,10 @@ function change(ownReplace) {
   var tr=mainDoc.body.createTextRange();
   tr.moveToElementText(whereToChange);
   tr.collapse(true);
-  changePos=newHTML1.replace(removeTagsRE,removeTagsRE_).replace(imgTagRE,imgTagRE_).replace(ltRE,ltRE_).replace(gtRE,gtRE_).replace(ampRE,ampRE_).replace(nbspRE,nbspRE_).length;
+  changePos=newHTML1.replace(removeTagsRE,removeTagsRE_).replace(imgTagRE,imgTagRE_).replace(shyRE,shyRE_).replace(ltRE,ltRE_).replace(gtRE,gtRE_).replace(ampRE,ampRE_).replace(nbspRE,nbspRE_).length;
   tr.move("character",changePos);
   var tr2=tr.duplicate();
-  tr2.move("character",newHTML2.replace(removeTagsRE,removeTagsRE_).replace(imgTagRE,imgTagRE_).replace(ltRE,ltRE_).replace(gtRE,gtRE_).replace(ampRE,ampRE_).replace(nbspRE,nbspRE_).length);
+  tr2.move("character",newHTML2.replace(removeTagsRE,removeTagsRE_).replace(imgTagRE,imgTagRE_).replace(shyRE,shyRE_).replace(ltRE,ltRE_).replace(gtRE,gtRE_).replace(ampRE,ampRE_).replace(nbspRE,nbspRE_).length);
   tr.setEndPoint("EndToStart",tr2);
   tr.select();
   var trTop=tr.boundingTop;
