@@ -21,7 +21,7 @@
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // v.1.8 — кастомизированные nbsp — Sclex (20.03.2010)
 //======================================
-var VersionNumber="2.5";
+var VersionNumber="2.6";
 
 //обрабатывать ли history
 var ObrabotkaHistory=false;
@@ -1126,7 +1126,7 @@ sobCol["Японию"] = true;
      if (s.search(re3cl)!=-1) ss=ss.replace(re3cl, re31cl);
     
      var s1=s.replace(re10, re14);
-     var a1=ss.replace(/&(lt|gt|amp);/gi,"&").search(s1)+nak;
+     var a1=ss.replace(/&(lt|gt|amp|shy);/gi,"&").search(s1)+nak;
      var b1=s1.length
     
      var range1=document.body.createTextRange();

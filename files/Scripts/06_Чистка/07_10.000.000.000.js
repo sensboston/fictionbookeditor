@@ -28,7 +28,7 @@
 //======================================
 // v.2.12 — доработка подсветки для найденных рез-тов поиска — Alex2L, июнь 2012
 //======================================
-var VersionNumber="2.2";
+var VersionNumber="2.3";
 
 //обрабатывать ли history
 var ObrabotkaHistory=false;
@@ -155,7 +155,7 @@ var re40 = new RegExp("^(.*?[^\\\d\\\-N№/]){0,1}(\\\d{1,3})([\\\s\\\.]{0,2})(\
 
    b0 = ss.length;
   }
- else { a1 = ss.replace(/&(lt|gt|amp|nbsp);/gi,"&").length; }
+ else { a1 = ss.replace(/&(lt|gt|amp|nbsp|shy);/gi,"&").length; }
 
  var range1=document.body.createTextRange();
  range1.moveToElementText(ptr);

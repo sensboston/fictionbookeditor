@@ -45,7 +45,7 @@
 // v.2.92 — доработка подсветки для найденных рез-тов поиска — Alex2L, май, июнь 2012
 //======================================
 
-var VersionNumber="3.2";
+var VersionNumber="3.3";
 
 //обрабатывать ли history
 var ObrabotkaHistory=true;
@@ -281,10 +281,10 @@ Coldef["право"] = true;
    if (ss.search(re1cl)!=-1) {ss = ss.replace(re1cl, re11cl);}
    if (ss.search(re3cl)!=-1) {ss = ss.replace(re3cl, re31cl);}
 
-   a1 = ss.replace(/<[^>]+>/g,"").replace(/&(lt|gt|amp|nbsp);/gi,"&").length;
-   b0 = s1.replace(/<[^>]+>/g,"").replace(/&(lt|gt|amp|nbsp);/gi,"&").length;
+   a1 = ss.replace(/<[^>]+>/g,"").replace(/&(lt|gt|amp|nbsp|shy);/gi,"&").length;
+   b0 = s1.replace(/<[^>]+>/g,"").replace(/&(lt|gt|amp|nbsp|shy);/gi,"&").length;
   }
- else { a1 = ss.replace(/&(lt|gt|amp|nbsp);/gi,"&").length; }
+ else { a1 = ss.replace(/&(lt|gt|amp|nbsp|shy);/gi,"&").length; }
 
  var range1=document.body.createTextRange();
  range1.moveToElementText(ptr);
