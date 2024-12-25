@@ -1,5 +1,5 @@
 // Скрипт «Поиск неразмеченных стихов» для редактора Fiction Book Editor (FBE).
-// Версия 1.01
+// Версия 1.1
 // Надстройка к скрипту Sclex-а «Поиск по регекспам…»
 // stokber, 2024, июнь.
 function Run() {
@@ -25,6 +25,7 @@ function Run() {
 		// alert("до\n"+txtBezTags);
 		txtBezTags = txtBezTags.replace(/&lt;/g, "<"); // 
 		txtBezTags = txtBezTags.replace(/&gt;/g, ">"); //  
+		txtBezTags = txtBezTags.replace(/&shy;/g, String.fromCharCode(173)); //  
 		txtBezTags = txtBezTags.replace(/&amp;/g, "&"); // 
 		txtBezTags = txtBezTags.replace(/&nbsp;/g, " "); // 
 		var lines = txtBezTags.split("\n"); // вычисляем кол. таких строк.
@@ -85,6 +86,7 @@ function Run() {
 		txt = txt.replace(/<\/?[^>]+>/g, "");
 		txt = txt.replace(/&lt;/g, "<"); // 
 		txt = txt.replace(/&gt;/g, ">"); //  
+		txt = txt.replace(/&shy;/g, String.fromCharCode(173)); //  
 		txt = txt.replace(/&amp;/g, "&"); // 
 		txt = txt.replace(/\r\n/gm, "\n"); // 
 		txt = txt.replace(/^&nbsp;\n/gm, "\n"); // 
@@ -484,6 +486,8 @@ function Run() {
 		var ltRE_ = "<";
 		var gtRE = new RegExp("&gt;", "g");
 		var gtRE_ = ">";
+		var shyRE = new RegExp("&shy;", "g");
+		var shyRE_ = String.fromCharCode(173);
 		var nbspRE = new RegExp("&nbsp;", "g");
 		var nbspRE_ = " ";
 		var pNode, foundPos, foundLen;
@@ -515,7 +519,7 @@ function Run() {
 			var savedIndex;
 			ignoreNullPosition = false; //tr.compareEndPoints("StartToEnd",tr)==0;
 			el = ptr;
-			s = el.innerHTML.replace(removeTagsRE, removeTagsRE_).replace(imgTagRE, imgTagRE_).replace(ltRE, ltRE_).replace(gtRE, gtRE_).replace(ampRE, ampRE_).replace(nbspRE, nbspRE_);
+			s = el.innerHTML.replace(removeTagsRE, removeTagsRE_).replace(imgTagRE, imgTagRE_).replace(shyRE,shyRE_).replace(ltRE, ltRE_).replace(gtRE, gtRE_).replace(ampRE, ampRE_).replace(nbspRE, nbspRE_);
 			s_len = s.length;
 			//log+="Входим в searchNext.  s1_len: "+s1_len+"  s_len: "+s_len+"\n\n";
 			tr.moveToElementText(el);
@@ -527,7 +531,7 @@ function Run() {
 			tr2.setEndPoint("EndToEnd", tr);
 			//tr2.select();
 			//alert("После команды tr2.select();");
-			s1_len = tr2.htmlText.replace(/\s{2,}/g, " ").replace(removeTagsRE, removeTagsRE_).replace(imgTagRE, imgTagRE_).replace(ltRE, ltRE_).replace(gtRE, gtRE_).replace(ampRE, ampRE_).replace(nbspRE, nbspRE_).length;
+			s1_len = tr2.htmlText.replace(/\s{2,}/g, " ").replace(removeTagsRE, removeTagsRE_).replace(imgTagRE, imgTagRE_).replace(shyRE,shyRE_).replace(ltRE, ltRE_).replace(gtRE, gtRE_).replace(ampRE, ampRE_).replace(nbspRE, nbspRE_).length;
 			var s1 = tr2.htmlText.replace(/\s{2,}/g, " ");
 			var s1_len2 = s1.length;
 			var s2 = el.innerHTML;
@@ -580,8 +584,8 @@ function Run() {
 									rslt = regExps[i].exec(s_html);
 									flag1 = false;
 									if(rslt) {
-										newPos = s_html.substr(0, rslt.index).replace(removeTagsRE, removeTagsRE_).replace(imgTagRE, imgTagRE_).replace(ltRE, ltRE_).replace(gtRE, gtRE_).replace(ampRE, ampRE_).replace(nbspRE, nbspRE_).length;
-										rslt_replaced = rslt[0].replace(removeTagsRE, removeTagsRE_).replace(imgTagRE, imgTagRE_).replace(ltRE, ltRE_).replace(gtRE, gtRE_).replace(ampRE, ampRE_).replace(nbspRE, nbspRE_);
+										newPos = s_html.substr(0, rslt.index).replace(removeTagsRE, removeTagsRE_).replace(imgTagRE, imgTagRE_).replace(shyRE,shyRE_).replace(ltRE, ltRE_).replace(gtRE, gtRE_).replace(ampRE, ampRE_).replace(nbspRE, nbspRE_).length;
+										rslt_replaced = rslt[0].replace(removeTagsRE, removeTagsRE_).replace(imgTagRE, imgTagRE_).replace(shyRE,shyRE_).replace(ltRE, ltRE_).replace(gtRE, gtRE_).replace(ampRE, ampRE_).replace(nbspRE, nbspRE_);
 										if(ignoreNullPosition ? minPos == s1_html_len + 1 : minPos == s1_html_len) break;
 										if(rslt_replaced.length == 0 || (rslt_replaced.length != 0 && rslt_replaced[0] != "<")) {
 											k = regExps[i].lastIndex;
@@ -652,7 +656,7 @@ function Run() {
 						if(el && el != fbwBody) el = el.nextSibling;
 					}
 				if(el && el.nodeName == "P") {
-					s = el.innerHTML.replace(removeTagsRE, removeTagsRE_).replace(imgTagRE, imgTagRE_).replace(ltRE, ltRE_).replace(gtRE, gtRE_).replace(ampRE, ampRE_).replace(nbspRE, nbspRE_);
+					s = el.innerHTML.replace(removeTagsRE, removeTagsRE_).replace(imgTagRE, imgTagRE_).replace(shyRE,shyRE_).replace(ltRE, ltRE_).replace(gtRE, gtRE_).replace(ampRE, ampRE_).replace(nbspRE, nbspRE_);
 					s1_len = 0;
 					s_html = el.innerHTML;
 					s1_html_len = 0;
@@ -677,7 +681,7 @@ function Run() {
 			tr2 = document.body.createTextRange();
 			tr2.moveToElementText(el2);
 			tr2.setEndPoint("EndToEnd", tr);
-			s1_len = tr2.htmlText.replace(/\s{2,}/g, " ").replace(removeTagsRE, removeTagsRE_).replace(imgTagRE, imgTagRE_).replace(ltRE, ltRE_).replace(gtRE, gtRE_).replace(ampRE, ampRE_).replace(nbspRE, nbspRE_).length;
+			s1_len = tr2.htmlText.replace(/\s{2,}/g, " ").replace(removeTagsRE, removeTagsRE_).replace(imgTagRE, imgTagRE_).replace(shyRE,shyRE_).replace(ltRE, ltRE_).replace(gtRE, gtRE_).replace(ampRE, ampRE_).replace(nbspRE, nbspRE_).length;
 		}
 		while(searchNext());
 		if(foundMatch) {
