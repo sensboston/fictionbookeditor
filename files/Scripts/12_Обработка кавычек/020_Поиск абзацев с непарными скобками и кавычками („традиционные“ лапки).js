@@ -1,4 +1,4 @@
-// Скрипт «Поиск абзацев с непарными скобками и кавычками („традиционные“ лапки) v.1.0» для редактора Fiction Book Editor (FBE).
+// Скрипт «Поиск абзацев с непарными скобками и кавычками („традиционные“ лапки) v.1.1» для редактора Fiction Book Editor (FBE).
 // Создано на базе скрипта «Поиск (без замены) ошибок текста (версия с исключениями)» Версия 4.8. Автор Sclex.
 // Добавлены  фрагменты, обрамленные закомментироваными строками из дефисов и знаков равенства, 
 // сверху и снизу соответственно. (stokber).
@@ -342,6 +342,8 @@ function Run() {
  var ltRE_="<";
  var gtRE=new RegExp("&gt;","g");
  var gtRE_=">";
+ var shyRE=new RegExp("&shy;","g");
+ var shyRE_=String.fromCharCode(173);
  var nbspRE=new RegExp("&nbsp;","g");
  var nbspRE_=" ";
  
@@ -377,7 +379,7 @@ function Run() {
    ignoreNullPosition=false; //tr.compareEndPoints("StartToEnd",tr)==0;
 
    el=ptr;
-   s=el.innerHTML.replace(removeTagsRE,removeTagsRE_).replace(imgTagRE,imgTagRE_).replace(ltRE,ltRE_).replace(gtRE,gtRE_).replace(ampRE,ampRE_).replace(nbspRE,nbspRE_);
+   s=el.innerHTML.replace(removeTagsRE,removeTagsRE_).replace(imgTagRE,imgTagRE_).replace(shyRE,shyRE_).replace(ltRE,ltRE_).replace(gtRE,gtRE_).replace(ampRE,ampRE_).replace(nbspRE,nbspRE_);
    s_len=s.length;
    //log+="Входим в searchNext.  s1_len: "+s1_len+"  s_len: "+s_len+"\n\n";
    tr.moveToElementText(el);
@@ -442,8 +444,8 @@ function Run() {
         rslt=regExps[i].exec(s_html);
         flag1=false;
         if (rslt) {
-         newPos=s_html.substr(0,rslt.index).replace(removeTagsRE,removeTagsRE_).replace(imgTagRE,imgTagRE_).replace(ltRE,ltRE_).replace(gtRE,gtRE_).replace(ampRE,ampRE_).replace(nbspRE,nbspRE_).length;
-         rslt_replaced=rslt[0].replace(removeTagsRE,removeTagsRE_).replace(imgTagRE,imgTagRE_).replace(ltRE,ltRE_).replace(gtRE,gtRE_).replace(ampRE,ampRE_).replace(nbspRE,nbspRE_);
+         newPos=s_html.substr(0,rslt.index).replace(removeTagsRE,removeTagsRE_).replace(imgTagRE,imgTagRE_).replace(shyRE,shyRE_).replace(ltRE,ltRE_).replace(gtRE,gtRE_).replace(ampRE,ampRE_).replace(nbspRE,nbspRE_).length;
+         rslt_replaced=rslt[0].replace(removeTagsRE,removeTagsRE_).replace(imgTagRE,imgTagRE_).replace(shyRE,shyRE_).replace(ltRE,ltRE_).replace(gtRE,gtRE_).replace(ampRE,ampRE_).replace(nbspRE,nbspRE_);
          if (ignoreNullPosition ? minPos==s1_html_len+1 : minPos==s1_html_len) break;
          if (rslt_replaced.length==0 || (rslt_replaced.length!=0 && rslt_replaced[0]!="<")) {
           k=regExps[i].lastIndex;
@@ -551,7 +553,7 @@ window.external.SetStatusBarText(desc);
       if (el && el!=fbwBody) el=el.nextSibling;
      }
     if (el && el.nodeName=="P") {
-     s=el.innerHTML.replace(removeTagsRE,removeTagsRE_).replace(imgTagRE,imgTagRE_).replace(ltRE,ltRE_).replace(gtRE,gtRE_).replace(ampRE,ampRE_).replace(nbspRE,nbspRE_);
+     s=el.innerHTML.replace(removeTagsRE,removeTagsRE_).replace(imgTagRE,imgTagRE_).replace(shyRE,shyRE_).replace(ltRE,ltRE_).replace(gtRE,gtRE_).replace(ampRE,ampRE_).replace(nbspRE,nbspRE_);
      s1_len=0;
      s_html=el.innerHTML;
      s1_html_len=0;
