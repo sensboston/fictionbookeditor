@@ -1,5 +1,5 @@
 //=========================================
-//     «Дроби, степени, интервалы, габариты» v.1.2 (май 2024)
+//     «Дроби, степени, интервалы, габариты» v.2.2 (декабрь 2024)
 //     Единицы площади и объема, габариты, дроби в виде чисел через слэш.
 //     За основу взят скрипт «10.000.000.000.js»
 //     Автор скрипта - jurgennt.
@@ -37,7 +37,7 @@
 //     Советы по улучшению и исправлению функционала регекспов - Sclex
 //------------------------------------------------------------------------------------------------------
 
-var VersionNumber="1.2";
+var VersionNumber="2.2";
 
 //обрабатывать ли history
 var ObrabotkaHistory=false;
@@ -285,7 +285,7 @@ catch(e) { var nbspChar=String.fromCharCode(160); var nbspEntity="&nbsp;";}
 
    b0 = ss.length;
   }
- else { a1 = ss.replace(/&(lt|gt|amp|nbsp);/gi,"&").length; }
+ else { a1 = ss.replace(/&(lt|gt|amp|nbsp|shy);/gi,"&").length; }
 
  var range1=document.body.createTextRange();
  range1.moveToElementText(ptr);
