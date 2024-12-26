@@ -1,22 +1,32 @@
-//"Удаление пробелов" by Sclex
-//v1.1
-//вид обработки, которой подвергается выделенный текст
-// 1 - перевод в верний регистр
-// 2 - перевод в верний регистр
-var ObrabotkaType=2;
-//имя тэга, который будет использован для маркеров начала и конца выделения
-var MyTagName="B";
+// Скрипт "Удалить все пробелы и дефисы в выделении". Автор - Sclex
+// v1.3
 
 function Run() {
+
+ var undoMsg="удаление всех пробелов и дефисов в выделении";
+ 
+ try { var nbspChar=window.external.GetNBSP(); var nbspEntity; if (nbspChar.charCodeAt(0)==160) nbspEntity="&nbsp;"; else nbspEntity=nbspChar;}
+ catch(e) { var nbspChar=String.fromCharCode(160); var nbspEntity="&nbsp;";}
+ 
+ var mainRegExp=new RegExp("[- "+nbspChar+"]+","g");
+
+ // имя тэга, который будет использован для маркеров начала и конца выделения
+ var MyTagName="B";
+
+ function isInsideP(el) {
+   while (el.nodeName!="BODY" && el.nodeName!="P") el=el.parentNode;
+   if (el.nodeName=="P" && fbw_body.contains(el)) return true;
+   return false;
+ }
+
  if (document.selection.type!="Text") {
   alert("Ничего не выделено!");
   return;
  }
- window.external.BeginUndoUnit(document,"Нижний регистр");
- try { var nbspChar=window.external.GetNBSP(); var nbspEntity; if (nbspChar.charCodeAt(0)==160) nbspEntity="&nbsp;"; else nbspEntity=nbspChar;}
- catch(e) { var nbspChar=String.fromCharCode(160); var nbspEntity="&nbsp;";}
+
+ var fbw_body=document.getElementById("fbw_body");
+ window.external.BeginUndoUnit(document,undoMsg);
  var nxt,s;
- var spaceRegExp=new RegExp("[- "+nbspChar+"]","g");
  var body=document.getElementById("fbw_body");
  var coll=body.document.selection.createRange().getClientRects();
  var ttr1 = body.document.selection.createRange();
@@ -31,61 +41,56 @@ function Run() {
 // поднимаемся вверх по дереву, пока не найдем DIV или P,
 // в который входит начало выделения
  while (el && el.nodeName!="DIV" && el.nodeName!="P") { el=el.parentNode; }
- var InsideP = false; // true, если находимся внутри тэга P
- var InsideSelection = false; // true, когда текущая позиция внутри выделенного текста
- var ProcessingEnded=false; // true, когда обработка закончена и пора выходить
+ var insideSelection = false; // true, когда текущая позиция внутри выделенного текста
+ var processingEnded=false; // true, когда обработка закончена и пора выходить
  ptr=el;
- while (!ProcessingEnded) {
+ while (!processingEnded) {
+  //alert("Внутри while.\n\nptr.nodeName: "+ptr.nodeName+"\nptr.nodeValue: "+ptr.nodeValue);
   nxt=ptr;
   if (nxt.firstChild!=null) {
     nxt=nxt.firstChild; // либо углубляемся...
   } else {
-    while (nxt.nextSibling==null) {
+    while (nxt.nextSibling==null)
      nxt=nxt.parentNode; // ...либо поднимаемся (если уже сходили вглубь)
-// поднявшись до элемента P, не забудем поменять флаг
-     if (nxt && nxt.nodeType==1 && nxt.nodeName=="P") {InsideP=false}
-    }
    nxt=nxt.nextSibling; //и переходим на соседний элемент
   }
-// напомню: nodeType=1 для элемента (тэга) и nodeType=3 для текста
-// если встретили тэг P, меняем флаг, что мы внутри P
-  if (ptr.nodeType==1 && ptr.nodeName=="P") {InsideP=true};
 // если встретили маркер начала блока, ...
   if (ptr.nodeType==1 && ptr.nodeName==MyTagName &&
       ptr.getAttribute("id")=="BlockStart") {
 // меняем флаг, т.к. попали внутрь выделения
-   InsideSelection=true;
+   insideSelection=true;
 // запомним ноду ссылки, чтобы потом удалить ее
-   var BlockStartNode=ptr;
+   var blockStartNode=ptr;
   }
 // аналогично для маркера конца выделения
   if (ptr.nodeType==1 && ptr.nodeName==MyTagName &&
       ptr.getAttribute("id")=="BlockEnd") {
-   InsideSelection=false;
-   ProcessingEnded=true;
-   var BlockEndNode=ptr;
+   insideSelection=false;
+   processingEnded=true;
+   var blockEndNode=ptr;
   }
+//  if (ptr.nodeType==3)
+//    alert("isInsideP(ptr): "+isInsideP(ptr)+"\n\n"+"insideSelection: "+insideSelection+"\n\n"+ptr.nodeValue);
 // если нашли текст и находимся внутри P и внутри выделения...
-  if (ptr.nodeType==3 && InsideP && InsideSelection) {
+  if (ptr.nodeType==3 && isInsideP(ptr) && insideSelection) {
 // получаем текстовое содержимое узла
 // обрабатываем как надо
-   s=ptr.nodeValue.replace(spaceRegExp,"");
+   s=ptr.nodeValue.replace(mainRegExp,"");
    if (s!="") ptr.nodeValue=s;
    else ptr.removeNode(true);
 // и возвращаем на место
   }
-// теперь надо найти следующий по дереву узел для обработки
   ptr=nxt;
  }
  tr=document.body.createTextRange();
- tr.moveToElementText(BlockStartNode);
+ tr.moveToElementText(blockStartNode);
  var tr2=document.body.createTextRange();
- tr2.moveToElementText(BlockEndNode);
+ tr2.moveToElementText(blockEndNode);
  tr.setEndPoint("EndToEnd",tr2);
  //if (tr.move("character",1)==1) tr.move("character",-1);
  tr.select();
 // удаляем маркеры блока
- BlockStartNode.parentNode.removeChild(BlockStartNode);
- BlockEndNode.parentNode.removeChild(BlockEndNode);
+ blockStartNode.parentNode.removeChild(blockStartNode);
+ blockEndNode.parentNode.removeChild(blockEndNode);
  window.external.EndUndoUnit(document);
 }
