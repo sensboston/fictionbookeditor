@@ -1,7 +1,7 @@
 <html>
 <head>
  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
- <!-- version 2.9 -->
+ <!-- version 3.0 -->
  <meta http-equiv="MSThemeCompatible" content="yes">
  <style>
   body, input{font-family:Tahoma; font-size:16px;margin:2px;}
@@ -549,7 +549,7 @@
     '  var howManySymbolsSkip=0;'+
     '  var srchResult=null;'+
     '  var removeNotAllTagsRegExp=new RegExp("<\\/?(?!(IMG|A))[a-z]+( [^>]+)?>","ig");'+
-    '  refMarkerStr=makeEntities("'+document.getElementById("refMarkerStr").value+'");'+
+    '  refMarkerStr=makeEntities("'+document.getElementById("refMarkerStr").value.replace(/\\/g,"\\\\").replace(/"/g,'\\"')+'");'+
     '  refMarkerStrLen=refMarkerStr.length;'+
     '  removeAllTagsRegExp=new RegExp("<\\/?[a-z]+( [^>]+)?>","ig");'+
 //    '  alert("a: "+pInnerHTML.replace(removeAllTagsRegExp,""));'+
@@ -671,7 +671,7 @@
     '  var pInnerHTMLSrc=p.innerHTML;'+
     '  var pInnerHTML2=null;'+
     '  var pInnerHTML;'+
-    '  refMarkerStr=makeEntities("'+document.getElementById("refMarkerStr").value+'");'+
+    '  refMarkerStr=makeEntities("'+document.getElementById("refMarkerStr").value.replace(/\\/g,"\\\\").replace(/"/g,'\\"')+'");'+
     '  refMarkerStrLen=refMarkerStr.length;'+
     '  removeAllTagsRegExp=new RegExp("<\\/?[a-z]+( [^>]+)?>","ig");'+
     '  var removeNotAllTagsRegExp=new RegExp("<\\/?(?!(IMG|A))[a-z]+( [^>]+)?>","ig");'+
@@ -713,7 +713,7 @@
    myWin.eval(
     'function addNotesInMyWin() {'+
     ''+
-    ' var refMarkerStr=makeEntities("'+document.getElementById("refMarkerStr").value+'");'
+    ' var refMarkerStr=makeEntities("'+document.getElementById("refMarkerStr").value.replace(/\\/g,"\\\\").replace(/"/g,'\\"')+'");'
 +
     ' var removeNotAllTagsRegExp=new RegExp("<\\/?(?!(IMG|A))[a-z]+( [^>]+)?>","ig");'+
     ' var removeAllTagsRegExp=new RegExp("<\\/?[a-z]+( [^>]+)?>","ig");'+
