@@ -1,7 +1,7 @@
 <html>
 <head>
  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
- <!-- version 3.1 -->
+ <!-- version 4.1 -->
  <meta http-equiv="MSThemeCompatible" content="yes">
  <style>
   body, input{font-family:Tahoma; font-size:16px;margin:2px;}
@@ -18,8 +18,28 @@
   var notePrefix="notePrefix не задано.";
   var notePostfix="notePostfix не задано.";
   var noteClass="noteClass не задано.";
-
   function evalMyCode() {
+   myWin.eval(
+    ' function units(num, cases) {'+
+    '    num = Math.abs(num);'+
+    '    '+
+    '    var word = "";'+
+    '    '+
+    '    if (num.toString().indexOf(".") > -1) {'+
+    '        word = cases.gen;'+
+    '    } else { '+
+    '        word = ('+
+    '            num % 10 == 1 && num % 100 != 11 '+
+    '                ? cases.nom'+
+    '                : num % 10 >= 2 && num % 10 <= 4 && (num % 100 < 10 || num % 100 >= 20) '+
+    '                   ? cases.gen'+
+    '                    : cases.plu'+
+    '        );'+
+    '    }'+
+    '    '+
+    '    return word;'+
+    '}'
+  );
    myWin.eval(
     ' try { var nbspChar=window.external.GetNBSP(); var nbspEntity; if (nbspChar.charCodeAt(0)==160) nbspEntity="&nbsp;"; else nbspEntity=nbspChar; }'+
     ' catch(e) { var nbspChar=String.fromCharCode(160); var nbspEntity="&nbsp;";};'+
@@ -27,6 +47,7 @@
     ' var processHistory=true;'+
     ' var processAnnotation=true;'+
     ' var notesTextCnt=0;'+
+    ' var leaveOnlySupsRegExp=new RegExp("<(?!/?SUP)[^>]*>","g");'+
     ' var interpretAsRegExp=null;'+
     ' var notesTexts={};'+
     ' var targetBody=null;'+
@@ -37,6 +58,8 @@
     ' var currNewNoteNumber=1;'+
     ' var removeAllTagsRegExp,refMarkerRegExp;'+
     ' var whatDoWeDo=null;'+
+    ' var upperIndex1=false;'+
+    ' var upperNumberRegExp=new RegExp("([¹²³⁴⁵⁶⁷⁸⁹⁰]+)(<SUP>[0-9¹²³⁴⁵⁶⁷⁸⁹⁰]*(?=[^<]*</SUP>)(</SUP>[¹²³⁴⁵⁶⁷⁸⁹⁰]+)?)*|([¹²³⁴⁵⁶⁷⁸⁹⁰]+<SUP>)?[0-9¹²³⁴⁵⁶⁷⁸⁹⁰]+(?=[^<]*</SUP>)(</SUP>[¹²³⁴⁵⁶⁷⁸⁹⁰]+(<SUP>[0-9¹²³⁴⁵⁶⁷⁸⁹⁰]+(?=[^<]*</SUP>))?)*","g");'+
     ' var targetBodyName="'+targetBodyName+'";'+
     ' var targetBodyTitle="'+targetBodyTitle+'";'+
     ' var noteAddressPrefix="'+noteAddressPrefix+'";'+
@@ -47,7 +70,11 @@
     );
    myWin.eval(
     ' function makeEntities(s) {'+
-    '  return s.replace(/&/gi,"&amp;").replace(/</gi,"&lt;").replace(/>/gi,"&gt;");'+
+    '  return s.replace(/&/gi,"&amp;").replace(/</gi,"&lt;").replace(/>/gi,"&gt;").replace(/\xAD/g,"&shy;");'+
+    ' }');
+   myWin.eval(
+    ' function unmakeEntities(s) {'+
+    '  return s.replace(/&shy;/gi,String.fromCharCode(173)).replace(/&lt;/gi,"<").replace(/&gt;/gi,">").replace(/&amp;/gi,"&").replace(/&nbsp;/gi,nbspChar);'+
     ' }');
    myWin.eval(
     ' function unsupReferences(p) {'+
@@ -149,6 +176,28 @@
     '  while (htmlStr4.search(openingAndClosingTagRegExp)!=-1) htmlStr4=htmlStr4.replace(openingAndClosingTagRegExp,"");'+
     '  p.innerHTML=htmlStr4;'+
     ' }');
+  myWin.eval(
+    'function leaveOnlyFirstLevelSups(str) {'+
+    ''+
+    ' function replaceFunction1(match, p1) {'+
+    '   if (p1!="/") {'+
+    '    supLevel++;'+
+    '    return supLevel==1 ? match : "";'+
+    '   }'+
+    '   if (p1=="/") {'+
+    '    supLevel--;'+
+    '    return supLevel==0 ? match : "";'+
+    '   }'+
+    ' }'+
+    ' '+
+    ' var supLevel=0;'+
+    ' str=str.replace(/<(\\/?)SUP[^>]*>/g,replaceFunction1);'+
+    ' var re100=/<\\/SUP><SUP[^>]*>/g;'+
+    ' var re101=/<SUP[^>]*><\\/SUP>/g;'+
+    ' while (str.search(re100)!=-1 || str.search(re101)!=-1)'+
+    '  str=str.replace(re100,"").replace(re101,"");'+
+    ' return(str);'+
+    '}');
    myWin.eval(
     'function findTargetBody() {'+
     ' fbwBody=document.getElementById("fbw_body");'+
@@ -261,7 +310,7 @@
    myWin.eval(
     'function findMarkerLen(innerTextStr,markerStrWithEntities) {'+
     ' var lengthAtBeginning=innerTextStr.length;'+
-    ' var markerStr=markerStrWithEntities.replace(/&lt;/g,"<").replace(/&gt;/g,">").replace(/&amp;/g,"&");'+
+    ' var markerStr=markerStrWithEntities.replace(/&shy;/g,String.fromCharCode(173)).replace(/&lt;/g,"<").replace(/&gt;/g,">").replace(/&amp;/g,"&");'+
     ' var lengthAddValue=markerStrWithEntities.length-markerStr.length;'+
     ' var innerTextStr=innerTextStr.replace(/nbsp;/g,nbspChar);'+
     ' var spacesRegExp=new RegExp("^( |"+nbspChar+")*");'+
@@ -273,7 +322,7 @@
     '}'
    );
    myWin.eval(
-    'function extractNotesInMyWin(dialogDoc) {'+
+    'function extractNotesInMyWin() {'+
     ''+
     ' notesTexts={};'+
     ' notesTexts["1"]="";'+
@@ -342,13 +391,13 @@
     '  firstNoteFlag=false;'+
     ' }'+ // конец функции processP
     ''+
-    ' var errMsg="Пожалуйста вначале выделите абзацы, из которых будут извлечены тексты сносок.";'+
     ' var tr,ptr;'+
     ' var MyTagName="B";'+
     ' var tr=document.selection.createRange();'+
+    ' var errMsg="Пожалуйста вначале выделите абзацы, из которых будут извлечены тексты сносок.";'+
     ' if (!tr || tr.compareEndPoints("StartToEnd",tr)==0) {'+
     '  MsgBox(errMsg);'+
-    '  return;'+
+    '  return "Ничего не выделено";'+
     ' }'+
     ' if (tr.parentElement().nodeName=="TEXTAREA" || tr.parentElement().nodeName=="INPUT") {'+
     '  MsgBox("Ошибка. Должно быть выделение в тексте книги, а не в поле ввода.");'+
@@ -534,7 +583,6 @@
     '  s.replace(regExp10,replaceFunc1);'+
     '  return containsTagFlag;'+
     ' }');
-
    myWin.eval(
     ' function processP_2(p) {'+
 //    Эта функция добавляет сноски или комментарии
@@ -542,7 +590,7 @@
 //    '  alert("Вошли в processp_2");'+
     '  var i,myPos,newRef,previousNote,previousNoteHref,previousNoteSection,str3,rndm2,rndm3,el;'+
     '  var matchLen;'+
-    '  var pInnerHTML=p.innerHTML;'+
+    '  var pInnerHTML=p.innerHTML.replace(/&nbsp;/g,nbspChar);'+
     '  var pInnerHTML_begin="";'+
     '  var symbolsBeforeCnt=0;'+
     '  var checkResult=false;'+
@@ -554,15 +602,36 @@
     '  removeAllTagsRegExp=new RegExp("<\\/?[a-z]+( [^>]+)?>","ig");'+
 //    '  alert("a: "+pInnerHTML.replace(removeAllTagsRegExp,""));'+
     '  if (interpretAsRegExp) refMarkerRegExp.lastIndex=0;'+
-    '  while (interpretAsRegExp ? refMarkerRegExp.test(pInnerHTML.replace(removeAllTagsRegExp,"")) : '+
+    '  if (upperIndex1) '+
+    '   var htmlStr10=leaveOnlyFirstLevelSups(pInnerHTML.replace(leaveOnlySupsRegExp,""));'+
+    '  else'+
+    '   var htmlStr10=unmakeEntities(pInnerHTML.replace(removeAllTagsRegExp,""));'+
+    '  while (interpretAsRegExp ? refMarkerRegExp.test(htmlStr10) : '+
     '    pInnerHTML.replace(removeAllTagsRegExp,"").indexOf(refMarkerStr)>=0) {'+
 //    '   alert("Внутри уайла получаем такой pInnerHTML:\\n\\n"+pInnerHTML);'+
     '   if (interpretAsRegExp) {'+
     '    refMarkerRegExp.lastIndex=0;'+
+//    '   alert("cga6");'+
 //    '    alert("Искать будем вот по чем:\\n\\n"+pInnerHTML.replace(removeAllTagsRegExp,""));'+
-    '    srchResult=refMarkerRegExp.exec(pInnerHTML.replace(removeAllTagsRegExp,""));'+
-    '    myPos=srchResult.index;'+
-    '    matchLen=srchResult[0].length;'+
+    '    var checkResult=true;'+
+    '    while (checkResult) {'+
+    '     srchResult=refMarkerRegExp.exec(htmlStr10);'+
+    '     if (!srchResult) return;'+
+//    '     alert("Присваивание pos номер 1.");'+
+    '     myPos=srchResult.index;'+
+//    '     alert("myPos: "+myPos);'+
+    '     var strBeginning=htmlStr10.substr(0,myPos).replace(removeAllTagsRegExp,"");'+
+//    '     alert("Присваивание pos номер 2.\\n\\nstrBeginning:"+strBeginning+"\\n\\nmakeEntities(strBeginning):"+makeEntities(strBeginning));'+
+    '     if (upperIndex1)'+
+    '      myPos=strBeginning.length;'+
+    '     else'+
+    '      myPos=makeEntities(strBeginning).length;'+
+//    '     matchLen=srchResult[0].replace(/<[^>]*>/g,"").length;'+
+    '     matchLen=makeEntities(srchResult[0]).length;'+
+//    '     alert("matchLen: "+matchLen);'+
+//    '   alert("Перед вызовом checkIfTagsAreInFoundSubstr номер 2.");'+
+    '     checkResult=checkIfTagsAreInFoundSubstr(pInnerHTML,myPos+1,matchLen);'+
+    '    }'+
     '    refMarkerRegExp.lastIndex=0;'+
     '   }'+
     '   else {'+
@@ -570,7 +639,7 @@
     '    matchLen=refMarkerStr.length;'+
     '   }'+
 //    '   alert("myPos: "+myPos+"\\n\\npInnerHTML:\\n\\n"+ pInnerHTML+ "\\n\\nrefMarkerStr:\\n\\n"+refMarkerStr+"\\n\\nrefMarkerStrLen: "+refMarkerStrLen+"\\n\\n"+'+
- //   '    checkIfTagsAreInFoundSubstr(pInnerHTML,myPos+1,refMarkerStrLen));'+
+//    '    checkIfTagsAreInFoundSubstr(pInnerHTML,myPos+1,refMarkerStrLen));'+
     '   var checkResult=checkIfTagsAreInFoundSubstr(pInnerHTML,myPos+1,matchLen);'+
 //   '   alert("checkResult: "+checkResult);'+
     '   rndm2=Math.round(Math.random()*100000).toString();'+
@@ -581,15 +650,21 @@
     '    rndm3=Math.round(Math.random()*100000).toString();'+
     '   if (checkResult) {'+
     '    pInnerHTML=removeSymbolsBeyondTags(pInnerHTML,myPos+1,matchLen,"RReeffMMaarrkkeerrSSttrr");'+
+    '    htmlStr10=unmakeEntities(pInnerHTML.replace(removeAllTagsRegExp,""));'+
     '    continue;'+
     '   }'+
+//    '   alert("Перед заменой маркера на ссылку.\\n\\npInnerHTML:\\n"+pInnerHTML+"\\n\\nmyPos: "+myPos+"\\n\\nmatchLen: "+matchLen+"\\n\\nrefText: "+refText);'+
     '   pInnerHTML=removeSymbolsBeyondTags(pInnerHTML,myPos+1,matchLen,"<A id=\'tmpId_"+rndm2+"\'"+noteClass+" href=\'#tmpId_"+rndm3+"\'>"+refText+"</A>");'+
     '   pInnerHTML=pInnerHTML.replace(/&nbsp;/g,nbspChar);'+
     '   pInnerHTML=removeSpacesBeyondTags(pInnerHTML,myPos+1);'+
     '   p.innerHTML=pInnerHTML.replace(openingAndClosingTagRegExp,"");'+
     '   newRef=document.getElementById("tmpId_"+rndm2);'+
     '   newRef.removeAttribute("id");'+
-    '   pInnerHTML=p.innerHTML;'+
+    '   pInnerHTML=p.innerHTML.replace(/&nbsp;/g,nbspChar);'+
+    '   if (upperIndex1)'+
+    '    htmlStr10=leaveOnlyFirstLevelSups(pInnerHTML.replace(leaveOnlySupsRegExp,""));'+
+    '   else '+
+    '    htmlStr10=unmakeEntities(pInnerHTML.replace(removeAllTagsRegExp,""));'+
 //    '   alert("Перед вызовом findPreviousNote.");'+
     '   previousNote=findPreviousNote(newRef);'+
 //    '   alert("После вызова findPreviousNote.\\n\\nРезультат:\\n\\n"+previousNote.outerHTML);'+
@@ -667,6 +742,15 @@
    myWin.eval(
     ' function processP_3(p) {'+
 //   Эта функция считает маркеры знака сноски
+    '  if (upperIndex1) {'+
+//    '   var htmlStr=p.innerHTML.replace(/(<A( [^>]*)?>)(.*?)(<\\/A>)/g,replaceFunction3);'+
+    '   var htmlStr=p.innerHTML.replace(/(<A( [^>]*)?>).*?(<\\/A>)/g,"$1x$3");'+
+    '   var htmlStr=leaveOnlyFirstLevelSups(htmlStr.replace(leaveOnlySupsRegExp,""));'+
+    '   var matches3=htmlStr.match(upperNumberRegExp);'+
+    '   if (matches3) refMarkersCnt+=matches3.length;'+
+//    '   if (matches3) { alert("matches3[0]: "+matches3[0]+"\\n\\nmatches3[1]: "+matches3[1]); }'+
+    '   return;'+
+    '  }'+
     '  var myPos,pInnerHTML_2,myPos2,srchResult,matchLen;'+
     '  var pInnerHTMLSrc=p.innerHTML;'+
     '  var pInnerHTML2=null;'+
@@ -676,18 +760,17 @@
     '  removeAllTagsRegExp=new RegExp("<\\/?[a-z]+( [^>]+)?>","ig");'+
     '  var removeNotAllTagsRegExp=new RegExp("<\\/?(?!(IMG|A))[a-z]+( [^>]+)?>","ig");'+
     '  var symbolsBefore=0;'+
-    '  pInnerHTML=pInnerHTMLSrc.replace(removeAllTagsRegExp,"");'+
+    '  pInnerHTML=unmakeEntities(pInnerHTMLSrc.replace(removeAllTagsRegExp,""));'+
     '  pInnerHTML2=pInnerHTMLSrc.replace(removeNotAllTagsRegExp,"");'+
 //    '  refMarkerRegExp.lastIndex=0;'+
-//    '  alert("Вот мы перед ифом.\\n\\ninterpretAsRegExp: "+interpretAsRegExp+"\\n\\n"+refMarkerRegExp.test(pInnerHTML));'+
     '  if (interpretAsRegExp) refMarkerRegExp.lastIndex=0;'+
+//    '  alert("Вот мы перед ифом.\\n\\ninterpretAsRegExp: "+interpretAsRegExp+"\\n\\nrefMarkerRegExp.test(pInnerHTML): "+refMarkerRegExp.test(pInnerHTML)+"\\n\\nrefMarkerRegExp: "+refMarkerRegExp+"\\n\\npInnerHTML: "+pInnerHTML);'+
     '  if (interpretAsRegExp ? refMarkerRegExp.test(pInnerHTML) :'+
     '      pInnerHTML.indexOf(refMarkerStr)>=0) {'+
     '   if (interpretAsRegExp) refMarkerRegExp.lastIndex=0;'+     
     '   while (interpretAsRegExp ? refMarkerRegExp.test(pInnerHTML) :'+
     '          pInnerHTML.indexOf(refMarkerStr)>=0) {'+
-//    '    alert("pInnerHTML2:\\n\\n"+pInnerHTML2+"\\n\\nsymbolsBefore+pInnerHTML.indexOf(refMarkerStr): "+(symbolsBefore+pInnerHTML.indexOf(refMarkerStr))+"\\n\\nrefMarkerStrLen: "+refMarkerStrLen+"\\n\\nCheck вот такой: "+checkIfTagsAreInFoundSubstr(pInnerHTML2,symbolsBefore+pInnerHTML.indexOf(refMarkerStr)+1,refMarkerStrLen));'+
-
+//    '    alert("pInnerHTML2:\\n\\n"+pInnerHTML2+"\\n\\nsymbolsBefore+pInnerHTML.indexOf(refMarkerStr): "+(symbolsBefore+pInnerHTML.indexOf(refMarkerStr))+"\\n\\nrefMarkerStrLen: "+refMarkerStrLen+"\\n\\nCheck вот такой: "+checkIfTagsAreInFoundSubstr(pInnerHTML2,symbolsBefore+pInnerHTML.indexOf(refMarkerStr)+1,refMarkerStrLen)+"\\n\\nrefMarkersCnt: "+refMarkersCnt+"\\n\\nrefMarkerRegExp: "+refMarkerRegExp);'+
     '    if (interpretAsRegExp) {'+
     '     refMarkerRegExp.lastIndex=0;'+
     '     srchResult=refMarkerRegExp.exec(pInnerHTML);'+
@@ -700,8 +783,7 @@
     '     myPos2=pInnerHTML.indexOf(refMarkerStr);'+
     '     matchLen=refMarkerStrLen;'+
     '    }'+
-
-    '    if (!checkIfTagsAreInFoundSubstr(pInnerHTML2,symbolsBefore+myPos2+1,matchLen))'+
+    '    if (!checkIfTagsAreInFoundSubstr(pInnerHTML2.replace(/&(gt|lt|amp|shy|nbsp);/gi,"A"),symbolsBefore+myPos2+1,matchLen))'+
     '     refMarkersCnt++;'+
     '    symbolsBefore+=myPos2+matchLen;'+
     '    pInnerHTML=pInnerHTML.substr(myPos2+matchLen);'+
@@ -797,8 +879,62 @@
     '  }'+
     ' }'
     );
+   myWin.eval(
+    ' function doAll() {'+
+/*    '  var tr=document.selection.createRange();'+
+    '  if (!tr || tr.compareEndPoints("StartToEnd",tr)==0) {'+
+    '   MsgBox("Пожалуйста вначале выделите абзацы, из которых будут извлечены тексты сносок.");'+
+    '   return "Ничего не выделено";'+
+    '  }'+
+    '  if (tr.parentElement().nodeName=="TEXTAREA" || tr.parentElement().nodeName=="INPUT") {'+
+    '   MsgBox("Ошибка. Должно быть выделение в тексте книги, а не в поле ввода.");'+
+    '   return;'+
+    '  }'+*/
+    '  window.external.BeginUndoUnit(document,"создание сносок из выделенных абзацев");'+
+    '  if (extractNotesInMyWin(document)=="Ничего не выделено") {'+
+    '   window.external.EndUndoUnit(document);'+
+    '   return;'+
+    '  }'+
+    '  whatDoWeDo="Считаем маркеры знаков сноски";'+
+    '  refMarkersCnt=0;'+
+    '  addNotesInMyWin();'+
+    '  var wordForms, noteName1, noteName2;'+
+    '  if (targetBodyName!="comments") {'+
+    '   wordForms={nom: "текст сноски", gen: "текста сносок", plu: "текстов сносок"};'+
+    '   noteName1="сносок";'+
+    '   noteName2="сноски";'+
+    '  }'+
+    '  else {'+
+    '   wordForms={nom: "текст комментария", gen: "текста комментариев", plu: "текстов комментариев"};'+
+    '   noteName1="комментариев";'+
+    '   noteName2="комментарии";'+
+    '  }'+
+    '  if (refMarkersCnt!=notesTextCnt) {'+
+    '   alert(units(refMarkersCnt, {nom: "Найден", gen: "Найдены", plu: "Найдено"})+" "+'+
+    '    refMarkersCnt+" "+units(refMarkersCnt, {nom: "маркер знака сноски", gen: "маркера знака сноски", plu: "маркеров знаков сноски"})+".\\n\\n"+'+
+    '    units(notesTextCnt, {nom: "Найден", gen: "Найдены", plu: "Найдено"})+" "+'+
+    '    notesTextCnt+" "+units(notesTextCnt, wordForms)+".\\n\\n"+'+
+    '    "Поскольку эти числа не совпадают, добавление "+noteName1+" не будет произведено.");'+
+    '   return "Числа не совпадают";'+
+    '  }'+
+    '  else {'+
+    '   if (!confirm(units(refMarkersCnt, {nom: "Найден", gen: "Найдены", plu: "Найдено"})+" "+'+
+    '    refMarkersCnt+" "+units(refMarkersCnt, {nom: "маркер знака сноски", gen: "маркера знаков сноски", plu: "маркеров знаков сноски"})+".\\n\\n"+'+
+    '   units(notesTextCnt, {nom: "Найден", gen: "Найдены", plu: "Найдено"})+" "+'+
+    '   notesTextCnt+" "+units(notesTextCnt, wordForms)+".\\n\\n"+'+
+    '   "Ура! Эти числа совпали. А значит, "+noteName2+" можно создать.\\n\\nСоздать "+noteName2+"?")) return "Создание сносок отменено пользователем";'+
+    '   targetBody=findTargetBody();'+
+    '   whatDoWeDo="Делаем сноски";'+
+    '   addNotesInMyWin(document);'+
+    '   renumberNotes();'+
+    '   window.external.SetStatusBarText(units(notesTextCnt, {nom: "Был добавлен", gen: "Были добавлены", plu: "Было добавлено"})'+
+    '    +" "+notesTextCnt+" "+'+
+    '    units(notesTextCnt, wordForms)+".");'+
+    '  }'+
+    '  window.external.EndUndoUnit(document);'+
+    ' }'
+    ); // конец функции doAll()
   }
-
   //   ' catch(e) {'+
   //  '  if (e instanceof RegExpError) {'+
   //  '   alert(getVersionStr()+"\\n\\nОшибка при компиляции регэкспа.\\nПожалуйста, проверьте, скорей всего вы ввели некорректный регэксп.");'+
@@ -869,89 +1005,6 @@
           "Сообщение об ошибке: "+e.message);
    }
   }
-
-  function extractNotesTexts() {
-   try {
-    myWin.extractNotesInMyWin(document);
-   }
-   catch(e) {
-    alert("Возникла ошибка при выполнении extractNotesInMyWin().\n\nИмя ошибки: "+e.name+"\n\n"+
-          "Сообщение об ошибке: "+e.message);
-   }
-  }
-
-  function addNotes() {
-   try {
-    myWin.whatDoWeDo="Считаем маркеры знаков сноски";
-    myWin.refMarkersCnt=0;
-    myWin.addNotesInMyWin(document);
-    var wordForms, noteName1, noteName2;
-    if (targetBodyName!="comments") {
-     wordForms={nom: 'текст сноски', gen: 'текста сносок', plu: 'текстов сносок'};
-     noteName1="сносок";
-     noteName2="сноски";
-    }
-    else {
-     wordForms={nom: 'текст комментария', gen: 'текста комментариев', plu: 'текстов комментариев'};
-     noteName1="комментариев";
-     noteName2="комментарии";
-    }
-    if (myWin.refMarkersCnt!=myWin.notesTextCnt) {
-     alert(units(myWin.refMarkersCnt, {nom: 'Найден', gen: 'Найдены', plu: 'Найдено'})+" "+
-      myWin.refMarkersCnt+" "+units(myWin.refMarkersCnt, {nom: 'маркер знака сноски', gen: 'маркера знака сноски', plu: 'маркеров знаков сноски'})+".\n\n"+
-      units(myWin.notesTextCnt, {nom: 'Найден', gen: 'Найдены', plu: 'Найдено'})+" "+
-      myWin.notesTextCnt+" "+units(myWin.notesTextCnt, wordForms)+".\n\n"+
-      "Поскольку эти числа не совпадают, добавление "+noteName1+" не будет произведено.");
-      return "Числа не совпадают";
-    }
-    else
-     if (!confirm(units(myWin.refMarkersCnt, {nom: 'Найден', gen: 'Найдены', plu: 'Найдено'})+" "+
-     myWin.refMarkersCnt+" "+units(myWin.refMarkersCnt, {nom: 'маркер знака сноски', gen: 'маркера знаков сноски', plu: 'маркеров знаков сноски'})+".\n\n"+
-     units(myWin.notesTextCnt, {nom: 'Найден', gen: 'Найдены', plu: 'Найдено'})+" "+
-     myWin.notesTextCnt+" "+units(myWin.notesTextCnt, wordForms)+".\n\n"+
-     "Ура! Эти числа совпали. А значит, "+noteName2+" можно создать.\n\nСоздать "+noteName2+"?")) return "Создание сносок отменено пользователем";
-   }
-   catch(e) {
-    alert("Произошла ошибка (код 1). Возможная причина –\nвы запускаете обработку после\nтого, как создали новый документ\nв основном окне FBE. В таком\nслучае перезапустите скрипт\n\n"+
-          "Имя ошибки: "+e.name+"\n"+
-          "Сообщение об ошибке: "+e.message);
-    return;
-  }
-  try {
-   myWin.targetBody=myWin.findTargetBody();
-  }
-  catch(e) {
-   alert("Произошла ошибка при инициализации targetBody (код 2).\n\n"+
-         "Имя ошибки: "+e.name+"\n"+
-         "Сообщение об ошибке: "+e.message);
-  }
-  try {
-    myWin.whatDoWeDo="Делаем сноски";
-    myWin.addNotesInMyWin(document);
-   }
-   catch(e) {
-    alert("Произошла ошибка (код 2). Возможная причина –\nвы запускаете обработку после\nтого, как создали новый документ\nв основном окне FBE. В таком\nслучае перезапустите скрипт\n\n"+
-          "Имя ошибки: "+e.name+"\n"+
-          "Сообщение об ошибке: "+e.message);
-    return;
-   }
-   try {
-    myWin.renumberNotes();
-   }
-   catch(e) {
-    alert("Возникла ошибка при выполнении renumberNotes().\n\nИмя ошибки: "+e.name+"\n\n"+
-          "Сообщение об ошибке: "+e.message);
-   }
-   
-   try {
-    myWin.external.SetStatusBarText(units(myWin.notesTextCnt, {nom: 'Был добавлен', gen: 'Были добавлены', plu: 'Было добавлено'})
-      +" "+myWin.notesTextCnt+" "+
-          units(myWin.notesTextCnt, wordForms)+".");
-   }
-   catch(e)
-   {}
-  }
-
   function createNotes() {
    try {
     var test=myWin.document.body;
@@ -959,15 +1012,6 @@
    catch (e) {
     if (e.name=="TypeError")
      alert("Произошла ошибка. Предположительная причина –\nвы запускаете обработку после\nтого, как создали или открыли новый документ\nв основном окне FBE. В таком\nслучае перезапустите скрипт.\n\n"+
-          "Имя ошибки: "+e.name+"\n"+
-          "Сообщение об ошибке: "+e.message);
-    return;
-   }
-   try {
-    myWin.external.BeginUndoUnit(myWin.document,"создание сносок из выделенных абзацев");
-   }
-   catch (e) {
-    alert("Произошла ошибка при выполнении BeginUndoUnit().\n\n"+
           "Имя ошибки: "+e.name+"\n"+
           "Сообщение об ошибке: "+e.message);
     return;
@@ -989,7 +1033,6 @@
           "Имя ошибки: "+e.name+"\n"+
           "Сообщение об ошибке: "+e.message);
    }
-   try {
     myWin.interpretAsRegExp=document.getElementById("interpretAsRegExpCheckbox").checked;
     if (document.getElementById("radio20").checked && myWin.interpretAsRegExp)
      myWin.refMarkerRegExp=new RegExp(document.getElementById("refMarkerStr").value,"gm");
@@ -1013,57 +1056,25 @@
      myWin.refMarkerRegExp=/\*/g;
      myWin.interpretAsRegExp=true;
     }
-   }
-   catch(e) {
-    alert("Произошла ошибка при компиляции регэкспа.\n\n"+
-          "Имя ошибки: "+e.name+"\n"+
-          "Сообщение об ошибке: "+e.message);
-    return;
-   }
-   try {
-    extractNotesTexts();
-   }
-   catch (e) {
-    alert("Произошла ошибка при выполнении extractNotesTexts().\n\n"+
-          "Имя ошибки: "+e.name+"\n"+
-          "Сообщение об ошибке: "+e.message);
-    return;
-   }
-   try {
-    if (myWin.notesTextCnt!=0) {
-     var addNotesResult=addNotes();
-     if (addNotesResult=="Числа не совпадают" || addNotesResult=="Создание сносок отменено пользователем") {
-      myWin.external.EndUndoUnit(myWin.document);
+    myWin.upperIndex1=false;
+    if (document.getElementById("radio6").checked) {
+     upperIndex1=true;
+     myWin.refMarkerRegExp=new RegExp("(([¹²³⁴⁵⁶⁷⁸⁹⁰]+)(<SUP>[0-9¹²³⁴⁵⁶⁷⁸⁹⁰]*(?=[^<]*</SUP>)(</SUP>[¹²³⁴⁵⁶⁷⁸⁹⁰]+)?)*)|"+
+                                      "(([¹²³⁴⁵⁶⁷⁸⁹⁰]+<SUP>)?[0-9¹²³⁴⁵⁶⁷⁸⁹⁰]+(?=[^<]*</SUP>)(</SUP>[¹²³⁴⁵⁶⁷⁸⁹⁰]+)?)","g");
+     myWin.interpretAsRegExp=true;
+     myWin.upperIndex1=true;
+    }
+   var addNotesResult=myWin.doAll();
+   if (myWin.notesTextCnt!=0) {
+    if (addNotesResult=="Числа не совпадают" || addNotesResult=="Создание сносок отменено пользователем")
       return "Числа не совпадают";
-     }
     }
-    else {
-     myWin.external.EndUndoUnit(myWin.document);
+    else
      return "Ноль сносок";
-    }
-   }
-   catch (e) {
-    alert("Произошла ошибка при выполнении addNotes() либо EndUndoUnit().\n\n"+
-          "Имя ошибки: "+e.name+"\n"+
-          "Сообщение об ошибке: "+e.message);
-    return;
-   }
-   try {
-    myWin.external.EndUndoUnit(myWin.document);
-   }
-   catch(e) {
-    alert("Произошла ошибка при выполнении EndUndoUnit().\n\n"+
-          "Имя ошибки: "+e.name+"\n"+
-          "Сообщение об ошибке: "+e.message);
-    return;
-   }
   }
-
-
   function makeEntities(s) {
-   return s.replace(/&/gi,"&amp;").replace(/</gi,"&lt;").replace(/>/gi,"&gt;");
+   return s.replace(/&/gi,"&amp;").replace(String.fromCharCode(173),"&shy;").replace(/</gi,"&lt;").replace(/>/gi,"&gt;");
   }
-
   function showNotesTexts() {
    if (myWin.notesTextCnt==0) return;
 /*
@@ -1100,7 +1111,6 @@
     msgWindow.document.body.style.fontSize=myWin.document.body.style.fontSize;
    msgWindow.document.body.innerHTML=s;
   }
-
   function myBeforeUnload() {
    if (myWin) {
     try {
@@ -1111,21 +1121,29 @@
    }
   }
 
+  function extractNotesTexts() {
+   myWin.eval(
+    ' window.external.BeginUndoUnit(document,"извлечение текстов сносок либо комментариев");'+
+    ' extractNotesInMyWin();'+
+    ' window.external.EndUndoUnit(document);'
+   );
+  }
+
  </script>
 </head>
 <body onbeforeunload="myBeforeUnload();">
- Выберите маркер для поиска знаков сноски:<br>
- <label for="radio1"><input type=radio id="radio1" name=noteSign checked> вида [1]</label>
+ Задайте маркер знака сноски:<br>
+ <label for="radio1"><input type=radio id="radio1" name=noteSign> вида [1]</label>
  <label for="radio2"><input type=radio id="radio2" name=noteSign> вида {1}</label>
  <label for="radio3"><input type=radio id="radio3" name=noteSign"> вида [~1~]</label>
  <label for="radio4"><input type=radio id="radio4" name=noteSign> вида {~1~}</label>
  <label for="radio5"><input type=radio id="radio5" name=noteSign> * (одна звездочка)</label><br>
+ <label for="radio6"><input type=radio id="radio6" name=noteSign checked> число надстрочным текстом</label><br>
  <label for="radio20"><input type=radio id="radio20" name=noteSign>задать свой:</label>
  <div style="padding-left:30px; padding-right:0; padding-top:0; padding-bottom:0;">
   <input type=text style="width:600px;" id=refMarkerStr value="[*]" onfocus="getElementById('radio20').checked=true;"><br>
   <label for=interpretAsRegExpCheckbox><input type=checkbox id=interpretAsRegExpCheckbox checked> трактовать как регулярное выражение</label>
  </div><br>
-
  Маркер 2-го, 3-го и т.д. абзацев текста сноски (не регэксп, а простой текст):<br>
  <input type=text style="width:600px;" id=notFirstParagraphStr value="++"><br><br>
  
