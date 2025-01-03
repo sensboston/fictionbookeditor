@@ -1,7 +1,7 @@
 <html>
 <head>
  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
- <!-- version 4.3 -->
+ <!-- version 4.4 -->
  <meta http-equiv="MSThemeCompatible" content="yes">
  <style>
   body, input{font-family:Tahoma; font-size:16px;margin:2px;}
@@ -62,11 +62,11 @@
     );
    myWin.eval(
     ' function makeEntities(s) {'+
-    '  return s.replace(/&/gi,"&amp;").replace(/</gi,"&lt;").replace(/>/gi,"&gt;").replace(/\xAD/gi,"&shy;");'+
+    '  return s.replace(/&/gi,"&amp;").replace(/</gi,"&lt;").replace(/>/gi,"&gt;").replace(/\xAD/g,"&shy;");'+
     ' }');
    myWin.eval(
     ' function unmakeEntities(s) {'+
-    '  return s.replace(/&lt;/gi,"<").replace(/&gt;/gi,">").replace(/&shy;/gi,String.fromCharCode(173)).replace(/&amp;/gi,"&").replace(/&nbsp;/gi,nbspChar);'+
+    '  return s.replace(/&lt;/gi,"<").replace(/&gt;/gi,">").replace(/&shy;/gi,String.fromCharCode(173).replace(/&nbsp;/gi,nbspChar).replace(/&amp;/gi,"&"));'+
     ' }');
    myWin.eval(
     ' function unsupReferences(p) {'+
@@ -214,7 +214,6 @@
     '     return htmlStr5;'+
     '    }'+
     '    var htmlStr4=htmlStr3.replace(spacesAtBeginningRegExp,"");'+
-//    '    var firstNotePMarkerRegExp=new RegExp(firstNotePMarkerREStr,"gm");'+
     '    var firstNotePMarkerRegExp=new RegExp("^( |&nbsp;|"+nbspChar+"|#)*#( |&nbsp;|"+nbspChar+"|#)*","");'+
     '    matches2=unmakeEntities(htmlStr4).match(firstNotePMarkerRegExp);'+
     '    if (matches2) {'+
@@ -269,7 +268,6 @@
     '   return (htmlStr11.substr(0,5)=="<SUP>" && mySearch==5) || mySearch==0;'+
     '   '+
     '  }'+
-//    '  firstNotePMarkerRegExp=new RegExp(firstNotePMarkerREStr,"gm");'+
     '  var firstNotePMarkerRegExp=new RegExp("^( |&nbsp;|"+nbspChar+"|#)*#( |&nbsp;|"+nbspChar+"|#)*","");'+
     '  var myPos=unmakeEntities(myInnerHTML.replace(/<[^>]*>/g,"").replace(spacesAtBeginningRegExp,"")).search(firstNotePMarkerRegExp);'+
 //    '  alert("myPos: "+myPos);'+
@@ -430,7 +428,7 @@
    myWin.eval(
     'function findMarkerLen(innerTextStr,markerStrWithEntities) {'+
     ' var lengthAtBeginning=innerTextStr.length;'+
-    ' var markerStr=markerStrWithEntities.replace(/&lt;/g,"<").replace(/&gt;/g,">").replace(/&shy;/gi,String.fromCharCode(173)).replace(/&amp;/g,"&");'+
+    ' var markerStr=markerStrWithEntities.replace(/&lt;/g,"<").replace(/&gt;/g,">").replace(/&shy;/g,String.fromCharCode(173)).replace(/&amp;/g,"&");'+
     ' var lengthAddValue=markerStrWithEntities.length-markerStr.length;'+
     ' var innerTextStr=innerTextStr.replace(/nbsp;/g,nbspChar);'+
     ' var spacesRegExp=new RegExp("^( |"+nbspChar+")*");'+
@@ -723,7 +721,7 @@
     '  while (interpretAsRegExp ? (!containsFirstNotePMarker(makeEntities(p.innerText)) && refMarkerRegExp.test(htmlStr10)) : '+
     '    containsRefMarker(unmakeEntities(pInnerHTML.replace(removeAllTagsRegExp,"")))) {'+
 //    '   alert("cga4");'+
-//    '   alert("Внутри уайла получаем такой htmlStr10:\\n\\n"+htmlStr10);'+
+//    '   alert("Внутри уайла получаем такой htmlStr10:\\n\\n"+htmlStr10+"\\n\\nИ такой pInnerHTML:\\n\\n"+pInnerHTML);'+
     '   if (interpretAsRegExp) {'+
     '    refMarkerRegExp.lastIndex=0;'+
     '    if (matchNotFromBeginning && htmlStr10.search(refMarkerRegExp)==0)  {'+
@@ -776,6 +774,7 @@
 //    '   alert("refMarkerStr: "+refMarkerStr+"\\n\\nmyPos: "+myPos+"\\n\\nmatchLen: "+matchLen+"\\n\\npInnerHTML: "+pInnerHTML);'+
 //    '  alert("Вызов removeSymbolsBeyondTags номер 04.");'+
     '   if (checkResult || (matchNotFromBeginning && myPos==0)) {'+
+//    '    alert("RReeffMMaarrkkeerrSSttrr!");'+
     '    pInnerHTML=removeSymbolsBeyondTags(pInnerHTML,myPos+1,matchLen,"RReeffMMaarrkkeerrSSttrr");'+
 //    '    alert("pInnerHTML после замены:\\n\\n"+pInnerHTML);'+
     '    continue;'+
@@ -783,6 +782,7 @@
 //    '   alert("myPos+1: "+(myPos+1));'+
 //    '  alert("Вызов removeSymbolsBeyondTags номер 05.");'+
 //    '   alert("cga8");'+
+//    '   alert("Перед заменой маркера на ссылку.\\n\\npInnerHTML:\\n"+pInnerHTML+"\\n\\nmyPos: "+myPos+"\\n\\nmatchLen: "+matchLen);'+
     '   pInnerHTML=removeSymbolsBeyondTags(pInnerHTML,myPos+1,matchLen,"<A id=\'tmpId_"+rndm2+"\'"+noteClass+" href=\'#tmpId_"+rndm3+"\'>"+refText+"</A>");'+
 //    '  alert("Вызов removeSymbolsBeyondTags номер 05 - ПОСЛЕ.");'+
     '   pInnerHTML=removeSpacesBeyondTags(pInnerHTML,myPos+1);'+
@@ -910,6 +910,7 @@
     '  if (containsFirstNotePMarker(makeEntities(p.innerText))) return;'+
     '  pInnerHTML2=pInnerHTMLSrc.replace(removeNotAllTagsRegExp,"");'+
     '  if (interpretAsRegExp) refMarkerRegExp.lastIndex=0;'+
+//    '  alert("Вот мы перед ифом.\\n\\ninterpretAsRegExp: "+interpretAsRegExp+"\\n\\nrefMarkerRegExp.test(pInnerHTML)Ж "+refMarkerRegExp.test(pInnerHTML)+"\\n\\nrefMarkerRegExp: "+refMarkerRegExp+"\\n\\npInnerHTML: "+pInnerHTML);'+
 //    '  alert("pInnerHTML: "+pInnerHTML);'+
 //    '  alert("Перед if номер 2.\\n\\npInnerHTML:\\n\\n"+pInnerHTML);'+
 //    '  alert("Перед вызовом containsRefMarker номер 2.");'+
@@ -1047,6 +1048,162 @@
     '  }'+
     ' }'
     );
+    myWin.eval(
+     ' function units(num, cases) {'+
+     '    num = Math.abs(num);'+
+     '    '+
+     '    var word = "";'+
+     '    '+
+     '    if (num.toString().indexOf(".") > -1) {'+
+     '        word = cases.gen;'+
+     '    } else { '+
+     '        word = ('+
+     '            num % 10 == 1 && num % 100 != 11 '+
+     '                ? cases.nom'+
+     '                : num % 10 >= 2 && num % 10 <= 4 && (num % 100 < 10 || num % 100 >= 20) '+
+     '                   ? cases.gen'+
+     '                    : cases.plu'+
+     '        );'+
+     '    }'+
+     '    '+
+     '    return word;'+
+     '}'
+   );
+   myWin.eval(
+    'function addNotes() {'+
+    ' try {'+
+    '  whatDoWeDo="Считаем маркеры знаков сноски";'+
+    '  refMarkersCnt=0;'+
+    '  addNotesInMyWin(document);'+
+    '  var wordForms, noteName1, noteName2;'+
+    '  if (targetBodyName!="comments") {'+
+    '   wordForms={nom: "текст сноски", gen: "текста сносок", plu: "текстов сносок"};'+
+    '   wordforms2={nom: "маркер знака сноски", gen: "маркера знака сноски", plu: "маркеров знаков сноски"};'+
+    '   noteName1="сносок";'+
+    '   noteName2="сноски";'+
+    '  }'+
+    '  else {'+
+    '   wordForms={nom: "текст комментария", gen: "текста комментариев", plu: "текстов комментариев"};'+
+    '   wordforms2={nom: "маркер знака комментария", gen: "маркера знака комментария", plu: "маркеров знаков комментария"};'+
+    '   noteName1="комментариев";'+
+    '   noteName2="комментарии";'+
+    '  }'+
+    '  if (refMarkersCnt!=notesTextCnt) {'+
+    '   alert(units(refMarkersCnt, {nom: "Найден", gen: "Найдены", plu: "Найдено"})+" "+'+
+    '    refMarkersCnt+" "+units(refMarkersCnt, wordforms2)+".\\n\\n"+'+
+    '    units(notesTextCnt, {nom: "Найден", gen: "Найдены", plu: "Найдено"})+" "+'+
+    '    notesTextCnt+" "+units(notesTextCnt, wordForms)+".\\n\\n"+'+
+    '    "Поскольку эти числа не совпадают, добавление "+noteName1+" не будет произведено.");'+
+    '    return "Числа не совпадают";'+
+    '  }'+
+    '  else'+
+    '   if (!confirm(units(refMarkersCnt, {nom: "Найден", gen: "Найдены", plu: "Найдено"})+" "+'+
+    '   refMarkersCnt+" "+units(refMarkersCnt, wordforms2)+".\\n\\n"+'+
+    '   units(notesTextCnt, {nom: "Найден", gen: "Найдены", plu: "Найдено"})+" "+'+
+    '   notesTextCnt+" "+units(notesTextCnt, wordForms)+".\\n\\n"+'+
+    '   "Ура! Эти числа совпали. А значит, "+noteName2+" можно создать.\\n\\nСоздать "+noteName2+"?")) return "Создание сносок отменено пользователем";'+
+    ' }'+
+    ' catch(e) {'+
+    '  alert("Произошла ошибка (код 1). Возможная причина –\\nвы запускаете обработку после\\nтого, как создали новый документ\\nв основном окне FBE. В таком\\nслучае  перезапустите скрипт\\n\\n"+'+
+    '        "Имя ошибки: "+e.name+"\\n"+'+
+    '        "Сообщение об ошибке: "+e.message);'+
+    '  return;'+
+    '}'+
+    'try {'+
+    ' targetBody=findTargetBody();'+
+    '}'+
+    'catch(e) {'+
+    ' alert("Произошла ошибка при инициализации targetBody (код 2).\\n\\n"+'+
+    '       "Имя ошибки: "+e.name+"\\n"+'+
+    '       "Сообщение об ошибке: "+e.message);'+
+    '}'+
+    'try {'+
+    '  whatDoWeDo="Делаем сноски";'+
+    '  addNotesInMyWin(document);'+
+    ' }'+
+    ' catch(e) {'+
+    '  alert("Произошла ошибка (код 2). Возможная причина –\\nвы запускаете обработку после\\nтого, как создали новый документ\\nв основном окне FBE. В таком\\nслучае перезапустите скрипт\\n\\n"+'+
+    '        "Имя ошибки: "+e.name+"\\n"+'+
+    '        "Сообщение об ошибке: "+e.message);'+
+    '  return;'+
+    ' }'+
+    ' try {'+
+    '  renumberNotes();'+
+    ' }'+
+    ' catch(e) {'+
+    '  alert("Возникла ошибка при выполнении renumberNotes().\\n\\nИмя ошибки: "+e.name+"\\n\\n"+'+
+    '        "Сообщение об ошибке: "+e.message);'+
+    ' }'+
+    ''+
+    ' try {'+
+    '  external.SetStatusBarText(units(notesTextCnt, {nom: "Был добавлен", gen: "Были добавлены", plu: "Было добавлено"})'+
+    '    +" "+notesTextCnt+" "+'+
+    '        units(notesTextCnt, wordForms)+".");'+
+    ' }'+
+    ' catch(e)'+
+    ' {}'+
+    '}'
+   );
+   myWin.eval(
+    "function createNotes() {"+
+    " try {"+
+    "  window.external.BeginUndoUnit(document,'создание сносок или комментариев из абзацев, помеченных знаками решетки');"+
+    " }"+
+    " catch (e) {"+
+    "  alert('Произошла ошибка при выполнении BeginUndoUnit().\\n\\n'+"+
+    "        'Имя ошибки: '+e.name+'\\n'+"+
+    "        'Сообщение об ошибке: '+e.message);"+
+    "  return;"+
+    " }"+
+    ""+
+    " try {"+
+    "  targetBody=findTargetBody();"+
+    " }"+
+    " catch(e) {"+
+    "  alert('Произошла ошибка при инициализации targetBody (код 1).\\n\\n'+"+
+    "        'Имя ошибки: '+e.name+'\\n'+"+
+    "        'Сообщение об ошибке: '+e.message);"+
+    " }"+
+    " try {"+
+    "  if (notesTextCnt!=0) {"+
+    "   var addNotesResult=addNotes();"+
+    "   if (addNotesResult=='Числа не совпадают' || addNotesResult=='Создание сносок отменено пользователем') {"+
+    "    window.external.EndUndoUnit(document);"+
+    "    return 'Числа не совпадают';"+
+    "   }"+
+    " }"+
+    " else {"+
+    "  window.external.EndUndoUnit(document);"+
+    "  if (targetBodyName!='comments')"+
+    "   alert('В документе не нашлось ни одного абзаца-исходника текста сноски.');"+
+    "  else"+
+    "   alert('В документе не нашлось ни одного абзаца-исходника текста комментария.');"+
+    "  return 'Ноль сносок';"+
+    "  }"+
+    " }"+
+    " catch (e) {"+
+    "  alert('Произошла ошибка при выполнении addNotes() либо EndUndoUnit().\\n\\n'+"+
+    "        'Имя ошибки: '+e.name+'\\n'+"+
+    "        'Сообщение об ошибке: '+e.message);"+
+    "  return;"+
+    " }"+
+    " try {"+
+    "  if (targetBodyName!='comments')"+
+    "   var msgStr1='Удалить ли абзацы-исходники текстов сносок?';"+
+    "  else"+
+    "   var msgStr1='Удалить ли абзацы-исходники текстов комментариев?';"+
+    "  if (confirm(msgStr1))"+
+    "   window.removeSourceNodes();"+
+    "  window.external.EndUndoUnit(document);"+
+    " }"+
+    " catch(e) {"+
+    "  alert('Произошла ошибка при удалении абзацев-исходников сносок либо при выполнении EndUndoUnit().\\n\\n'+"+
+    "        'Имя ошибки: '+e.name+'\\n'+"+
+    "        'Сообщение об ошибке: '+e.message);"+
+    "  return;"+
+    " }"+
+    "}"
+   );
   }
   /**
    * Возвращает единицу измерения с правильным окончанием
@@ -1113,77 +1270,7 @@
           "Сообщение об ошибке: "+e.message);
    }
   }
-  function addNotes() {
-   try {
-    myWin.whatDoWeDo="Считаем маркеры знаков сноски";
-    myWin.refMarkersCnt=0;
-    myWin.addNotesInMyWin(document);
-    var wordForms, noteName1, noteName2;
-    if (targetBodyName!="comments") {
-     wordForms={nom: 'текст сноски', gen: 'текста сносок', plu: 'текстов сносок'};
-     noteName1="сносок";
-     noteName2="сноски";
-    }
-    else {
-     wordForms={nom: 'текст комментария', gen: 'текста комментариев', plu: 'текстов комментариев'};
-     noteName1="комментариев";
-     noteName2="комментарии";
-    }
-    if (myWin.refMarkersCnt!=myWin.notesTextCnt) {
-     alert(units(myWin.refMarkersCnt, {nom: 'Найден', gen: 'Найдены', plu: 'Найдено'})+" "+
-      myWin.refMarkersCnt+" "+units(myWin.refMarkersCnt, {nom: 'маркер знака сноски', gen: 'маркера знака сноски', plu: 'маркеров знаков сноски'})+".\n\n"+
-      units(myWin.notesTextCnt, {nom: 'Найден', gen: 'Найдены', plu: 'Найдено'})+" "+
-      myWin.notesTextCnt+" "+units(myWin.notesTextCnt, wordForms)+".\n\n"+
-      "Поскольку эти числа не совпадают, добавление "+noteName1+" не будет произведено.");
-      return "Числа не совпадают";
-    }
-    else
-     if (!confirm(units(myWin.refMarkersCnt, {nom: 'Найден', gen: 'Найдены', plu: 'Найдено'})+" "+
-     myWin.refMarkersCnt+" "+units(myWin.refMarkersCnt, {nom: 'маркер знака сноски', gen: 'маркера знаков сноски', plu: 'маркеров знаков сноски'})+".\n\n"+
-     units(myWin.notesTextCnt, {nom: 'Найден', gen: 'Найдены', plu: 'Найдено'})+" "+
-     myWin.notesTextCnt+" "+units(myWin.notesTextCnt, wordForms)+".\n\n"+
-     "Ура! Эти числа совпали. А значит, "+noteName2+" можно создать.\n\nСоздать "+noteName2+"?")) return "Создание сносок отменено пользователем";
-   }
-   catch(e) {
-    alert("Произошла ошибка (код 1). Возможная причина –\nвы запускаете обработку после\nтого, как создали новый документ\nв основном окне FBE. В таком\nслучае перезапустите скрипт\n\n"+
-          "Имя ошибки: "+e.name+"\n"+
-          "Сообщение об ошибке: "+e.message);
-    return;
-  }
-  try {
-   myWin.targetBody=myWin.findTargetBody();
-  }
-  catch(e) {
-   alert("Произошла ошибка при инициализации targetBody (код 2).\n\n"+
-         "Имя ошибки: "+e.name+"\n"+
-         "Сообщение об ошибке: "+e.message);
-  }
-  try {
-    myWin.whatDoWeDo="Делаем сноски";
-    myWin.addNotesInMyWin(document);
-   }
-   catch(e) {
-    alert("Произошла ошибка (код 2). Возможная причина –\nвы запускаете обработку после\nтого, как создали новый документ\nв основном окне FBE. В таком\nслучае перезапустите скрипт\n\n"+
-          "Имя ошибки: "+e.name+"\n"+
-          "Сообщение об ошибке: "+e.message);
-    return;
-   }
-   try {
-    myWin.renumberNotes();
-   }
-   catch(e) {
-    alert("Возникла ошибка при выполнении renumberNotes().\n\nИмя ошибки: "+e.name+"\n\n"+
-          "Сообщение об ошибке: "+e.message);
-   }
-   
-   try {
-    myWin.external.SetStatusBarText(units(myWin.notesTextCnt, {nom: 'Был добавлен', gen: 'Были добавлены', plu: 'Было добавлено'})
-      +" "+myWin.notesTextCnt+" "+
-          units(myWin.notesTextCnt, wordForms)+".");
-   }
-   catch(e)
-   {}
-  }
+
   function adjustVars() {
    try {
     myWin.interpretAsRegExp=document.getElementById("interpretAsRegExpCheckbox").checked;
@@ -1271,26 +1358,8 @@
     return "error";
    }
   }
-  function createNotes() {
-   try {
-    var test=myWin.document.body;
-   }
-   catch (e) {
-    if (e.name=="TypeError")
-     alert("Произошла ошибка. Предположительная причина –\nвы запускаете обработку после\nтого, как создали или открыли новый документ\nв основном окне FBE. В таком\nслучае перезапустите скрипт.\n\n"+
-          "Имя ошибки: "+e.name+"\n"+
-          "Сообщение об ошибке: "+e.message);
-    return;
-   }
-   try {
-    myWin.external.BeginUndoUnit(myWin.document,"создание сносок или комментариев из абзацев, помеченных знаками решетки");
-   }
-   catch (e) {
-    alert("Произошла ошибка при выполнении BeginUndoUnit().\n\n"+
-          "Имя ошибки: "+e.name+"\n"+
-          "Сообщение об ошибке: "+e.message);
-    return;
-   }
+
+  function doAll() {
    try {
     evalMyCode();
    }
@@ -1300,65 +1369,35 @@
           "Сообщение об ошибке: "+e.message);
     return;
    }
+   if (adjustVars()=='error') return;
    try {
-    myWin.targetBody=myWin.findTargetBody();
-   }
-   catch(e) {
-    alert("Произошла ошибка при инициализации targetBody (код 1).\n\n"+
-          "Имя ошибки: "+e.name+"\n"+
-          "Сообщение об ошибке: "+e.message);
-   }
-   if (adjustVars()=="error") return;
-   try {
-    extractNotesTexts();
+     extractNotesTexts();
    }
    catch (e) {
-    alert("Произошла ошибка при выполнении extractNotesTexts().\n\n"+
-          "Имя ошибки: "+e.name+"\n"+
-          "Сообщение об ошибке: "+e.message);
+    alert('Произошла ошибка при выполнении extractNotesTexts().\\n\\n'+
+          'Имя ошибки: '+e.name+'\\n'+
+          'Сообщение об ошибке: '+e.message);
     return;
    }
-   try {
-    if (myWin.notesTextCnt!=0) {
-     var addNotesResult=addNotes();
-     if (addNotesResult=="Числа не совпадают" || addNotesResult=="Создание сносок отменено пользователем") {
-      myWin.external.EndUndoUnit(myWin.document);
-      return "Числа не совпадают";
-     }
-    }
-    else {
-     myWin.external.EndUndoUnit(myWin.document);
-     if (targetBodyName!="comments")
-       alert("В документе не нашлось ни одного абзаца-исходника текста сноски.");
-     else
-       alert("В документе не нашлось ни одного абзаца-исходника текста комментария.");
-     return "Ноль сносок";
-    }
-   }
-   catch (e) {
-    alert("Произошла ошибка при выполнении addNotes() либо EndUndoUnit().\n\n"+
-          "Имя ошибки: "+e.name+"\n"+
-          "Сообщение об ошибке: "+e.message);
-    return;
-   }
-   try {
-    if (targetBodyName!="comments")
-     var msgStr1="Удалить ли абзацы-исходники текстов сносок?";
-    else
-     var msgStr1="Удалить ли абзацы-исходники текстов комментариев?";
-    if (confirm(msgStr1))
-     myWin.removeSourceNodes();
-    myWin.external.EndUndoUnit(myWin.document);
-   }
-   catch(e) {
-    alert("Произошла ошибка при удалении абзацев-исходников сносок либо при выполнении EndUndoUnit().\n\n"+
-          "Имя ошибки: "+e.name+"\n"+
-          "Сообщение об ошибке: "+e.message);
-    return;
-   }
+   myWin.createNotes();
   }
+
+  function testMyWin() {
+   try {
+    var test=myWin.document.body;
+   }
+   catch (e) {
+    if (e.name=="TypeError")
+     alert("Произошла ошибка. Предположительная причина –\nвы запускаете обработку после\nтого, как создали или открыли новый документ\nв основном окне FBE. В таком\nслучае перезапустите скрипт.\n\n"+
+          "Имя ошибки: "+e.name+"\n"+
+          "Сообщение об ошибке: "+e.message);
+    return "error";
+   }
+   return true;
+  }
+
   function makeEntities(s) {
-   return s.replace(/&/gi,"&amp;").replace(/</gi,"&lt;").replace(/>/gi,"&gt;").replace(/\xAD/g,"&shy;");
+   return s.replace(/&/gi,"&amp;").replace(/</gi,"&lt;").replace(/>/gi,"&gt;").replace(String.fromCharCode(173),"&shy;");
   }
   function showNotesTexts() {
    if (myWin.notesTextCnt==0) {
@@ -1399,10 +1438,6 @@
     }
    }
   }
-  alert("ВНИМАНИЕ!\n\n"+
-        "Откат (Undo, Ctrl+Z) изменений, сделанных данным сценарием после его выполнения, может не работать корректно.\n\n"+
-        "Во избежание потери данных, возможно, стоит СОХРАНИТЬ FB2-ФАЙЛ перед запуском данного скрипта!\n\n"+
-        "В случае необходимости, файл можно будет закрыть (не сохраняя) и открыть повторно.");
  </script>
 </head>
 <body onbeforeunload="myBeforeUnload();">
@@ -1444,6 +1479,6 @@
  Маркер 2-го, 3-го и т.д. абзацев текста сноски (не регэксп, а простой текст):<br>
  <input type=text style="width:600px;" id=notFirstParagraphStr value="++"><br><br>
  
- <input type=button value="Создать сноски" onclick="initVarsForNotes(); createNotes();" style="width:200px;"><input type=button value="Создать сноски и выйти" onclick="initVarsForNotes(); var rslt=createNotes(); if (rslt!='Ноль сносок' && rslt!='Числа не совпадают') window.close();" style="width:260px;"><input type=button onclick="window.close();" value="Выйти" style="width:120px;"><BR><input type=button style="width:550px;" value="Предпросмотр текстов сносок, помеченных знаками решетки" onclick="evalMyCode(); if (adjustVars()=='error') return; extractNotesTexts(); showNotesTexts();"><BR> <input type=button value="Создать комментарии" onclick="initVarsForComments(); createNotes();" style="width:200px;"><input type=button value="Создать комментарии и выйти" onclick="initVarsForComments(); var rslt=createNotes(); if (rslt!='Ноль сносок' && rslt!='Числа не совпадают') window.close();" style="width:260px;"><input type=button onclick="window.close();" value="Выйти" style="width:120px;">
+ <input type=button value="Создать сноски" onclick="initVarsForNotes(); if (testMyWin()=='error') return; doAll();" style="width:200px;"><input type=button value="Создать сноски и выйти" onclick="initVarsForNotes(); if (testMyWin()=='error') return; var rslt=doAll(); if (rslt!='Ноль сносок' && rslt!='Числа не совпадают') window.close();" style="width:260px;"><input type=button onclick="window.close();" value="Выйти" style="width:120px;"><BR><input type=button style="width:550px;" value="Предпросмотр текстов сносок, помеченных знаками решетки" onclick="if (testMyWin()=='error') return; evalMyCode(); if (adjustVars()=='error') return; extractNotesTexts(); showNotesTexts();"><BR> <input type=button value="Создать комментарии" onclick="initVarsForComments(); if (testMyWin()=='error') return; doAll();" style="width:200px;"><input type=button value="Создать комментарии и выйти" onclick="initVarsForComments(); if (testMyWin()=='error') return; var rslt=doAll(); if (rslt!='Ноль сносок' && rslt!='Числа не совпадают') window.close();" style="width:260px;"><input type=button onclick="window.close();" value="Выйти" style="width:120px;">
  </body>
 </html>
