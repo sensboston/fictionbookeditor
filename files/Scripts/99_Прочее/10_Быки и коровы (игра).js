@@ -5,7 +5,7 @@
 //~~~~~~~~~~~~~~~~~~
 
 
-var NumerusVersion="1.0";
+var NumerusVersion="1.1";
 
 
 function Run() {
@@ -243,7 +243,7 @@ var Lex = 1;      // 0 ; 1 //      ("0" — никогда не показыва
 
 while (!theEnd) {
 
- if (Dilectus ==1) dialogus_1("Выбирете длину числа.\nВ этой игре число может иметь от 2 до 9 знаков.");
+ if (Dilectus ==1) dialogus_1("Выберите длину числа.\nВ этой игре число может иметь от 2 до 9 знаков.");
  var re001 = new RegExp("^\\\d{"+k+"}$","g");
 
  count_Partia++;
