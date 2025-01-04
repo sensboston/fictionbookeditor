@@ -1,24 +1,24 @@
 //======================================
 //             «Чистка структуры»
+// Скрипт тестировался в FBE v.2.7.6 (win XP, IE8 и win 7, IE9 и IE11)
+// * История изменений в конце скрипта
 //~~~~~~~~~~~~~~~~~~
-// v.1.0 — Создание скрипта — Александр Ка (27.03.2024)
-// v.1.1 — Исправлена ошибка с добавлением пустых строк — Александр Ка (10.06.2024)
-// v.1.2 — Коррекция метода удаления пустого заголовка — Александр Ка (13.07.2024)
-//~~~~~~~~~~~~~~~~~~
-
-
-var NumerusVersion="1.2";
-
-  var Ts=new Date().getTime();
-
 
 function Run() {
+
+var NumerusVersion="1.6";
 
 //--------------------------------------------------------------------
 //--------------------------------------------------------------------
 //--------------------------------------------------------------------
 
                  ///  НАСТРОЙКИ
+
+//--------------------------------------------------------------------
+
+//     Дизайн окна результатов
+
+var Dizajn = 1;      // 0 ; 1 //      ("0" — для win XP, "1" — универсальный)
 
 //--------------------------------------------------------------------
 
@@ -44,18 +44,51 @@ var Obrabotka_karm_Img = 2;      // 0 ; 1 ; 2 //      ("0" — никогда н
 
 var Obrabotka_Entity_ttl = 2;      // 0 ; 1 ; 2 //      ("0" — никогда не удалять, "1" — всегда удалять, "2" — всегда спрашивать)
 
+//--------------------------------------------------------------------
+
+//               Добавление пустой строки рядом с иллюстрацией (внутри секции)
+
+//     1. Пустая строка между иллюстрацией и [подзаголовком, цитатой или обычным текстом]
+
+var Add_Entity_Img_Podpis = 0;      // 0 ; 1 //       ("0" — не изменять, "1" — всегда добавлять)
+
+//     * Подзаголовки, цитаты и обычный текст могут использоваться как подписи или надписи к иллюстрациям.
+//        Принято не добавлять пустую строку между ними.
+//        Более качественная расстановка пустых строк между иллюстрациями и надписями/подписями есть в скрипте "Пустые строки рядом с иллюстрациями".
+
+
+//     2. Пустая строка между иллюстрацией и заголовком
+
+var Add_Entity_Img_Title = 1;      // 0 ; 1 //       ("0" — не изменять, "1" — всегда добавлять)
+
+//     * Принято не добавлять пустую строку между ними. Но в некоторых читалках может получиться некрасиво
+
+
+//     3. Пустая строка между двумя иллюстрациями
+
+var Add_Entity_Img_Img = 1;      // 0 ; 1 //       ("0" — не изменять, "1" — всегда добавлять)
+
+//     * Возможно это две части разрезанной иллюстрации (например, высокой таблицы)
+//        Поштучной обработки этих пар пока нет, но планируется в версии 1.3, скрипта "Пустые строки рядом с иллюстрациями"
+
 // ---------------------------------------------------------------
 // ----------------------------------------------
 // -----------------------------
 
 
+ var Ts=new Date().getTime();
+
 
                  /// ОБЩИЕ ПЕРЕМЕННЫЕ
 
 
-//   Неразрывные пробелы  ;  ("+nbspEntity+") - для поиска  ;  ("+nbspChar+") - для замены  ;
- try { var nbspChar=window.external.GetNBSP(); var nbspEntity; if (nbspChar.charCodeAt(0)==160) nbspEntity="&nbsp;"; else nbspEntity=nbspChar;}
- catch(e) { var nbspChar=String.fromCharCode(160); var nbspEntity="&nbsp;";}
+//   Неразрывный пробел:  "nbspEntity" - для обычного использования; "nbspChar" - используется при временной замене кода "&nbsp;" на прозрачный н/р пробел
+ var nbspEntity="&nbsp;";          //  использование кода для н/р пробела
+ try {                           // для FBE в котором есть настройки выбора символа для н/р пробела:
+         var nbspChar=window.external.GetNBSP();              //  выбранный символ для н/р пробела в FBE
+         if (nbspChar.charCodeAt(0)!=160)  nbspEntity=nbspChar;    }        //  для непрозрачных символов, код "&nbsp;" при записи н/р пробела не используется
+ catch(e) {                 // для FBE в котором отсутствуют эти настройки, и в котором команда "window.external.GetNBSP()" вызывает ошибку:
+         var nbspChar=String.fromCharCode(160);    }       //  символ прозрачного н/р пробела
 
 //  Счетчики цикла
 var j = 0;
@@ -73,40 +106,20 @@ var n = 0;
 
 
 
-                 /// ОБРАБОТКА ТЕКСТА _1_  :  Параграфы <P>  :  операции  № 101-103
+                 /// ОБРАБОТКА ТЕКСТА _1_  :  Параграфы <P>  :  операции  № 100-103
                  //      (регулярные выражения)
 
 
-       //  Удаление тегов вложенного параграфа в параграф
- var re101 = new RegExp("<P>(.{0,}?)</P>","g");
- var re101_ = " $1 ";
- var count_101 = 0;
-
-       //  Автоисправление вложений в параграф (перезапись внутреннего содержимого)
- var count_102 = 0;
+       //  Восстановление параграфа <P> из текстовых элементов и внутренних тегов
+ var re100 = new RegExp("^(STRONG|EM|SUP|SUB|STRIKE|SPAN|A)$","g");
+ var re101 = new RegExp("</?P>","g");
+ var count_100 = 0;
 
        //  Удаление внутренних тегов вне параграфа
- var re103 = new RegExp("STRONG|EM|SUP|SUB|STRIKE|SPAN","g");
  var count_103 = 0;
 
-// ---------------------------------------------------------------
-// ----------------------------------------------
-// -----------------------------
-
-
-
-                 /// ОБРАБОТКА ТЕКСТА _1_  :  Параграфы <P>  :  операции  № 101-103
-                 //      (сборка функции "AntiGluc(ptr)")
-
-
- var s="";  // Внутреннее содержание оригинального абзаца (<P>содержание</P>)
-
- function AntiGluc(ptr) {
-
-    s=ptr.innerHTML;
-   if (s.search(re101)!=-1)  { count_101+=s.match(re101).length;  s=s.replace(re101, re101_);  ptr.innerHTML=s }
-
-    }
+       //  Восстановление конечного тега </P>
+ var re104 = new RegExp("</P>$","g");
 
 // ---------------------------------------------------------------
 // ----------------------------------------------
@@ -114,39 +127,96 @@ var n = 0;
 
 
 
-                 /// ОБРАБОТКА ТЕКСТА _1_  :  Параграфы <P>  :  операции  № 101-103
-                 //      (применение функции "AntiGluc(ptr)")
+                 /// ОБРАБОТКА ТЕКСТА _1_  :  Параграфы <P>  :  операции  № 100-103
+                 //      (Восстановление параграфов)
 
 
-    window.external.BeginUndoUnit(document,"«Чистка структуры» v."+NumerusVersion+":   Операции №101-103");                               // ОТКАТ (UNDO) начало
-            //  Эти три операции достаточно маловероятны, поэтому эта запись в систему откатов будет достаточно редкой
-
+ window.external.BeginUndoUnit(document,"«Чистка структуры» v."+NumerusVersion);   // начало (запись в систему отмен)
 
  var ptr=fbwBody;                                                           //  Начальное значение переменной "ptr"
  var ProcessingEnding=false;                              //  Флаг завершения обработки
- var nextPtr = false;                              //  Флаг перехода на соседний элемент
+ var mPtr;                              //  Узел, который выше параграфа
+ var newP;                             //  Новый параграф
 
  while (!ProcessingEnding)  {             //  Если конца текста не видно — продолжаем путешествие.
+         if (ptr.nodeType == 3  ||  (ptr.nodeName.search(re100) != -1  &&  ptr.innerHTML.search(re101) == -1))  {       //  Если встретился текстовый эл-т или внутренний тег...
+                 newP = document.createElement("P");              // создаем новый параграф
+                 if (ptr.previousSibling)  ptr.previousSibling.insertAdjacentElement("afterEnd", newP);   // если перед "текстом" есть раздел, то вставляем новый <P> после него
+                     else ptr.parentNode.insertAdjacentElement("afterBegin", newP);                   // если нет - вставляем в начало родительского раздела
+                 // в книге может быть ряд из текстовых элементов и внутренних тегов. Переносим их всех в новую оболочку <P> по очереди
+                 while (newP.nextSibling  &&  (newP.nextSibling.nodeType==3  ||  (newP.nextSibling.nodeName.search(re100)!=-1  &&  newP.nextSibling.innerHTML.search(re101) == -1))) {
+                         if (newP.nextSibling.nodeType==3)
+                                 newP.innerHTML += newP.nextSibling.nodeValue;   // для текстового эл-та получаем значения командой "nodeValue"
+                         if (newP.nextSibling.nodeName.search(re100)!=-1)
+                                 newP.innerHTML += newP.nextSibling.outerHTML;  // для внутреннего тега - обычной командой "outerHTML"
+                         newP.nextSibling.removeNode(true);   // после копирования, удаляем ненужный оригинал
+                         }
+                 ptr=newP;   // после переноса, заполненный новый параграф становится основной переменной "ptr"
+                 count_100++;    // отмечаем проделанную операцию в счетчике
+                 }
          if (ptr.nodeName=="P")                  //  Если встретился параграф...
-                 AntiGluc(ptr);                                                                        //  ...обрабатываем его функцией "AntiGluc".
+                 if (ptr.outerHTML.search(re104)==-1)  {            // и в этом параграфе отсутствует конечный тег
+                         newP = document.createElement("P");              // создаем новый параграф
+                         newP.innerHTML = ptr.innerHTML;                       // копируем в него содержание ущербного параграфа
+                         ptr.insertAdjacentElement("afterEnd", newP);    // вставляем новый параграф после "оригинала"
+                         ptr = newP;                                                                   // присваиваем ему имя "ptr"
+                         ptr.previousSibling.removeNode(true);   // удаляем ненужный оригинал
+                         count_100++;
+                         }
          if (ptr.firstChild!=null  &&  ptr.nodeName!="P")                //  Если есть куда углубляться, и это всё ещё не параграф...
                  { ptr=ptr.firstChild }                                                       //  ...тогда спускаемся на один уровень.
              else {                                                                                                //  Если углубляться нельзя...
-                     nextPtr = false;
-                     while (!nextPtr) {
-                             while (ptr.nextSibling==null)  {                              //  ...и если нет прохода на соседний элемент...
-                                     ptr=ptr.parentNode;                                           //  ...тогда поднимаемся, пока не появится этот проход.
-                                     if (ptr.nodeName =="P")  { ptr.innerHTML=ptr.innerHTML; count_102++ }
-                                     if (ptr==fbwBody) {ProcessingEnding=true }           // А если поднявшись, оказываемся в "fbw_body" — объявляем о завершении обработки текста.
+                     while (ptr.nextSibling==null)  {                              //  ...и если нет прохода на соседний элемент...
+                             if (ptr.parentNode.nodeName.search(re100)!=-1) {
+                                     mPtr=ptr.parentNode.getElementsByTagName("P");
+                                     for (j=0; mPtr[j]; j++)
+                                             mPtr[j].innerHTML= "<"+ptr.parentNode.nodeName+">"+mPtr[j].innerHTML+"</"+ptr.parentNode.nodeName+">";
+                                     ptr.parentNode.removeNode(false);   //  удаляем внутренние теги сверху
+                                     count_103++;
                                      }
-                             while (ptr.nextSibling !=null  &&  ptr.nextSibling.nodeName.search(re103)!=-1)  { ptr.nextSibling.removeNode(false); count_103++ }
-                             if (ptr.nextSibling !=null)  { ptr=ptr.nextSibling; nextPtr = true }                     //  Затем переходим на соседний элемент.
+                                 else {
+                                         ptr=ptr.parentNode;                                           //  или поднимаемся, пока не появится проход на соседний элемент
+                                         if (ptr==fbwBody) {ProcessingEnding=true }           // А если поднявшись, оказываемся в "fbw_body" — объявляем о завершении обработки текста.
+                                         }
                              }
+                             ptr=ptr.nextSibling;                     //  Затем переходим на соседний элемент.
                      }
          }
 
+// ---------------------------------------------------------------
+// ----------------------------------------------
+// -----------------------------
 
-    window.external.EndUndoUnit(document);                                             // undo конец (запись в систему для отката)
+
+
+                 /// Добавление разрыва секции перед заголовком
+
+
+ var mDiv=fbwBody.getElementsByTagName("DIV");  //  массив с узлами "DIV"
+ var div;                //  один из узлов "DIV"
+
+ var section_1;
+ var section_2;
+ var count_150 = 0;
+
+ for (j=0; j<mDiv.length; j++) {
+
+         div = mDiv[j];
+
+         // Добавление разрыва секции перед заголовком, если заголовок расположен посреди секции
+         if (div.className =="title"  &&  div.parentNode.className == "section"  &&  div.previousSibling != null) {
+                 section_1 = div.parentNode;
+                 section_2 = section_1.cloneNode(false);                                     //  Тогда, копируем оболочку секции...
+                 section_1.insertAdjacentElement("beforeBegin",section_2);       //  ...и вставляем её перед оригинальной секцией.
+                 section_1.removeAttribute("id");           //  В оригинальной секции удаляем "id", чтобы не получилось два одинаковых индекса в тексте.
+                 if (section_1.firstChild.className == "title")                    //  Если в начале секции есть заголовок...
+                         section_2.insertAdjacentElement("beforeEnd",section_1.firstChild);      //  ...переносим его в новую оболочку секции.
+                 while (section_1.firstChild.className != "title") {                   //  Затем, пока не встретим ещё один заголовок...
+                         section_2.insertAdjacentElement("beforeEnd",section_1.firstChild);      //  ...последовательно переносим все элементы в новую оболочку секции.
+                         }
+                 count_150++;
+                 }
+         }
 
 // ---------------------------------------------------------------
 // ----------------------------------------------
@@ -169,8 +239,8 @@ var n = 0;
  var count_211 = 0;
 
          // Чистка пустых строк от пробелов и внутренних тегов
- var re212 = new RegExp("^(\\\s|"+nbspEntity+"|<[^>]{1,}>){1,}$","g");
- var re212ex = new RegExp("<SPAN class=image","g");
+ var re212 = new RegExp("^(\\\s|"+nbspChar+"|<[^>]{1,}>){1,}$","g");
+ var re212ex = new RegExp("<SPAN [^>]{0,}?class=image","g");
  var re212_ = "";
  var count_212 = 0;
 
@@ -190,18 +260,18 @@ var n = 0;
  var re222 = new RegExp("</{0,1}STRONG>|</{0,1}EM>|</{0,1}SUP>|</{0,1}SUB>|</{0,1}STRIKE>","g");
 
 //  Для преобразования строк в подзаголовок, состоящих из символа ⁂ (три звездочки), или из 1-9 одинаковых символов ( • | * | + ), или из 3-9 одинаковых символов ( х | - | – | — | ~)  (дефисы/тире здесь считаются одинаковыми символами)
- var re223 = new RegExp("^(\\\s|"+nbspEntity+"|<[^>]{1,}>){0,}((\\\s|"+nbspEntity+"){0,}⁂|((\\\s|"+nbspEntity+"){0,}•){1,9}|((\\\s|"+nbspEntity+"){0,}\\\*){1,9}|((\\\s|"+nbspEntity+"){0,}\\\+){1,9}|((\\\s|"+nbspEntity+"){0,}[-–—]){3,9}|((\\\s|"+nbspEntity+"){0,}~){3,9}|((\\\s|"+nbspEntity+"){0,}[хx]){3,9})(\\\s|"+nbspEntity+"|<[^>]{1,}>){0,}$","g");
+ var re223 = new RegExp("^(\\\s|"+nbspChar+"|<[^>]{1,}>){0,}((\\\s|"+nbspChar+"){0,}⁂|((\\\s|"+nbspChar+"){0,}•){1,9}|((\\\s|"+nbspChar+"){0,}\\\*){1,9}|((\\\s|"+nbspChar+"){0,}\\\+){1,9}|((\\\s|"+nbspChar+"){0,}[-–—]){3,9}|((\\\s|"+nbspChar+"){0,}~){3,9}|((\\\s|"+nbspChar+"){0,}[хx]){3,9})(\\\s|"+nbspChar+"|<[^>]{1,}>){0,}$","g");
 
 //  Для удаления внутренних тегов жирности и курсива
  var re224 = new RegExp("</{0,1}STRONG>|</{0,1}EM>","g");
 
 // Замена символа ⁂ (три звездочки) на строку из трех звездочек   (символ ⁂ не видит большинство шрифтов)
- var re225 = new RegExp("^(\\\s|"+nbspEntity+"|<[^>]{1,}>){0,}⁂(\\\s|"+nbspEntity+"|<[^>]{1,}>){0,}$","g");
+ var re225 = new RegExp("^(\\\s|"+nbspChar+"|<[^>]{1,}>){0,}⁂(\\\s|"+nbspChar+"|<[^>]{1,}>){0,}$","g");
  var re225_ = "<SUB>*</SUB><SUP>*</SUP><SUB>*</SUB>";
 
 //  Добавление пробелов между символами  | • | * | + |  для строк, состоящих из 2-5 таких одинаковых символов
- var re226s = new RegExp("^(<[^>]{1,}>){0,}(((\\\s|"+nbspEntity+"){0,}•){2,5}|((\\\s|"+nbspEntity+"){0,}\\\*){2,5}|((\\\s|"+nbspEntity+"){0,}\\\+){2,5})(\\\s|"+nbspEntity+"|<[^>]{1,}>){0,}$","g");
- var re226 = new RegExp("([•\\\*\\\+])(\\\s|"+nbspEntity+"){0,}(?=[•\\\*\\\+])","g");
+ var re226s = new RegExp("^(<[^>]{1,}>){0,}(((\\\s|"+nbspChar+"){0,}•){2,5}|((\\\s|"+nbspChar+"){0,}\\\*){2,5}|((\\\s|"+nbspChar+"){0,}\\\+){2,5})(\\\s|"+nbspChar+"|<[^>]{1,}>){0,}$","g");
+ var re226 = new RegExp("([•\\\*\\\+])(\\\s|"+nbspChar+"){0,}(?=[•\\\*\\\+])","g");
  var re226_ = "$1 ";
 
  var count_227 = 0;  //  Счетчик изменений внутри строки
@@ -209,8 +279,8 @@ var n = 0;
 
 
          //  Внутренняя чистка графики в пустом параграфе  (от пробелов и внутренних тегов)
- var re231s = new RegExp("<SPAN class=image","g");
- var re231 = new RegExp("^(&nbsp;|\\\s|"+nbspEntity+"|<[^>]{1,}>){0,}(<SPAN class=image[^>]{1,}>)(<[^>]{1,}>){0,}(<IMG [^>]{1,}>)(&nbsp;|\\\s|"+nbspEntity+"|<[^>]{1,}>){0,}$","g");
+ var re231s = new RegExp("<SPAN [^>]{0,}?class=image","g");
+ var re231 = new RegExp("^(&nbsp;|\\\s|"+nbspChar+"|<[^>]{1,}>){0,}(<SPAN [^>]{0,}?class=image[^>]{0,}>)(<[^>]{1,}>){0,}(<IMG [^>]{1,}>)(&nbsp;|\\\s|"+nbspChar+"|<[^>]{1,}>){0,}$","g");
  var re231_ = "$2$4</SPAN>";
  var count_231 = 0;
  var q_231 = false;
@@ -247,7 +317,7 @@ var n = 0;
  var count_271 = 0;
 
          //  Удаление пустых строк за окраиной блоков
- var re272 = new RegExp("^(title|annotation|stanza|poem|epigraph|cite|subtitle)$","g");  //  класс блоков
+ var re272 = new RegExp("^(title|annotation|stanza|poem|epigraph|cite|subtitle|section)$","g");  //  класс блоков
  var count_272 = 0;
 
 
@@ -256,13 +326,130 @@ var n = 0;
 
 
        //  Поиск графики в тексте
- var re001 = new RegExp("^<SPAN class=image[^>]{1,}><IMG [^>]{1,}></SPAN>$","g");
+ var re001 = new RegExp("^<SPAN [^>]{0,}?class=image[^>]{0,}><IMG [^>]{1,}></SPAN>$","g");
  var m_001 = [];
  var count_001 = 0;
 
        //  Поиск пустых строк между строк заголовка
  var m_002 = [];
  var count_002 = 0;
+
+         // Возвращение кода   "&nbsp;"
+ var reNBSPon = new RegExp(nbspChar,"g");
+ var reNBSPon_ = "&nbsp;";
+
+// ---------------------------------------------------------------
+// ----------------------------------------------
+// -----------------------------
+
+
+
+                 /// Функция удаления дублей внутренних тегов
+
+ var otvet_201;
+ var re201 = new RegExp("^(\\\s|"+nbspEntity+"|[…\\\(\\\[«„“\\\"’—–\\\-]){0,}(.{0,}?)(\\\s|"+nbspEntity+"|[…\\\.,:;\\\?!\\\)\\\]»“”\\\"’—–\\\-]){0,}$","g");
+ var re201_ = "$2";
+ var newCite;
+ var count_202 = 0;
+ var if_202 = true;
+ var styleAdd = false;
+
+ function delTag() {
+
+ //  Автоматическое удаление вложенного тега, если текст в обоих тегах одинаковый
+
+ if (mmm3[j].innerText.replace(re201, re201_) == subPtr0.innerText.replace(re201, re201_)) {
+         otvet_201 = 7;
+         subPtr0.removeNode(false);      //  удаляем второй тег
+         count_201++;              //  отмечаем удаление в счетчике
+         return;                     //  выходим из функции
+         }
+
+ //  Полуавтоматическое удаление
+
+ //  Коррекция названия тега
+ var nameTeg = "";
+ switch (mmm1[j]) {
+         case "EM":  nameTeg = "emphasis";  break;
+         case "STRONG":  nameTeg = "strong";  break;
+         case "SUP":  nameTeg = "sup";  break;
+         case "SUB":  nameTeg = "sub";  break;
+         case "STRIKE":  nameTeg = "strikethrough";  break;
+         case "A":  nameTeg = "a";  break;
+         case "SPAN":  if (mmm2[j] == "code")  nameTeg = "code";  else  nameTeg = "style: "+mmm2[j];  break;
+         }
+
+ //  добавление стилей
+ mmm3[j].style.backgroundColor="#C9B766";
+ mmm3[j].style.color="black";
+ mmm3[j].style.paddingLeft="0.2em";
+ mmm3[j].style.paddingRight="0.2em";
+
+ subPtr0.style.backgroundColor="#821A1A";
+ subPtr0.style.color="#EEF47C";
+ subPtr0.style.paddingLeft="0.1em";
+ subPtr0.style.paddingRight="0.1em";
+
+ styleAdd = true;
+
+ //  переход на ошибочный тег
+ GoTo(subPtr0);
+ T_pause -= new Date().getTime();                  // определение продолжительности паузы в вычислениях
+ window.external.InputBox(" ДА:	Удаление общего тега <"+nameTeg+"> (желтый фон)\n НЕТ:	Удаление вложенного тега <"+nameTeg+"> (красный фон)", "Тег <"+nameTeg+"> внутри тега <"+nameTeg+">", "");       //  диалоговое окно, запись введенного текста
+ T_pause += new Date().getTime();                  // определение продолжительности паузы в вычислениях
+ otvet_201 = window.external.GetModalResult();
+
+ //  удаление стилей
+ subPtr0.style.removeAttribute("backgroundColor");
+ subPtr0.style.removeAttribute("color");
+ subPtr0.style.removeAttribute("paddingLeft");
+ subPtr0.style.removeAttribute("paddingRight");
+
+ //  удаление стилей
+ mmm3[j].style.removeAttribute("backgroundColor");
+ mmm3[j].style.removeAttribute("color");
+ mmm3[j].style.removeAttribute("paddingLeft");
+ mmm3[j].style.removeAttribute("paddingRight");
+
+ //  обработка ответа
+ if (otvet_201 == 6)  {                                     // "Да"
+         if_202 = (mmm3[j].innerText.replace(re201, re201_) == ptr.innerText.replace(re201, re201_)  &&  ptr.parentNode.className != "cite");  // условие для добавления цитаты
+         subPtr=subPtr0;                       //  пропускаем вложенный тег
+         mmm3[j].removeNode(false);          //  удаляем общий тег
+         mmm1.splice(j, 1);                              //   удаляем записи об этом теге
+         mmm2.splice(j, 1);
+         mmm3.splice(j, 1);
+         j--;                                     //  уменьшаем счетчик цикла
+         count_201++;              //  отмечаем удаление в счетчике
+         if (if_202) {                                    // Если возможно добавление цитаты
+                 ptr.style.backgroundColor="#C9B766";         //  выделяем параграф
+                 ptr.style.color="black";
+                 T_pause -= new Date().getTime();                  // определение продолжительности паузы в вычислениях
+                 window.external.InputBox(" Добавить для этого параграфа формат \"Цитата\"?", "Тег <"+nameTeg+"> внутри тега <"+nameTeg+"> (продолжение)", ""); // спрашиваем
+                 T_pause += new Date().getTime();                  // определение продолжительности паузы в вычислениях
+                 ptr.style.removeAttribute("backgroundColor");         //  удаляем выделение параграфа
+                 ptr.style.removeAttribute("color");
+                 if (window.external.GetModalResult() == 6) {          // если второй ответ "Да"
+                         newCite = document.createElement("DIV");      // создаем раздел цитаты
+                         newCite.className = "cite";
+                         ptr.insertAdjacentElement("beforeBegin", newCite);  // вставляем этот раздел перед параграфом
+                         newCite.insertAdjacentElement("afterBegin", ptr);    //  переносим параграф внутрь цитаты
+                         count_202++;                    // отмечаем это действие в счетчике
+                         if (newCite.previousSibling !=null  &&  newCite.previousSibling.innerHTML ==""
+                             &&  (newCite.previousSibling.previousSibling ==null  ||  newCite.previousSibling.previousSibling.className !="image"))
+                                 { newCite.previousSibling.removeNode(true); count_272++ }   //  если предыдущая строка пустая и ее можно удалить -- удаляем
+                         }
+                 }
+         }
+ if (otvet_201 == 7)  {                                         // "Нет"
+         subPtr0.removeNode(false);      //  удаляем вложенный тег
+         count_201++;              //  отмечаем удаление в счетчике
+         }
+ if (otvet_201 == 2)  {                                         // "Отмена"
+         subPtr=subPtr0;                       //  пропускаем вложенный тег
+         }
+ }
+
 
 // ---------------------------------------------------------------
 // ----------------------------------------------
@@ -275,12 +462,16 @@ var n = 0;
 
 
  var subPtr;  // Внутренние элементы параграфа
+ var subPtr0;  // Внутренний элемент параграфа (кандидат на удаление)
  var mmm1 = [];  //  Массив с внешними тегами : nodeName
  var mmm2 = [];  //  Массив с внешними тегами : className (для SPAN)
+ var mmm3 = [];  //  Массив с элементами
  var nextSubPtr;  //  Индикатор перехода на соседний полноценный элемент
 
+ var s="";  // Содержание абзаца
  var sct="";  // Копия абзаца без некоторых тегов
  var sosedi;  //  Соседние узлы
+ var stanza_1;  //  Оригинальная строфа
  var stanza_2;  //  Копия строфы
  var ptrUp;  //  Узлы, которые выше параграфа
  var empty_line = document.createElement("P");   //  создание новой оболочки параграфа (позже, для создания пустой строки, туда добавится пустота: "")
@@ -288,46 +479,59 @@ var n = 0;
 
  function HandleP(ptr) {
 
+
          //  Большое удаление дублей тегов внутри параграфа
  if (ptr.children.length !=0) {               //  Если в параграфе есть вложения...
+
          subPtr=ptr;                                           //  начальное значение переменной "subPtr"
-         mmm1 = [];                                          //  массивы с данными об элементах
+         mmm1 = [];                                          //  очистка массивов с данными об элементах
          mmm2 = [];
+         mmm3 = [];
+
+ //  Поиск и удаление дублей
 aaa:
          while (true)  {             //  Путешествие по структуре, пока не будет специального объявления о завершении цикла
                  if (subPtr.firstChild!=null  &&  subPtr.children.length !=0)  {                //  Если есть куда углубляться...
-                         mmm1.push(subPtr.nodeName);                                      //  Записываем данные элемента в два массива
+                         mmm1.push(subPtr.nodeName);                                      //  Записываем данные элемента в три массива
                          mmm2.push(subPtr.className);
+                         mmm3.push(subPtr);
                          subPtr=subPtr.firstChild;                                                             //  ...спускаемся на один уровень.
                          if (subPtr.nodeType ==1)                                                   //   Проверяем, является ли элемент   обычным элементом  (не текст, и не специфические элементы)
                                  for  (j=0; j<mmm1.length; j++)
                                          if (mmm1[j] == subPtr.nodeName  &&  mmm2[j] == subPtr.className) {     //   Сравниваем нижний элемент со списками в массивах
+                                                 subPtr0=subPtr;
                                                  subPtr=subPtr.parentNode;                         //  Если есть совпадение --  возвращаемся
-                                                 subPtr.firstChild.removeNode(false);          //   удаляем нижний тег
-                                                             count_201++;                                             //   отмечаем это событие в счетчике
-                                                 mmm1.pop();                                                         //   удаляем последние записи
-                                                 mmm2.pop();
-                                                 break  }                                                                         //   и выходим из цикла проверки.
+                                                 delTag();
+                                                 if (otvet_201 == 7) {                                //  если был удален вложенный тег...
+                                                         mmm1.pop();                                   //   удаляем последние записи
+                                                         mmm2.pop();
+                                                         mmm3.pop();    }
+                                                 break  }                                                        //   и выходим из цикла проверки.
                           }
                      else {                                                                                   //  Если углубляться нельзя...
                              nextSubPtr = false;                                                            //   Объявляем, что переход на полноценный соседний элемент ещё не состоялся
                              while (!nextSubPtr)  {                                                      //    И пока не осуществлен переход на полноценный соседний элемент...
-                                     while (subPtr.nextSibling==null)  {                              //  В частности, если нет даже прохода на соседний элемент...
+                                     while (subPtr.nextSibling==null  ||  !subPtr.nextSibling)  {                              //  В частности, если нет даже прохода на соседний элемент...
                                              subPtr=subPtr.parentNode;                                           //  ...тогда постепенно поднимаемся, пока не появится этот проход.
                                              mmm1.pop();                                                                       //   в процессе подъема удаляем последние записи
                                              mmm2.pop();
-                                             if (subPtr==ptr) break aaa;             // А если поднявшись, вдруг оказываемся в "ptr" — объявляем о полном завершении обработки текста.
+                                             mmm3.pop();
+                                             if (subPtr==ptr) break aaa;             // А если поднявшись, вдруг оказываемся в "ptr" — объявляем о полном завершении обработки параграфа.
                                              }
                                      subPtr=subPtr.nextSibling;                      //  Затем переходим на соседний элемент.
                                      if (subPtr.nodeType ==1) {                              //   Проверяем, является ли элемент   обычным элементом  (не текст, и не специфические элементы)
                                              nextSubPtr = true;                                                   //   и если это так, то объявляем об успешном переходе на полноценный соседний элемент
                                              for  (j=0; j<mmm1.length; j++)               //  Потом проверяем этого соседа на повторение
                                                      if (mmm1[j] == subPtr.nodeName  &&  mmm2[j] == subPtr.className) {     //   Сравниваем соседний элемент со списками в массивах
+                                                             subPtr0=subPtr;
                                                              subPtr=subPtr.previousSibling;               //  Если есть совпадение --  возвращаемся
-                                                             subPtr.nextSibling.removeNode(false);     //   удаляем этот соседний тег
-                                                             count_201++;                                                  //   отмечаем это событие в счетчике
-                                                             nextSubPtr = false;                                    //   объявляем, что переход на полноценный соседний элемент был неудачным
-                                                             break    }    }    }                                        //   и выходим из цикла проверки, чтобы сразу приступить к поиску нового соседа
+                                                             delTag();
+                                                             if (otvet_201 == 7) {                           //  если был удален вложенный тег...
+                                                                     nextSubPtr = false;                     //   объявляем, что переход на полноценный соседний элемент был неудачным
+                                                                     break; }                                 //   и выходим из цикла проверки, чтобы сразу приступить к поиску нового соседа
+                                                     }
+                                             }
+                                     }
                              }
                  }
          }                       //  Конец для    "Большое удаление дублей..."
@@ -335,15 +539,30 @@ aaa:
 
     s=ptr.innerHTML;
 
+         // Удаление остатков атрибута "style" внутри параграфа после выделения текста операцией №201 (например:  <EM style="">  ›››  <EM>)
+   if (styleAdd)  {
+         s=s.replace(/ style=""/g, "");
+         styleAdd=false;
+         }
+
          // Коррекция неразрывных пробелов
-   if (nbspEntity!="&nbsp;"  &&  s.search(re211)!=-1)  { count_211+=s.match(re211).length; s=s.replace(re211, re211_) }
+   if (s.search(re211)!=-1)  {
+         if (nbspEntity!="&nbsp;")  count_211+=s.match(re211).length;   //  подсчет невозвратных замен для ошибочного написания н/р пробела (&nbsp;)
+         s=s.replace(re211, re211_);         //  замена кода н/р пробела (&nbsp;) на обычный символ (в т.ч. временная замена прозрачного н/р пробела)
+         }
 
          // Чистка пустых строк от пробелов и внутренних тегов
    if (s.search(re212)!=-1  &&  s.search(re212ex)==-1)  { s=s.replace(re212, re212_); count_212++ }
 
          // Снятие форматирования "подзаголовок" с пустой строки
-   if (s==""  &&  ptr.className=="subtitle")
-           { ptr.removeAttribute("className"); count_213++ }
+   if (s==""  &&  ptr.className=="subtitle")  { 
+           ptr.insertAdjacentElement("afterEnd",empty_line.cloneNode(true));  // добавление пустой строки
+           ptr=ptr.nextSibling;
+           window.external.inflateBlock(ptr)=true;               // легализация пустой строки
+           ptr.previousSibling.removeNode(true);                // удаление пустого подзаголовка
+           count_213++ }
+           //  * В коде этой операции нет ничего лишнего. Если записать проще (как для №214), то в IE11 может произойти серьезная ошибка
+
 
          // Снятие форматирования "автор текста" с пустой строки (если предыдущая строка без этого формата)
    if (s==""  &&  ptr.className=="text-author"  &&  (ptr.previousSibling==null  ||  (ptr.previousSibling!=null  &&  ptr.previousSibling.className!="text-author")))
@@ -362,7 +581,8 @@ aaa:
                    if (ptr.className !="subtitle")  {                     //  А если строка не имела формат подзаголовка, то
                            ptr.className="subtitle";                     //  добавляем его
                            count_227++;                     //  и отмечаем это действие в соответствующем счетчике
-                           if (ptr.previousSibling !=null  &&  ptr.previousSibling.innerHTML =="")                     //  при этом, если перед новым подзаголовком есть пустая строк, то
+                           if (ptr.previousSibling !=null  &&  ptr.previousSibling.innerHTML ==""                     //  при этом, если перед новым подзаголовком есть пустая строка
+                               &&  (ptr.previousSibling.previousSibling ==null  ||  ptr.previousSibling.previousSibling.className !="image"))  // и ее можно удалить, то
                                    { ptr.previousSibling.removeNode(true); count_272++ }                     //  удаляем ее, и отмечаем это действие в соответствующем счетчике
                            }
                    if (s !=sct)  { s=sct; count_228++ }                     //  Если копия изменялась, то сохраняем эти изменения в "s", и отмечаем это в соответствующем счетчике
@@ -377,10 +597,14 @@ aaa:
                    { s=s_; count_231++ }    }
        else  q_231 = false;
 
+         //  возвращение кода н/р пробела
+   if (nbspEntity=="&nbsp;"  &&  s.search(reNBSPon)!=-1)  s=s.replace(reNBSPon, reNBSPon_);
+
 
    //  сохранение абзаца в оригинале только в том случае, если он действительно изменен
    if (ptr.innerHTML != s)   ptr.innerHTML=s;
-         //  * Далее преобразования выполняются без участия "s"
+
+         //  * Далее преобразования выполняются без участия переменной "s"
 
 
          // Снятие внешнего форматирования с графики в пустом параграфе
@@ -467,14 +691,13 @@ aaa:
                &&  ptr.previousSibling !=null  &&  ptr.previousSibling.nodeName =="P"    //  ...и предыдущая строка - параграф...
                &&  ptr.nextSibling !=null  &&  ptr.nextSibling.nodeName =="P")    //  ...и следующая строка - параграф.
                    {
-                   stanza_2=ptr.parentNode.cloneNode(false);    //  Тогда, копируем оболочку строфы...
-                   ptr.parentNode.insertAdjacentElement("beforeBegin",stanza_2);    //  ...и вставляем её перед оригинальной строфой.
-                   ptr.parentNode.removeAttribute("id");    //  В оригинальной строфе удаляем "id", чтобы не получилось два одинаковых индекса в тексте.
-                   sosedi=ptr.parentNode.firstChild;    //  Находим там первую строку...
-                   while (sosedi.innerHTML !="") {    //  Затем, пока не встретим пустую строку...
-                           sosedi=sosedi.nextSibling;    //  ...перебираем все строки начиная с первой...
-                           stanza_2.insertAdjacentElement("beforeEnd",sosedi.previousSibling)    }    //  ...и последовательно переносим их в новую оболочку строфы.
-                   sosedi.removeNode(true);    //  В конце удаляем пустую строку.
+                   stanza_1=ptr.parentNode;    //  Тогда, копируем оболочку строфы...
+                   stanza_2=stanza_1.cloneNode(false);    //  Тогда, копируем оболочку строфы...
+                   stanza_1.insertAdjacentElement("beforeBegin",stanza_2);    //  ...и вставляем её перед оригинальной строфой.
+                   stanza_1.removeAttribute("id");    //  В оригинальной строфе удаляем "id", чтобы не получилось два одинаковых индекса в тексте.
+                   while (stanza_1.firstChild.innerHTML != "")    //  Затем, пока не встретим пустую строку в оригинальной строфе...
+                           stanza_2.insertAdjacentElement("beforeEnd", stanza_1.firstChild)    //  ...и последовательно переносим все строки в новую оболочку строфы.
+                   stanza_1.firstChild.removeNode(true);    //  В конце удаляем пустую строку.
                    count_281++; return;    //  Увеличиваем счетчик изменений на единицу, и выходим из функции "HandleP(ptr)"
                    }
 
@@ -482,7 +705,7 @@ aaa:
 
 
        //  Поиск графики в тексте
-   if (Obrabotka_Img_v_Texte_on_off  !=0  &&  s.search(re001)!=-1  &&  ptr.parentNode.className =="section")
+   if (Obrabotka_Img_v_Texte_on_off  !=0  &&  ptr.innerHTML.search(re001)!=-1  &&  (ptr.parentNode.className =="section"  ||  ptr.parentNode.className =="body"))
            { m_001[count_001]=ptr;  count_001++ }
 
        //  Поиск пустых строк между строк заголовка + сохранение следующей строки в массиве
@@ -490,7 +713,7 @@ aaa:
            { m_002[count_002]=ptr;  count_002++ }
 
 
-  }   //  конец создания функции "HandleP(ptr)"
+  }   //  конец функции "HandleP(ptr)"
 
 // ---------------------------------------------------------------
 // ----------------------------------------------
@@ -500,9 +723,6 @@ aaa:
 
                  /// ОБРАБОТКА ТЕКСТА _2_  :  Параграфы <P>  :  операции  № 2хх
                  //      (применение функции "HandleP")
-
-
-    window.external.BeginUndoUnit(document,"«Чистка структуры» v."+NumerusVersion);                               // ОТКАТ (UNDO) начало
 
 
  ptr=fbwBody;                                                           //  Начальное значение переменной "ptr"
@@ -545,6 +765,7 @@ aaa:
          if (m2<11 || m2>19) {
                  if (m1==1) ok=0;
                  else  if (m1==2 || m1==3 || m1==4) ok=1;    }
+         return ok;
          }
 
 // ---------------------------------------------------------------
@@ -564,17 +785,19 @@ aaa:
  var otvet_001 = false;
 
 
- if (count_001!=0)  {
+ if (count_001 != 0  &&  Obrabotka_Img_v_Texte_on_off == 2)  {
          pad(count_001);
          T_pause-=new Date().getTime();
-         otvet_001=AskYesNo("                                         ◊  КАРТИНКИ в ТЕКСТЕ  ◊\n\n"+
-                                             "  Найдено "+count_001+izobrazhenij_kotorye[ok]+" можно вывести из пустого параграфа\n\n"+
-                                             "                             ПРЕОБРАЗОВАТЬ оформление "+kartinok[ok]+"?			");
+         otvet_001=AskYesNo("                     ◊  КАРТИНКИ в ТЕКСТЕ  ◊                                      \n\n"+
+                                             "Найдено "+count_001+izobrazhenij_kotorye[ok]+" можно вывести\n"+
+                                             "                        из пустого параграфа\n\n"+
+                                             "                             ПРЕОБРАЗОВАТЬ\n"+
+                                             "                       оформление "+kartinok[ok]+"?");
          T_pause+=new Date().getTime();
          }
 
 
- var re301 = new RegExp("<P( [^>]{1,}){0,1}><SPAN( class=image[^>]{1,}><IMG [^>]{1,}>)</SPAN></P>","g");
+ var re301 = new RegExp("<P( [^>]{1,}){0,1}><SPAN( [^>]{0,}?class=image[^>]{0,}><IMG [^>]{1,}>)</SPAN></P>","g");
  var re301_ = "<DIV$2</DIV>";
  var count_301 = 0;
 
@@ -598,9 +821,11 @@ aaa:
                  msg1 = "                             УДАЛИТЬ пустую строку посреди заголовка?";
                  GoTo(m_002[n].previousSibling);
                  msg2=" • "+(n+1)+" из "+count_002+" • ";
+                 m_002[n].previousSibling.style.backgroundColor="#C9B766";         //  выделяем параграф
                  T_pause-=new Date().getTime();
                  otvet2 = InputBox(msg1, msg2, r);
                  T_pause+=new Date().getTime();
+                 m_002[n].previousSibling.style.removeAttribute("backgroundColor");         //  удаляем выделение параграфа
                  if (otvet2 ==6) {
                          m_002[n].previousSibling.removeNode(true);
                          count_311++ }
@@ -623,8 +848,7 @@ aaa:
                  /// ОБРАБОТКА ТЕКСТА _4_  :  Разделы "DIV"  :  операции  № 4хх  ;  Создание массивов с разделами "image", "section" и "body"
 
 
- var mDiv=fbwBody.getElementsByTagName("DIV");  //  массив с узлами "DIV"
- var div;                //  один из узлов "DIV"
+ mDiv=fbwBody.getElementsByTagName("DIV");
 
  var count_401 = 0;
  var count_402 = 0;
@@ -685,9 +909,9 @@ aaa:
  if (count_Body >1)  {
          pad(count_Body);
          T_pause-=new Date().getTime();
-         otvet_011=AskYesNo('                                     ◊  СЛИШКОМ МНОГО "body"  ◊\n\n'+
-                                                      '                                         Найдены '+count_Body+razdel[ok]+' "body"\n\n'+
-                                                      "                                      ОБЪЕДИНИТЬ в один раздел?				");
+         otvet_011=AskYesNo('               ◊  СЛИШКОМ МНОГО "body"  ◊\n\n'+
+                                                      '                   Найдены '+count_Body+razdel[ok]+' "body"\n\n'+
+                                                      "                ОБЪЕДИНИТЬ в один раздел?                                  ");
          T_pause+=new Date().getTime();
          }
 
@@ -772,16 +996,20 @@ aaa:
                  // Проверка для нового заголовка
                  if (q_503) {
                          msg1 = "                   СОХРАНИТЬ ЗАГОЛОВОК, полученный из имени <body>?\n"+
-                                         "                    (возможно сохранение отредактированного заголовка)";
+                                         "                              (текст заголовка можно отредактировать)";
                          GoTo(newTitle);
                          msg2=newTitle.firstChild.innerHTML;
+                         newTitle.style.backgroundColor="#821A1A";         //  выделяем заголовок
+                         newTitle.style.color="#EEF47C";
                          T_pause-=new Date().getTime();
                          otvet2 = InputBox(msg1, msg2, r);
                          T_pause+=new Date().getTime();
-                         if (otvet2 ==7) {
+                         newTitle.style.removeAttribute("backgroundColor");         //  удаляем выделение заголовка
+                         newTitle.style.removeAttribute("color");
+                         if (otvet2 ==6) newTitle.firstChild.innerHTML=r.$;
+                             else  {
                                  newTitle.removeNode(true);
                                  count_503-- }
-                         if (otvet2 ==6  &&  r.$!="") newTitle.firstChild.innerHTML=r.$;
                          }
 
                  }
@@ -860,7 +1088,7 @@ ccc: {
          Section=mSection[j];
 
          // Перемещение заголовка основной секции   в   <body>
-         //  <body>[картинка]<section>[заголовок][ряд строк]</section></body>   и т.п.     ›››     <body>[картинка][заголовок]<section>[ряд строк]</section></body>
+         //  <body>[картинка]<section>[заголовок][ряд строк]</section></body>     ›››     <body>[картинка][заголовок]<section>[ряд строк]</section></body>
 ddd: {
          if (Section.parentNode !=null  &&  Section.parentNode.className =="body") {
                  classStroka="";
@@ -921,14 +1149,14 @@ ddd: {
  if (count_021!=0  &&  Obrabotka_karm_Img ==2)  {
          pad(count_021);
          T_pause-=new Date().getTime();
-         otvet_021=AskYesNo("                                   ◊  ИЛЛЮСТРАЦИЯ В КАРМАНЕ  ◊\n\n"+
-                                                      "                          "+Najden[ok]+count_021+ill_v_karm[ok]+" секций:\n\n"+
-                                                      "                                       < Начало внешней секции >\n"+
-                                                      "                                                      < . . . . . >\n"+
-                                                      "                                                < Иллюстрация >\n"+
-                                                      "                                           < Внутренние секции >\n"+
-                                                      "                                        < Конец внешней секции >\n\n"+
-                                                      "                     ОБРАМИТЬ "+ill_nov_razd[ok]+"?		");
+         otvet_021=AskYesNo("               ◊  ИЛЛЮСТРАЦИЯ В КАРМАНЕ  ◊                                 \n\n"+
+                                                      ""+Najden[ok]+count_021+ill_v_karm[ok]+" секций:\n\n"+
+                                                      "< Начало внешней секции >\n"+
+                                                      "    < . . . . . >\n"+
+                                                      "    < Иллюстрация >\n"+
+                                                      "    < Внутренние секции >\n"+
+                                                      "< Конец внешней секции >\n\n"+
+                                                      "ОБРАМИТЬ "+ill_nov_razd[ok]+"?");
          T_pause+=new Date().getTime();
          }
 
@@ -942,8 +1170,17 @@ ddd: {
 
 
  var imgUp;          //  узлы рядом с картинкой
- var count_601 = 0;   var count_611 = 0;   var count_621 = 0;   var count_622 = 0;   var count_631 = 0;   //  Счетчики
- var re611ex = new RegExp("^(cite|subtitle||normal)$","g");  //  класс тегов -- исключения для автоматической редакции
+ var count_601 = 0;   var count_611 = 0;   var count_621 = 0;   var count_622 = 0;   var count_631 = 0;   var count_632 = 0;   //  Счетчики
+
+ var Re_Add_Entity = "";
+ if (Add_Entity_Img_Podpis == 1  &&  Add_Entity_Img_Title == 1  &&  Add_Entity_Img_Img == 1)  Re_Add_Entity = "&";
+     else  {
+             if (Add_Entity_Img_Podpis == 0)  Re_Add_Entity += "|cite|subtitle||normal";
+             if (Add_Entity_Img_Title == 0)  Re_Add_Entity += "|title";
+             if (Add_Entity_Img_Img == 0)  Re_Add_Entity += "|image";
+             Re_Add_Entity=Re_Add_Entity.replace(/^./g, "");
+             }
+ var re611ex = new RegExp("^("+Re_Add_Entity+")$","g");      //  класс тегов -- исключения для автоматической редакции
 
 
  for (j=0; j<count_Img; j++) {
@@ -1038,10 +1275,47 @@ ddd: {
                            }                    //  ----------------   конец для    "Перемещение картинки из кармана в отдельную секцию"
 
                    }                    //  ----------------   конец отбора картинок в секции
+
+
+           //  Перемещение картинки из <body> в отдельную секцию (когда картинка расположена не в начале <body>)
+           if (img.parentNode.className =="body"  &&  img.previousSibling !=null  &&  img.nextSibling !=null  &&  img.nextSibling.className =="section")  {
+                   newSection = document.createElement("DIV");   newSection.className ="section";      //  создание новой секции
+                   img.insertAdjacentElement("afterEnd",newSection);     //  Вставка новой секции после картинки
+                   newSection.insertAdjacentElement("afterBegin",empty_line.cloneNode(true));     //  Вставка оболочки будущей пустой строки в новую секцию
+                   window.external.inflateBlock(newSection.firstChild)=true;     //  Вставка содержимого пустой строки
+                   newSection.insertAdjacentElement("afterBegin",img);     //  Перемещение картинки в новую секцию (в начало секции)
+                   count_632++;
+                   //  Далее проверка наличия пустой секции, стоящей после новой секции, и её удаление
+                   if (newSection.nextSibling !=null) {
+                           imgUp = newSection.nextSibling;
+                           if (imgUp.className =="section"  &&  imgUp.children.length ==1  &&  imgUp.firstChild.nodeName =="P"  &&  imgUp.firstChild.innerHTML =="")
+                                   { imgUp.removeNode(true); count_263++ }
+                           }
+                   }
+
            }                    //  ----------------   конец цикла перебора всех картинок
 
+// ---------------------------------------------------------------
+// ----------------------------------------------
+// -----------------------------
 
-    window.external.EndUndoUnit(document);                                             // undo конец (запись в систему для отката)
+
+                 // Подсчет общего количества исправлений
+
+ var itogi = count_100 + count_103 + count_150 + count_201 + count_213 + count_214 + count_227 + count_232 + count_241 + count_251 + count_252 + count_253 + count_262 + count_263 + count_271 + count_272 + count_281 + count_301 + count_311 + count_401 + count_402 + count_501 + count_502 + count_503 + count_511 + count_512 + count_521 + count_601 + count_611 + count_621 + count_622 + count_631 + count_632;
+
+
+ if (itogi != 0)  window.focus();  // Удаление курсора из текста, при результативной обработке
+
+// * Если этого не делать, то при нахождении курсора на месте удаленной или значительно преобразованной строки, он может оказаться в запретном месте, и тогда ручной ввод любого текста может привести к вылету FBE (происходит такое в браузере IE11), либо к созданию аномальной структуры (происходит такое везде).
+// ** По идее курсор надо бы переместить внутрь параграфа, но этого я не умею.
+
+
+ itogi += count_211 + count_212 + count_228 + count_231;  // наиболее безопасные операции для курсора
+
+// ---------------------------------------------------------------
+
+ window.external.EndUndoUnit(document);                                             // конец (запись в систему отмен)
 
 // ---------------------------------------------------------------
 // ----------------------------------------------
@@ -1065,9 +1339,10 @@ ddd: {
  var currentMonth = 1+currentFullDate.getMonth();
  var currentYear = currentFullDate.getFullYear();
 
- if (currentDay<10) currentDay = "‌ ‌ " + currentDay;
+ var Day_ = "";
+ if (currentDay<10) Day_ = "  ";
  if (currentMonth<10) currentMonth = "0" + currentMonth;
- currentYear = (currentYear+"").replace(/^.*?(\d{1,2})$/g, "$1");
+currentYear = (currentYear+"").replace(/^.*?(\d{1,2})$/g, "$1");
 
  var currentTime = currentHours + ":" + currentMinutes + ":" + currentSeconds;
  var currentDate = currentDay + "." + currentMonth + "." + currentYear;
@@ -1390,21 +1665,12 @@ Kn[271]="Советская Армия врага разгромила, она �
 // -----------------------------
 
 
+                 // Демонстрационный режим "Показать все строки"
 
-                 // Подсчет общего количества исправлений
- var itogi = count_101 + count_102 + count_103 + count_201 + count_211 + count_212 + count_213 + count_214 + count_231 + count_232 + count_227 + count_228 + count_241 + count_251 + count_252 + count_253 + count_262 + count_263 + count_271 + count_272 + count_281 + count_301 + count_311 + count_401 + count_402 + count_501 + count_502 + count_503 + count_511 + count_512 + count_521 + count_601 + count_611 + count_621 + count_622 + count_631;
+var VseStroki_on_off = 0;      // 0 ; 1 //      ("0" — отключить, "1" — включить)
 
-
-
-                 /// ДОПОЛНЕНИЕ _2_  :  Демонстрационный режим "Показать все строки"
-
-
- var dem=false;
- var Q="н/д";
-// dem=true;   // !!!!!  активатор
- if (dem) {
-         count_101=Q;  count_102=Q;  count_103=Q;  count_201=Q;  count_211=Q;  count_212=Q;  count_213=Q;  count_214=Q;  count_227=Q;  count_228=Q;  count_231=Q;  count_232=Q;  count_241=Q;  count_251=Q;  count_252=Q;  count_253=Q;  count_262=Q;  count_263=Q;  count_271=Q;  count_272=Q;  count_281=Q;  count_301=Q;  count_311=Q;  count_401=Q;  count_402=Q;  count_501=Q;  count_502=Q;  count_503=Q;  count_511=Q;  count_512=Q;  count_521=Q;  count_601=Q;  count_611=Q;  count_621=Q;  count_622=Q;  count_631=Q;  itogi=Q;
-         }
+ var d=0;
+ if (VseStroki_on_off ==1)  d="показать нули";
 
 // ---------------------------------------------------------------
 // ----------------------------------------------
@@ -1412,7 +1678,13 @@ Kn[271]="Советская Армия врага разгромила, она �
 
 
 
-                 /// ОКНО РЕЗУЛЬТАТОВ  :  Сборка массива с результатами обработки
+                 /// ОКНО РЕЗУЛЬТАТОВ  :  Сборка массива с результатами обработки (для win XP)
+
+
+ if (Dizajn==0) {
+
+
+                 ///  Сборка массива с результатами обработки
 
 
  var mSt=[];
@@ -1427,48 +1699,51 @@ Kn[271]="Советская Армия врага разгромила, она �
                                                              mSt[ind]='';  ind++;
                                                              mSt[ind]='• РАЗНЫЕ ИСПРАВЛЕНИЯ:';  ind++;
 
-         if (count_101!=0)             { mSt[ind]='101. Удаление тегов вложеного параграфа в параграф  .  .  .  .  .  .  .  .	'+count_101;  ind++ }
-         if (count_102!=0)             { mSt[ind]='102. Перезапись параграфов .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .	'+count_102;  ind++ }
-         if (count_103!=0)             { mSt[ind]='103. Удаление внутренних тегов вне параграфа   .  .  .  .  .  .  .  .  .  .  .	'+count_103;  ind++ }
-         if (count_201!=0)             { mSt[ind]='201. Удаление повторных внутренних тегов в параграфе .  .  .  .  .  .  .	'+count_201;  ind++ }
-         if (count_211!=0)             { mSt[ind]='211. Замена "&nbsp;" на неразрывный пробел   .  .  .  .  .  .  .  .  .  .  .  .  .	'+count_211;  ind++ }
-         if (count_227!=0)             { mSt[ind]='227. Добавление формата "подзаголовок" для строк из символов  .  .  .	'+count_227;  ind++ }
-         if (count_228!=0)             { mSt[ind]='228. Коррекция подзаголовков из символов  .  .  .  .  .  .  .  .  .  .  .  .  .  .	'+count_228;  ind++ }
-         if (count_231!=0)             { mSt[ind]='231. Внутренняя чистка строк с графикой .  .  .  .  .  .  .  .  .  .  .  .  .  .  .	'+count_231;  ind++ }
-         if (count_232!=0)             { mSt[ind]='232. Снятие внешнего форматирования со строк с графикой   .  .  .  .  .	'+count_232;  ind++ }
-         if (count_301!=0)             { mSt[ind]='301. Переоформление графики .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .	'+count_301;  ind++ }
-         if (count_402!=0)             { mSt[ind]='402. Чистка двойных разделов   .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .	'+count_402;  ind++ }
-         if (count_501!=0)             { mSt[ind]='501. Преобразование раздела "body" в секцию   .  .  .  .  .  .  .  .  .  .  .  .	'+count_501;  ind++ }
-         if (count_502!=0)             { mSt[ind]='502. Перестановка заглавной картинки  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .	'+count_502;  ind++ }
-         if (count_503!=0)             { mSt[ind]='503. Преобразование имени "body" в заголовок   .  .  .  .  .  .  .  .  .  .  .  .	'+count_503;  ind++ }
-         if (count_511!=0)             { mSt[ind]='511. Чистка секций в "body"  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .	'+count_511;  ind++ }
-         if (count_512!=0)             { mSt[ind]='512. Чистка внутренних секций  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .	'+count_512;  ind++ }
-         if (count_521!=0)             { mSt[ind]='521. Перемещение заголовка из основной секции в "body" .  .  .  .  .  .  .	'+count_521;  ind++ }
-         if (count_631!=0)             { mSt[ind]='631. Перемещение картинки из "кармана" в отдельную секцию  .  .  .  .	'+count_631;  ind++ }
+         if (count_100!=d)             { mSt[ind]='100. Восстановление параграфов .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .	'+count_100;  ind++ }
+         if (count_103!=d)             { mSt[ind]='103. Коррекция внутренних тегов вне параграфа .  .  .  .  .  .  .  .  .  .  .	'+count_103;  ind++ }
+         if (count_150!=d)             { mSt[ind]='150. Добавление разрыва секции перед заголовком   .  .  .  .  .  .  .  .  .	'+count_150;  ind++ }
+         if (count_201!=d)             { mSt[ind]='201. Удаление повторных внутренних тегов в параграфе   .  .  .  .  .  .	'+count_201;  ind++ }
+         if (count_202!=d)             { mSt[ind]='202. Добавление формата "Цитата" .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .	'+count_202;  ind++ }
+         if (count_211!=d)             { mSt[ind]='211. Замена "&nbsp;" на неразрывный пробел .  .  .  .  .  .  .  .  .  .  .  .  .	'+count_211;  ind++ }
+         if (count_227!=d)             { mSt[ind]='227. Добавление формата "подзаголовок" для строк из символов .  .  .	'+count_227;  ind++ }
+         if (count_228!=d)             { mSt[ind]='228. Коррекция подзаголовков из символов .  .  .  .  .  .  .  .  .  .  .  .  .  .	'+count_228;  ind++ }
+         if (count_231!=d)             { mSt[ind]='231. Удаление мусора из строк с графикой  .  .  .  .  .  .  .  .  .  .  .  .  .  .	'+count_231;  ind++ }
+         if (count_232!=d)             { mSt[ind]='232. Удаление внешнего форматирования со строк с графикой  .  .  .  .	'+count_232;  ind++ }
+         if (count_301!=d)             { mSt[ind]='301. Переоформление графики  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .	'+count_301;  ind++ }
+         if (count_402!=d)             { mSt[ind]='402. Исправление двойных разделов  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .	'+count_402;  ind++ }
+         if (count_501!=d)             { mSt[ind]='501. Преобразование раздела "body" в секцию  .  .  .  .  .  .  .  .  .  .  .  .	'+count_501;  ind++ }
+         if (count_502!=d)             { mSt[ind]='502. Перестановка заглавной картинки .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .	'+count_502;  ind++ }
+         if (count_503!=d)             { mSt[ind]='503. Преобразование имени "body" в заголовок .  .  .  .  .  .  .  .  .  .  .  .	'+count_503;  ind++ }
+         if (count_511!=d)             { mSt[ind]='511. Удаление лишней секции в "body"   .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .	'+count_511;  ind++ }
+         if (count_512!=d)             { mSt[ind]='512. Удаление лишних внутренних секций   .  .  .  .  .  .  .  .  .  .  .  .  .  .	'+count_512;  ind++ }
+         if (count_521!=d)             { mSt[ind]='521. Перемещение заголовка из основной секции в "body"   .  .  .  .  .  .	'+count_521;  ind++ }
+         if (count_631!=d)             { mSt[ind]='631. Перемещение картинки из "кармана" в отдельную секцию .  .  .  .	'+count_631;  ind++ }
+         if (count_632!=d)             { mSt[ind]='632. Перемещение картинки из "body" в отдельную секцию   .  .  .  .  .	'+count_632;  ind++ }
 
  if (cTaT1==ind-3) ind=ind-2;  //  Удаление двух последних строк, если нет пунктов в этом разделе
  var cTaT2=ind-1;  //  число строк в двух разделах
 
                                                              mSt[ind]='';  ind++;
                                                              mSt[ind]='• ОПЕРАЦИИ С ПУСТЫМИ СТРОКАМИ:';  ind++;
-         if (count_212!=0)             { mSt[ind]='212. Чистка... внутри строки   .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .	'+count_212;  ind++ }
-         if (count_213!=0)             { mSt[ind]='213. Снятие формата "подзаголовок"   .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .	'+count_213;  ind++ }
-         if (count_214!=0)             { mSt[ind]='214. Снятие формата "автор текста" .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .	'+count_214;  ind++ }
-         if (count_241!=0)             { mSt[ind]='241. Добавление... между "карманным" блоком и концом секции .  .  .  .	'+count_241;  ind++ }
-         if (count_251!=0)             { mSt[ind]='251. Удаление второй пустой строки подряд   .  .  .  .  .  .  .  .  .  .  .  .  .	'+count_251;  ind++ }
-         if (count_252!=0)             { mSt[ind]='252. Снятие внешнего форматирования  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .	'+count_252;  ind++ }
-         if (count_253!=0)             { mSt[ind]='253. Удаление... в "body" и "fbw_body"   .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .	'+count_253;  ind++ }
-         if (count_262!=0)             { mSt[ind]='262. Удаление пустых "body"   .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .	'+count_262;  ind++ }
-         if (count_263!=0)             { mSt[ind]='263. Удаление пустых секций  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .	'+count_263;  ind++ }
-         if (count_271!=0)             { mSt[ind]='271. Удаление... на окраине разделов .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .	'+count_271;  ind++ }
-         if (count_272!=0)             { mSt[ind]='272. Удаление... за краем разделов и подзаголовков  .  .  .  .  .  .  .  .  .	'+count_272;  ind++ }
-         if (count_281!=0)             { mSt[ind]='281. Замена пустых строк в стихах на разрыв строф   .  .  .  .  .  .  .  .  .	'+count_281;  ind++ }
-         if (count_311!=0)             { mSt[ind]='311. Удаление...  посреди заголовка   .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .	'+count_311;  ind++ }
-         if (count_401!=0)             { mSt[ind]='401. Удаление абсолютно пустых разделов  .  .  .  .  .  .  .  .  .  .  .  .  .  .	'+count_401;  ind++ }
-         if (count_601!=0)             { mSt[ind]='601. Удаление... рядом с картинкой в "кармане" секций .  .  .  .  .  .  .  .	'+count_601;  ind++ }
-         if (count_611!=0)             { mSt[ind]='611. Вставка... рядом с картинкой посреди секции   .  .  .  .  .  .  .  .  .  .	'+count_611;  ind++ }
-         if (count_621!=0)             { mSt[ind]='621. Вставка... между картинкой и границей секции .  .  .  .  .  .  .  .  .  .	'+count_621;  ind++ }
-         if (count_622!=0)             { mSt[ind]='622. Удаление... между картинкой и границей секции .  .  .  .  .  .  .  .  .	'+count_622;  ind++ }
+
+         if (count_212!=d)             { mSt[ind]='212. Удаление мусора из пустых строк  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .	'+count_212;  ind++ }
+         if (count_213!=d)             { mSt[ind]='213. Удаление формата "подзаголовок" .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .	'+count_213;  ind++ }
+         if (count_214!=d)             { mSt[ind]='214. Удаление формата "автор текста"  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .	'+count_214;  ind++ }
+         if (count_241!=d)             { mSt[ind]='241. Добавление... между "карманным" блоком и концом секции   .  .  .	'+count_241;  ind++ }
+         if (count_251!=d)             { mSt[ind]='251. Удаление второй пустой строки подряд  .  .  .  .  .  .  .  .  .  .  .  .  .	'+count_251;  ind++ }
+         if (count_252!=d)             { mSt[ind]='252. Удаление внешнего форматирования   .  .  .  .  .  .  .  .  .  .  .  .  .  .	'+count_252;  ind++ }
+         if (count_253!=d)             { mSt[ind]='253. Удаление... в "body" и "fbw_body"  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .	'+count_253;  ind++ }
+         if (count_262!=d)             { mSt[ind]='262. Удаление пустого "body" .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .	'+count_262;  ind++ }
+         if (count_263!=d)             { mSt[ind]='263. Удаление пустых секций .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .	'+count_263;  ind++ }
+         if (count_271!=d)             { mSt[ind]='271. Удаление... на окраине разделов   .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .	'+count_271;  ind++ }
+         if (count_272!=d)             { mSt[ind]='272. Удаление... за краем разделов и подзаголовков .  .  .  .  .  .  .  .  .	'+count_272;  ind++ }
+         if (count_281!=d)             { mSt[ind]='281. Замена пустых строк в стихах на разрыв строф  .  .  .  .  .  .  .  .  .	'+count_281;  ind++ }
+         if (count_311!=d)             { mSt[ind]='311. Удаление...  посреди заголовка  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .	'+count_311;  ind++ }
+         if (count_401!=d)             { mSt[ind]='401. Удаление абсолютно пустых разделов   .  .  .  .  .  .  .  .  .  .  .  .  .	'+count_401;  ind++ }
+         if (count_601!=d)             { mSt[ind]='601. Удаление... рядом с картинкой в "кармане" секций   .  .  .  .  .  .  .	'+count_601;  ind++ }
+         if (count_611!=d)             { mSt[ind]='611. Вставка... рядом с картинкой посреди секции  .  .  .  .  .  .  .  .  .  .	'+count_611;  ind++ }
+         if (count_621!=d)             { mSt[ind]='621. Вставка... между картинкой и границей секции   .  .  .  .  .  .  .  .  .	'+count_621;  ind++ }
+         if (count_622!=d)             { mSt[ind]='622. Удаление... между картинкой и границей секции   .  .  .  .  .  .  .  .	'+count_622;  ind++ }
 
  if (cTaT2==ind-3) ind=ind-2;  //  Удаление двух последних строк, если нет пунктов в этом разделе
 
@@ -1477,11 +1752,11 @@ Kn[271]="Советская Армия врага разгромила, она �
                                                              mSt[ind]='';  ind++;
                                                              mSt[ind]='• ПОСЛОВИЦА:';  ind++;
 
- var reS92 = new RegExp("(\\\s|"+nbspEntity+")","g");   // удвоение пробелов для лучшей картинки
+ var reS92 = new RegExp("\\\s","g");   // удвоение пробелов для лучшей картинки
  var reS92_ = "  ";
- var reZit = new RegExp("^(.{0,75})(\\\s\\\s|$)(.{0,})$","g");   // разделение на строки
+ var reZit = new RegExp("^((  (?!—)|.){0,62})(\\\s\\\s|$)(.{0,})$","g");   // Разделение на строки
  var reZit_1 = "$1";
- var reZit_2 = "$3";
+ var reZit_2 = "$4";
  var fragment = "";
  var otstup = "         ";
 
@@ -1493,8 +1768,30 @@ Kn[271]="Советская Армия врага разгромила, она �
 
 
 //  Сборка строк текущей даты и времени
-                                                             mSt[ind]='				';  ind++;
-                                                             mSt[ind]="  ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ "+currentDate+" ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ "+currentTime+" ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ";  ind++;
+                                                             mSt[ind]="				";  ind++;
+                                                             mSt[ind]= Day_+"                .:::::::::::::: "+currentDate+" ::::::::::::::: "+currentTime+" ::::::::::::::.";  ind++;
+
+
+
+                 ///  Вывод окна результатов на экран
+
+
+ var st2="";  //  текст результатов
+
+ for  ( j=1; j!=ind; j++ )
+        st2=st2+'\n    '+mSt[j];  //  добавление элемента из массива
+
+
+//  Вывод окна результатов
+ MsgBox ('                                                            –= ◊ =–\n'+
+                   '                                     .:::: «Чистка структуры» v.'+NumerusVersion+' ::::.                                                       \n'+
+                   "                               ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' '"+st2);
+
+ return;  // Конец скрипта (для win XP)
+ }
+
+
+
 
 // ---------------------------------------------------------------
 // ----------------------------------------------
@@ -1502,19 +1799,432 @@ Kn[271]="Советская Армия врага разгромила, она �
 
 
 
-                 /// ОКНО РЕЗУЛЬТАТОВ  :  Вывод окна результатов на экран
+                 /// Продвинутая функция склонения по падежам в зависимости от числа
+
+
+ function pad2(Numer) {
+         ok=3;
+         m1=Numer % 10;
+         m2=Numer % 100;
+         if (m2<11 || m2>19) {
+                 if (m1==1)
+                         if (Numer==1)  ok=0;
+                             else  ok=1;
+                     else  if (m1==2 || m1==3 || m1==4) ok=2;    }
+         return ok;
+         }
+
+// ---------------------------------------------------------------
+// ----------------------------------------------
+// -----------------------------
+
+
+
+                 /// ОКНО РЕЗУЛЬТАТОВ  :  Сборка массива с результатами обработки   (универсальный дизайн)
+
+
+ var mSt=[];
+ var ind=0;
+
+ mSt[ind]="• Время выполнения:  "+tempus;  ind++;
+
+ var cTaT1=ind;  //  число строк в первом разделе
+
+ mSt[ind]="";  ind++;
+ mSt[ind]="• РАЗНЫЕ ИСПРАВЛЕНИЯ:";  ind++;
+
+ if (count_100!=d) {
+          mSt[ind]=count_100+"    ";
+          switch (pad2(count_100)) {
+                 case 0:  mSt[ind]+="восстановление параграфа";  break;
+                 case 1:  mSt[ind]+="восстановление параграфов";  break;
+                 case 2:  mSt[ind]+="восстановления параграфов";  break;
+                 case 3:  mSt[ind]+="восстановлений параграфов";
+                 }
+         ind++ }
+ if (count_103!=d) {
+          mSt[ind]=count_103+"    ";
+          switch (pad2(count_103)) {
+                 case 0:  mSt[ind]+="коррекция внутреннего тега вне параграфа";  break;
+                 case 1:  mSt[ind]+="коррекция внутренних тегов вне параграфа";  break;
+                 case 2:  mSt[ind]+="коррекции внутренних тегов вне параграфа";  break;
+                 case 3:  mSt[ind]+="коррекций внутренних тегов вне параграфа";
+                 }
+         ind++ }
+ if (count_150!=d) {
+          mSt[ind]=count_150+"    ";
+          switch (pad2(count_150)) {
+                 case 0:  mSt[ind]+="добавление разрыва секции перед заголовком";  break;
+                 case 1:  mSt[ind]+="добавление разрывов секций перед заголовками";  break;
+                 case 2:  mSt[ind]+="добавления разрывов секций перед заголовками";  break;
+                 case 3:  mSt[ind]+="добавлений разрывов секций перед заголовками";
+                 }
+         ind++ }
+ if (count_201!=d) {
+          mSt[ind]=count_201+"    ";
+          switch (pad2(count_201)) {
+                 case 0:  mSt[ind]+="удаление повторного внутреннего тега в параграфе";  break;
+                 case 1:  mSt[ind]+="удаление повторных внутренних тегов в параграфе";  break;
+                 case 2:  mSt[ind]+="удаления повторных внутренних тегов в параграфе";  break;
+                 case 3:  mSt[ind]+="удалений повторных внутренних тегов в параграфе";
+                 }
+         ind++ }
+ if (count_202!=d) {
+          mSt[ind]=count_202+"    ";
+          switch (pad2(count_202)) {
+                 case 0:  mSt[ind]+="добавление формата \"Цитата\"";  break;
+                 case 1:  mSt[ind]+="добавление формата \"Цитата\"";  break;
+                 case 2:  mSt[ind]+="добавления формата \"Цитата\"";  break;
+                 case 3:  mSt[ind]+="добавлений формата \"Цитата\"";
+                 }
+         ind++ }
+ if (count_211!=d) {
+          mSt[ind]=count_211+"    ";
+          switch (pad2(count_211)) {
+                 case 0:  mSt[ind]+="замена \"&nbsp;\" на неразрывный пробел";  break;
+                 case 1:  mSt[ind]+="замена \"&nbsp;\" на неразрывный пробел";  break;
+                 case 2:  mSt[ind]+="замены \"&nbsp;\" на неразрывный пробел";  break;
+                 case 3:  mSt[ind]+="замен \"&nbsp;\" на неразрывный пробел";
+                 }
+         ind++ }
+ if (count_227!=d) {
+          mSt[ind]=count_227+"    ";
+          switch (pad2(count_227)) {
+                 case 0:  mSt[ind]+="добавление формата \"подзаголовок\" для строки из символов";  break;
+                 case 1:  mSt[ind]+="добавление формата \"подзаголовок\" для строк из символов";  break;
+                 case 2:  mSt[ind]+="добавления формата \"подзаголовок\" для строк из символов";  break;
+                 case 3:  mSt[ind]+="добавлений формата \"подзаголовок\" для строк из символов";
+                 }
+         ind++ }
+ if (count_228!=d) {
+          mSt[ind]=count_228+"    ";
+          switch (pad2(count_228)) {
+                 case 0:  mSt[ind]+="коррекция подзаголовка из символов";  break;
+                 case 1:  mSt[ind]+="коррекция подзаголовков из символов";  break;
+                 case 2:  mSt[ind]+="коррекции подзаголовков из символов";  break;
+                 case 3:  mSt[ind]+="коррекций подзаголовков из символов";
+                 }
+         ind++ }
+ if (count_231!=d) {
+          mSt[ind]=count_231+"    ";
+          switch (pad2(count_231)) {
+                 case 0:  mSt[ind]+="удаление мусора из строки с графикой";  break;
+                 case 1:  mSt[ind]+="удаление мусора из строк с графикой";  break;
+                 case 2:  mSt[ind]+="удаления мусора из строк с графикой";  break;
+                 case 3:  mSt[ind]+="удалений мусора из строк с графикой";
+                 }
+         ind++ }
+ if (count_232!=d) {
+          mSt[ind]=count_232+"    ";
+          switch (pad2(count_232)) {
+                 case 0:  mSt[ind]+="удаление внешнего форматирования со строки с графикой";  break;
+                 case 1:  mSt[ind]+="удаление внешнего форматирования со строк с графикой";  break;
+                 case 2:  mSt[ind]+="удаления внешнего форматирования со строк с графикой";  break;
+                 case 3:  mSt[ind]+="удалений внешнего форматирования со строк с графикой";
+                 }
+         ind++ }
+ if (count_301!=d) {
+          mSt[ind]=count_301+"    ";
+          switch (pad2(count_301)) {
+                 case 0:  mSt[ind]+="переоформление графики";  break;
+                 case 1:  mSt[ind]+="переоформление графики";  break;
+                 case 2:  mSt[ind]+="переоформления графики";  break;
+                 case 3:  mSt[ind]+="переоформлений графики";
+                 }
+         ind++ }
+ if (count_402!=d) {
+          mSt[ind]=count_402+"    ";
+          switch (pad2(count_402)) {
+                 case 0:  mSt[ind]+="исправление двойных разделов";  break;
+                 case 1:  mSt[ind]+="исправление двойных разделов";  break;
+                 case 2:  mSt[ind]+="исправления двойных разделов";  break;
+                 case 3:  mSt[ind]+="исправлений двойных разделов";
+                 }
+         ind++ }
+ if (count_501!=d) {
+          mSt[ind]=count_501+"    ";
+          switch (pad2(count_501)) {
+                 case 0:  mSt[ind]+="преобразование раздела \"body\" в секцию";  break;
+                 case 1:  mSt[ind]+="преобразование разделов \"body\" в секции";  break;
+                 case 2:  mSt[ind]+="преобразования разделов \"body\" в секции";  break;
+                 case 3:  mSt[ind]+="преобразований разделов \"body\" в секции";
+                 }
+         ind++ }
+ if (count_502!=d) {
+          mSt[ind]=count_502+"    ";
+          switch (pad2(count_502)) {
+                 case 0:  mSt[ind]+="перестановка заглавной картинки";  break;
+                 case 1:  mSt[ind]+="перестановка заглавных картинок";  break;
+                 case 2:  mSt[ind]+="перестановки заглавных картинок";  break;
+                 case 3:  mSt[ind]+="перестановок заглавных картинок";
+                 }
+         ind++ }
+ if (count_503!=d) {
+          mSt[ind]=count_503+"    ";
+          switch (pad2(count_503)) {
+                 case 0:  mSt[ind]+="преобразование имени \"body\" в заголовок";  break;
+                 case 1:  mSt[ind]+="преобразование имён \"body\" в заголовки";  break;
+                 case 2:  mSt[ind]+="преобразования имён \"body\" в заголовки";  break;
+                 case 3:  mSt[ind]+="преобразований имён \"body\" в заголовки";
+                 }
+         ind++ }
+ if (count_511!=d) {
+          mSt[ind]=count_511+"    ";
+          switch (pad2(count_511)) {
+                 case 0:  mSt[ind]+="удаление лишней секции в \"body\"";  break;
+                 case 1:  mSt[ind]+="удаление лишних секций в \"body\"";  break;
+                 case 2:  mSt[ind]+="удаления лишних секций в \"body\"";  break;
+                 case 3:  mSt[ind]+="удалений лишних секций в \"body\"";
+                 }
+         ind++ }
+ if (count_512!=d) {
+          mSt[ind]=count_512+"    ";
+          switch (pad2(count_512)) {
+                 case 0:  mSt[ind]+="удаление лишней внутренней секции";  break;
+                 case 1:  mSt[ind]+="удаление лишних внутренней секции";  break;
+                 case 2:  mSt[ind]+="удаления лишних внутренних секций";  break;
+                 case 3:  mSt[ind]+="удалений лишних внутренних секций";
+                 }
+         ind++ }
+ if (count_521!=d) {
+          mSt[ind]=count_521+"    ";
+          switch (pad2(count_521)) {
+                 case 0:  mSt[ind]+="перемещение заголовка из основной секции в \"body\"";  break;
+                 case 1:  mSt[ind]+="перемещение заголовков из основных секций в \"body\"";  break;
+                 case 2:  mSt[ind]+="перемещения заголовков из основных секций в \"body\"";  break;
+                 case 3:  mSt[ind]+="перемещений заголовков из основных секций в \"body\"";
+                 }
+         ind++ }
+ if (count_631!=d) {
+          mSt[ind]=count_631+"    ";
+          switch (pad2(count_631)) {
+                 case 0:  mSt[ind]+="перемещение картинки из \"кармана\" в отдельную секцию";  break;
+                 case 1:  mSt[ind]+="перемещение картинок из \"кармана\" в отдельные секции";  break;
+                 case 2:  mSt[ind]+="перемещения картинок из \"кармана\" в отдельные секции";  break;
+                 case 3:  mSt[ind]+="перемещений картинок из \"кармана\" в отдельные секции";
+                 }
+         ind++ }
+ if (count_632!=d) {
+          mSt[ind]=count_632+"    ";
+          switch (pad2(count_632)) {
+                 case 0:  mSt[ind]+="перемещение картинки из \"body\" в отдельную секцию";  break;
+                 case 1:  mSt[ind]+="перемещение картинок из \"body\" в отдельные секции";  break;
+                 case 2:  mSt[ind]+="перемещения картинок из \"body\" в отдельные секции";  break;
+                 case 3:  mSt[ind]+="перемещений картинок из \"body\" в отдельные секции";
+                 }
+         ind++ }
+ if (cTaT1==ind-2) ind=ind-2;  //  Удаление двух последних строк, если нет пунктов в этом разделе
+ var cTaT2=ind;  //  число строк в двух разделах
+
+ mSt[ind]="";  ind++;
+ mSt[ind]="• ОПЕРАЦИИ С ПУСТЫМИ СТРОКАМИ:";  ind++;
+
+ if (count_212!=d) {
+          mSt[ind]=count_212+"    ";
+          switch (pad2(count_212)) {
+                 case 0:  mSt[ind]+="удаление мусора из пустой строки";  break;
+                 case 1:  mSt[ind]+="удаление мусора из пустых строк";  break;
+                 case 2:  mSt[ind]+="удаления мусора из пустых строк";  break;
+                 case 3:  mSt[ind]+="удалений мусора из пустых строк";
+                 }
+         ind++ }
+ if (count_213!=d) {
+          mSt[ind]=count_213+"    ";
+          switch (pad2(count_213)) {
+                 case 0:  mSt[ind]+="удаление формата \"подзаголовок\"";  break;
+                 case 1:  mSt[ind]+="удаление формата \"подзаголовок\"";  break;
+                 case 2:  mSt[ind]+="удаления формата \"подзаголовок\"";  break;
+                 case 3:  mSt[ind]+="удалений формата \"подзаголовок\"";
+                 }
+         ind++ }
+ if (count_214!=d) {
+          mSt[ind]=count_214+"    ";
+          switch (pad2(count_214)) {
+                 case 0:  mSt[ind]+="удаление формата \"автор текста\"";  break;
+                 case 1:  mSt[ind]+="удаление формата \"автор текста\"";  break;
+                 case 2:  mSt[ind]+="удаления формата \"автор текста\"";  break;
+                 case 3:  mSt[ind]+="удалений формата \"автор текста\"";
+                 }
+         ind++ }
+ if (count_241!=d) {
+          mSt[ind]=count_241+"    ";
+          switch (pad2(count_241)) {
+                 case 0:  mSt[ind]+="добавление... между \"карманным\" блоком и концом секции";  break;
+                 case 1:  mSt[ind]+="добавление... между \"карманным\" блоком и концом секции";  break;
+                 case 2:  mSt[ind]+="добавления... между \"карманным\" блоком и концом секции";  break;
+                 case 3:  mSt[ind]+="добавлений... между \"карманным\" блоком и концом секции";
+                 }
+         ind++ }
+ if (count_251!=d) {
+          mSt[ind]=count_251+"    ";
+          switch (pad2(count_251)) {
+                 case 0:  mSt[ind]+="удаление второй пустой строки подряд";  break;
+                 case 1:  mSt[ind]+="удаление второй пустой строки подряд";  break;
+                 case 2:  mSt[ind]+="удаления второй пустой строки подряд";  break;
+                 case 3:  mSt[ind]+="удалений второй пустой строки подряд";
+                 }
+         ind++ }
+ if (count_252!=d) {
+          mSt[ind]=count_252+"    ";
+          switch (pad2(count_252)) {
+                 case 0:  mSt[ind]+="удаление внешнего форматирования";  break;
+                 case 1:  mSt[ind]+="удаление внешнего форматирования";  break;
+                 case 2:  mSt[ind]+="удаления внешнего форматирования";  break;
+                 case 3:  mSt[ind]+="удалений внешнего форматирования";
+                 }
+         ind++ }
+ if (count_253!=d) {
+          mSt[ind]=count_253+"    ";
+          switch (pad2(count_253)) {
+                 case 0:  mSt[ind]+="удаление... в \"body\" и \"fbw_body\"";  break;
+                 case 1:  mSt[ind]+="удаление... в \"body\" и \"fbw_body\"";  break;
+                 case 2:  mSt[ind]+="удаления... в \"body\" и \"fbw_body\"";  break;
+                 case 3:  mSt[ind]+="удалений... в \"body\" и \"fbw_body\"";
+                 }
+         ind++ }
+ if (count_262!=d) {
+          mSt[ind]=count_262+"    ";
+          switch (pad2(count_262)) {
+                 case 0:  mSt[ind]+="удаление пустого \"body\"";  break;
+                 case 1:  mSt[ind]+="удаление пустых \"body\"";  break;
+                 case 2:  mSt[ind]+="удаления пустых \"body\"";  break;
+                 case 3:  mSt[ind]+="удалений пустых \"body\"";
+                 }
+         ind++ }
+ if (count_263!=d) {
+          mSt[ind]=count_263+"    ";
+          switch (pad2(count_263)) {
+                 case 0:  mSt[ind]+="удаление пустой секции";  break;
+                 case 1:  mSt[ind]+="удаление пустых секций";  break;
+                 case 2:  mSt[ind]+="удаления пустых секций";  break;
+                 case 3:  mSt[ind]+="удалений пустых секций";
+                 }
+         ind++ }
+ if (count_271!=d) {
+          mSt[ind]=count_271+"    ";
+          switch (pad2(count_271)) {
+                 case 0:  mSt[ind]+="удаление... на окраине раздела";  break;
+                 case 1:  mSt[ind]+="удаление... на окраине разделов";  break;
+                 case 2:  mSt[ind]+="удаления... на окраине разделов";  break;
+                 case 3:  mSt[ind]+="удалений... на окраине разделов";
+                 }
+         ind++ }
+ if (count_272!=d) {
+          mSt[ind]=count_272+"    ";
+          switch (pad2(count_272)) {
+                 case 0:  mSt[ind]+="удаление... за краем раздела или подзаголовка";  break;
+                 case 1:  mSt[ind]+="удаление... за краем разделов или подзаголовков";  break;
+                 case 2:  mSt[ind]+="удаления... за краем разделов или подзаголовков";  break;
+                 case 3:  mSt[ind]+="удалений... за краем разделов или подзаголовков";
+                 }
+         ind++ }
+ if (count_281!=d) {
+          mSt[ind]=count_281+"    ";
+          switch (pad2(count_281)) {
+                 case 0:  mSt[ind]+="замена пустой строки в стихах на разрыв строфы";  break;
+                 case 1:  mSt[ind]+="замена пустых строк в стихах на разрыв строф";  break;
+                 case 2:  mSt[ind]+="замены пустых строк в стихах на разрыв строф";  break;
+                 case 3:  mSt[ind]+="замен пустых строк в стихах на разрыв строф";
+                 }
+         ind++ }
+ if (count_311!=d) {
+          mSt[ind]=count_311+"    ";
+          switch (pad2(count_311)) {
+                 case 0:  mSt[ind]+="удаление...  посреди заголовка";  break;
+                 case 1:  mSt[ind]+="удаление...  посреди заголовков";  break;
+                 case 2:  mSt[ind]+="удаления...  посреди заголовков";  break;
+                 case 3:  mSt[ind]+="удалений...  посреди заголовков";
+                 }
+         ind++ }
+ if (count_401!=d) {
+          mSt[ind]=count_401+"    ";
+          switch (pad2(count_401)) {
+                 case 0:  mSt[ind]+="удаление абсолютно пустого раздела";  break;
+                 case 1:  mSt[ind]+="удаление абсолютно пустых разделов";  break;
+                 case 2:  mSt[ind]+="удаления абсолютно пустых разделов";  break;
+                 case 3:  mSt[ind]+="удалений абсолютно пустых разделов";
+                 }
+         ind++ }
+ if (count_601!=d) {
+          mSt[ind]=count_601+"    ";
+          switch (pad2(count_601)) {
+                 case 0:  mSt[ind]+="удаление... рядом с картинкой в \"кармане\" секции";  break;
+                 case 1:  mSt[ind]+="удаление... рядом с картинками в \"кармане\" секции";  break;
+                 case 2:  mSt[ind]+="удаления... рядом с картинками в \"кармане\" секции";  break;
+                 case 3:  mSt[ind]+="удалений... рядом с картинками в \"кармане\" секции";
+                 }
+         ind++ }
+ if (count_611!=d) {
+          mSt[ind]=count_611+"    ";
+          switch (pad2(count_611)) {
+                 case 0:  mSt[ind]+="вставка... рядом с картинкой посреди секции";  break;
+                 case 1:  mSt[ind]+="вставка... рядом с картинками посреди секции";  break;
+                 case 2:  mSt[ind]+="вставки... рядом с картинками посреди секции";  break;
+                 case 3:  mSt[ind]+="вставок... рядом с картинками посреди секции";
+                 }
+         ind++ }
+ if (count_621!=d) {
+          mSt[ind]=count_621+"    ";
+          switch (pad2(count_621)) {
+                 case 0:  mSt[ind]+="вставка... между картинкой и границей секции";  break;
+                 case 1:  mSt[ind]+="вставка... между картинкой и границей секции";  break;
+                 case 2:  mSt[ind]+="вставки... между картинкой и границей секции";  break;
+                 case 3:  mSt[ind]+="вставок... между картинкой и границей секции";
+                 }
+         ind++ }
+ if (count_622!=d) {
+          mSt[ind]=count_622+"    ";
+          switch (pad2(count_622)) {
+                 case 0:  mSt[ind]+="удаление... между картинкой и границей секции";  break;
+                 case 1:  mSt[ind]+="удаление... между картинкой и границей секции";  break;
+                 case 2:  mSt[ind]+="удаления... между картинкой и границей секции";  break;
+                 case 3:  mSt[ind]+="удалений... между картинкой и границей секции";
+                 }
+         ind++ }
+
+ if (cTaT2==ind-2) ind=ind-2;  //  Удаление двух последних строк, если нет пунктов в этом разделе
+
+ if (cTaT1==ind) {
+         mSt[ind]="";  ind++;
+         mSt[ind]=">>  Исправлений нет";  ind++ }
+
+//  Сборка строк цитаты
+ mSt[ind]="";  ind++;
+ mSt[ind]="• ПОСЛОВИЦА:";  ind++;
+
+ var reS92 = new RegExp("\\\s","g");   // удвоение пробелов для лучшей картинки
+ var reS92_ = "  ";
+ var reZit = new RegExp("^((  (?!—)|.){0,50})(\\\s\\\s|$)(.{0,})$","g");   // Разделение на строки
+ var reZit_1 = "$1";
+ var reZit_2 = "$4";
+ var fragment = "";
+ var otstup = "         ";
+
+ fragment="    "+Kn[zitata_N].replace(reS92, reS92_);
+ while (fragment != otstup) {
+         mSt[ind]=fragment.replace(reZit, reZit_1);
+         fragment=otstup+fragment.replace(reZit, reZit_2);
+         ind++ }
+
+
+//  Сборка строк текущей даты и времени
+ mSt[ind]="				";  ind++;
+ mSt[ind]= "                       : : :  "+currentDate+"  : : :  "+currentTime+"  : : :";  ind++;
+
+
+
+                 ///  Вывод окна результатов на экран
 
 
  var st2="";  //  текст результатов
 
- for  ( j=1; j!=ind; j++ )
-        st2=st2+'\n     '+mSt[j];  //  добавление элемента из массива
+ for  ( j=0; j!=ind; j++ )
+        st2=st2+"\n"+mSt[j];  //  добавление элемента из массива
 
 
 //  Вывод окна результатов
- MsgBox ('                                       .·.·.·.             –= ◊ =–             .·.·.·.\n'+
-                   '                                    ·.̉·.̉·.̉  «Чистка структуры» v.'+NumerusVersion+'  .̉·.̉·.̉·                                                      \n'+
-                   '                                        ̉   ̉   ̉                                              ̉   ̉   ̉ '+st2);
+ MsgBox ("                                         –= ◊ =–\n"+
+                   "                   .:::: «Чистка структуры» v."+NumerusVersion+" ::::.                              \n"+st2);
 
 // ---------------------------------------------------------------
 // ----------------------------------------------
@@ -1527,6 +2237,28 @@ Kn[271]="Советская Армия врага разгромила, она �
 
 
 
-
-
-
+                 ///  ИСТОРИЯ
+//    v.1.0 — Создание скрипта — Александр Ка (27.03.2024)
+//    v.1.1 — Исправлена ошибка с добавлением пустых строк — Александр Ка (10.06.2024)
+//    v.1.2 — Коррекция метода удаления пустого заголовка — Александр Ка (13.07.2024)
+//    v.1.3 — Александр Ка (17.10.2024)
+// Добавлен универсальный дизайн окна результатов
+// 100. Восстановление параграфов (вместо неработающей операции №101)
+// удален №102. Перезапись параграфов (эта дополнительная операция уже не требуется)
+// 103. Коррекция внутренних тегов вне параграфов (добавлен перенос тега в параграфы)
+// 150. Добавление разрыва секции перед заголовком
+// 201. Удаление повторных внутренних тегов в параграфе (добавлен полуавтомат для сложных случаев)
+// 202. Добавление формата "Цитата" (дополнение к №201)
+// Устранение замедления при выборе в FBE прозрачного символа для н/р пробела
+//    v.1.4 — Александр Ка (18.10.2024)
+// Исправлена старая ошибка в среде win7, которая приводила к удалению иллюстраций в тексте
+//    v.1.5 — Александр Ка (30.11.2024)
+// Исправлена ошибка, которая приводила к игнорированию прозрачных н/р пробелов
+// 632. Перемещение картинки из "body" в отдельную секцию (новая операция)
+// Коррекция диалогов
+// Добавление настроек для операции добавления пустых строк между иллюстрациями и текстом в секции
+//    v.1.6 — Александр Ка (12.12.2024)
+// Добавление настроек для вставки пустых строк между иллюстрациями.
+// Коррекция операции 213. Удаление формата "подзаголовок" (для пустой строки)
+// Удаление курсора из текста при изменении структуры
+//~~~~~~~~~~~~~~~~~~
