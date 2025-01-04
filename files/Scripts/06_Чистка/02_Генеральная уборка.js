@@ -1,8 +1,7 @@
 //======================================
-//             «Генеральная уборка»
-//             Автор скрипта - jurgennt
+//             «Генеральная уборка» (версия 2.5)
 //                                             Engine by ©Sclex
-//                                                    01.05.2007 – 07.05.2008
+//                                                    01.05.2007 – 31.08.2022
 //~~~~~~~~~~~~~~~~~~
 // v.1.01 — курсивное лидирующее тире в диалогах №08 — Faiber
 //~~~~~~~~~~~~~~~~~~
@@ -79,22 +78,22 @@
 //~~~~~~~~~~~~~~~~~~
 // v.1.34 — emphasis'ы со strong'ами загнал в переменные
 //~~~~~~~~~~~~~~~~~~
-// v.1.35 — #84 попыткаоставить наместе точки в заголовках, типа 1980 г.; XXI в.; Буш-мл. и т.п.
+// v.1.35 — #84 попытка оставить на месте точки в заголовках, типа 1980 г.; XXI в.; Буш-мл. и т.п.
 //~~~~~~~~~~~~~~~~~~
 // v.1.36 — ##40,46,46a + PromtSnoska – возможность отключениия простановки квадратных скобок вокруг сноски
 //~~~~~~~~~~~~~~~~~~
 //v.2.0 — изменения для правильной работы с учетом возможности выбора вида неразрывного пробела в FBE
 //======================================
-//v.2.1 — отключил «окавычивание» №15,17, 18, 37, 38 — для этого есть скрипты по кавычкам; перестал обращать внимание на сноски 40, 41, 43, 47 — есть скрипты о сноскам
+//v.2.1 — отключил «окавычивание» №15,17, 18, 37, 38 — для этого есть скрипты по кавычкам; перестал обращать внимание на сноски 40, 41, 43, 47 — есть скрипты по сноскам
 //======================================
 //v.2.2 — убрал Ко
 //======================================
-//v.2.3 — закомментировал замену с регэкспом re67
+//v.2.3 — унификация апострофов, замена-удаление различных мусорных знаков: U+202B, U+00AD, U+E088, пробелы U+0020, U+2002, U+200B, U+202F, U+2009, U+200A, прилипшие многоточия и проч. (п.п. 92-141) — TaKir
 //======================================
 //v.2.4 — теперь, если заголовок заканчивается на вопросительное или восклицательное многоточие ("?..", "!..", "?!.") , то скрипт не будет отрывать от него конечную точку.
 //Примеры заголовков, которые раньше обрабатывались неверно: "СССР: вернуться в детство?..", "Ты кто?!."
 //======================================
-var VersionNumber="2.4";
+var VersionNumber="2.5";
 
 //обрабатывать ли history
 var ObrabotkaHistory=true;
@@ -151,9 +150,9 @@ function Run() {
  var re05_ = "$1$3$4";
 
 // замена троеточия и его производных (или знака, например, точка-точка-запятая, которого в русском языке не существует) на многоточие
- var re06 = new RegExp("(\\\.\\\.\\\.|,\\\.\\\.|\\\.,\\\.|\\\.\\\.,)","gi");
- var re06_ = "…";
- var count_06 = 0;
+// var re06 = new RegExp("(\\\.\\\.\\\.|,\\\.\\\.|\\\.,\\\.|\\\.\\\.,)","gi");
+// var re06_ = "…";
+// var count_06 = 0;
 
 // короткие тире на длинные
  var re07 = new RegExp("([^0123456789])–([^0123456789])","gi");
@@ -348,8 +347,8 @@ function Run() {
 // var re43a_ = "$8 $6$2$5$7";
 
 // удаление пробела перед [сноской]
-// var re44 = new RegExp("(\\\s|"+nbspEntity+"){0,1}("+aIB+"){0,1}(\\\s|"+nbspEntity+"){0,1}(<A class=note [^<]+?</A>)","gi");
-// var re44_ = "$2$4";
+ var re44 = new RegExp("(\\\s|"+nbspEntity+"){0,1}("+aIB+"){0,1}(\\\s|"+nbspEntity+"){0,1}(<A class=note [^<]+?</A>)","gi");
+ var re44_ = "$2$4";
 
 // удаление одного пробела вокруг </emphasis'а>
  var re45 = new RegExp("(\\\s|"+nbspEntity+")("+aIB+")(\\\s|"+nbspEntity+")","gi");
@@ -522,8 +521,8 @@ function Run() {
  var re84_ = "";
  var count_84 = 0;
 
- // пропущенный пробел перед строчной после строчной и запятой, точки с запятой
- var re85= new RegExp("([а-яё0-9])([,;])([а-яё]{3,})","g");
+ // пропущенный пробел перед строчной после строчной и запятой, точки с запятой ({1,} - было 3 знака, TaKir)
+ var re85= new RegExp("([а-яё0-9])([,;])([а-яё]{1,})","g");
  var re85_ = "$1$2 $3";
 
  // неверный знак препинания
@@ -550,6 +549,254 @@ function Run() {
 
  var re91c= new RegExp("■","g");
  var re91c_ = "";
+ 
+ // удаление невидимых знаков мягкого переноса U+00AD (TaKir)
+ var re92 = new RegExp("(­)","gi");
+ var re92_ = "";
+ var count_92 = 0;
+ 
+  // удаление Вставка справа-налево U+202B (TaKir)
+ var re93 = new RegExp("(‫)","gi");
+ var re93_ = "";
+ var count_93 = 0;
+
+  // замена неправильных апострофов на знак U+0027 (TaKir)
+ var re94 = new RegExp("([´ʼ′˙΄’‘])","gi");
+ var re94_ = "'";
+ var count_94 = 0;
+ 
+   // замена Область частного использования U+E088 (TaKir)
+ var re95 = new RegExp("([])","gi");
+ var re95_ = " ";
+ var count_95 = 0;
+ 
+    // замена сдвоенных обычных пробелов U+0020 (TaKir)
+ var re96 = new RegExp("([\\u0020][\\u0020])","gi");
+ var re96_ = " ";
+ var count_96 = 0;
+  
+    // замена En пробелов U+2002 (TaKir)
+ var re97 = new RegExp("([\\u2002])","gi");
+ var re97_ = " ";
+ var count_97 = 0;
+ 
+     // удаление Пробелов нулевой ширины U+200B (TaKir)
+ var re98 = new RegExp("([\\u200B])","gi");
+ var re98_ = "";
+ var count_98 = 0;
+
+   // прилипшее многоточие (Sclex)
+ var re99= new RegExp("([A-zА-яЁё](</?(EM|STRONG)>)*)…((</?(EM|STRONG)>)*[A-zА-яЁё])","gi");
+ var re99_ = "$1… $4";
+ var count_99 = 0;
+ 
+    //  var re100 - Пробел перед маркером сноски
+
+    // замена неправильных амперсандов (TaKir)
+ var re101 = new RegExp("( amp; )","gi");
+ var re101_ = " & ";
+ var count_101 = 0;
+ 
+   // замена мягких переносов U+00AD (TaKir)
+ var re102 = new RegExp("([\\u00AD])","gi");
+ var re102_ = "";
+ var count_102 = 0;
+ 
+    // замена остаточных мягких переносов (TaKir)
+ var re103 = new RegExp("(&amp;shy;)","gi");
+ var re103_ = "";
+ var count_103 = 0;
+ 
+     // замена Узких неразрывных пробелов U+202F на обычные неразрывные пробелы U+00A0 (TaKir)
+ var re104 = new RegExp("([\\u202F])","gi");
+ var re104_ = ""+nbspChar+"";
+ var count_104 = 0;
+ 
+      // расформатирование кривых ссылок-сносок, где маркер сноски - текст (буквы) без скобок, а текст сноски - web адрес этап № 1 (TaKir)
+ var re105 = new RegExp("(<[aA]\\s[^>]*#http[^>]*>)((<\\w*>)*[^<>]*(</[^aA]\\w*>)*)(</[aA]>)","gi");             //   A -> А, a -> а
+ var re105_ = " $2";
+ var count_105 = 0;
+  
+      // расформатирование кривых ссылок-сносок, где маркер сноски - текст (буквы) без скобок, а текст сноски - web адрес этап № 2 (TaKir)
+ var re106 = new RegExp("(<[aA]\\s[^>]*class=note[^>]*>)((<\\w*>)*[^\\[({<>]*(</[^aA]\\w*>)*)(</[aA]>)","gi");             //   A -> А, a -> а
+ var re106_ = " $2";
+ var count_106 = 0;
+ 
+ // удаление лишнего пробела после расформатирования кривых ссылок (TaKir)
+ var re107 = new RegExp("([\\u25AB])(\\s)","g");
+ var re107_ = " ";
+ var count_107 = 0;
+  
+ // удаление знака Разделительный параграф U+2029 (TaKir)
+ var re108 = new RegExp("([\\u2029])","gi");
+ var re108_ = "";
+ var count_108 = 0;
+ 
+    // замена Тонких пробелов U+2009 на обычные (TaKir)
+ var re109 = new RegExp("([\\u2009])","gi");
+ var re109_ = " ";
+ var count_109 = 0;
+ 
+     // замена Самых тонких пробелов U+200A на обычные (TaKir)
+ var re110 = new RegExp("([\\u200A])","gi");
+ var re110_ = " ";
+ var count_110 = 0;
+ 
+      // замена Три в em пробел U+2004 на обычные пробелы (TaKir)
+ var re111 = new RegExp("([\\u2004])","gi");
+ var re111_ = " ";
+ var count_111 = 0;
+ 
+       // замена Четыре в em пробел U+2005 на обычные пробелы (TaKir)
+ var re112 = new RegExp("([\\u2005])","gi");
+ var re112_ = " ";
+ var count_112 = 0;
+ 
+        // замена Шесть в em пробел U+2006 на обычные пробелы (TaKir)
+ var re113 = new RegExp("([\\u2006])","gi");
+ var re113_ = " ";
+ var count_113 = 0; 
+ 
+        // удаление служебных знаков U+E06E (TaKir)
+ var re114 = new RegExp("([\\uE06E])","gi");
+ var re114_ = "";
+ var count_114 = 0;
+ 
+         // удаление знаков "Пространство пунктуации" U+2008 (TaKir)
+ var re115 = new RegExp("([\\u2008])","gi");
+ var re115_ = "";
+ var count_115 = 0;
+ 
+          // маленький белый квадрат+дефис меняем на него же + тире (TaKir)
+ var re116 = new RegExp("(▫-)","gi");
+ var re116_ = "▫—";
+ var count_116 = 0;
+ 
+           // белый квадрат+дефис меняем на него же + тире (TaKir)
+ var re117 = new RegExp("(□-)","gi");
+ var re117_ = "□—";
+ var count_117 = 0;
+ 
+            // прозрачный маркер списка+дефис меняем на него же + тире (TaKir)
+ var re118 = new RegExp("(◦-)","gi");
+ var re118_ = "◦—";
+ var count_118 = 0;
+ 
+          // удаление знаков "Разделительная линия" U+2028 (TaKir)
+ var re119 = new RegExp("([\\u2028])","gi");
+ var re119_ = "";
+ var count_119 = 0;
+ 
+           // замена знаков "Граница легкая горизонтальная" U+2500 на тире (TaKir)
+ var re120 = new RegExp("([\\u2500])","gi");
+ var re120_ = "—";
+ var count_120 = 0;
+  
+           // исправление многоточия после знаков препинания (TaKir)
+ var re121 = new RegExp("([\\!\\?,:;])([…])","gi");
+ var re121_ = "$1..";
+ var count_121 = 0;
+ 
+            // исправление троеточия после знаков препинания (TaKir)
+ var re122 = new RegExp("([\\!\\?,:;])([\\.]{3})","gi");
+ var re122_ = "$1..";
+ var count_122 = 0;
+
+            // удаление знаков "Символ заменяющий объект" ￼ U+FFFC (TaKir)
+ var re123 = new RegExp("([\\uFFFC])","gi");
+ var re123_ = "";
+ var count_123 = 0;
+
+            // удаление знаков "Метка слева-направо" U+200E (TaKir)
+ var re124 = new RegExp("([\\u200E])","gi");
+ var re124_ = "";
+ var count_124 = 0;
+
+            // замена знаков "Дефис" U+2010 на обычный дефис-минус (TaKir)
+ var re125 = new RegExp("([\\u2010])","gi");
+ var re125_ = "-";
+ var count_125 = 0;
+
+            // замена знаков "Горизонтальная линия" U+2015 на длинное тире (TaKir)
+ var re126 = new RegExp("([\\u2015])","gi");
+ var re126_ = "—";
+ var count_126 = 0;
+
+            // Удаление сдвоенных открывающих болдов (TaKir)
+ var re127 = new RegExp("<STRONG><STRONG>","gi");
+ var re127_ = "<STRONG>"
+ var count_127 = 0;
+
+            // Удаление сдвоенных закрывающих болдов (TaKir)
+ var re128 = new RegExp("</STRONG></STRONG>","gi");
+ var re128_ = "</STRONG>"
+ var count_128 = 0;
+
+            // Унификация открывающих болдов и курсивов (TaKir)
+ var re129 = new RegExp("<EM><STRONG>","gi");
+ var re129_ = "<STRONG><EM>"
+ var count_129 = 0;
+
+            // Унификация закрывающих болдов и курсивов (TaKir)
+ var re130 = new RegExp("</EM></STRONG>","gi");
+ var re130_ = "</STRONG></EM>"
+ var count_130 = 0;
+
+        // удаление символов "Соединитель слов" U+2060 (TaKir)
+ var re131 = new RegExp("([\\u2060])","gi");
+ var re131_ = "";
+ var count_131 = 0;
+
+        // замена Em пробел U+2003 на обычные пробелы (TaKir)
+ var re132 = new RegExp("([\\u2003])","gi");
+ var re132_ = " ";
+ var count_132 = 0;
+
+        // замена Цифровой пробел U+2007 на обычные пробелы (TaKir)
+ var re133 = new RegExp("([\\u2007])","gi");
+ var re133_ = " ";
+ var count_133 = 0;
+
+        // замена En квадрат U+2000 на обычные пробелы (TaKir)
+ var re134 = new RegExp("([\\u2000])","gi");
+ var re134_ = " ";
+ var count_134 = 0;
+
+        // замена Em квадрат U+2001 на обычные пробелы (TaKir)
+ var re135 = new RegExp("([\\u2001])","gi");
+ var re135_ = " ";
+ var count_135 = 0;
+
+        // замена "Узкий неразрывный пробел U+202F" на обычный неразрывный пробел (TaKir)
+ var re136 = new RegExp("([\\u202F])","gi");
+ var re136_ = ""+nbspChar+"";
+ var count_136 = 0;
+
+        // удаление символов "Неразрывный пробел нулевой ширины (BOM)" U+FEFF (TaKir)
+ var re137 = new RegExp("([\\uFEFF])","gi");
+ var re137_ = "";
+ var count_137 = 0;
+
+        // удаление символов "Нулевая ширина (без объединения)" U+200C (TaKir)
+ var re138 = new RegExp("([\\u200C])","gi");
+ var re138_ = "";
+ var count_138 = 0;
+
+        // удаление символов "Нулевая ширина (с объединением)" U+200D (TaKir)
+ var re139 = new RegExp("([\\u200D])","gi");
+ var re139_ = "";
+ var count_139 = 0;
+
+        // замена символов "Неразрывный дефис U+2011" на обычный дефис (TaKir)
+ var re140 = new RegExp("([\\u2011])","gi");
+ var re140_ = "-";
+ var count_140 = 0;
+
+        // удаление символов "Комбинируемая подстрочная точка" U+0323 (TaKir)
+ var re141 = new RegExp("([\\u0323])","gi");
+ var re141_ = "";
+ var count_141 = 0;
+
 
 //~~~~~~~~~~~~~~ Конец шаблонов ~~~~~~~~~~~~~~~~~~
 
@@ -574,7 +821,7 @@ function Run() {
        if (s.search(re03)!=-1)         { s=s.replace(re03, re03_); count_03++}
        if (s.search(re04)!=-1)         { s=s.replace(re04, re04_); count_04++}
        if (s.search(re05)!=-1)         { s=s.replace(re05, re05_); }
-       if (s.search(re06)!=-1)         { s=s.replace(re06, re06_); count_06++}
+  //   if (s.search(re06)!=-1)         { s=s.replace(re06, re06_); count_06++}
        if (s.search(re07)!=-1)         { s=s.replace(re07, re07_); }
        if (s.search(re08)!=-1)         { s=s.replace(re08, re08_); count_08++}
        if (s.search(re09)!=-1)         { s=s.replace(re09, re09_); count_09++}
@@ -624,7 +871,7 @@ function Run() {
 //       if (s.search(re42)!=-1)         { s=s.replace(re42, re42_); }
 //       if (s.search(re43)!=-1 && Snoska)         { s=s.replace(re43, re43_); }                       // отключаю касательство к сноскам
 //       if (s.search(re43)!=-1 && !Snoska)         { s=s.replace(re43, re43a_); }                    // отключаю касательство к сноскам
-//       if (s.search(re44)!=-1)         { s=s.replace(re44, re44_); }
+       if (s.search(re44)!=-1)         { s=s.replace(re44, re44_); }
        if (s.search(re45)!=-1)         { s=s.replace(re45, re45_); }
 //       if (s.search(re46)!=-1 && Snoska)         { s=s.replace(re46, re46_); }
 //       if (s.search(re46a)!=-1 && Snoska)       { s=s.replace(re46a, re46a_); }
@@ -654,7 +901,7 @@ function Run() {
        if (s.search(re64)!=-1)         { s=s.replace(re64, re64_); }
        if (s.search(re65)!=-1)         { s=s.replace(re65, re65_); }
 //       if (s.search(re66)!=-1)         { s=s.replace(re66, re66_); }                        // и компания Ко
-//       if (s.search(re67)!=-1)         { s=s.replace(re67, re67_); }
+       if (s.search(re67)!=-1)         { s=s.replace(re67, re67_); }
        if (s.search(re68)!=-1)         { s=s.replace(re68, re68_); }
        if (s.search(re69)!=-1)         { s=s.replace(re69, re69_); }
        if (s.search(re70)!=-1)         { s=s.replace(re70, re70_); }
@@ -670,6 +917,63 @@ function Run() {
        if (s.search(re91a)!=-1)       { s=s.replace(re91a, re91a_); }
        if (s.search(re91b)!=-1)       { s=s.replace(re91b, re91b_); }
        if (s.search(re91c)!=-1)       { s=s.replace(re91c, re91c_); }
+	   
+       if (s.search(re92)!=-1)       { count_92+=s.match(re92).length;s=s.replace(re92, re92_); }
+	   if (s.search(re93)!=-1)       { count_93+=s.match(re93).length;s=s.replace(re93, re93_); }
+	   if (s.search(re94)!=-1)       { count_94+=s.match(re94).length;s=s.replace(re94, re94_); }
+	   if (s.search(re95)!=-1)       { count_95+=s.match(re95).length;s=s.replace(re95, re95_); }
+	   if (s.search(re96)!=-1)       { count_96+=s.match(re96).length;s=s.replace(re96, re96_); }
+	   if (s.search(re97)!=-1)       { count_97+=s.match(re97).length;s=s.replace(re97, re97_); }
+	   if (s.search(re98)!=-1)       { count_98+=s.match(re98).length;s=s.replace(re98, re98_); }
+	   if (s.search(re99)!=-1)       { count_99+=s.match(re99).length;s=s.replace(re99, re99_); }
+//       if (s.search(re100)!=-1)       { count_100+=s.match(re100).length;s=s.replace(re100, re100_); }
+	   if (s.search(re101)!=-1)       { count_101+=s.match(re101).length;s=s.replace(re101, re101_); }
+	   if (s.search(re102)!=-1)       { count_102+=s.match(re102).length;s=s.replace(re102, re102_); }
+	   if (s.search(re103)!=-1)       { count_103+=s.match(re103).length;s=s.replace(re103, re103_); }
+	   if (s.search(re104)!=-1)       { count_104+=s.match(re104).length;s=s.replace(re104, re104_); }
+	   if (s.search(re105)!=-1)       { count_105+=s.match(re105).length;s=s.replace(re105, re105_); }
+	   if (s.search(re106)!=-1)       { count_106+=s.match(re106).length;s=s.replace(re106, re106_); }
+	   if (s.search(re107)!=-1)       { count_107+=s.match(re107).length;s=s.replace(re107, re107_); }
+	   if (s.search(re108)!=-1)       { count_108+=s.match(re108).length;s=s.replace(re108, re108_); }
+	   if (s.search(re109)!=-1)       { count_109+=s.match(re109).length;s=s.replace(re109, re109_); }
+	   if (s.search(re110)!=-1)       { count_110+=s.match(re110).length;s=s.replace(re110, re110_); }
+	   if (s.search(re111)!=-1)       { count_111+=s.match(re111).length;s=s.replace(re111, re111_); }
+	   if (s.search(re112)!=-1)       { count_112+=s.match(re112).length;s=s.replace(re112, re112_); }
+	   if (s.search(re113)!=-1)       { count_113+=s.match(re113).length;s=s.replace(re113, re113_); }
+	   if (s.search(re114)!=-1)       { count_114+=s.match(re114).length;s=s.replace(re114, re114_); }
+	   if (s.search(re115)!=-1)       { count_115+=s.match(re115).length;s=s.replace(re115, re115_); }
+	   if (s.search(re116)!=-1)       { count_116+=s.match(re116).length;s=s.replace(re116, re116_); }
+	   if (s.search(re117)!=-1)       { count_117+=s.match(re117).length;s=s.replace(re117, re117_); }
+	   if (s.search(re118)!=-1)       { count_118+=s.match(re118).length;s=s.replace(re118, re118_); }
+	   if (s.search(re119)!=-1)       { count_119+=s.match(re119).length;s=s.replace(re119, re119_); }
+	   if (s.search(re120)!=-1)       { count_120+=s.match(re120).length;s=s.replace(re120, re120_); }
+	   if (s.search(re121)!=-1)       { count_121+=s.match(re121).length;s=s.replace(re121, re121_); }
+	   if (s.search(re122)!=-1)       { count_122+=s.match(re122).length;s=s.replace(re122, re122_); }
+	   if (s.search(re123)!=-1)       { count_123+=s.match(re123).length;s=s.replace(re123, re123_); }
+	   if (s.search(re124)!=-1)       { count_124+=s.match(re124).length;s=s.replace(re124, re124_); }
+	   if (s.search(re125)!=-1)       { count_125+=s.match(re125).length;s=s.replace(re125, re125_); }
+	   if (s.search(re126)!=-1)       { count_126+=s.match(re126).length;s=s.replace(re126, re126_); }
+	   if (s.search(re127)!=-1)       { count_127+=s.match(re127).length;s=s.replace(re127, re127_); }
+	   if (s.search(re128)!=-1)       { count_128+=s.match(re128).length;s=s.replace(re128, re128_); }
+	   if (s.search(re129)!=-1)       { count_129+=s.match(re129).length;s=s.replace(re129, re129_); }
+	   if (s.search(re130)!=-1)       { count_130+=s.match(re130).length;s=s.replace(re130, re130_); }
+	   if (s.search(re131)!=-1)       { count_131+=s.match(re131).length;s=s.replace(re131, re131_); }
+	   if (s.search(re132)!=-1)       { count_132+=s.match(re132).length;s=s.replace(re132, re132_); }
+	   if (s.search(re133)!=-1)       { count_133+=s.match(re133).length;s=s.replace(re133, re133_); }
+	   if (s.search(re134)!=-1)       { count_134+=s.match(re134).length;s=s.replace(re134, re134_); }
+	   if (s.search(re135)!=-1)       { count_135+=s.match(re135).length;s=s.replace(re135, re135_); }
+	   if (s.search(re136)!=-1)       { count_136+=s.match(re136).length;s=s.replace(re136, re136_); }
+	   if (s.search(re137)!=-1)       { count_137+=s.match(re137).length;s=s.replace(re137, re137_); }
+	   if (s.search(re138)!=-1)       { count_138+=s.match(re138).length;s=s.replace(re138, re138_); }
+	   if (s.search(re139)!=-1)       { count_139+=s.match(re139).length;s=s.replace(re139, re139_); }
+	   if (s.search(re140)!=-1)       { count_140+=s.match(re140).length;s=s.replace(re140, re140_); }
+	   if (s.search(re141)!=-1)       { count_141+=s.match(re141).length;s=s.replace(re141, re141_); }
+
+
+
+
+   
+
 
    ptr.innerHTML=s;      
   } 
@@ -720,48 +1024,100 @@ var Tsec3 = Math.ceil(1000*((Tf-Ts)/1000-Tmin*60))/1000;
  var st2="";
 
 // без тире в диалогах 08 и дублей пробелов 80
- if (count_01!=0 || count_03!=0 || count_04!=0 || count_06!=0 || count_09!=0  || count_10!=0 || count_11!=0 || count_13!=0 || count_14!=0 || count_26!=0 || count_29!=0 || count_30!=0 || count_50!=0 || count_51!=0 || count_53!=0 || count_55!=0 || count_81!=0 || count_82!=0 || count_83!=0 || count_84!=0 || count_90!=0)   {st2+='\n Статистика'}
+ if (count_01!=0 || count_03!=0 || count_04!=0 ||  count_09!=0  || count_10!=0 || count_11!=0 || count_13!=0 || count_14!=0 || count_26!=0 || count_29!=0 || count_30!=0 || count_50!=0 || count_51!=0 || count_53!=0 || count_55!=0 || count_81!=0 || count_82!=0 || count_84!=0 || count_90!=0 || count_121!=0 || count_122!=0)   {st2+='\n Статистика'}
 
 
- if (count_01!=0)   {st2+='\n• неразрывный пробел на обычный:	'+count_01;}
+ if (count_01!=0)   {st2+='\n• Неразрывный пробел на обычный:	'+count_01;}
+ if (count_03!=0)   {st2+='\n• Пробел перед закрывающими:	'+count_03;}
+ if (count_04!=0)   {st2+='\n• Пробел после открывающих:	'+count_04;}
 
- if (count_03!=0)   {st2+='\n• пробел перед закрывающими:	'+count_03;}
- if (count_04!=0)   {st2+='\n• пробел после открывающих:	'+count_04;}
- if (count_06!=0)   {st2+='\n• троеточие на многоточие:		'+count_06;}
-// if (count_08!=0)   {st2+='\n• лидирующее тире в диалогах:	'+count_08;}
- if (count_09!=0)   {st2+='\n• курсивные знаки препинания:	'+count_09;}
+// if (count_06!=0)   {st2+='\n• Троеточие на многоточие:		'+count_06;}
+// if (count_08!=0)   {st2+='\n• Лидирующее тире в диалогах:	'+count_08;}
 
- if (count_10!=0)   {st2+='\n• стык эмфазисов:            	 	'+count_10;}
- if (count_11!=0)   {st2+='\n• так далее и т.п.:             		'+count_11;}
- if (count_13!=0)   {st2+='\n• дефис после знаков препинания:	'+count_13;}
- if (count_14!=0)   {st2+='\n• замена дефисов на тире:   	'+count_14;}
+ if (count_09!=0)   {st2+='\n• Курсивные знаки препинания:	'+count_09;}
+ if (count_10!=0)   {st2+='\n• Стык эмфазисов:            	 	'+count_10;}
+ if (count_11!=0)   {st2+='\n• Так далее и т.п.:             		'+count_11;}
+ if (count_13!=0)   {st2+='\n• Дефис после знаков препинания:	'+count_13;}
+ if (count_14!=0)   {st2+='\n• Замена дефисов на тире:   	'+count_14;}
+ if (count_26!=0)   {st2+='\n• Пропущенный пробел :  		'+count_26;}
+ if (count_29!=0)   {st2+='\n• Тире вместо дефиса после точки: 	'+count_29;}
+ if (count_30!=0)   {st2+='\n• Точки в строчных после пробела:	'+count_30;}
 
- if (count_26!=0)   {st2+='\n• пропущенный пробел :  		'+count_26;}
- if (count_29!=0)   {st2+='\n• тире вместо дефиса после точки: 	'+count_29;}
- if (count_30!=0)   {st2+='\n• точки в строчных после пробела:	'+count_30;}
+// if (count_44!=0)   {st2+='\n• Пробел перед маркером сноски:  	'+count_44;}
+// if (count_47!=0)   {st2+='\n• Пробел после сноски:  		'+count_47;}                       // отключаю касательство к сноскам
 
-// if (count_47!=0)   {st2+='\n• пробел после сноски:  		'+count_47;}                       // отключаю касательство к сноскам
+ if (count_50!=0)   {st2+='\n• Пронумерованный список:  	'+count_50;}
+ if (count_51!=0)   {st2+='\n• Номера страниц:    		'+count_51;}
+ if (count_53!=0)   {st2+='\n• Размерности:     			'+count_53;}
+ if (count_55!=0)   {st2+='\n• Тире после препинаний:  		'+count_55;}
 
- if (count_50!=0)   {st2+='\n• пронумерованный список:  	'+count_50;}
- if (count_51!=0)   {st2+='\n• номера страниц:    		'+count_51;}
+// if (count_60!=0)   {st2+='\n• Интервал дат:  			'+count_60;}
+// if (count_80!=0)   {st2+='\n• Дублированные пробелы:   	'+count_80;}
 
- if (count_53!=0)   {st2+='\n• размерности:     			'+count_53;}
- if (count_55!=0)   {st2+='\n• тире после препинаний:  		'+count_55;}
+ if (count_81!=0)   {st2+='\n• Конечный пробел параграфа: 	'+count_81;}
+ if (count_82!=0)   {st2+='\n• Начальный пробел абзаца:   	'+count_82;}
+ if (count_83!=0)   {st2+='\n• Мягкие переносы "в чистом виде":      		'+count_83;}
+ if (count_84!=0)   {st2+='\n• Конечные точки в заголовках: 	'+count_84;}
+ if (count_90!=0)   {st2+='\n• Лишние идентификаторы:  	'+count_90;}
+ if (count_92!=0)   {st2+='\n• Знаки мягкого переноса U+00AD:  	'+count_92;}
+ if (count_93!=0)   {st2+='\n• Вставка справа-налево U+202B:  	'+count_93;}
+ if (count_94!=0)   {st2+='\n• Некорректные апострофы:  	'+count_94;}
+ if (count_95!=0)   {st2+='\n• Неправильные пробелы U+E088:  	'+count_95;}
+ if (count_96!=0)   {st2+='\n• Сдвоенные пробелы U+0020:  	'+count_96;}
+ if (count_97!=0)   {st2+='\n• En пробелы U+2002:  	'+count_97;}
+ if (count_98!=0)   {st2+='\n• Пробел нулевой ширины U+200B:  	'+count_98;}
+ if (count_99!=0)   {st2+='\n• Прилипшее многоточие:  	'+count_99;}
 
-// if (count_60!=0)   {st2+='\n• интервал дат:  			'+count_60;}
+// if (count_100!=0)   {st2+='\n• Пробел перед маркером сноски:  	'+count_100;}
 
-// if (count_80!=0)   {st2+='\n• дублированные пробелы:   	'+count_80;}
- if (count_81!=0)   {st2+='\n• конечный пробел параграфа: 	'+count_81;}
- if (count_82!=0)   {st2+='\n• начальный пробел абзаца:   	'+count_82;}
- if (count_83!=0)   {st2+='\n• мягкие переносы:      		'+count_83;}
- if (count_84!=0)   {st2+='\n• конечные точки в заголовках: 	'+count_84;}
+ if (count_101!=0)   {st2+='\n• Амперсанды &:  	'+count_101;}
+ if (count_102!=0)   {st2+='\n• Мягкий перенос U+00AD:  	'+count_102;}
+ if (count_103!=0)   {st2+='\n• Остаточный мягкий перенос shy:  	'+count_103;}
+ if (count_104!=0)   {st2+='\n• Узкий неразрывный пробел:  	'+count_104;}
+ if (count_105!=0)   {st2+='\n• Кривые ссылки-сноски-1:  	'+count_105;}
+ if (count_106!=0)   {st2+='\n• Кривые ссылки-сноски-2:  	'+count_106;}
+ if (count_107!=0)   {st2+='\n• Лишние пробелы после удаления ссылок:  	'+count_107;}
+ if (count_108!=0)   {st2+='\n• Разделительный параграф U+2029:  	'+count_108;}
+ if (count_109!=0)   {st2+='\n• Тонкие пробелы U+2009:  	'+count_109;}
+ if (count_110!=0)   {st2+='\n• Самые тонкие пробелы U+200A:  	'+count_110;}
+ if (count_111!=0)   {st2+='\n• Три в em пробел U+2004:  	'+count_111;}
+ if (count_112!=0)   {st2+='\n• Четыре в em пробел U+2005:  	'+count_112;}
+ if (count_113!=0)   {st2+='\n• Шесть в em пробел U+2006:	'+count_113;}
+ if (count_114!=0)   {st2+='\n• Служебные знаки U+E06E:	'+count_114;}
+ if (count_115!=0)   {st2+='\n• Пространство пунктуации U+2008:	'+count_115;}
+ if (count_116!=0)   {st2+='\n• Маленький белый квадрат+дефис:	'+count_116;}
+ if (count_117!=0)   {st2+='\n• Белый квадрат+дефис:	'+count_117;}
+ if (count_118!=0)   {st2+='\n• Прозрачный маркер списка+дефис:	'+count_118;}
+ if (count_119!=0)   {st2+='\n• Разделительная линия U+2028:	'+count_119;}
+ if (count_120!=0)   {st2+='\n• Граница легкая горизонтальная U+2500:	'+count_120;}
+ if (count_121!=0)   {st2+='\n• Исправление многоточия после препинаний:	'+count_121;}
+ if (count_122!=0)   {st2+='\n• Исправление троеточия после препинаний:	'+count_122;}
+ if (count_123!=0)   {st2+='\n• Символ, заменяющий объект ￼:	'+count_123;}
+ if (count_124!=0)   {st2+='\n• Метка слева-направо U+200E:	'+count_124;}
+ if (count_125!=0)   {st2+='\n• Замена дефисов U+2010:	'+count_125;}
+ if (count_126!=0)   {st2+='\n• Замена горизонтальных линий U+2015:	'+count_126;}
+ if (count_127!=0)   {st2+='\n• Сдвоенные открывающие болды:	'+count_127;}
+ if (count_128!=0)   {st2+='\n• Сдвоенные закрывающие болды:	'+count_128;}
+ if (count_129!=0)   {st2+='\n• Унификация открывающих болдов и курсивов:	'+count_129;}
+ if (count_130!=0)   {st2+='\n• Унификация закрывающих болдов и курсивов:	'+count_130;}
+ if (count_131!=0)   {st2+='\n• Соединитель слов U+2060:	'+count_131;}
+ if (count_132!=0)   {st2+='\n• Em пробел U+2003:	'+count_132;}
+ if (count_133!=0)   {st2+='\n• Цифровой пробел U+2007:	'+count_133;}
+ if (count_134!=0)   {st2+='\n• En квадрат U+2000:	'+count_134;}
+ if (count_135!=0)   {st2+='\n• Em квадрат U+2001:	'+count_135;}
+ if (count_136!=0)   {st2+='\n• Узкий неразрывный пробел U+202F:	'+count_136;}
+ if (count_137!=0)   {st2+='\n• Неразрывный пробел нулевой ширины (BOM) U+FEFF:	'+count_137;}
+ if (count_138!=0)   {st2+='\n• Нулевая ширина (без объединения) U+200C:	'+count_138;}
+ if (count_139!=0)   {st2+='\n• Нулевая ширина (с объединением) U+200D:	'+count_139;}
+ if (count_140!=0)   {st2+='\n• Неразрывный дефис U+2011:	'+count_140;}
+ if (count_141!=0)   {st2+='\n• Комбинируемая подстрочная точка U+0323:	'+count_141;}
 
- if (count_90!=0)   {st2+='\n• лишние идентификаторы:  	'+count_90;}
+ 
 
  if (st2!="") st2="\n"+st2;
 
  MsgBox ('                  –= Jurgen Script =– \n'+
-        ' «Генеральная уборка» v.'+VersionNumber+' Golma Edition       \n\n'+
+        ' «Генеральная уборка» v.'+VersionNumber+' Golma+TaKir Edition 2024       \n\n'+
 
         ' Время: ' +TimeStr+'.'+st2); 
 
