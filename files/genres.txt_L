@@ -1,0 +1,290 @@
+1252 // codepage
+SF, Fantasy
+ sf_history Alternative history
+ sf_action Action SF
+ sf_epic Epic SF
+ sf_heroic Heroic SF
+ sf_detective Detective SF
+ sf_cyberpunk Cyberpunk
+ sf_space Space SF
+ sf_social Social SF
+ sf_horror Horror
+ sf_humor Humor SF
+ sf_fantasy Fantasy
+ sf Science Fiction
+ child_sf Science Fiction for Kids
+ sf_fantasy_city Fantasy city
+ sf_postapocalyptic Postapocalyptic
+ love_sf Love SF
+ gothic_novel Gothic novel
+ nsf Non Science Fiction
+ fairy_fantasy Fairy SF
+ sf_etc Other SF
+ sf_irony Ironical SF
+ sf_fantasy_irony Ironyc female fantasy
+ sf_mystic Mystic
+ sf_space_opera Space Opera
+ sf_stimpank Stimpank
+ sf_technofantasy Technofantasy
+ popadanec popadanec 
+ historical_fantasy Historical fantasy
+ humor_fantasy humor_fantasy
+Detectives, Thrillers
+ sf_detective Detective SF
+ det_classic Classical Detective
+ det_police Police Stories
+ det_action Action
+ det_irony Ironical Detective
+ det_history Historical Detective
+ det_espionage Espionage Detective
+ det_crime Crime Detective
+ det_political Political Detective
+ det_maniac Maniacs
+ det_hard Hard-boiled Detective
+ thriller Thrillers
+ detective Detective
+ love_detective Detective Romance
+ child_det Detective for Kids
+ thriller_legal Legal thriller
+ thriller_medical Medical thriller
+ thriller_techno Techno Thriller
+ det_cozy Cozy Mysteries
+Prose
+ prose Prose
+ prose_classic Classical Prose
+ prose_history Historical Prose
+ prose_contemporary Contemporary Prose
+ prose_counter Counterculture
+ prose_rus_classic Russian Classics
+ prose_su_classics Soviet Classics
+ prose_military Military
+ aphorisms Aphorisms
+ essay Essay
+ story Story
+ great_story Great story
+ short_story Short story
+ roman Roman
+ extravaganza Extravaganza
+ epistolary_fiction Epistolary
+ prose_epic Epic
+ prose_magic Magic realism
+ sagas Sagas
+ dissident Anti-Soviet fiction
+ prose_sentimental prose_sentimental
+Love
+ love_contemporary Contemporary Romance
+ love_history Historical Romance
+ love_detective Detective Romance
+ love_short Short Romance
+ love_erotica Erotica
+ love About love
+ love_sf Love SF
+ love_hard Porno
+ det_cozy Cozy Mysteries
+Adventures
+ adv_western Western
+ adv_history History
+ adv_indian Indians
+ adv_maritime Maritime Fiction
+ adv_geo Travel & Geography
+ adv_animal Nature & Animals
+ adventure Misk Adventures
+ child_adv Adventures for Kids
+Children's
+ child_tale Fairy Tales
+ child_verse Verses for Kids
+ child_prose Prose for Kids
+ child_sf Science Fiction for Kids
+ child_det Detective for Kids
+ child_adv Adventures for Kids
+ child_education Education for Kids
+ children For Kids: Misk
+ child_folklore Child Folklore
+ prose_game Game book
+Poetry, Dramaturgy
+ child_verse Verses for Kids
+ poetry Poetry
+ humor_verse Humor Verses
+ fable Fable
+ vers_libre Vers libre
+ visual_poetry Visual Poetry
+ lyrics Lyrics
+ palindromes Palindromes
+ song_poetry Song Poetry
+ experimental_poetry Experimental Poetry
+ epic_poetry Epic Poetry
+ in_verse In verse
+Antique
+ antique_ant Antique Literature
+ antique_european Antique European Literature
+ antique_russian Antique Russian Literature
+ antique_east Antique East Literature
+ antique_myths Myths. Legends. Epos
+ antique Other Antique
+Science, Education
+ sci_history History
+ sci_psychology Psychology
+ sci_culture Cultural Science
+ sci_religion Religious Studies
+ sci_philosophy Philosophy
+ sci_politics Politics
+ sci_business Business
+ sci_juris Jurisprudence
+ sci_linguistic Linguistics
+ sci_medicine Medicine
+ sci_phys Physics
+ sci_math Mathematics
+ sci_chem Chemistry
+ sci_biology Biology
+ sci_tech Technical
+ science Misk Science, Education
+ sci_biochem Biochemistry
+ sci_physchem Physical chemistry
+ sci_anachem Analitic Chemistry
+ sci_orgchem Organic Chemistry
+ sci_economy Economy
+ sci_state State science
+ sci_biophys Biophysics
+ sci_geo Geology
+ sci_cosmos Cosmos
+ sci_medicine_alternative Alternative medicine
+ sci_philology Philology
+ sci_pedagogy Pedagogy
+ sci_social_studies Social studies
+ sci_ecology Ecology
+ military_history Military History
+ sci_veterinary Veterinary
+ sci_zoo Zoology
+ sci_botany Botany
+ sci_textbook Textbook
+ sci_crib Cribs
+ sci_abstract Abstract
+ foreign_language Foreign languages
+ psy_childs psy_childs
+ psy_theraphy psy_theraphy
+ psy_sex_and_family Sex and family
+Computers
+ comp_www Internet
+ comp_programming Programming
+ comp_hard Hardware
+ comp_soft Software
+ comp_db Databases
+ comp_osnet OS & Networking
+ computers Computers: Misk
+ comp_dsp DSP
+Reference
+ ref_encyc Encyclopedias
+ ref_dict Dictionaries
+ ref_ref Reference
+ ref_guide Guidebooks
+ reference Misk References
+ design Art, Design
+ geo_guides Guides
+Religion
+ religion_rel Religion
+ religion_esoterics Esoterics
+ religion_self Self-perfection
+ religion Religion: Other
+ religion_budda Buddha
+ religion_christianity Christianity
+ religion_orthodoxy Orthodoxy
+ religion_catholicism Catholicism
+ religion_protestantism Protestantism
+ religion_hinduism Hinduism
+ religion_islam Islam
+ religion_judaism Judaism
+ astrology Astrology
+ palmistry Palmistry
+ religion_paganism Paganism
+Humor
+ sf_humor Humor SF
+ humor_anecdote Anecdote
+ humor_prose Humor Prose
+ humor_verse Humor Verses
+ humor Misk Humor
+ comedy Comedy
+ humor_satire Satire
+Home, Family
+ home_cooking Cooking
+ home_pets Pets
+ home_crafts Hobbies & Crafts
+ home_entertain Entertaining
+ home_health Health
+ home_garden Garden
+ home_diy Do it yourself
+ home_sport Sports
+ home_sex Erotica, Sex
+ home Home: Other
+ home_collecting Collecting
+Technics
+ sci_tech Technical
+ sci_transport Transport
+ sci_metal Metallurgy
+ sci_radio Radio
+ sci_build Building
+ auto_regulations Auto regulations
+ architecture_book Architecture
+Other
+ other Other
+ notes Notes
+ periodic Periodic
+ music Music
+ cine Cine
+ theatre Theatre
+ fanfiction Fan fiction
+ unfinished Unfinished
+ visual_arts Visual Arts
+Economy, Business
+ banking Banking
+ accounting Accounting
+ global_economy Global Economy
+ paper_work Paper Work
+ org_behavior Corporate Culture
+ personal_finance Personal Finance
+ small_business Small Business
+ marketing Marketing, PR, Adv
+ real_estate Real Estate
+ popular_business Popular Business
+ industries Industries
+ job_hunting Job Hunting
+ ya Young-adult fiction
+ management Management
+ stock Stock
+ economics Economics
+ trade Trade
+Nonfiction
+ adv_geo Travel & Geography
+ adv_animal Nature & Animals
+ nonf_biography Biography & Memoirs
+ nonf_publicism Publicism
+ nonf_criticism Criticism
+ nonfiction Misk Nonfiction
+ nonf_military Military docs
+ sci_popular Science popular
+Dramaturgy
+ dramaturgy Dramaturgy
+ drama Drama
+ screenplays Screenplays
+ comedy Comedy
+ mystery Mystery
+ scenarios Scenarios
+ tragedy Tragedy
+ vaudeville Vaudeville
+Folklore
+ humor_anecdote Anecdote
+ epic Epic
+ child_folklore Child Folklore
+ riddles Riddles
+ folk_songs Folk Songs
+ folk_tale Folk tales
+ proverbs Proverbs
+ folklore Folklore
+ limerick Limerick
+Military
+ prose_military Military
+ nonf_military Military docs
+ military_history Military History
+ military_weapon Weapon
+ military_arts Military Arts
+ military_special Military special
+ military Military
