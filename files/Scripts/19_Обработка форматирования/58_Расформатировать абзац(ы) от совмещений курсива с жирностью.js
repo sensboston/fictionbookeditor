@@ -1,6 +1,6 @@
 // Скрипт «Расформатировать абзац(ы) от совмещений курсива с жирностью»
 // Автор Sclex
-// Версия 1.5
+// Версия 1.6
 
 function Run() {
 
@@ -10,9 +10,6 @@ function Run() {
  var markerTagName="STRIKE";
 
  function processPs() {
- 
-  var boldLevel=0;
-  var italicLevel=0;
   
   function replaceFunction(match, brackets1, brackets2, brackets3) {
    //alert("match: "+match+"\n\nboldLevel: "+boldLevel+"\n\nitalicLevel: "+italicLevel);
@@ -22,7 +19,7 @@ function Run() {
       if (brackets3=="EM") { italicLevel--; return "</EM>"; }
      }
      if (boldLevel==1 && italicLevel==0) {
-      if (brackets3=="STRONG") { italicLevel--; return "</STRONG>"; }
+      if (brackets3=="STRONG") { boldLevel--; return "</STRONG>"; }
      }
      if (boldLevel==1 && italicLevel==1) {
       if (brackets3=="EM") { italicLevel--; return "<STRONG>"; }
@@ -70,8 +67,12 @@ function Run() {
   
   for (var i=0; i<ps.length; i++) {
    //var code="Чтобы <STRONG>изменить <EM>до<STRONG><STRONG><STRONG>кум</STRONG></STRONG></STRONG>ент</EM> по умолчанию</STRONG>, отредактируйте файл \"blank.fb2\" вручную.";
-   //var newCode=code.replace(/(<)(\/?)([A-Z]+)( [^>]+)?>|[^<>]+/gi,replaceFunction);
-   //alert("Код после замен:\n\n"+newCode);
+   //var newCode=ps[i].innerHTML.replace(/(<)(\/?)([A-Z]+)( [^>]+)?>|[^<>]+/gi,replaceFunction);
+   //var boldLevel=0;
+   //var italicLevel=0;
+   //alert("Код до замен:\n\n"+ps[i].innerHTML+"\n\nКод после замен:\n\n"+ps[i].innerHTML.replace(/(<)(\/?)([A-Z]+)( [^>]+)?>|[^<>]+/gi,replaceFunction));
+   var boldLevel=0;
+   var italicLevel=0;
    ps[i].innerHTML=ps[i].innerHTML.replace(/(<)(\/?)([A-Z]+)( [^>]+)?>|[^<>]+/gi,replaceFunction);
   }
  }
