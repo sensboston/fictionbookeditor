@@ -1,5 +1,5 @@
 // Скрипт «Поиск по набору регэкспов (разрывы абзацев)» для редактора Fiction Book Editor (FBE).
-// Версия 1.3
+// Версия 1.4
 // Автор Sclex, набор RegExp-ов - TaKir, Sclex, 20.04.2022
 
 // Редакция на 16.05.2024.
@@ -426,7 +426,7 @@ tagRegExp("(?<=<мы-не-внутри-тэга>)([^\»….,:;!\?]|[—–,-])<�
 
    el=ptr;
    
-   s=el.innerHTML.replace(removeTagsRE,removeTagsRE_).replace(imgTagRE,imgTagRE_).replace(shyRE,shyRE_).replace(ltRE,ltRE_).replace(gtRE,gtRE_).replace(ampRE,ampRE_).replace(nbspRE,nbspRE_);
+   s=el.innerHTML.replace(removeTagsRE,removeTagsRE_).replace(imgTagRE,imgTagRE_).replace(shyRE,shyRE_).replace(ltRE,ltRE_).replace(gtRE,gtRE_).replace(nbspRE,nbspRE_).replace(ampRE,ampRE_);
    
 
      // alert(s);
@@ -446,7 +446,7 @@ tagRegExp("(?<=<мы-не-внутри-тэга>)([^\»….,:;!\?]|[—–,-])<�
    // tr2.select();
    // alert("После команды tr2.select();");
    
-   s1_len=tr2.htmlText.replace(/\s{2,}/g," ").replace(removeTagsRE,removeTagsRE_).replace(imgTagRE,imgTagRE_).replace(shyRE,shyRE_).replace(ltRE,ltRE_).replace(gtRE,gtRE_).replace(ampRE,ampRE_).replace(nbspRE,nbspRE_).length;
+   s1_len=tr2.htmlText.replace(/\s{2,}/g," ").replace(removeTagsRE,removeTagsRE_).replace(imgTagRE,imgTagRE_).replace(shyRE,shyRE_).replace(ltRE,ltRE_).replace(gtRE,gtRE_).replace(nbspRE,nbspRE_).replace(ampRE,ampRE_).length;
    var s1=tr2.htmlText.replace(/\s{2,}/g," ");
    var s1_len2=s1.length;
    var s2=el.innerHTML;
@@ -500,8 +500,8 @@ tagRegExp("(?<=<мы-не-внутри-тэга>)([^\»….,:;!\?]|[—–,-])<�
         rslt=regExps[i].exec(s_html);
         flag1=false;
         if (rslt) {
-         newPos=s_html.substr(0,rslt.index).replace(removeTagsRE,removeTagsRE_).replace(imgTagRE,imgTagRE_).replace(shyRE,shyRE_).replace(ltRE,ltRE_).replace(gtRE,gtRE_).replace(ampRE,ampRE_).replace(nbspRE,nbspRE_).length;
-         rslt_replaced=rslt[0].replace(removeTagsRE,removeTagsRE_).replace(imgTagRE,imgTagRE_).replace(shyRE,shyRE_).replace(ltRE,ltRE_).replace(gtRE,gtRE_).replace(ampRE,ampRE_).replace(nbspRE,nbspRE_);
+         newPos=s_html.substr(0,rslt.index).replace(removeTagsRE,removeTagsRE_).replace(imgTagRE,imgTagRE_).replace(shyRE,shyRE_).replace(ltRE,ltRE_).replace(gtRE,gtRE_).replace(nbspRE,nbspRE_).replace(ampRE,ampRE_).length;
+         rslt_replaced=rslt[0].replace(removeTagsRE,removeTagsRE_).replace(imgTagRE,imgTagRE_).replace(shyRE,shyRE_).replace(ltRE,ltRE_).replace(gtRE,gtRE_).replace(nbspRE,nbspRE_).replace(ampRE,ampRE_);
          if (ignoreNullPosition ? minPos==s1_html_len+1 : minPos==s1_html_len) break;
          if (rslt_replaced.length==0 || (rslt_replaced.length!=0 && rslt_replaced[0]!="<")) {
           k=regExps[i].lastIndex;
@@ -579,7 +579,7 @@ tagRegExp("(?<=<мы-не-внутри-тэга>)([^\»….,:;!\?]|[—–,-])<�
       if (el && el!=fbwBody) el=el.nextSibling;
      }
     if (el && el.nodeName=="P") {
-     s=el.innerHTML.replace(removeTagsRE,removeTagsRE_).replace(imgTagRE,imgTagRE_).replace(shyRE,shyRE_).replace(ltRE,ltRE_).replace(gtRE,gtRE_).replace(ampRE,ampRE_).replace(nbspRE,nbspRE_);
+     s=el.innerHTML.replace(removeTagsRE,removeTagsRE_).replace(imgTagRE,imgTagRE_).replace(shyRE,shyRE_).replace(ltRE,ltRE_).replace(gtRE,gtRE_).replace(nbspRE,nbspRE_).replace(ampRE,ampRE_);
      s1_len=0;
      s_html=el.innerHTML;
      s1_html_len=0;
@@ -604,7 +604,7 @@ tagRegExp("(?<=<мы-не-внутри-тэга>)([^\»….,:;!\?]|[—–,-])<�
   tr2=document.body.createTextRange();
   tr2.moveToElementText(el2);
   tr2.setEndPoint("EndToEnd",tr);
-  s1_len=tr2.htmlText.replace(/\s{2,}/g," ").replace(removeTagsRE,removeTagsRE_).replace(imgTagRE,imgTagRE_).replace(shyRE,shyRE_).replace(ltRE,ltRE_).replace(gtRE,gtRE_).replace(ampRE,ampRE_).replace(nbspRE,nbspRE_).length;
+  s1_len=tr2.htmlText.replace(/\s{2,}/g," ").replace(removeTagsRE,removeTagsRE_).replace(imgTagRE,imgTagRE_).replace(shyRE,shyRE_).replace(ltRE,ltRE_).replace(gtRE,gtRE_).replace(nbspRE,nbspRE_).replace(ampRE,ampRE_).length;
  }
     
  while (searchNext()) ;
