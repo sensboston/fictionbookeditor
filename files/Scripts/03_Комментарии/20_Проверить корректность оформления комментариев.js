@@ -1,14 +1,17 @@
 // Скрипт "Проверка корректности оформления комментариев"
-// Версия: 1.3
+// Версия: 1.4
 
 function Run() {
  var Ts=new Date().getTime();
  var fbw_body=document.getElementById("fbw_body");
  if (fbw_body==null) {MsgBox("Ошибка. Не найдено fbw_body!"); return;}
+ MyLinks=fbw_body.getElementsByTagName("A");
+ var ptr=fbw_body.firstChild;
+ while (ptr) { if (ptr.getAttribute("fbname")=="notes") break; else ptr=ptr.nextSibling; }
+ var BodyNotes=ptr;
  var ptr=fbw_body.firstChild;
  while (ptr) { if (ptr.getAttribute("fbname")=="comments") break; else ptr=ptr.nextSibling; }
  if (ptr==null) {MsgBox("Отсутствует body комментариев."); return;}
- MyLinks=fbw_body.getElementsByTagName("A");
  var BodyComments=ptr;
  var ptr=BodyComments.firstChild;
  var NoteIdByNum = new Object();
@@ -40,7 +43,7 @@ function Run() {
  var PrevNum=0;
  for (i=0;i<MyLinks.length;i++) {
   var type=MyLinks[i].className;
-  // if (type!="note") continue;
+  //if (type=="note") continue;
   var href=MyLinks[i].getAttribute("href");
   if (href.indexOf("http://")!=-1 || href.indexOf("https://")!=-1 ||
       href.indexOf("ftp://")!=-1) continue;
@@ -48,6 +51,7 @@ function Run() {
   if (href.length==0) {ErrTxt="Пустой адрес ссылки."; break;}
   href=GetLocalHref(href);
   if (href=="1") {ErrTxt="Отсутствует # в адресе ссылки."; break;}
+  if (BodyNotes && BodyNotes.contains(document.getElementById(href))) continue;
   if (NoteCntById[href]==null) {
    ErrTxt="В body комментариев нет раздела комментария с id, указанным в ссылке.";
    break;
