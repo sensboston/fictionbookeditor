@@ -1,12 +1,20 @@
 ﻿// Скрипт «Статистика нецензурных слов» для редактора Fiction Book Editor (FBE).
-// Версия 1.7
-// автор — stokber (ноябрь 2024).
+// Версия 1.8
+// автор — stokber (февраль 2025).
 // В скрипте использован регексп-антимат за авторством imDaniX (https://gist.github.com/imDaniX/8449f40655fcc1b92ae8d756cbca1264#file-swears-javascript-regex) дополненный рядом изменений-добавок.
 
 function Run() {
-
-    var version = "1.7";
+    
+    var name = "«Статистика нецензурных слов»";
+    var version = "1.8";
     // --------------------------------------------------------------------------------------------
+    /// НАСТРОЙКИ
+    
+  /// Здесь, с помощью переменной "okno" можно настроить в каком окне показывать результаты статистики: обычном или ModelessDialog. Имеются сообщения, что обычное html-окно может долго открываться. Из плюсов обычного окна — возможность тут же выделить и скопировать нужные вам строки. Окно ModelessDialog не позволяет выделить и скопировать из него, но зато открывается как правило быстро. В случае выбора окна ModelessDialog, есть возможность помещения всего содержимого таблицы статистики в буфер обмена. Это можно сделать настроив параметры переменной "tablCopu". 
+
+    var okno = 0; // 0 — обычное html-окно; 1 — Modelles-окно.
+	
+    var tablCopu = 1; //0 — пропустить копирование таблицы; 1 — копировать в буфер (работает только с окном ModellesDialog, в обычном html-окне игнорируется).
     
     // Считать ли все слова со звёздочками вконце (возможно это просто маркеры сносок) подозрительными? Выберите да или нет:
     var astEnd = false; // нет
@@ -22,7 +30,7 @@ function Run() {
     
     var engFoul = "(?:beaver|bellend|clunge|cock|cunt|dick|fuck|gash|knob|minge|motherfuck|prick|punani|pussy|snatch|twat|twunt)";
     var meta = "Meta|Мета";
-    var faceInst = "instagram|inst|инстаграм(?:[аеу]|ом)?|инст[аеоуы]|facebook|faceb|ф[-]бу|ф[еэ]йсбук|фейсб(?:[аеу]|ом)?";
+    var faceInst = "instagram|inst|инстаграм(?:[аеу]|ом)?|инст[аеоуы]|facebook|faceb|ф[-]бу|ф[еэ]йсбук(?:[аеу]|ом)?";
     // var ast = "(?:\\*\\*\\*|\\*|#)";
      var ast = "(?:[*]|#)+";
 
@@ -56,7 +64,7 @@ function Run() {
          
          // все-все слова со звёздочками вначале или середине:
          // "|[а-яё]*(?:"+ ast + "[а-яё]+)+[*#]*" +
-		 "|[а-яё]*(?:"+ ast + "[а-яё]+)+("+ ast + ")?" +
+         "|[а-яё]*(?:"+ ast + "[а-яё]+)+("+ ast + ")?" +
          
          // некоторые слова со звездочками в конце:
           "|(?:возъ|въ|взъ|вы|до|за|изъ|на|недо|объ|отъ|по|подъ|пере|при|про|разъ|съ)?[еёe]"+ ast +
@@ -181,7 +189,7 @@ function Run() {
     var matches = str.match(regexp); // Получаем массив совпадений.
 
     if (!matches) {
-        alert("В документе не найдено нецензурных слов.\n\n«Статистика нецензурных слов» v."+version);
+        alert("В документе не найдено нецензурных слов.\n\n"+name+" v."+version);
         return true;
     }
     // -------------------------------------------------------------------------------------------------------
@@ -230,7 +238,7 @@ function Run() {
     alf = alf.replace(new RegExp("♣", "igm"), ""); //
 
     if (!alf) {
-        alert("В документе не найдено нецензурных слов.\n\n«Статистика нецензурных слов» v."+version);
+        alert("В документе не найдено нецензурных слов.\n\n"+name+" v."+version);
         return true;
     } else {
         var countMat = (alf.match(/\n/igm) || []).length;
@@ -245,9 +253,9 @@ function Run() {
         countMat = countMat - countMetaFaceInst;
 
         if (!countMat && !countMetaFaceInst) {
-        alert("В документе не найдено нецензурных слов.\n\n«Статистика нецензурных слов» v."+version);
+        alert("В документе не найдено нецензурных слов.\n\n"+name+" v."+version);
         return true;
-        } else alert("Найдено нецензурных слов:\t\t" + countMat + "\n\nУпоминаний запрещённых \nна территории РФ сетей и организаций:\t" + countMetaFaceInst + "\n\n«Статистика нецензурных слов» v."+version);
+        } else alert("Найдено нецензурных слов:\t\t" + countMat + "\n\nУпоминаний запрещённых \nна территории РФ сетей и организаций:\t" + countMetaFaceInst + "\n\n"+name+" v."+version);
     }
 
     // указываем количество каждого из совпадений:
@@ -268,8 +276,9 @@ function Run() {
     tabl = tabl.replace(new RegExp("[*#]+", "img"), "<font color='red'>$&</font>");
 
     MyMsgWindow(tabl);
-
+    // ---------------------------------------------------------------
     window.external.BeginUndoUnit(document, "добавление записи в аннотацию");
+    
 
    if (countMat > 0) {
         result = confirm("Оставить запись о наличии неценцурной лексики в аннотации?")
@@ -295,19 +304,11 @@ function Run() {
             var msg_1 = "<EM>** Meta Platforms Inc. признана экстремистской организацией на территории РФ.</EM>";
             addToAnno();
         }
-        // alert("«Статистика нецензурных слов» v."+version)
     }   else return true;
 
     window.external.EndUndoUnit(document);
 
-    function MyMsgWindow(tabl) {
-        var MsgWindow = window.open("HTML/Статистика нецензурных слов.html", null, "status=no,toolbar=no,menubar=no,location=no,scrollbars=yes,resizable=yes, width=400"); // ??????????????????????????
-
-        MsgWindow.document.body.innerHTML = tabl;
-        // MsgWindow.moveTo(0, 0);
-    }
-
-    // добавление в аннотацию:
+        // добавление в аннотацию:
     // (подсмотрено у Александра Ка)
     function addToAnno() {
         var fbwBody = document.getElementById("fbw_body");
@@ -348,5 +349,28 @@ function Run() {
         while (SearchAnno.firstChild && SearchAnno.firstChild.innerHTML.search(reH01) != -1) SearchAnno.firstChild.removeNode(true); //  Удаление начальных пустых строк
         // window.external.EndUndoUnit(document); 
     }
+    
+    // ================================================
 
+    function MyMsgWindow(tabl) {
+    if (okno == 0) {
+         var MsgWindow = window.open("HTML/Статистика нецензурных слов.html", null, "height=680,width=400,status=no,toolbar=no,menubar=no,location=no,scrollbars=yes,resizable=yes"); 
+         }
+    if (okno == 1) {
+         var MsgWindow = window.showModelessDialog("HTML/Статистика нецензурных слов.html", null, "height=720,width=400,status=no,toolbar=no,menubar=no,location=no,scrollbars=yes,resizable=yes"); 
+         
+         // текст для буфера обмена:
+         var board = tabl;
+         board = board.replace(new RegExp("</td><td>", "ig"), "\t");
+         board = board.replace(new RegExp("<th>(Последовательно)</th>", "igm"), "  $1\n");
+          board = board.replace(new RegExp("<th>(По алфавиту)</th>", "igm"), "\n\n===================\n\n  $1");
+         board = board.replace(new RegExp("</?[^>]+?>", "ig"), "");
+         
+         if (tablCopu ==1) {
+         clipboardData.setData("Text",board); // поместить данные в буфер обмена.
+         }
+         }
+
+        MsgWindow.document.body.innerHTML = tabl;
+    }
 }
