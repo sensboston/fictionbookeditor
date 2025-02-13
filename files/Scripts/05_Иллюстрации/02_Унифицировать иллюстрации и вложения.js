@@ -4,7 +4,7 @@
 function Run() {
  var Ts=new Date().getTime();
  
- var versionNumber="1.5";
+ var versionNumber="1.6";
 
  // шаблон id картинок и вложений
  // вместо %N будет подставлен номер картинки
@@ -102,7 +102,6 @@ function Run() {
  var ImgCntById={};
  var BinById={};
  var ImgByNum={};
- var BinIdByNum={};
  var NonJpegPngImgs={};
  NonJpegPngImgs["0"]=0;
  var ImgInfoNumById={};
@@ -124,7 +123,6 @@ function Run() {
   if (BinById[id]==null || BinById[id]=="undefined") {
    type=bins[i].all.type.value;
    BinCnt++;
-   BinIdByNum[BinCnt]=id;
    BinById[id]=bins[i];
    if (type!="image/png" && type!="image/jpeg") {
     NonJpegPngImgs["0"]++;
@@ -186,7 +184,7 @@ function Run() {
  }
  // сгенерим длинное случайное число для временных id
  var RandomNum=GetRandomNum(DigitsInTempName);
- var NewId,BinNum,j;
+ var NewId,j;
  var IdUsed={};
  var NewTiCover="";
  var NewStiCover="";
@@ -245,7 +243,6 @@ function Run() {
     BinById[strconst4+NewId]=BinById[NewId];
     BinById[NewId]=null;
     BinById[strconst4+NewId].all.id.value=strconst4+NewId;
-    BinIdByNum[BinNum]=strconst4+NewId;
     ImgCntById[strconst4+NewId]=ImgCntById[NewId];
     ImgCntById[NewId]=null;    
     IdUsed[strconst4+NewId]=1;
@@ -261,7 +258,6 @@ function Run() {
    BinById[NewId]=BinById[id];
    BinById[id]=null;
    BinById[NewId].all.id.value=NewId;
-   BinIdByNum[BinNum]=NewId;
    IdUsed[NewId]=1;
    tmp_node=BinById[NewId].cloneNode(true);
    NewBinobj.appendChild(tmp_node);
@@ -298,7 +294,6 @@ function Run() {
     BinById[strconst4+NewId]=BinById[NewId];
     BinById[NewId]=null;
     BinById[strconst4+NewId].all.id.value=strconst4+NewId;
-    BinIdByNum[BinNum]=strconst4+NewId;
     ImgCntById[strconst4+NewId]=ImgCntById[NewId];
     ImgCntById[NewId]=null;    
     IdUsed[strconst4+NewId]=1;
@@ -312,10 +307,10 @@ function Run() {
    }
    ChangeSrcInImageInfo(id,NewId);
    var Bin=BinById[id];
+   //alert("01. BinById[NewId]=Bin;\n\n"+NewId+"\n\n"+Bin.all.id.value);
    BinById[NewId]=Bin;
    BinById[id]=null;
    Bin.all.id.value=NewId;
-   BinIdByNum[BinNum]=NewId;
    IdUsed[NewId]=1;
    tmp_node=BinById[NewId].cloneNode(true);
    NewBinobj.appendChild(tmp_node);
@@ -346,10 +341,10 @@ function Run() {
    else { IdUsed[id]++; }
    ChangeSrcInImageInfo(id,NewId);
    Bin=BinById[id];
+   //alert("02. BinById[NewId]=Bin;\n\n"+NewId+"\n\n"+Bin.all.id.value);
    BinById[NewId]=Bin;
    BinById[id]=null;
    Bin.all.id.value=NewId;
-   BinIdByNum[BinNum]=NewId;
    ImgCntById[NewId]=ImgCntById[id];
    ImgCntById[id]=null;
   }
@@ -372,20 +367,23 @@ function Run() {
       else if (type=="image/jpeg") NewId+=".jpg";
       ChangeSrcInImageInfo(id,NewId);
       var Bin=BinById[id];
+      //alert("03. BinById[NewId]=Bin;\n\n"+id+"\n\n"+NewId+"\n\n"+Bin.all.id.value);
       BinById[NewId]=Bin;
-      BinById[id]=null;
+      //BinById[id]=null;
       Bin.all.id.value=NewId;
-      BinIdByNum[BinNum]=NewId;
+      //alert("04. BinById[NewId]: "+BinById[NewId].outerHTML);
       for (j=1;j<=ImgCntById[id];j++) {
        ImgsById[NewId+'"'+j]=ImgsById[id+'"'+j];
        ImgsById[id+'"'+j]=null;
        ImgsById[NewId+'"'+j].firstChild.src="";
+//       alert("123.\n\n"+NewId+'"'+j+"\n\n"+"#"+NewId);
        ImgsById[NewId+'"'+j].setAttribute("href","#"+NewId);
        ImgsById[NewId+'"'+j].firstChild.src="fbw-internal:#"+NewId;
       }
       ImgCntById[NewId]=ImgCntById[id];
       ImgCntById[id]=null;
       tmp_node=BinById[NewId].cloneNode(true);
+      //alert("Добавляем в NewBinobj:\n\n"+tmp_node.outerHTML);
       NewBinobj.appendChild(tmp_node);
       IdUsed[NewId]=1;
      }
