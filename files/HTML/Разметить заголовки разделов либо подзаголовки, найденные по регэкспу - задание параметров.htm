@@ -1,4 +1,4 @@
-<!-- версия скрипта 3.3 -->
+<!-- версия скрипта 4.0 -->
 <html>
 <head>
  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -62,6 +62,30 @@ table {
   var params=window.dialogArguments;
   document.title="Разметить заголовки разделов либо подзаголовки, найденные по регэкспу v"+params["versionNum"]+". Автор Sclex.";
   var myWin=params["window"];
+  var unusualSpaces=params["unusualSpaces"];
+  var timerId=null;
+  var currentRegExp=null;
+
+  function setFocus() {
+   if (document.getElementById("regExpId")) document.getElementById("regExpId").focus();
+  }
+
+  function myOnInterval() {
+   if (document.getElementById('regExpId').value!=currentRegExp) {
+    clearInterval(timerId);
+    timerId=null;
+    document.getElementById('regExpId1').value='';
+    currentRegExp=null;
+   } 
+  }
+
+  function onListChange() {
+   if (timerId) clearInterval(timerId);
+   document.getElementById('regExpId').value=document.getElementById('regExpId1').value;
+   currentRegExp=document.getElementById('regExpId1').value;
+   timerId=setInterval(myOnInterval,50);
+  }
+
   function markupTitles() {
    try {
    myWin.eval('function splittingIntoSections_OK(dialogDoc) {'+
@@ -101,7 +125,7 @@ table {
     '  while (ptrInSection) {'+
     '   if (ptrInSection.nodeName=="P" && ptrInSection.innerHTML=="") '+
     '     ptrInSection.innerHTML=nbspChar;'+
-    '   if (ptrInSection.nodeName=="P" && ptrInSection.className!="subtitle" && ptrInSection.innerHTML.replace(/<[^>]+>/g,"").replace(nbspRegExp,char160).replace(/&lt;/g,"<").replace(/&gt;/g,">").replace(/&amp;/g,"&").search(titleRegExp)>=0) {'+
+    '   if (ptrInSection.nodeName=="P" && ptrInSection.className!="subtitle" && ptrInSection.innerHTML.replace(/<[^>]+>/g,"").replace(nbspRegExp,char160).replace(/&lt;/g,"<").replace(/&gt;/g,">").replace(/&amp;/g,"&").replace(unusualSpacesRegExp," ").search(titleRegExp)>=0) {'+
     '    titleBegin=ptrInSection;'+
     '    titleEnd=ptrInSection;'+
     '    titleEnd.removeAttribute("className");'+
@@ -192,6 +216,7 @@ table {
     '   return;'+
     '  }'+
     ' }'+
+    ' var unusualSpacesRegExp=new RegExp("['+unusualSpaces+']","g");'+
     ' fbwBody=document.getElementById("fbw_body");'+
     ' var ptrInFbwBody=fbwBody.firstChild;'+
     ' var newTitleCnt=0;'+
@@ -248,7 +273,7 @@ table {
     '  while (ptrInSection) {'+
     '   if (ptrInSection.nodeName=="P" && ptrInSection.innerHTML=="") '+
     '     ptrInSection.innerHTML=nbspChar;'+
-    '   if (ptrInSection.nodeName=="P" && (ptrInSection.className=="" || ptrInSection.className=="normal") && ptrInSection.innerHTML.replace(/<[^>]+>/g,"").replace(nbspRegExp,char160).replace(/&lt;/g,"<").replace(/&gt;/g,">").replace(/&amp;/g,"&").search(subtitleRegExp)>=0) {'+
+    '   if (ptrInSection.nodeName=="P" && (ptrInSection.className=="" || ptrInSection.className=="normal") && ptrInSection.innerHTML.replace(/<[^>]+>/g,"").replace(nbspRegExp,char160).replace(/&lt;/g,"<").replace(/&gt;/g,">").replace(/&amp;/g,"&").replace(unusualSpacesRegExp," ").search(subtitleRegExp)>=0) {'+
     '    ptrInSection.className="subtitle";'+
     '    newSubtitleCnt++;'+
     '    var el2=ptrInSection.previousSibling;'+
@@ -312,6 +337,7 @@ table {
     '   return;'+
     '  }'+
     ' }'+
+    ' var unusualSpacesRegExp=new RegExp("['+unusualSpaces+']","g");'+
     ' fbwBody=document.getElementById("fbw_body");'+
     ' try { var nbspChar=window.external.GetNBSP(); } '+
     ' catch(e) { var nbspChar=String.fromCharCode(160); } '+
@@ -342,10 +368,9 @@ table {
   }
  </script>
 </head>
-<body onbeforeunload="myBeforeUnload();">
- Регэксп для поиска абзацев, которые следует превратить в заголовки либо подзаголовки. Например: «^Глава \d+$».<br>
- <input type=text style="width:660px;" id=regExpId><br>
- Предзаданные регэкспы: <select Id=regExpId1 onchange="document.getElementById('regExpId').value=document.getElementById('regExpId1').value; document.getElementById('regExpId1').value='';">
+<body onload="setFocus();" onbeforeunload="myBeforeUnload();">
+ Можете выбрать один из готовых вариантов типичных разновидностей (под)заголовков:<br>
+<select Id=regExpId1 onchange="onListChange();" style="width:100%;">
 <option selected value=""></option>
 <option value="^[ \xA0]*\d+[ \xA0]*$">Вида «123»</option>
 <option value="^[ \xA0]*[IVXLCDM]+[ \xA0]*$">Вида «XVI»</option>
@@ -377,10 +402,28 @@ table {
 <option value="^[ \xA0]*[.…«&quot;&#39;’\( \xA0]*([A-ZА-ЯЁ]+(?![A-ZА-ЯЁ])[-—–\d\.\*,;:&#39;’?!…«»“”„\(\) \xA0&quot;&#39;\[\]{}]*)+[ \xA0]*$">Вида «ЗАГОЛОВОК» (включите флажок «учитывать регистр»)</option>
 <option value="^[ \xA0]*«.{1,70}([?!]\.\.|\?!\.|…|\.\.\.)»[ \xA0]*$">Вида «Заголовок стиха из текста первой строки…»</option>
 <option value="^[ \xA0]*(\*[ \xA0]*){3}[ \xA0]*$">Вида «***»</option>
+<option value="^[ \xA0]*Part[ \xA0]+\d+[ \xA0]*$">Вида «Part 123»</option>
+<option value="^[ \xA0]*Part[ \xA0]+[IVXLCDM]+[ \xA0]*$">Вида «Part XVI»</option>
+<option value="^[ \xA0]*Part[ \xA0]+(One|Two|Three|Four|Five|Six|Seven|Eight|Nine|Ten|Eleven|Twelve|Thirteen|Fourteen|Fifteen|Sixteen|Seventeen|Eighteen|Nineteen|Twenty|Thirty|Forty|Fifty|Sixty|Seventy|Eighty|Ninety|Hundred)(?![a-z])">Вида «Part One»</option>
+<option value="^[ \xA0]*Chapter[ \xA0]+\d+[ \xA0]*$">Вида «Chapter 123»</option>
+<option value="^[ \xA0]*Chapter[ \xA0]+[IVXLCDM]+[ \xA0]*$">Вида «Chapter XVI»</option>
+<option value="^[ \xA0]*Chapter[ \xA0]+(One|Two|Three|Four|Five|Six|Seven|Eight|Nine|Ten|Eleven|Twelve|Thirteen|Fourteen|Fifteen|Sixteen|Seventeen|Eighteen|Nineteen|Twenty|Thirty|Forty|Fifty|Sixty|Seventy|Eighty|Ninety|Hundred)(?![a-z])">Вида «Chapter One»</option>
+<option value="^[ \xA0]*Volume[ \xA0]+\d+[ \xA0]*$">Вида «Volume 123»</option>
+<option value="^[ \xA0]*Volume[ \xA0]+[IVXLCDM]+[ \xA0]*$">Вида «Volume XVI»</option>
+<option value="^[ \xA0]*Volume[ \xA0]+(One|Two|Three|Four|Five|Six|Seven|Eight|Nine|Ten|Eleven|Twelve|Thirteen|Fourteen|Fifteen|Sixteen|Seventeen|Eighteen|Nineteen|Twenty|Thirty|Forty|Fifty|Sixty|Seventy|Eighty|Ninety|Hundred)(?![a-z])">Вида «Volume One»</option>
+<option value="^[ \xA0]*Book[ \xA0]+\d+[ \xA0]*$">Вида «Book 123»</option>
+<option value="^[ \xA0]*Book[ \xA0]+[IVXLCDM]+[ \xA0]*$">Вида «Book XVI»</option>
+<option value="^[ \xA0]*Book[ \xA0]+(One|Two|Three|Four|Five|Six|Seven|Eight|Nine|Ten|Eleven|Twelve|Thirteen|Fourteen|Fifteen|Sixteen|Seventeen|Eighteen|Nineteen|Twenty|Thirty|Forty|Fifty|Sixty|Seventy|Eighty|Ninety|Hundred)(?![a-z])">Вида «Book One»</option>
+<option value="^[ \xA0]*Stave[ \xA0]+\d+[ \xA0]*$">Вида «Stave 123»</option>
+<option value="^[ \xA0]*Stave[ \xA0]+[IVXLCDM]+[ \xA0]*$">Вида «Stave XVI»</option>
+<option value="^[ \xA0]*Stave[ \xA0]+(One|Two|Three|Four|Five|Six|Seven|Eight|Nine|Ten|Eleven|Twelve|Thirteen|Fourteen|Fifteen|Sixteen|Seventeen|Eighteen|Nineteen|Twenty|Thirty|Forty|Fifty|Sixty|Seventy|Eighty|Ninety|Hundred)(?![a-z])">Вида «Stave One»</option>
+<option value="^[ \xA0]*(Prolog|Prologue|Epilog|Epilogue|Foreword|Afterword|Preface)[ \xA0]*$">Prologue, Epilogue, Foreword и пр.</option>
 </select><br>
+ Регэксп для поиска абзацев, которые следует превратить в заголовки либо подзаголовки. Можете задать <span style="font-style: italic;">свой</span> регэксп (например: «<span style="background-color:#7A7666; color:white;">^Глава&#160;\d+$</span>»), а можете использовать готовый, воспользовавшись выпадающим списком выше.<br>
+ <input type=text style="width:100%;" id=regExpId><br>
  <input type=checkbox id="caseSensitiveId"><label for="caseSensitiveId"> учитывать регистр при поиске по регэкспу</label><br>
- <select id=captureBeforeId><option selected value=0>0<option value=1>1<option value=2>2<option value=3>3</option></select> сколько захватывать в заголовок либо подзаголовок абзацев, находящихся <b>перед</b> абзацем, найденным по регэкспу<br>
- <select id=captureAfterId><option selected value=0>0<option value=1>1<option value=2>2<option value=3>3</option></select> сколько захватывать в заголовок либо подзаголовок абзацев, находящихся <b>после</b> абзаца, найденного по регэкспу<br>
+ <select id=captureBeforeId><option selected value=0>0<option value=1>1<option value=2>2<option value=3>3</option></select> сколько захватывать в создаваемый заголовок либо подзаголовок абзацев, находящихся <b>перед</b> абзацем, найденным по регэкспу<br>
+ <select id=captureAfterId><option selected value=0>0<option value=1>1<option value=2>2<option value=3>3</option></select> сколько захватывать в создаваемый заголовок либо подзаголовок абзацев, находящихся <b>после</b> абзаца, найденного по регэкспу<br>
  <p style="text-align:center; margin-top:8px; padding-top:0; margin-bottom:0; padding-bottom:0;"><input type=button value="Разметить заголовки" onclick="markupTitles();" style="width:220px;"><input type=button value="Разметить заголовки и выйти" onclick="markupTitles(); window.close();" style="width:240px;"><input type=button onclick="window.close();" value="Выйти" style="width:120px;"></p>
 <p style="text-align:center; margin-top:8px; padding-top:0; margin-bottom:0; padding-bottom:0;"><input type=button value="Разметить подзаголовки" onclick="markupSubtitles();" style="width:220px;"><input type=button value="Разметить подзаголовки и выйти" onclick="markupSubtitles(); window.close();" style="width:240px;"><input type=button onclick="window.close();" value="Выйти" style="width:120px;"></p>
 </body>
