@@ -1,3 +1,4 @@
+<!-- версия скрипта 4.3 -->
 <html>
 <head>
  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -13,6 +14,8 @@
   var myWin=params["window"];
   var mainDocument=params["mainDocument"];
   var scriptVersion=params["versionNum"];
+  var unusualSpaces=params["unusualSpaces"];
+  var unusualSpacesRegExp=new RegExp("["+unusualSpaces+"]","g");
   var blockBeginParagraph, blockEndParagraph;
   var myRange, myRange2, processingType;
   var undoBeginMade=false;
@@ -98,7 +101,8 @@
       var contentsText=document.getElementById("contentsTextArea").value
                          .replace(crLfRegExp2,crLfRegExp2_)
                          .replace(/</g,"&lt;")
-                         .replace(/>/g,"&gt;");
+                         .replace(/>/g,"&gt;")
+                         .replace(unusualSpacesRegExp," ");
       Arr=contentsText.match(/^[^\r\n]+/gm);
       Arr2=[];
       for (var jjj=0; jjj<Arr.length; jjj++)
@@ -117,7 +121,8 @@
 
     function detectIfTitleFits(titleHTML) {
       //alert("titleHTML: \n\n"+titleHTML)
-      titleTextNew=titleHTML.replace(emptySpaceRegExp2," ")
+      titleTextNew=titleHTML.replace(unusualSpacesRegExp," ")
+                            .replace(emptySpaceRegExp2," ")
 //                            .replace(/&lt;/gi,"«")
 //                            .replace(/&gt;/gi,"»")
                             .replace(/&amp;/gi,"&")
@@ -130,7 +135,8 @@
                             .replace(/[«„“»]/g,'"')
                             .replace(/…/g,"...")
                             .replace(/’/g,"'")
-      titleTextNew2=titleHTML.replace(emptySpaceRegExp2," ")
+      titleTextNew2=titleHTML.replace(unusualSpacesRegExp," ")
+                             .replace(emptySpaceRegExp2," ")
                             .replace(/<A( [^<>]+)? href=("[^"]*"|'[^']*')( [^<>]+)?>.*?<\/A>/gmi,"")
   //                          .replace(/&lt;/gi,"«")
 //                            .replace(/&gt;/gi,"»")
@@ -146,7 +152,7 @@
                             .replace(/’/g,"'")
                             .replace(/\[\d+\]|\{\d+\}|\*+/gmi,"")
                             .replace(/([a-zа-яё.,:;!?»"\)])\d+/ig,"$1");
-      //alert("titleTextNew after: \n\n"+titleTextNew)
+      //alert("titleTextNew after: \n\n"+titleTextNew+"\n\ntitleTextNew2 after: "+titleTextNew2)
       //alert("Вызов detectIfTitleFits.\n\ntitleTextNew: #"+titleTextNew+"#\n\ntitlesArr: "+titlesArr+"\n\nArr[0]: "+Arr[0]);
       for (var i=0; i<titlesArr.length; i++) {
         if (processingType=="FullMatch") {
