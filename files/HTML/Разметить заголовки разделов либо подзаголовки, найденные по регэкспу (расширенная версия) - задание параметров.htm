@@ -1,0 +1,502 @@
+<!-- версия скрипта 1.7 -->
+<html>
+<head>
+ <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+ <meta http-equiv="MSThemeCompatible" content="yes">
+ <style>
+/* css reset
+http://meyerweb.com/eric/tools/css/reset/ 
+   v2.0 | 20110126
+   License: none (public domain)
+*/
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed, 
+figure, figcaption, footer, header, hgroup, 
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	font-size: 100%;
+	font: inherit;
+	vertical-align: baseline;
+}
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure, 
+footer, header, hgroup, menu, nav, section {
+	display: block;
+}
+body {
+	line-height: 1;
+}
+ol, ul {
+	list-style: none;
+}
+blockquote, q {
+	quotes: none;
+}
+blockquote:before, blockquote:after,
+q:before, q:after {
+	content: '';
+	content: none;
+}
+table {
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+/* конец css-reset-а */
+  body{font-family:Tahoma; font-size:16px;margin:2px;}
+  select, input {font-size: 15px; font-family:Tahoma;}
+ </style>
+ <title>Разметить заголовки разделов либо подзаголовки, найденные по регэкспу</title>
+ <script language=JavaScript type="text/javascript">
+  window.returnValue=0;
+  var params=window.dialogArguments;
+  document.title="Разметить заголовки разделов либо подзаголовки, найденные по регэкспу (расширенная версия) v"+params["versionNum"]+". Автор Sclex.";
+  var myWin=params["window"];
+  var unusualSpaces=params["unusualSpaces"];
+  var timerId=null;
+  var currentRegExp=null;
+
+  function setFocus() {
+   if (document.getElementById("regExpId")) document.getElementById("regExpId").focus();
+  }
+
+  function myOnInterval() {
+   if (document.getElementById('regExpId').value!=currentRegExp) {
+    clearInterval(timerId);
+    timerId=null;
+    document.getElementById('regExpId1').value='';
+    currentRegExp=null;
+   } 
+  }
+
+  function onListChange() {
+   if (timerId) clearInterval(timerId);
+   document.getElementById('regExpId').value=document.getElementById('regExpId1').value;
+   currentRegExp=document.getElementById('regExpId1').value;
+   timerId=setInterval(myOnInterval,50);
+  }
+
+  function evalChecksOfBoldAndItalic() {
+   myWin.eval(
+    ' try { var nbspChar=window.external.GetNBSP(); var nbspEntity; if (nbspChar.charCodeAt(0)==160) nbspEntity="&nbsp;"; else nbspEntity=nbspChar; }'+
+    ' catch(e) { var nbspChar=String.fromCharCode(160); var nbspEntity="&nbsp;";};'+
+    ''+
+    ' var emptyLineRegExp=new RegExp("^( | |&nbsp;|"+nbspChar+")*?$","i");'+
+    ''+
+    ' function isLineEmpty(ptr) {'+
+    '  return emptyLineRegExp.test(ptr.innerHTML.replace(/<[^>]*?>/gi,""));'+
+    ' }'+
+    ''+
+    ' var re0=new RegExp("<STRONG>(((?!</?STRONG>).)*)</STRONG>","ig");'+
+    ' var re1=new RegExp("</?[^>]*>","ig");'+
+    ' var re2=new RegExp(" |&nbsp;|"+nbspChar,"g");'+
+    ''+
+    ' function isParagraphEntirelyBold(elem1) {'+
+    '  if (isLineEmpty(elem1)) return false;'+
+    '  myHtml=elem1.innerHTML;'+
+    '  searchResult=re0.test(myHtml);'+
+    '  while (searchResult) {'+
+    '   myHtml=myHtml.replace(re0,"");'+
+    '   searchResult=re0.test(myHtml);'+
+    '  }'+
+    '  myHtml=myHtml.replace(re1,"");'+
+    '  if (myHtml=="" || myHtml.replace(re2,"")=="") return true;'+
+    '  return false;'+
+    ' }'+
+    ''+
+    ' var re5=new RegExp("<EM>(((?!</?EM>).)*)</EM>","ig");'+
+    ' var re6=new RegExp("</?[^>]*>","ig");'+
+    ''+
+    ' function isParagraphEntirelyItalic(elem1) {'+
+    '  if (isLineEmpty(elem1)) return false;'+
+    '  myHtml=elem1.innerHTML;'+
+    '  searchResult=re5.test(myHtml);'+
+    '  while (searchResult) {'+
+    '   myHtml=myHtml.replace(re5,"");'+
+    '   searchResult=re5.test(myHtml);'+
+    '  }'+
+    '  myHtml=myHtml.replace(re6,"");'+
+    '  if (myHtml=="" || myHtml.replace(re2,"")=="") return true;'+
+    '  return false;'+
+    ' }'
+   )
+  };
+
+  function markupTitles() {
+   evalChecksOfBoldAndItalic();
+   try {
+   myWin.eval('function splittingIntoSections_OK(dialogDoc) {'+
+    ''+
+    ' try { var nbspChar=window.external.GetNBSP(); var nbspEntity; if (nbspChar.charCodeAt(0)==160) nbspEntity="&nbsp;"; else nbspEntity=nbspChar; }'+
+    ' catch(e) { var nbspChar=String.fromCharCode(160); var nbspEntity="&nbsp;";}'+
+    ' var nbspRegExp=new RegExp("&nbsp;|"+nbspChar,"ig");'+
+    ' var char160=String.fromCharCode(160);'+
+    ''+
+    ' var find_xA0=new RegExp("((\\\\\\\\)+?)xA0","ig");'+
+    ' function replaceA0(full_match, brackets1, offset_of_match, string_we_search_in) {'+
+    '  if (brackets1.length%2==1) return full_match.replace(/\xA0$/i,char160);'+
+    '  else return full_match;'+
+    ' }'+
+    ''+
+    ' function getVersionStr() {'+
+    '  return "Скрипт «Разметить заголовки разделов либо подзаголовки, найденные по регэкспу» v"+markupTitlesOrSubtitles_versionNum+".\\nАвтор Sclex.";'+
+    ' }'+
+    ''+
+    ' function getRandomNum(n) {'+
+    '  var s="";'+
+    '  for (var i=1;i<=n;i++) {'+
+    '    s+=Math.floor(Math.random()*10);'+
+    '  }'+
+    '  return s;'+
+    ' }'+
+    '   '+
+    ' function processSectionAndSubsections(sectionPtr) {'+
+    '  var ptrInSection=sectionPtr.firstChild;'+
+    '  var titleBegin,titleEnd,i,whileFlag,titleBeginPrev,titleEndNext,newEl,el,myRegExp,saveNext;'+
+    '  while (ptrInSection) {'+
+    '   saveNext=ptrInSection.nextSibling;'+
+    '   if (ptrInSection.className.toLowerCase()=="section") processSectionAndSubsections(ptrInSection);'+
+    '   ptrInSection=saveNext;'+
+    '  }'+
+    '  ptrInSection=sectionPtr.firstChild;'+
+    '  while (ptrInSection) {'+
+    '   if (ptrInSection.nodeName=="P" && ptrInSection.innerHTML=="") '+
+    '     ptrInSection.innerHTML=nbspChar;'+
+    '   if (ptrInSection.nodeName=="P" && ptrInSection.className!="subtitle" && (!boldFlag || isParagraphEntirelyBold(ptrInSection)) && (!italicFlag || isParagraphEntirelyItalic(ptrInSection)) && (ptrInSection.innerHTML.replace(/<[^>]+>/g,"").replace(nbspRegExp,char160).replace(/&lt;/g,"<").replace(/&gt;/g,">").replace(/&amp;/g,"&").replace(unusualSpacesRegExp," ").length<=maxLength) && ptrInSection.innerHTML.replace(/<[^>]+>/g,"").replace(nbspRegExp,char160).replace(/&lt;/g,"<").replace(/&gt;/g,">").replace(/&amp;/g,"&").replace(unusualSpacesRegExp," ").search(titleRegExp)>=0) {'+
+    '    titleBegin=ptrInSection;'+
+    '    titleEnd=ptrInSection;'+
+    '    titleEnd.removeAttribute("className");'+
+    '    titleEnd.removeAttribute("class");'+
+    '    if (captureBeforeCnt>0) {'+
+    '     i=1;'+
+    '     whileFlag=true;'+
+    '     while (whileFlag) {'+
+    '      titleBeginPrev=titleBegin.previousSibling;'+
+    '      if (titleBeginPrev && titleBeginPrev.nodeName=="P" &&'+
+    '          titleBeginPrev.innerHTML.search(new RegExp("^Sclex_SplittingIntoSections_"+randomNum+"_"+"\\\\d+"+"_(begin|end)$"),"")<0) {'+
+    '       if (titleBeginPrev.className=="subtitle") break;'+
+    '       titleBegin=titleBeginPrev;'+
+    '       titleBegin.removeAttribute("class");'+
+    '       titleBegin.removeAttribute("className");'+
+    '      }'+
+    '      else whileFlag=false;'+
+    '      i++;'+
+    '      if (i>captureBeforeCnt) whileFlag=false;        '+
+    '     }'+
+    '    } '+
+    '    newEl=mainDocument.createElement("P");'+
+    '    newTitleCnt++;'+
+    '    newEl.innerHTML="Sclex_SplittingIntoSections_"+randomNum+"_"+newTitleCnt+"_begin";'+
+    '    titleBegin.parentNode.insertBefore(newEl,titleBegin);'+
+    '    if (captureAfterCnt>0) {'+
+    '     i=1;'+
+    '     whileFlag=true;'+
+    '     while (whileFlag) {'+
+    '      titleEndNext=titleEnd.nextSibling;'+
+    '      if (titleEndNext && titleEndNext.nodeName=="P") {'+
+    '       if (titleEndNext.className=="subtitle") break;'+
+    '       titleEnd=titleEndNext;'+
+    '       titleEnd.removeAttribute("className");'+
+    '       titleEnd.removeAttribute("class");'+
+    '      }'+
+    '      else whileFlag=false;'+
+    '      i++;'+
+    '      if (i>captureAfterCnt) whileFlag=false;        '+
+    '     }'+
+    '    } '+
+    '    newEl=mainDocument.createElement("P");'+
+    '    newEl.innerHTML="Sclex_SplittingIntoSections_"+randomNum+"_"+newTitleCnt+"_end";'+
+    '    el=titleEnd.parentNode.insertBefore(newEl,titleEnd.nextSibling);      '+
+    '    ptrInSection=el.nextSibling;'+
+    '   };'+
+    '   else ptrInSection=ptrInSection.nextSibling;'+
+    '  }'+
+    '  regExp1=new RegExp("<P(\\\\s[^>]*?)?>Sclex_SplittingIntoSections_"+randomNum+"_"+"(\\\\d+)_begin</P>","g");'+
+    '  regExp1_="</DIV><DIV class=section><DIV class=title>";'+
+    '  regExp2=new RegExp("<P(\\\\s[^>]*?)?>Sclex_SplittingIntoSections_"+randomNum+"_"+"(\\\\d+)_end</P>","g");'+
+    '  regExp2_="</DIV>";'+
+    '  regExp3=new RegExp("\\A\\\\s*?</DIV><DIV class=section>");'+
+    '  regExp3_="";'+
+    '  sectionPtr.outerHTML=sectionPtr.outerHTML.replace(regExp1,regExp1_).replace(regExp2,regExp2_).replace(regExp3,regExp3_);'+
+    ' }'+
+    '   '+
+    ' function processBodyAndSubsections(bodyPtr) {'+
+    '  var ptrInBody=bodyPtr.firstChild;'+
+    '  var saveNext;'+
+    '  while (ptrInBody) {'+
+    '   saveNext=ptrInBody.nextSibling;'+
+    '   if (ptrInBody.className.toLowerCase()=="section") processSectionAndSubsections(ptrInBody);'+
+    '   ptrInBody=saveNext;'+
+    '  }     '+
+    ' }  '+
+    '    '+
+    ' try { var nbspChar=window.external.GetNBSP(); } '+
+    ' catch(e) { var nbspChar=String.fromCharCode(160); } '+
+    ' var mainDocument=document;'+
+    ' var regExpEdit=dialogDoc.getElementById("regExpId");'+
+    ' if (!regExpEdit) {alert("Ошибка. Не найдено поле ввода регэкспа.");return}'+
+    ' var caseSensitiveCheckbox=dialogDoc.getElementById("caseSensitiveId");'+
+    ' if (!caseSensitiveCheckbox) {alert("Ошибка. Не найден чекбокс чувствительности к регэкспу.");return}'+
+    ' var captureBeforeSelect=dialogDoc.getElementById("captureBeforeId");'+
+    ' if (!captureBeforeSelect) {alert("Ошибка. Не найден выпадающий список, сколько строк захватывать до.");return}'+
+    ' var captureAfterSelect=dialogDoc.getElementById("captureAfterId");'+
+    ' if (!captureAfterSelect) {alert("Ошибка. Не найден выпадающий список, сколько строк захватывать после.");return}'+
+    ' var captureBeforeCnt=eval(captureBeforeSelect.value);'+
+    ' var captureAfterCnt=eval(captureAfterSelect.value);'+
+    ' if ('+(document.getElementById("maxLengthId").value.search(/^\d+$/)<0)+') {alert("Ошибка. Задано неверное значение максимальной длины абзаца."); return;}'+
+    ' var maxLength=eval('+document.getElementById("maxLengthId").value+');'+
+    ' try {'+
+    '  var titleRegExp=new RegExp(regExpEdit.value.replace(find_xA0,replaceA0).replace(nbspRegExp,char160),caseSensitiveCheckbox.getAttribute("checked")==false?"i":"");'+
+    ' }'+
+    ' catch(e) {'+
+    '  if (e instanceof RegExpError) {'+
+    '   alert(getVersionStr()+"\\n\\nНе удалось скомпилировать регэксп.\\nПожалуйста, проверьте корректность регэкспа, который вы вводите.");'+
+    '   return;'+
+    '  }'+
+    ' }'+
+    ' var unusualSpacesRegExp=new RegExp("['+unusualSpaces+']","g");'+
+    ' var boldFlag='+document.getElementById("boldId").checked+';'+
+    ' var italicFlag='+document.getElementById("italicId").checked+';'+
+    ' window.external.BeginUndoUnit(document,"разметку заголовков разделов, найденных по регэкспу");'+
+    ' fbwBody=document.getElementById("fbw_body");'+
+    ' var ptrInFbwBody=fbwBody.firstChild;'+
+    ' var newTitleCnt=0;'+
+    ' var randomNum=getRandomNum(6);'+
+    ' while (ptrInFbwBody) {'+
+    '  if (ptrInFbwBody.className.toLowerCase()=="body" && ptrInFbwBody.getAttribute("fbname")!="notes" && ptrInFbwBody.getAttribute("fbname")!="comments") '+
+    '   processBodyAndSubsections(ptrInFbwBody);'+
+    '  ptrInFbwBody=ptrInFbwBody.nextSibling;'+
+    ' }'+
+    ' InflateIt(fbwBody);'+
+    ' var tr=document.body.createTextRange();'+
+    ' tr.moveToElementText(fbwBody);'+
+    ' tr.collapse(true);'+
+    ' tr.select();'+
+    ' window.external.EndUndoUnit(document);'+
+    ' alert(getVersionStr()+"\\n\\nОбработка завершена.\\nРазмечено заголовков: "+newTitleCnt+".");'+
+    '}');}
+   catch (e) {
+    alert("Произошла ошибка. Возможная причина –\nвы запускаете обработку после\nтого, как создали новый документ\nв основном окне FBE. В таком\nслучае перезапустите скрипт.");
+    return;
+   } 
+   myWin.splittingIntoSections_OK(document);
+  }
+  function markupSubtitles() {
+   evalChecksOfBoldAndItalic();
+   try {
+   myWin.eval('function splittingIntoSections_OK(dialogDoc) {'+
+    ''+
+    ' try { var nbspChar=window.external.GetNBSP(); var nbspEntity; if (nbspChar.charCodeAt(0)==160) nbspEntity="&nbsp;"; else nbspEntity=nbspChar;}'+
+    ' catch(e) { var nbspChar=String.fromCharCode(160); var nbspEntity="&nbsp;";}'+
+    ' var nbspRegExp=new RegExp("&nbsp;|"+nbspChar,"ig");'+
+    ' var char160=String.fromCharCode(160);'+
+    ''+
+    ' var find_xA0=new RegExp("((\\\\\\\\)+?)xA0","ig");'+
+    ' function replaceA0(full_match, brackets1, offset_of_match, string_we_search_in) {'+
+    '  if (brackets1.length%2==1) return full_match.replace(/\xA0$/i,char160);'+
+    '  else return full_match;'+
+    ' }'+
+    ''+
+    ' function getVersionStr() {'+
+    '  return "Скрипт «Разметить заголовки разделов либо подзаголовки, найденные по регэкспу» v"+markupTitlesOrSubtitles_versionNum+".\\nАвтор Sclex.";'+
+    ' }'+
+    ''+
+    ' function getRandomNum(n) {'+
+    '  var s="";'+
+    '  for (var i=1;i<=n;i++) {'+
+    '    s+=Math.floor(Math.random()*10);'+
+    '  }'+
+    '  return s;'+
+    ' }'+
+    '   '+
+    ' function processSectionAndSubsections(sectionPtr) {'+
+    '  var ptrInSection=sectionPtr.firstChild;'+
+    '  var titleBegin,titleEnd,i,whileFlag,titleBeginPrev,titleEndNext,newEl,el,myRegExp,saveNext;'+
+    '  while (ptrInSection) {'+
+    '   saveNext=ptrInSection.nextSibling;'+
+    '   if (ptrInSection.className.toLowerCase()=="section") processSectionAndSubsections(ptrInSection);'+
+    '   ptrInSection=saveNext;'+
+    '  }'+
+    '  ptrInSection=sectionPtr.firstChild;'+
+    '  while (ptrInSection) {'+
+    '   if (ptrInSection.nodeName=="P" && ptrInSection.innerHTML=="") '+
+    '     ptrInSection.innerHTML=nbspChar;'+
+    '   if (ptrInSection.nodeName=="P" && (ptrInSection.className=="" || ptrInSection.className=="normal") && (!boldFlag || isParagraphEntirelyBold(ptrInSection)) && (!italicFlag || isParagraphEntirelyItalic(ptrInSection)) && (ptrInSection.innerHTML.replace(/<[^>]+>/g,"").replace(nbspRegExp,char160).replace(/&lt;/g,"<").replace(/&gt;/g,">").replace(/&amp;/g,"&").replace(unusualSpacesRegExp," ").length<=maxLength) && ptrInSection.innerHTML.replace(/<[^>]+>/g,"").replace(nbspRegExp,char160).replace(/&lt;/g,"<").replace(/&gt;/g,">").replace(/&amp;/g,"&").replace(unusualSpacesRegExp," ").search(subtitleRegExp)>=0) {'+
+    '    ptrInSection.className="subtitle";'+
+    '    newSubtitleCnt++;'+
+    '    var el2=ptrInSection.previousSibling;'+
+    '    for (var i=0; i<captureBeforeCnt; i++) {'+
+    '      if (el2 && el2.nodeName=="P" && el2.className!="" && el2.className!="normal" && el2.className!="subtitle") break;'+
+    '      if (el2 && el2.nodeName!="P") break;'+
+    '      if (el2 && el2.nodeName=="P" && (el2.className=="" || el2.className=="normal")) '+
+    '        el2.className="subtitle";'+
+    '      if (el2) el2=el2.previousSibling;'+
+    '    }'+
+    '    var el2=ptrInSection.nextSibling;'+
+    '    for (var i=0; i<captureAfterCnt; i++) {'+
+    '      if (el2 && el2.nodeName=="P" && el2.className!="" && el2.className!="normal" && el2.className!="subtitle") break;'+
+    '      if (el2 && el2.nodeName!="P") break;'+
+    '      if (el2 && el2.nodeName=="P" && (el2.className=="" || el2.className=="normal")) '+
+    '        el2.className="subtitle";'+
+    '      if (el2) el2=el2.nextSibling;'+
+    '    }'+
+    '    ptrInSection=ptrInSection.nextSibling;'+
+    '   };'+
+    '   else ptrInSection=ptrInSection.nextSibling;'+
+    '  }'+
+    '  regExp1=new RegExp("<P(\\\\s[^>]*?)?>Sclex_SplittingIntoSections_"+randomNum+"_"+"(\\\\d+)_begin</P>","g");'+
+    '  regExp1_="</DIV><DIV class=section><DIV class=title>";'+
+    '  regExp2=new RegExp("<P(\\\\s[^>]*?)?>Sclex_SplittingIntoSections_"+randomNum+"_"+"(\\\\d+)_end</P>","g");'+
+    '  regExp2_="</DIV>";'+
+    '  regExp3=new RegExp("\\A\\\\s*?</DIV><DIV class=section>");'+
+    '  regExp3_="";'+
+    '  sectionPtr.outerHTML=sectionPtr.outerHTML.replace(regExp1,regExp1_).replace(regExp2,regExp2_).replace(regExp3,regExp3_);'+
+    ' }'+
+    '   '+
+    ' function processBodyAndSubsections(bodyPtr) {'+
+    '  var ptrInBody=bodyPtr.firstChild;'+
+    '  var saveNext;'+
+    '  while (ptrInBody) {'+
+    '   saveNext=ptrInBody.nextSibling;'+
+    '   if (ptrInBody.className.toLowerCase()=="section") processSectionAndSubsections(ptrInBody);'+
+    '   ptrInBody=saveNext;'+
+    '  }     '+
+    ' }  '+
+    '    '+
+    ' var mainDocument=document;'+
+    ' var regExpEdit=dialogDoc.getElementById("regExpId");'+
+    ' if (!regExpEdit) {alert("Ошибка. Не найдено поле ввода регэкспа.");return}'+
+    ' if (regExpEdit.value=="") { alert("Вы не ввели никакой регэксп. Пожалуйста, введите регэксп для поиска заголовков в предназначенное для него (регэкспа) поле ввода."); return; }'+
+    ' var caseSensitiveCheckbox=dialogDoc.getElementById("caseSensitiveId");'+
+    ' if (!caseSensitiveCheckbox) {alert("Ошибка. Не найден чекбокс чувствительности к регэкспу.");return}'+
+    ' var captureBeforeSelect=dialogDoc.getElementById("captureBeforeId");'+
+    ' if (!captureBeforeSelect) {alert("Ошибка. Не найден выпадающий список, сколько строк захватывать до.");return}'+
+    ' var captureAfterSelect=dialogDoc.getElementById("captureAfterId");'+
+    ' if (!captureAfterSelect) {alert("Ошибка. Не найден выпадающий список, сколько строк захватывать после.");return}'+
+    ' var captureBeforeCnt=eval(captureBeforeSelect.value);'+
+    ' var captureAfterCnt=eval(captureAfterSelect.value);'+
+    ' if ('+(document.getElementById("maxLengthId").value.search(/^\d+$/)<0)+') {alert("Ошибка. Задано неверное значение максимальной длины абзаца."); return;}'+
+    ' var maxLength=eval('+document.getElementById("maxLengthId").value+');'+
+    ' try {'+
+    '  var subtitleRegExp=new RegExp(regExpEdit.value.replace(find_xA0,replaceA0).replace(nbspRegExp,char160),caseSensitiveCheckbox.getAttribute("checked")==false?"i":"");'+
+    ' }'+
+    ' catch(e) {'+
+    '  if (e instanceof RegExpError) {'+
+    '   alert(getVersionStr()+"\\n\\nНе удалось скомпилировать регэксп.\\nПожалуйста, проверьте корректность регэкспа, который вы вводите.");'+
+    '   return;'+
+    '  }'+
+    ' }'+
+    ' var boldFlag='+document.getElementById("boldId").checked+';'+
+    ' var italicFlag='+document.getElementById("italicId").checked+';'+
+    ' window.external.BeginUndoUnit(document,"разметку подзаголовков, найденных по регэкспу");'+
+    ' var unusualSpacesRegExp=new RegExp("['+unusualSpaces+']","g");'+
+    ' fbwBody=document.getElementById("fbw_body");'+
+    ' try { var nbspChar=window.external.GetNBSP(); } '+
+    ' catch(e) { var nbspChar=String.fromCharCode(160); } '+
+    ' var ptrInFbwBody=fbwBody.firstChild;'+
+    ' var newSubtitleCnt=0;'+
+    ' var randomNum=getRandomNum(6);'+
+    ' while (ptrInFbwBody) {'+
+    '  if (ptrInFbwBody.className.toLowerCase()=="body" && ptrInFbwBody.getAttribute("fbname")!="notes" && ptrInFbwBody.getAttribute("fbname")!="comments") '+
+    '   processBodyAndSubsections(ptrInFbwBody);'+
+    '  ptrInFbwBody=ptrInFbwBody.nextSibling;'+
+    ' }'+
+    ' InflateIt(fbwBody);'+
+    ' var tr=document.body.createTextRange();'+
+    ' tr.moveToElementText(fbwBody);'+
+    ' tr.collapse(true);'+
+    ' tr.select();'+
+    ' window.external.EndUndoUnit(document);'+
+    ' alert(getVersionStr()+"\\n\\nОбработка завершена.\\nРазмечено подзаголовков: "+newSubtitleCnt+".");'+
+    '}');}
+   catch (e) {
+    alert("Произошла ошибка. Возможная причина –\nвы запускаете обработку после\nтого, как создали новый документ\nв основном окне FBE. В таком\nслучае перезапустите скрипт.");
+    return;
+   } 
+   myWin.splittingIntoSections_OK(document);
+  }
+  function myBeforeUnload() {
+   if (myWin) {
+    try {
+     myWin.splittingIntoSections_OK=undefined;
+    }
+    catch (e) {
+    }
+   }
+  }
+ </script>
+</head>
+<body onload="setFocus(); onListChange();" onbeforeunload="myBeforeUnload();">
+ Можете выбрать один из готовых вариантов типичных разновидностей (под)заголовков:<br>
+<select Id=regExpId1 onchange="onListChange();" style="width:100%;">
+<option selected value=""></option>
+<option value="[^ \xA0]" selected>Любой непустой абзац</option>
+<option value="^[ \xA0]*\d+[ \xA0]*$">Вида «123»</option>
+<option value="^[ \xA0]*[IVXLCDM]+[ \xA0]*$">Вида «XVI»</option>
+<option value="^[ \xA0]*Глава[ \xA0]+\d+[ \xA0]*$">Вида «Глава 123»</option>
+<option value="^[ \xA0]*Глава[ \xA0]+[IVXLCDM]+[ \xA0]*$">Вида «Глава XVI»</option>
+<option value="^[ \xA0]*Глава([ \xA0]+(первая|вторая|третья|четв[её]ртая|пятая|шестая|седьмая|восьмая|девятая|десятая|одиннадцатая|двенадцатая|тринадцатая|четырнадцатая|пятнадцатая|шестнадцатая|семнадцатая|восемнадцатая|девятнадцатая|двадцатая|двадцать|тридцатая|тридцать|сороковая|сорок|пятидесятая|пятьдесят|шестидесятая|шестьдесят|семидесятая|семьдесят|восьмидесятая|восемьдесят|девяностая|девяносто|сотая|сто|двухсотая|двести|тр[её]хсотая|триста|четыр[её]хсотая|четыреста|пятисотая|пятьсот|шестисотая|шестьсот|семисотая|семьсот|восьмисотая|восемьсот|девятисотая|девятьсот|тысячная))+[ \xA0]*$">Вида «Глава первая»</option>
+<option value="^[ \xA0]*((первая|вторая|третья|четв[её]ртая|пятая|шестая|седьмая|восьмая|девятая|десятая|одиннадцатая|двенадцатая|тринадцатая|четырнадцатая|пятнадцатая|шестнадцатая|семнадцатая|восемнадцатая|девятнадцатая|двадцатая|двадцать|тридцатая|тридцать|сороковая|сорок|пятидесятая|пятьдесят|шестидесятая|шестьдесят|семидесятая|семьдесят|восьмидесятая|восемьдесят|девяностая|девяносто|сотая|сто|двухсотая|двести|тр[её]хсотая|триста|четыр[её]хсотая|четыреста|пятисотая|пятьсот|шестисотая|шестьсот|семисотая|семьсот|восьмисотая|восемьсот|девятисотая|девятьсот|тысячная)[ \xA0]+)+глава[ \xA0]*$">Вида «Первая глава»</option>
+<option value="^[ \xA0]*Часть[ \xA0]+\d+[ \xA0]*$">Вида «Часть 123»</option>
+<option value="^[ \xA0]*Часть[ \xA0]+[IVXLCDM]+[ \xA0]*$">Вида «Часть XVI»</option>
+<option value="^[ \xA0]*Часть([ \xA0]+(первая|вторая|третья|четв[её]ртая|пятая|шестая|седьмая|восьмая|девятая|десятая|одиннадцатая|двенадцатая|тринадцатая|четырнадцатая|пятнадцатая|шестнадцатая|семнадцатая|восемнадцатая|девятнадцатая|двадцатая|двадцать|тридцатая|тридцать|сороковая|сорок|пятидесятая|пятьдесят|шестидесятая|шестьдесят|семидесятая|семьдесят|восьмидесятая|восемьдесят|девяностая|девяносто|сотая|сто|двухсотая|двести|тр[её]хсотая|триста|четыр[её]хсотая|четыреста|пятисотая|пятьсот|шестисотая|шестьсот|семисотая|семьсот|восьмисотая|восемьсот|девятисотая|девятьсот|тысячная))+[ \xA0]*$">Вида «Часть первая»</option>
+<option value="^[ \xA0]*((первая|вторая|третья|четв[её]ртая|пятая|шестая|седьмая|восьмая|девятая|десятая|одиннадцатая|двенадцатая|тринадцатая|четырнадцатая|пятнадцатая|шестнадцатая|семнадцатая|восемнадцатая|девятнадцатая|двадцатая|двадцать|тридцатая|тридцать|сороковая|сорок|пятидесятая|пятьдесят|шестидесятая|шестьдесят|семидесятая|семьдесят|восьмидесятая|восемьдесят|девяностая|девяносто|сотая|сто|двухсотая|двести|тр[её]хсотая|триста|четыр[её]хсотая|четыреста|пятисотая|пятьсот|шестисотая|шестьсот|семисотая|семьсот|восьмисотая|восемьсот|девятисотая|девятьсот|тысячная)[ \xA0]+)+часть[ \xA0]*$">Вида «Первая часть»</option>
+<option value="^[ \xA0]*Книга[ \xA0]+\d+[ \xA0]*$">Вида «Книга 123»</option>
+<option value="^[ \xA0]*Книга[ \xA0]+[IVXLCDM]+[ \xA0]*$">Вида «Книга XVI»</option>
+<option value="^[ \xA0]*Книга([ \xA0]+(первая|вторая|третья|четв[её]ртая|пятая|шестая|седьмая|восьмая|девятая|десятая|одиннадцатая|двенадцатая|тринадцатая|четырнадцатая|пятнадцатая|шестнадцатая|семнадцатая|восемнадцатая|девятнадцатая|двадцатая|двадцать|тридцатая|тридцать|сороковая|сорок|пятидесятая|пятьдесят|шестидесятая|шестьдесят|семидесятая|семьдесят|восьмидесятая|восемьдесят|девяностая|девяносто|сотая|сто|двухсотая|двести|тр[её]хсотая|триста|четыр[её]хсотая|четыреста|пятисотая|пятьсот|шестисотая|шестьсот|семисотая|семьсот|восьмисотая|восемьсот|девятисотая|девятьсот|тысячная))+[ \xA0]*$">Вида «Книга первая»</option>
+<option value="^[ \xA0]*((первая|вторая|третья|четв[её]ртая|пятая|шестая|седьмая|восьмая|девятая|десятая|одиннадцатая|двенадцатая|тринадцатая|четырнадцатая|пятнадцатая|шестнадцатая|семнадцатая|восемнадцатая|девятнадцатая|двадцатая|двадцать|тридцатая|тридцать|сороковая|сорок|пятидесятая|пятьдесят|шестидесятая|шестьдесят|семидесятая|семьдесят|восьмидесятая|восемьдесят|девяностая|девяносто|сотая|сто|двухсотая|двести|тр[её]хсотая|триста|четыр[её]хсотая|четыреста|пятисотая|пятьсот|шестисотая|шестьсот|семисотая|семьсот|восьмисотая|восемьсот|девятисотая|девятьсот|тысячная)[ \xA0]+)+книга[ \xA0]*$">Вида «Первая книга»</option>
+<option value="^[ \xA0]*Раздел[ \xA0]+\d+[ \xA0]*$">Вида «Раздел 123»</option>
+<option value="^[ \xA0]*Раздел[ \xA0]+[IVXLCDM]+[ \xA0]*$">Вида «Раздел XVI»</option>
+<option value="^[ \xA0]*Раздел([ \xA0]+(первый|второй|третий|четв[её]ртый|пятый|шестой|седьмой|восьмой|девятый|десятый|одиннадцатый|двенадцатый|тринадцатый|четырнадцатый|пятнадцатый|шестнадцатый|семнадцатый|восемнадцатый|девятнадцатый|двадцатый|двадцать|тридцатый|тридцать|сороковой|сорок|пятидесятый|пятьдесят|шестидесятый|шестьдесят|семидесятый|семьдесят|восьмидесятый|восемьдесят|девяностый|девяносто|сотый|сто|двухсотый|двести|тр[её]хсотый|триста|четыр[её]хсотый|четыреста|пятисотый|пятьсот|шестисотый|шестьсот|семисотый|семьсот|восьмисотый|восемьсот|девятисотый|девятьсот|тысячный))+[ \xA0]*$">Вида «Раздел первый»</option>
+<option value="^[ \xA0]*((первый|второй|третий|четв[её]ртый|пятый|шестой|седьмой|восьмой|девятый|десятый|одиннадцатый|двенадцатый|тринадцатый|четырнадцатый|пятнадцатый|шестнадцатый|семнадцатый|восемнадцатый|девятнадцатый|двадцатый|двадцать|тридцатый|тридцать|сороковой|сорок|пятидесятый|пятьдесят|шестидесятый|шестьдесят|семидесятый|семьдесят|восьмидесятый|восемьдесят|девяностый|девяносто|сотый|сто|двухсотый|двести|тр[её]хсотый|триста|четыр[её]хсотый|четыреста|пятисотый|пятьсот|шестисотый|шестьсот|семисотый|семьсот|восьмисотый|восемьсот|девятисотый|девятьсот|тысячный)[ \xA0]+)+Раздел[ \xA0]*$">Вида «Первый раздел»</option>
+<option value="^[ \xA0]*Том[ \xA0]+\d+[ \xA0]*$">Вида «Том 123»</option>
+<option value="^[ \xA0]*Том[ \xA0]+[IVXLCDM]+[ \xA0]*$">Вида «Том XVI»</option>
+<option value="^[ \xA0]*Том([ \xA0]+(первый|второй|третий|четв[её]ртый|пятый|шестой|седьмой|восьмой|девятый|десятый|одиннадцатый|двенадцатый|тринадцатый|четырнадцатый|пятнадцатый|шестнадцатый|семнадцатый|восемнадцатый|девятнадцатый|двадцатый|двадцать|тридцатый|тридцать|сороковой|сорок|пятидесятый|пятьдесят|шестидесятый|шестьдесят|семидесятый|семьдесят|восьмидесятый|восемьдесят|девяностый|девяносто|сотый|сто|двухсотый|двести|тр[её]хсотый|триста|четыр[её]хсотый|четыреста|пятисотый|пятьсот|шестисотый|шестьсот|семисотый|семьсот|восьмисотый|восемьсот|девятисотый|девятьсот|тысячный))+[ \xA0]*$">Вида «Том первый»</option>
+<option value="^[ \xA0]*((первый|второй|третий|четв[её]ртый|пятый|шестой|седьмой|восьмой|девятый|десятый|одиннадцатый|двенадцатый|тринадцатый|четырнадцатый|пятнадцатый|шестнадцатый|семнадцатый|восемнадцатый|девятнадцатый|двадцатый|двадцать|тридцатый|тридцать|сороковой|сорок|пятидесятый|пятьдесят|шестидесятый|шестьдесят|семидесятый|семьдесят|восьмидесятый|восемьдесят|девяностый|девяносто|сотый|сто|двухсотый|двести|тр[её]хсотый|триста|четыр[её]хсотый|четыреста|пятисотый|пятьсот|шестисотый|шестьсот|семисотый|семьсот|восьмисотый|восемьсот|девятисотый|девятьсот|тысячный)[ \xA0]+)+Том[ \xA0]*$">Вида «Первый том»</option>
+<option value="^[ \xA0]*(Пролог|Эпилог|Предисловие|Заключение|Послесловие|Введение|Вступление|От[ \xA0]+автора|Оглавление|Содержание|Иллюстрации|Алфавитный[ \xA0]+указатель[ \xA0]+имен|Библиография|Благодарности|От[ \xA0]+переводчика|От[ \xA0]+редактора|От[ \xA0]+составителя|Краткая[ \xA0]+библиография|Предварительные[ \xA0]+замечания|Использованная[ \xA0]+литература|Именной[ \xA0]+и[ \xA0]+тематический[ \xA0]+указатель|Именной[ \xA0]+указатель|Указатель[ \xA0]+имен|Предметный[ \xA0]+указатель|Указатель[ \xA0]+источников|Указатель[ \xA0]+литературы|Краткий[ \xA0]+словарь[ \xA0]+[а-я]+(и|ы)х[ \xA0]+терминов|Перечень[ \xA0]+использованных[ \xA0]+источников|Хронологическая[ \xA0]+таблица|Предисловие[ \xA0]+редактора|Вместо[ \xA0]+эпилога|Приложение|Комментарии)[ \xA0]*$">«Пролог», «Эпилог», «Предисловие» и прочее стандартное</option>
+<option value="^[ \xA0]*(\d+\.)*\d+\.?+">Вида «1.1.1. Имя подраздела»</option>
+<option value="^[ \xA0]*§[ \xA0]*(\d+\.)*\d+\.?">Вида «§ 123. Имя подраздела»</option>
+<option value="^[ \xA0]*Таблица[ \xA0]+№?[ \xA0]+?(\d+\.?)+.+[ \xA0]*$">Вида «Таблица №123»</option>
+<option value="^[ \xA0]*((Действующие[ \xA0]+лица:?)|((Сцена|Картина)([ \xA0]+(первая|вторая|третья|четв[её]ртая|пятая|шестая|седьмая|восьмая|девятая|десятая|одиннадцатая|двенадцатая|тринадцатая|четырнадцатая|пятнадцатая|шестнадцатая|семнадцатая|восемнадцатая|девятнадцатая|двадцатая|двадцать|тридцатая|тридцать|сороковая|сорок|пятидесятая|пятьдесят|шестидесятая|шестьдесят|семидесятая|семьдесят|восьмидесятая|восемьдесят|девяностая|девяносто|сотая|сто|двухсотая|двести|тр[её]хсотая|триста|четыр[её]хсотая|четыреста|пятисотая|пятьсот|шестисотая|шестьсот|семисотая|семьсот|восьмисотая|восемьсот|девятисотая|девятьсот|тысячная))+)|((Действие|Явление)([ \xA0]+(первое|второе|третье|четв[её]ртое|пятое|шестое|седьмое|восьмое|девятое|десятое|одиннадцатое|двенадцатое|тринадцатое|четырнадцатое|пятнадцатое|шестнадцатое|семнадцатое|восемнадцатое|девятнадцатле|двадцатое|двадцать|тридцатое|тридцать|сороковое|сорок|пятидесятое|пятьдесят|шестидесятое|шестьдесят|семидесятое|семьдесят|восьмидесятое|восемьдесят|девяностое|девяносто|сотое|сто|двухсотое|двести|тр[её]хсотое|триста|четыр[её]хсотое|четыреста|пятисотое|пятьсот|шестисотое|шестьсот|семисотое|семьсот|восьмисотое|восемьсот|девятисотое|девятьсот|тысячное))+)|(Эпизод|Акт)([ \xA0]+(первый|второй|третий|четв[её]ртый|пятый|шестой|седьмой|восьмой|девятый|десятый|одиннадцатый|двенадцатый|тринадцатый|четырнадцатый|пятнадцатый|шестнадцатый|семнадцатый|восемнадцатый|девятнадцатый|двадцатый|двадцать|тридцатый|тридцать|сороковой|сорок|пятидесятый|пятьдесят|шестидесятый|шестьдесят|семидесятый|семьдесят|восьмидесятый|восемьдесят|девяностый|девяносто|сотый|сто|двухсотый|двести|тр[её]хсотый|триста|четыр[её]хсотый|четыреста|пятисотый|пятьсот|шестисотый|шестьсот|семисотый|семьсот|восьмисотый|восемьсот|девятисотый|девятьсот|тысячный))+|(Первый|Второй|Третий|Четв[её]ртый|Пятый|Шестой|Седьмой|Восьмой|Девятый|Десятый|Одиннадцатый|Двенадцатый|Тринадцатый|Четырнадцатый|Пятнадцатый|Шестнадцатый|Семнадцатый|Восемнадцатый|Девятнадцатый|Двадцатый|Двадцать|Тридцатый|Тридцать|Сороковой|Сорок|Пятидесятый|Пятьдесят|Шестидесятый|Шестьдесят|Семидесятый|Семьдесят|Восьмидесятый|Восемьдесят|Девяностый|Девяносто|Сотый|Сто|Двухсотый|Двести|Тр[её]хсотый|Триста|Четыр[её]хсотый|Четыреста|Пятисотый|Пятьсот|Шестисотый|Шестьсот|Семисотый|Семьсот|Восьмисотый|Восемьсот|Девятисотый|Девятьсот|Тысячный)([ \xA0]+(первый|второй|третий|четв[её]ртый|пятый|шестой|седьмой|восьмой|девятый|десятый|одиннадцатый|двенадцатый|тринадцатый|четырнадцатый|пятнадцатый|шестнадцатый|семнадцатый|восемнадцатый|девятнадцатый|двадцатый|двадцать|тридцатый|тридцать|сороковой|сорок|пятидесятый|пятьдесят|шестидесятый|шестьдесят|семидесятый|семьдесят|восьмидесятый|восемьдесят|девяностый|девяносто|сотый|сто|двухсотый|двести|тр[её]хсотый|триста|четыр[её]хсотый|четыреста|пятисотый|пятьсот|шестисотый|шестьсот|семисотый|семьсот|восьмисотый|восемьсот|девятисотый|девятьсот|тысячный))*[ \xA0]+(эпизод|акт)|(Сцена|Картина|Действие|Явление|Эпизод|Акт)[ \xA0]+(\d+|[IVXLCDM]+))[ \xA0]*$">Типичное для драматургии («Акт I», «Сцена 2» и др.)</option>
+<option value="^[ \xA0]*[.…«&quot;&#39;’\( \xA0]*([A-ZА-ЯЁ]+(?![A-ZА-ЯЁ])[-—–\d\.\*,;:&#39;’?!…«»“”„\(\) \xA0&quot;&#39;\[\]{}]*)+[ \xA0]*$">Вида «ЗАГОЛОВОК» (включите флажок «учитывать регистр»)</option>
+<option value="^[ \xA0]*«.{1,70}([?!]\.\.|\?!\.|…|\.\.\.)»[ \xA0]*$">Вида «Заголовок стиха из текста первой строки…»</option>
+<option value="^[ \xA0]*(\*[ \xA0]*){3}[ \xA0]*$">Вида «***»</option>
+<option value="^[ \xA0]*Part[ \xA0]+\d+[ \xA0]*$">Вида «Part 123»</option>
+<option value="^[ \xA0]*Part[ \xA0]+[IVXLCDM]+[ \xA0]*$">Вида «Part XVI»</option>
+<option value="^[ \xA0]*Part[ \xA0]+(One|Two|Three|Four|Five|Six|Seven|Eight|Nine|Ten|Eleven|Twelve|Thirteen|Fourteen|Fifteen|Sixteen|Seventeen|Eighteen|Nineteen|Twenty|Thirty|Forty|Fifty|Sixty|Seventy|Eighty|Ninety|Hundred)(?![a-z])">Вида «Part One»</option>
+<option value="^[ \xA0]*Chapter[ \xA0]+\d+[ \xA0]*$">Вида «Chapter 123»</option>
+<option value="^[ \xA0]*Chapter[ \xA0]+[IVXLCDM]+[ \xA0]*$">Вида «Chapter XVI»</option>
+<option value="^[ \xA0]*Chapter[ \xA0]+(One|Two|Three|Four|Five|Six|Seven|Eight|Nine|Ten|Eleven|Twelve|Thirteen|Fourteen|Fifteen|Sixteen|Seventeen|Eighteen|Nineteen|Twenty|Thirty|Forty|Fifty|Sixty|Seventy|Eighty|Ninety|Hundred)(?![a-z])">Вида «Chapter One»</option>
+<option value="^[ \xA0]*Volume[ \xA0]+\d+[ \xA0]*$">Вида «Volume 123»</option>
+<option value="^[ \xA0]*Volume[ \xA0]+[IVXLCDM]+[ \xA0]*$">Вида «Volume XVI»</option>
+<option value="^[ \xA0]*Volume[ \xA0]+(One|Two|Three|Four|Five|Six|Seven|Eight|Nine|Ten|Eleven|Twelve|Thirteen|Fourteen|Fifteen|Sixteen|Seventeen|Eighteen|Nineteen|Twenty|Thirty|Forty|Fifty|Sixty|Seventy|Eighty|Ninety|Hundred)(?![a-z])">Вида «Volume One»</option>
+<option value="^[ \xA0]*Book[ \xA0]+\d+[ \xA0]*$">Вида «Book 123»</option>
+<option value="^[ \xA0]*Book[ \xA0]+[IVXLCDM]+[ \xA0]*$">Вида «Book XVI»</option>
+<option value="^[ \xA0]*Book[ \xA0]+(One|Two|Three|Four|Five|Six|Seven|Eight|Nine|Ten|Eleven|Twelve|Thirteen|Fourteen|Fifteen|Sixteen|Seventeen|Eighteen|Nineteen|Twenty|Thirty|Forty|Fifty|Sixty|Seventy|Eighty|Ninety|Hundred)(?![a-z])">Вида «Book One»</option>
+<option value="^[ \xA0]*Stave[ \xA0]+\d+[ \xA0]*$">Вида «Stave 123»</option>
+<option value="^[ \xA0]*Stave[ \xA0]+[IVXLCDM]+[ \xA0]*$">Вида «Stave XVI»</option>
+<option value="^[ \xA0]*Stave[ \xA0]+(One|Two|Three|Four|Five|Six|Seven|Eight|Nine|Ten|Eleven|Twelve|Thirteen|Fourteen|Fifteen|Sixteen|Seventeen|Eighteen|Nineteen|Twenty|Thirty|Forty|Fifty|Sixty|Seventy|Eighty|Ninety|Hundred)(?![a-z])">Вида «Stave One»</option>
+<option value="^[ \xA0]*(Prolog|Prologue|Epilog|Epilogue|Foreword|Afterword|Preface)[ \xA0]*$">Prologue, Epilogue, Foreword и пр.</option>
+</select><br>
+ Регэксп для поиска абзацев, которые следует превратить в заголовки либо подзаголовки. Можете задать <span style="font-style: italic;">свой</span> регэксп (например: «<span style="background-color:#7A7666; color:white;">^Глава&#160;\d+$</span>»), а можете использовать готовый, воспользовавшись выпадающим списком выше.<br>
+ <input type=text id=regExpId value="^.*[^ \xA0].*$" style="width:100%;"><br>
+ <input type=checkbox id="caseSensitiveId"><label for="caseSensitiveId"> учитывать регистр при поиске по регэкспу</label><br>
+ <input type=checkbox id="boldId"><label for="boldId"> абзац должен быть полностью жирным</label><br>
+ <input type=checkbox id="italicId"><label for="italicId"> абзац должен быть полностью курсивным</label><br>
+ Длина абзаца должна быть не больше, чем столько символов: <input type=text id="maxLengthId" value="60" style="width:80px; text-align:center;"><br>
+ <select id=captureBeforeId><option selected value=0>0<option value=1>1<option value=2>2<option value=3>3</option></select> сколько захватывать в создаваемый заголовок либо подзаголовок абзацев, находящихся <b>перед</b> абзацем, найденным по регэкспу<br>
+ <select id=captureAfterId><option selected value=0>0<option value=1>1<option value=2>2<option value=3>3</option></select> сколько захватывать в создаваемый заголовок либо подзаголовок абзацев, находящихся <b>после</b> абзаца, найденного по регэкспу<br>
+ <p style="text-align:center; margin-top:8px; padding-top:0; margin-bottom:0; padding-bottom:0;"><input type=button value="Разметить заголовки" onclick="markupTitles();" style="width:220px;"><input type=button value="Разметить заголовки и выйти" onclick="markupTitles(); window.close();" style="width:240px;"><input type=button onclick="window.close();" value="Выйти" style="width:120px;"></p>
+<p style="text-align:center; margin-top:8px; padding-top:0; margin-bottom:0; padding-bottom:0;"><input type=button value="Разметить подзаголовки" onclick="markupSubtitles();" style="width:220px;"><input type=button value="Разметить подзаголовки и выйти" onclick="markupSubtitles(); window.close();" style="width:240px;"><input type=button onclick="window.close();" value="Выйти" style="width:120px;"></p>
+</body>
+</html>
