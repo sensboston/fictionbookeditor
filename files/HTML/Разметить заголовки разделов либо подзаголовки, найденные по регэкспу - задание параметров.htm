@@ -1,4 +1,4 @@
-<!-- версия скрипта 4.0 -->
+<!-- версия скрипта 4.1 -->
 <html>
 <head>
  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -222,7 +222,8 @@ table {
     ' var newTitleCnt=0;'+
     ' var randomNum=getRandomNum(6);'+
     ' while (ptrInFbwBody) {'+
-    '  if (ptrInFbwBody.className.toLowerCase()=="body") processBodyAndSubsections(ptrInFbwBody);'+
+    '  if (ptrInFbwBody.className.toLowerCase()=="body" && ptrInFbwBody.getAttribute("fbname")!="notes" && ptrInFbwBody.getAttribute("fbname")!="comments") '+
+    '   processBodyAndSubsections(ptrInFbwBody);'+
     '  ptrInFbwBody=ptrInFbwBody.nextSibling;'+
     ' }'+
     ' window.external.EndUndoUnit(document);'+
@@ -345,7 +346,8 @@ table {
     ' var newSubtitleCnt=0;'+
     ' var randomNum=getRandomNum(6);'+
     ' while (ptrInFbwBody) {'+
-    '  if (ptrInFbwBody.className.toLowerCase()=="body") processBodyAndSubsections(ptrInFbwBody);'+
+    '  if (ptrInFbwBody.className.toLowerCase()=="body" && ptrInFbwBody.getAttribute("fbname")!="notes" && ptrInFbwBody.getAttribute("fbname")!="comments") '+
+    '   processBodyAndSubsections(ptrInFbwBody);'+
     '  ptrInFbwBody=ptrInFbwBody.nextSibling;'+
     ' }'+
     ' window.external.EndUndoUnit(document);'+
