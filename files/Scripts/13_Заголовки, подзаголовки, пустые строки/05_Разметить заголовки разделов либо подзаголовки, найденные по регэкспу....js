@@ -1,8 +1,7 @@
 //Скрипт «Разметить заголовки разделов либо подзаголовки, найденные по регэкспу»
 //Автор Sclex
-//http://www.fictionbook.org/forum/viewtopic.php?t=4412
 
-var markupTitlesOrSubtitles_versionNum="4.1";
+var markupTitlesOrSubtitles_versionNum="4.2";
 
 function Run() {
  var dialogWidth="700px";
