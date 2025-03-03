@@ -4,7 +4,7 @@
 function Run() {
  try { var nbspChar=window.external.GetNBSP(); var nbspEntity; if (nbspChar.charCodeAt(0)==160) nbspEntity="&nbsp;"; else nbspEntity=nbspChar;}
  catch(e) { var nbspChar=String.fromCharCode(160); var nbspEntity="&nbsp;";}
- var verStr="v4.6";
+ var verStr="v4.7";
  var DebugMode=0;
  var DestrongTitles=false; //делать ли удаление жирности в заголовках
  var DeitalicTitles=false; //удалять ли курсив в заголовках
@@ -78,7 +78,8 @@ function Run() {
   var go_more=true;
   var a4=savedFirstEmpty;
   var SaveNextA4;
-  while (a4!=null && go_more) {
+  if (elemName=="section" && a4 && a4.previousSibling && a4.previousSibling.className=="image") return;
+  while (a4 && go_more) {
    SaveNextA4=a4.nextSibling;
    if (a4.nodeName=="P" &&
        isLineEmpty(a4) && a4.parentNode!=null) {
