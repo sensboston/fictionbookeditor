@@ -1,7 +1,7 @@
 //Скрипт «Разметить заголовки разделов согласно оглавлению документа»
 //Автор Sclex
 
-var markupTitlesByContents_versionNum="4.3";
+var markupTitlesByContents_versionNum="4.4";
 
 function myBeginUndoUnit(s) {
  window.external.BeginUndoUnit(document,s);
@@ -13,17 +13,22 @@ function myEndUndoUnit() {
 
 function Run() {
 
+ try { var nbspChar=window.external.GetNBSP(); var nbspEntity; if (nbspChar.charCodeAt(0)==160) nbspEntity="&nbsp;"; else nbspEntity=nbspChar; }
+ catch(e) { var nbspChar=String.fromCharCode(160); var nbspEntity="&nbsp;";};
+ 
  // Нижеследующая команда задает список необычных пробелов,
  // которые в заголовках должны обрабатываться наравне
  // с обычными пробелами:
- var unusualSpaces=String.fromCharCode(8194)+
+ var unusualSpaces=String.fromCharCode(160)+
+  String.fromCharCode(8194)+
   String.fromCharCode(8195)+
   String.fromCharCode(8196)+
   String.fromCharCode(8197)+
   String.fromCharCode(8198)+
   String.fromCharCode(8239)+
   String.fromCharCode(8201)+
-  String.fromCharCode(8202);
+  String.fromCharCode(8202)+
+  nbspChar;
   
  var dialogWidth="700px";
  var dialogHeight="1000px";
@@ -35,8 +40,6 @@ function Run() {
  coll["window"]=window;
  coll["versionNum"]=markupTitlesByContents_versionNum;
  coll["unusualSpaces"]=unusualSpaces;
- try { var nbspChar=window.external.GetNBSP(); var nbspEntity; if (nbspChar.charCodeAt(0)==160) nbspEntity="&nbsp;"; else nbspEntity=nbspChar; }
- catch(e) { var nbspChar=String.fromCharCode(160); var nbspEntity="&nbsp;";};
  coll["nbspChar"]=nbspChar;
  coll["nbspEntity"]=nbspEntity;
  if (!document.selection || document.selection.type!="Text") {

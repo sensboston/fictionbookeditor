@@ -1,4 +1,4 @@
-<!-- версия скрипта 4.3 -->
+<!-- версия скрипта 4.4 -->
 <html>
 <head>
  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -103,6 +103,7 @@
                          .replace(/</g,"&lt;")
                          .replace(/>/g,"&gt;")
                          .replace(unusualSpacesRegExp," ");
+      //alert("contentsText: "+contentsText);
       Arr=contentsText.match(/^[^\r\n]+/gm);
       Arr2=[];
       for (var jjj=0; jjj<Arr.length; jjj++)
