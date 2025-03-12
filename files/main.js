@@ -1,4 +1,4 @@
-// Версия файла - 2.0
+// Версия файла - 2.1
 
 // Object reference maker
 Object.prototype.$=function $(val){if(val)this.valueOf=this.toSource=this.toString=function(){return val};return val;};
@@ -1124,12 +1124,13 @@ function MakeAuthor(node,name,dv,force,indent)
   added=MakeText(au,"first-name",dv.all.first.value,true,indent+1) || added;
   added=MakeText(au,"middle-name",dv.all.middle.value,false,indent+1) || added;
   added=MakeText(au,"last-name",dv.all.last.value,true,indent+1) || added;
-  if(dv.all.id)
-	added=MakeText(au,"id",dv.all.id.value,false,indent+1) || added;
  }
  added=MakeText(au,"nickname",dv.all.nick.value,false,indent+1) || added;
  added=MakeText(au,"home-page",dv.all.home.value,false,indent+1) || added;
  added=MakeText(au,"email",dv.all.email.value,false,indent+1) || added;
+
+ if(dv.all.id)
+	added=MakeText(au,"id",dv.all.id.value,false,indent+1) || added;
 
  if(added || force)
  {
