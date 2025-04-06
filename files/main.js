@@ -1,4 +1,4 @@
-// Версия файла - 2.1
+// Версия файла - 2.2
 
 // Object reference maker
 Object.prototype.$=function $(val){if(val)this.valueOf=this.toSource=this.toString=function(){return val};return val;};
@@ -36,7 +36,7 @@ function apiGetBinary(id)
  }
 }
 
-function OnBinaryIdChange() {
+function OnBinaryChange() {
  FillLists();
 }
 
@@ -117,8 +117,9 @@ function apiAddBinary(fullpath, id, type, data)
 	div.all.id.value = curid;
 	div.all.type.value = type;
 	div.base64data = data;
-	div.all.id.setAttribute("oldId",curid);
-	div.all.id.onchange=OnBinaryIdChange;
+	//div.all.id.setAttribute("oldId",curid);
+	div.all.id.onchange=OnBinaryChange;
+        div.all.type.onchange=OnBinaryChange;
 
 	document.all.binobj.appendChild(div);
 	// PutSpacers(document.all.binobj);
