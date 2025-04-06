@@ -1,4 +1,4 @@
-// Версия файла - 2.2
+// Версия файла - 2.3
 
 // Object reference maker
 Object.prototype.$=function $(val){if(val)this.valueOf=this.toSource=this.toString=function(){return val};return val;};
@@ -753,7 +753,7 @@ function FillImageList(list, bin_objects)
 			var pic_id=bin_objects[j].all.id.value;
 			
 			//if(pic_id.toLowerCase().indexOf(".jpg")==-1 && pic_id.toLowerCase().indexOf(".png")==-1  && pic_id.toLowerCase().indexOf(".jpeg")==-1)
-			if((typeof contentType!="string") || contentType.toLowerCase()!="image/jpeg" && contentType.toLowerCase()!="image/png")
+			if((typeof contentType!="string") || pic_id=="" || (contentType.toLowerCase()!="image/jpeg" && contentType.toLowerCase()!="image/png"))
 			{
 				continue;
 			}
