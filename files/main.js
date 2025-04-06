@@ -748,9 +748,11 @@ function FillImageList(list, bin_objects)
 
 		for(var j=0; j<bin_objects.length; j++)
 		{
+			var contentType=bin_objects[j].all.type.value;
 			var pic_id=bin_objects[j].all.id.value;
-
-			if(pic_id.toLowerCase().indexOf(".jpg")==-1 && pic_id.toLowerCase().indexOf(".png")==-1  && pic_id.toLowerCase().indexOf(".jpeg")==-1)
+			
+			//if(pic_id.toLowerCase().indexOf(".jpg")==-1 && pic_id.toLowerCase().indexOf(".png")==-1  && pic_id.toLowerCase().indexOf(".jpeg")==-1)
+			if((typeof contentType!="string") || contentType.toLowerCase()!="image/jpeg" && contentType.toLowerCase()!="image/png")
 			{
 				continue;
 			}
@@ -1124,13 +1126,12 @@ function MakeAuthor(node,name,dv,force,indent)
   added=MakeText(au,"first-name",dv.all.first.value,true,indent+1) || added;
   added=MakeText(au,"middle-name",dv.all.middle.value,false,indent+1) || added;
   added=MakeText(au,"last-name",dv.all.last.value,true,indent+1) || added;
+  if(dv.all.id)
+	added=MakeText(au,"id",dv.all.id.value,false,indent+1) || added;
  }
  added=MakeText(au,"nickname",dv.all.nick.value,false,indent+1) || added;
  added=MakeText(au,"home-page",dv.all.home.value,false,indent+1) || added;
  added=MakeText(au,"email",dv.all.email.value,false,indent+1) || added;
-
- if(dv.all.id)
-	added=MakeText(au,"id",dv.all.id.value,false,indent+1) || added;
 
  if(added || force)
  {
