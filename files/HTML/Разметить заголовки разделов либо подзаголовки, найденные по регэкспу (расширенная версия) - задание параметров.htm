@@ -1,4 +1,4 @@
-<!-- версия скрипта 1.8 -->
+<!-- версия скрипта 1.9 -->
 <html>
 <head>
  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -97,13 +97,19 @@ table {
     '  return emptyLineRegExp.test(ptr.innerHTML.replace(/<[^>]*?>/gi,""));'+
     ' }'+
     ''+
+    ' var removeLinksRE=new RegExp("<A( [^<>]*)?>.*?</A>","gi");'+
+    ''+
+    ' function isLineWithoutLinksEmpty(ptr) {'+
+    '  return emptyLineRegExp.test(ptr.innerHTML.replace(removeLinksRE,""));'+
+    ' }'+
+    ''+
     ' var re0=new RegExp("<STRONG>(((?!</?STRONG>).)*)</STRONG>","ig");'+
     ' var re1=new RegExp("</?[^>]*>","ig");'+
     ' var re2=new RegExp(" |&nbsp;|"+nbspChar,"g");'+
     ''+
     ' function isParagraphEntirelyBold(elem1) {'+
-    '  if (isLineEmpty(elem1)) return false;'+
-    '  myHtml=elem1.innerHTML;'+
+    '  if (isLineWithoutLinksEmpty(elem1)) return false;'+
+    '  myHtml=elem1.innerHTML.replace(removeLinksRE,"");'+
     '  searchResult=re0.test(myHtml);'+
     '  while (searchResult) {'+
     '   myHtml=myHtml.replace(re0,"");'+
@@ -118,8 +124,8 @@ table {
     ' var re6=new RegExp("</?[^>]*>","ig");'+
     ''+
     ' function isParagraphEntirelyItalic(elem1) {'+
-    '  if (isLineEmpty(elem1)) return false;'+
-    '  myHtml=elem1.innerHTML;'+
+    '  if (isLineWithoutLinksEmpty(elem1)) return false;'+
+    '  myHtml=elem1.innerHTML.replace(removeLinksRE,"");'+
     '  searchResult=re5.test(myHtml);'+
     '  while (searchResult) {'+
     '   myHtml=myHtml.replace(re5,"");'+
@@ -491,8 +497,8 @@ table {
  Регэксп для поиска абзацев, которые следует превратить в заголовки либо подзаголовки. Можете задать <span style="font-style: italic;">свой</span> регэксп (например: «<span style="background-color:#7A7666; color:white;">^Глава&#160;\d+$</span>»), а можете использовать готовый, воспользовавшись выпадающим списком выше.<br>
  <input type=text id=regExpId value="^.*[^ \xA0].*$" style="width:100%;"><br>
  <input type=checkbox id="caseSensitiveId"><label for="caseSensitiveId"> учитывать регистр при поиске по регэкспу</label><br>
- <input type=checkbox id="boldId"><label for="boldId"> абзац должен быть полностью жирным</label><br>
- <input type=checkbox id="italicId"><label for="italicId"> абзац должен быть полностью курсивным</label><br>
+ <input type=checkbox id="boldId"><label for="boldId"> абзац должен быть полностью жирным (кроме, разве что, ссылок и пробелов)</label><br>
+ <input type=checkbox id="italicId"><label for="italicId"> абзац должен быть полностью курсивным (кроме, разве что, ссылок и пробелов)</label><br>
  Длина абзаца должна быть не больше, чем столько символов: <input type=text id="maxLengthId" value="60" style="width:80px; text-align:center;"><br>
  <select id=captureBeforeId><option selected value=0>0<option value=1>1<option value=2>2<option value=3>3</option></select> сколько захватывать в создаваемый заголовок либо подзаголовок абзацев, находящихся <b>перед</b> абзацем, найденным по регэкспу<br>
  <select id=captureAfterId><option selected value=0>0<option value=1>1<option value=2>2<option value=3>3</option></select> сколько захватывать в создаваемый заголовок либо подзаголовок абзацев, находящихся <b>после</b> абзаца, найденного по регэкспу<br>
