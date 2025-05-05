@@ -1,7 +1,7 @@
 <html>
 <head>
  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
- <!-- version 4.1 -->
+ <!-- version 4.2 -->
  <meta http-equiv="MSThemeCompatible" content="yes">
  <style>
   body, input{font-family:Tahoma; font-size:16px;margin:2px;}
@@ -1133,13 +1133,13 @@
 </head>
 <body onbeforeunload="myBeforeUnload();">
  Задайте маркер знака сноски:<br>
- <label for="radio1"><input type=radio id="radio1" name=noteSign> вида [1]</label>
- <label for="radio2"><input type=radio id="radio2" name=noteSign> вида {1}</label>
- <label for="radio3"><input type=radio id="radio3" name=noteSign"> вида [~1~]</label>
- <label for="radio4"><input type=radio id="radio4" name=noteSign> вида {~1~}</label>
- <label for="radio5"><input type=radio id="radio5" name=noteSign> * (одна звездочка)</label><br>
- <label for="radio6"><input type=radio id="radio6" name=noteSign checked> число надстрочным текстом</label><br>
- <label for="radio20"><input type=radio id="radio20" name=noteSign>задать свой:</label>
+ <label for="radio1"><input type=radio id="radio1" name="noteSign" value="1"> вида [1]</label>
+ <label for="radio2"><input type=radio id="radio2" name="noteSign" value="2"> вида {1}</label>
+ <label for="radio3"><input type=radio id="radio3" name="noteSign" value="3"> вида [~1~]</label>
+ <label for="radio4"><input type=radio id="radio4" name="noteSign" value="4"> вида {~1~}</label>
+ <label for="radio5"><input type=radio id="radio5" name="noteSign" value="5"> * (одна звездочка)</label><br>
+ <label for="radio6"><input type=radio id="radio6" name="noteSign" value="6 "checked> число надстрочным текстом</label><br>
+ <label for="radio20"><input type=radio id="radio20" name="noteSign" value="20">задать свой:</label>
  <div style="padding-left:30px; padding-right:0; padding-top:0; padding-bottom:0;">
   <input type=text style="width:600px;" id=refMarkerStr value="[*]" onfocus="getElementById('radio20').checked=true;"><br>
   <label for=interpretAsRegExpCheckbox><input type=checkbox id=interpretAsRegExpCheckbox checked> трактовать как регулярное выражение</label>
