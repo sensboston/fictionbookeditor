@@ -93,6 +93,9 @@
 //v.2.4 — теперь, если заголовок заканчивается на вопросительное или восклицательное многоточие ("?..", "!..", "?!.") , то скрипт не будет отрывать от него конечную точку.
 //Примеры заголовков, которые раньше обрабатывались неверно: "СССР: вернуться в детство?..", "Ты кто?!."
 //======================================
+//v.2.5 — регэкспы (п.п. 142-149) — TaKir
+
+//======================================
 var VersionNumber="2.5";
 
 //обрабатывать ли history
@@ -797,6 +800,47 @@ function Run() {
  var re141_ = "";
  var count_141 = 0;
 
+   // замена Область частного использования U+F04A (TaKir)
+ var re142 = new RegExp("([\\uF04A])","gi");
+ var re142_ = " ";
+ var count_142 = 0;
+
+   // замена и + Комбинируемое бреве (и+U+0306) на й (TaKir)
+ var re143 = new RegExp("(й)","gi");
+ var re143_ = "й";
+ var count_143 = 0;
+
+   // замена Кольцо сверху U+02DA на градусы Цельсия (TaKir)
+ var re144 = new RegExp("([\\u02DA])","gi");
+ var re144_ = "°";
+ var count_144 = 0;
+
+   // замена Комбинируемый надстрочный кружок U+030A на градусы Цельсия (TaKir)
+ var re145 = new RegExp("([\\u030A])","gi");
+ var re145_ = "°";
+ var count_145 = 0;
+
+   // замена Мужской порядковый индикатор U+00BA на градусы Цельсия (TaKir)
+ var re146 = new RegExp("([\\u00BA])","gi");
+ var re146_ = "°";
+ var count_146 = 0;
+
+   // замена Надстрочный нуль U+2070 на градусы Цельсия (TaKir)
+ var re147 = new RegExp("([\\u2070])","gi");
+ var re147_ = "°";
+ var count_147 = 0;
+
+   // замена Латинская строчная буква кра "ĸ" U+0138 на русскую к (TaKir)
+ var re148 = new RegExp("([\\u0138])","gi");
+ var re148_ = "к";
+ var count_148 = 0;
+
+   // замена Латинская строчная буква e с диэризисом "ë" U+00EB на русскую ё (TaKir)
+ var re149 = new RegExp("([\\u00EB])","gi");
+ var re149_ = "ё";
+ var count_149 = 0;
+
+
 
 //~~~~~~~~~~~~~~ Конец шаблонов ~~~~~~~~~~~~~~~~~~
 
@@ -968,6 +1012,21 @@ function Run() {
 	   if (s.search(re139)!=-1)       { count_139+=s.match(re139).length;s=s.replace(re139, re139_); }
 	   if (s.search(re140)!=-1)       { count_140+=s.match(re140).length;s=s.replace(re140, re140_); }
 	   if (s.search(re141)!=-1)       { count_141+=s.match(re141).length;s=s.replace(re141, re141_); }
+	   if (s.search(re142)!=-1)       { count_142+=s.match(re142).length;s=s.replace(re142, re142_); }
+	   if (s.search(re143)!=-1)       { count_143+=s.match(re143).length;s=s.replace(re143, re143_); }
+	   if (s.search(re144)!=-1)       { count_144+=s.match(re144).length;s=s.replace(re144, re144_); }
+	   if (s.search(re145)!=-1)       { count_145+=s.match(re145).length;s=s.replace(re145, re145_); }
+	   if (s.search(re146)!=-1)       { count_146+=s.match(re146).length;s=s.replace(re146, re146_); }
+	   if (s.search(re147)!=-1)       { count_147+=s.match(re147).length;s=s.replace(re147, re147_); }
+	   if (s.search(re148)!=-1)       { count_148+=s.match(re148).length;s=s.replace(re148, re148_); }
+	   if (s.search(re149)!=-1)       { count_149+=s.match(re149).length;s=s.replace(re149, re149_); }
+
+
+
+
+
+
+
 
 
 
@@ -1062,7 +1121,7 @@ var Tsec3 = Math.ceil(1000*((Tf-Ts)/1000-Tmin*60))/1000;
  if (count_92!=0)   {st2+='\n• Знаки мягкого переноса U+00AD:  	'+count_92;}
  if (count_93!=0)   {st2+='\n• Вставка справа-налево U+202B:  	'+count_93;}
  if (count_94!=0)   {st2+='\n• Некорректные апострофы:  	'+count_94;}
- if (count_95!=0)   {st2+='\n• Неправильные пробелы U+E088:  	'+count_95;}
+ if (count_95!=0)   {st2+='\n• Область частного использования U+E088:  	'+count_95;}
  if (count_96!=0)   {st2+='\n• Сдвоенные пробелы U+0020:  	'+count_96;}
  if (count_97!=0)   {st2+='\n• En пробелы U+2002:  	'+count_97;}
  if (count_98!=0)   {st2+='\n• Пробел нулевой ширины U+200B:  	'+count_98;}
@@ -1095,7 +1154,7 @@ var Tsec3 = Math.ceil(1000*((Tf-Ts)/1000-Tmin*60))/1000;
  if (count_123!=0)   {st2+='\n• Символ, заменяющий объект ￼:	'+count_123;}
  if (count_124!=0)   {st2+='\n• Метка слева-направо U+200E:	'+count_124;}
  if (count_125!=0)   {st2+='\n• Замена дефисов U+2010:	'+count_125;}
- if (count_126!=0)   {st2+='\n• Замена горизонтальных линий U+2015:	'+count_126;}
+ if (count_126!=0)   {st2+='\n• Горизонтальные линии U+2015:	'+count_126;}
  if (count_127!=0)   {st2+='\n• Сдвоенные открывающие болды:	'+count_127;}
  if (count_128!=0)   {st2+='\n• Сдвоенные закрывающие болды:	'+count_128;}
  if (count_129!=0)   {st2+='\n• Унификация открывающих болдов и курсивов:	'+count_129;}
@@ -1111,13 +1170,21 @@ var Tsec3 = Math.ceil(1000*((Tf-Ts)/1000-Tmin*60))/1000;
  if (count_139!=0)   {st2+='\n• Нулевая ширина (с объединением) U+200D:	'+count_139;}
  if (count_140!=0)   {st2+='\n• Неразрывный дефис U+2011:	'+count_140;}
  if (count_141!=0)   {st2+='\n• Комбинируемая подстрочная точка U+0323:	'+count_141;}
+ if (count_142!=0)   {st2+='\n• Область частного использования U+F04A:	'+count_142;}
+ if (count_143!=0)   {st2+='\n• Комбинируемое бреве+и на й:	'+count_143;}
+ if (count_144!=0)   {st2+='\n• Кольцо сверху на градусы:	'+count_144;}
+ if (count_145!=0)   {st2+='\n• Надстрочный кружок на градусы:	'+count_145;}
+ if (count_146!=0)   {st2+='\n• Мужской порядковый индикатор на градусы:	'+count_146;}
+ if (count_147!=0)   {st2+='\n• Надстрочный нуль на градусы:	'+count_147;}
+ if (count_148!=0)   {st2+='\n• Латинская строчная буква кра на к:	'+count_148;}
+ if (count_149!=0)   {st2+='\n• Латинская строчная буква e с диэризисом на ё:	'+count_149;}
 
  
 
  if (st2!="") st2="\n"+st2;
 
  MsgBox ('                  –= Jurgen Script =– \n'+
-        ' «Генеральная уборка» v.'+VersionNumber+' Golma+TaKir Edition 2024       \n\n'+
+        ' «Генеральная уборка» v.'+VersionNumber+' Golma+TaKir Edition 2025       \n\n'+
 
         ' Время: ' +TimeStr+'.'+st2); 
 
