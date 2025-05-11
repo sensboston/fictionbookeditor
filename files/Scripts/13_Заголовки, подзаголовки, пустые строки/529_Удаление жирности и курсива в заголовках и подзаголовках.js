@@ -1,62 +1,309 @@
 //======================================
-//             «Удаление жирности/курсива в заголовках и подзаголовках»
-//~~~~~~~~~~~~~~~~~~
-// v.1.0 — Создание скрипта — Александр Ка (21.03.2024)
-//~~~~~~~~~~~~~~~~~~
-
-
-var NumerusVersion="1.0";
-
-  var Ts1=new Date().getTime();
-  var tempus=0;
-
+//             «Удаление форматирования в заголовках и подзаголовках»
+//  Скрипт тестировался в FBE v.2.7.7 (win XP, IE8 и win 7, IE11)
+//======================================
+//   Скрипт предназначен для удаления нежелательного форматирования внутри заголовков и подзаголовков
+//======================================
+//  * История изменений в конце скрипта
+//======================================
 
 function Run() {
 
- try { var nbspChar=window.external.GetNBSP(); var nbspEntity; if (nbspChar.charCodeAt(0)==160) nbspEntity="&nbsp;"; else nbspEntity=nbspChar }
- catch(e) { var nbspChar=String.fromCharCode(160); var nbspEntity="&nbsp;" }
-
- var n=0;
+ var ScriptName="«Удаление форматирования в заголовках и подзаголовках»";
+ var NumerusVersion="2.1";
+ var Ts=new Date().getTime();
 
 //--------------------------------------------------------------------
-//--------------------------------------------------------------------
-//--------------------------------------------------------------------
-
                  ///  НАСТРОЙКИ
-
 //--------------------------------------------------------------------
+
+         //  Удаление форматирования
 
 //     Удаление жирности во всех обычных заголовках
-
-var Obrabotka_Title_St = 2;      // 0 ; 1 ; 2 //      ("0" — никогда не удалять, "1" — всегда удалять, "2" — всегда спрашивать и показывать)
-
-//--------------------------------------------------------------------
+var Obrabotka_Title_St = 2;      // 0 ; 1 ; 2 //
 
 //     Удаление курсива во всех обычных заголовках
+var Obrabotka_Title_Em = 2;      // 0 ; 1 ; 2 //
 
-var Obrabotka_Title_Em = 2;      // 0 ; 1 ; 2 //      ("0" — никогда не удалять, "1" — всегда удалять, "2" — всегда спрашивать и показывать)
+//     Удаление нижнего индекса во всех обычных заголовках
+var Obrabotka_Title_Sub = 2;      // 0 ; 1 ; 2 //
 
-//--------------------------------------------------------------------
+//     Удаление верхнего индекса во всех обычных заголовках
+var Obrabotka_Title_Sup = 2;      // 0 ; 1 ; 2 //
+
 
 //     Удаление жирности во всех подзаголовках
-
-var Obrabotka_Subtitle_St = 2;      // 0 ; 1 ; 2 //      ("0" — никогда не удалять, "1" — всегда удалять, "2" — всегда спрашивать и показывать)
-
-//--------------------------------------------------------------------
+var Obrabotka_Subtitle_St = 2;      // 0 ; 1 ; 2 //
 
 //     Удаление курсива во всех подзаголовках
+var Obrabotka_Subtitle_Em = 2;      // 0 ; 1 ; 2 //
 
-var Obrabotka_Subtitle_Em = 2;      // 0 ; 1 ; 2 //      ("0" — никогда не удалять, "1" — всегда удалять, "2" — всегда спрашивать и показывать)
+//     Удаление нижнего индекса во всех подзаголовках
+var Obrabotka_Subtitle_Sub = 2;      // 0 ; 1 ; 2 //
+
+//     Удаление верхнего индекса во всех подзаголовках
+var Obrabotka_Subtitle_Sup = 2;      // 0 ; 1 ; 2 //
+
+ // "0" — никогда не удалять
+ // "1" — всегда удалять
+ // "2" — всегда спрашивать и показывать
+
+// ---------------------------------------------------------------
+
+         //  Автоматическое повышение версии файла и запись в историю изменений
+
+ var Version_on_off = 1;      // 0 ; 1 //      ("0" — отключить, "1" — включить)
+
+//  Добавлять, если не сделано ни одного исправления
+ var Vsegda_on_off = 0;      // 0 ; 1 //      ("0" — отключить, "1" — включить)
+
+//   Имя используемое в добавленной записи:
+ var youName = "Зорро";
+
+//  * Для записи имени можно использовать почти любые символы.
+//     Исключения:   |  "  |  \  |    Но и любой из этих знаков можно добавить, если поставить перед ним наклонную черту ("\"), например: "\\" = "\"
+//     Или можно оставить кавычки пустыми (""), тогда строка в истории будет без имени.
 
 // ---------------------------------------------------------------
 // ----------------------------------------------
 // -----------------------------
 
 
+                 /// ОБЩИЕ ПЕРЕМЕННЫЕ
+
+//   Неразрывный пробел из настроек FBE
+ try  {
+         var nbspEntity=window.external.GetNBSP();   //  Получаем выбранный символ неразрывного пробела.
+         if (nbspEntity.charCodeAt(0) == 160)   //  Если используется стандартный символ...
+                 nbspEntity = "&nbsp;";   //  то заменяем его на стандартный код.
+         }
+ catch(e) {            //  Если команда для получения символа н/р пробела вызывает ошибку...
+         var nbspEntity="&nbsp;";   //  то используем стандартный код н/р пробела.
+         }
+
+ var fbwBody=document.getElementById("fbw_body");   //  Структура текста в режиме "B"-дизайн.
+
+ var T_pause=0;  //  Продолжительность диалоговых пауз.
+
+ var n=0;
+
+// ---------------------------------------------------------------
+// ----------------------------------------------
+// -----------------------------
+
+
+                 ///  ФУНКЦИЯ ПОВЫШЕНИЯ ВЕРСИИ ФАЙЛА И ЗАПИСЬ В ИСТОРИЮ ИЗМЕНЕНИЙ
+
+ function HistoryChange(Script_Name, youName) {
+
+
+         // Получение раздела истории
+
+// var fbwBody=document.getElementById("fbw_body");   //  **  эта строка уже есть в скрипте  **
+ var History=fbwBody.firstChild;   //  Предполагаемый раздел истории.
+
+ //  Поиск раздела "историй"
+ while (History != null  &&  History.className != "history")    //  Пока не найдем настоящий раздел истории, или окажется, что истории нет в тексте...
+         History = History.nextSibling;         //  переходим на следующий раздел.
+
+//  Добавление раздела истории
+ if (History==null)  {                 //   Если нет истории...
+         History = document.createElement("DIV");     //   Создание нового раздела
+         var Annotation=fbwBody.firstChild;
+         while (Annotation!=null  &&  Annotation.className!="annotation") Annotation=Annotation.nextSibling;   //  Поиск аннотации к книге
+         if (Annotation!=null)  Annotation.insertAdjacentElement("afterEnd",History);      //  Размещаем новый раздел    или после аннотации (если она есть)...
+                 else  fbwBody.insertAdjacentElement("afterBegin",History);                //  ...или в начале "fbwBody"
+         History.className = "history";      //  Присваиваем новому разделу    класс "история" и необходимые атрибуты
+         History.setAttribute("xmlns:l", xlNS);    //  "xlNS" и "fbNS" - переменные из "main.js"
+         History.setAttribute("xmlns:f", fbNS);
+         History.insertAdjacentElement("beforeEnd",document.createElement("P"));     //  Добавляем пустую строку
+         window.external.inflateBlock(History.lastChild)=true;
+         }
+
+
+         //  Создание массива с прошедшими датами
+
+ var mDate=[];         //  Массив с прошедшими датами.
+ var D = new Date().getTime();   //  Начальное значение даты.
+ var fullDate;
+ var Day;
+ var Month;
+ var Year;
+
+ for (var j=0; j<10; j++) {              //  Запускаем цикл для получения недавних дат, в котором...
+         fullDate = new Date(D);                         //  получаем полную дату,
+         Day = fullDate.getDate();                            //  день месяца,
+         Month = ("0" + (1+fullDate.getMonth())).replace(/^.*?(\d\d)$/g, "$1");   //  месяц,
+         Year = ("0" + fullDate.getFullYear()).replace(/^.*?(\d\d)$/g, "$1");       //  год,
+         mDate[j] = Day + "." + Month + "." + Year;             //  и заполняем массив текстом очередной даты (Д.ММ.ГГ).
+         D -= 86400000;                       //  При этом каждый раз уменьшаем проверяемую дату на один день.
+         }
+
+
+         //  Поиск недавней записи в "истории"
+
+ var povtorD = false;   //  Индикатор повторной обработки в последние 10 дней.
+ var mP = History.getElementsByTagName("P");   //  Получение всех строк в "Истории".
+ var s="";               //  Содержимое строки.
+ var k=0;               //  Счетчик цикла.
+
+fff:
+ for (j=mP.length-1;  j>0;  j--) {    //  Последовательный просмотр строк истории.
+         s = mP[j].innerHTML;                //  Содержимое строки.
+         for (k=0; k<10; k++) {                //  и запускаем цикл для проверки даты.
+                 if (s.search(mDate[k]) !=-1) {   //  Если проверяемая дата есть в строке истории...
+                         povtorD = true;                    //  то отмечаем это,
+                         break fff;                            //  и прерываем оба цикла проверки.
+                         }
+                 }
+         }
+
+
+         //  Обновление записи в истории изменений
+
+ try  { youName = fbeUserName }   //  Если есть строка:   var fbeUserName = "Имя";   в файле "main.js"  --  Изменение имени в соответствии с глобальной переменной.
+ catch(e)  {}                                            //  Если глобальная переменная отсутствует - пропуск операции по изменению имени.
+
+ var textYouName = youName+"";    //  Имя в тексте.
+ if (youName!="")                           //  Если есть заполненное имя...
+         textYouName += ", ";   //  то добавляем к текстовой записи запятую.
+
+ var reHist00s = new RegExp("[^А-яЁёA-Za-z0-9]"+Script_Name+"[^А-яЁёA-Za-z0-9]","g");   //  Стартовая.
+ //  Добавление точки с запятой
+ var reHist01 = new RegExp("(.[^…\\\?!\\\.,;:—])(\\\s|"+nbspEntity+")(— \\\("+textYouName+mDate[k]+"\\\))","g");
+ var reHist01_ = "$1; $3";
+ //  Добавление слова "Скрипт"
+ var reHist02 = new RegExp("(.)(\\\s|"+nbspEntity+")(— \\\("+textYouName+mDate[k]+"\\\))","g");
+ var reHist02_ = "$1 Скрипт: $3";
+ //  Добавление имени скрипта
+ var reHist03 = new RegExp("(.)(\\\s|"+nbspEntity+")(— \\\("+textYouName+mDate[k]+"\\\))","g");
+ var reHist03_ = "$1 "+Script_Name+" $3";
+
+ if (povtorD) {                                         //  Если найдена запись с недавней датой...
+         if (s.search(reHist03) !=-1) {    //  и если в строке имя пользователя и дата записаны по форме: "— (Имя, Дата)"...
+                 if (s.search(reHist00s) ==-1) {    //  то проверяем строку на наличие записи имени скрипта, и если этой записи нет...
+                         if (s.search(/([Сс]крипт):/) !=-1)  s = s.replace(/([Сс]крипт):/g, "$1ы:");   //  то заменяем при необходимости слово "Скрипт" на "Скрипты",
+                         if (s.search(reHist01) !=-1)  s = s.replace(reHist01, reHist01_);                   //  добавляем при необходимости точку с запятой,
+                         if (s.search(/[Сс]крипты?:/) ==-1)  s = s.replace(reHist02, reHist02_);   //  добавляем при необходимости слово "Скрипт"
+                         s = s.replace(reHist03, reHist03_);      //  и добавляем имя скрипта.
+                         }
+                 if (k != 0)                                                    //  Затем проверяем дату, и если она не сегодняшняя...
+                         s = s.replace(mDate[k], mDate[0]);   //  то заменяем на сегодняшнюю.
+                 if (mP[j].innerHTML != s) {                //  Затем проверяем изменилась ли строка истории, и если она изменилась...
+                         mP[j].innerHTML = s;          //  то сохраняем её в тексте
+                         HiCh=3;   //  и отмечаем это на индикаторе.
+                         }
+                 }
+             else                                  // Если же есть недавняя дата, но запись сделана не по форме...
+                 povtorD = false;   //  Объявляем, что недавняя дата - посторонняя, и надо повышать версию и добавлять новую строку в историю.
+         }
+
+ if (povtorD)  return;   //  Если производилась обработка записи в истории - выход из функции.
+
+
+         //  Повышение версии
+
+ var versionText = "";           //  Текст с версией в истории изменений.
+
+ //  Проверка на валидность версии файла
+ var ValidationVersion=(versionFile.length <=10  &&  versionFile.search(/^\d{0,10}(\.\d{1,8})?$/g) !=-1);    //  сравнение с шаблоном:  "цифры + (точка + цифры)"
+
+ //   Изменение версии файла
+ if (ValidationVersion) {
+         if (versionFile =="")          //  Если версия не заполнена...
+                 versionFile = "1.0";    //  то изменяем начальную версию на "1.0".
+         if (versionFile.search(/^\d+$/g) !=-1)   //  Если версия без точки...
+                 newVersion = versionFile + ".1";     //  то для новой версии добавляем ".1".
+             else {                                                                                         //  Если в версии есть точка...
+                     newVersion = +versionFile.replace(/^\d+\./g, "");  //  извлекаем цифры после точки,
+                     newVersion++;                                                                                           //  увеличиваем полученное число на единицу
+                     newVersion = versionFile.replace(/\.\d+$/g, "")+"."+newVersion;   //   и добавляем к нему первую группу цифр.
+                     }
+         if (newVersion.length <=10)                                        //  Если новая версия валидна...
+                 document.getElementById("diVersion").value=newVersion;   //  то изменяем версию в файле,
+                 VersionUp=true;                                                          //  отмечаем это на индикаторе
+                 var versionText="v."+newVersion+" — ";    //  и создаем текст для истории.
+         }
+
+
+         //   Добавление строк в историю изменений
+
+ var reHist11 = new RegExp("^(\\\s|"+nbspEntity+"){0,}$","g");   //  Признак пустой строки.
+ var reHist12 = new RegExp("(^|\\n)[^0-9]{0,10}"+versionFile+"([^0-9]|$)","g");   //  Поиск старой версии.
+
+ //   Добавление строки с информацией о старой версии
+ if (ValidationVersion  &&  History.innerHTML.search(reHist12)==-1) {       //  Если в истории нет записи о старой версии...
+         if (History.lastChild.innerHTML.search(reHist11)==-1)                                               //  то проверяем наличие пустой строки в конце истории
+                 History.insertAdjacentElement("beforeEnd",document.createElement("P"));       //  и если ее нет - добавляем новую.
+         History.lastChild.innerHTML = "v."+versionFile+" — ?";  //  Затем добавляем в строку информацию о старой версии
+         HiCh++;                                        //  и изменяем индикатор истории.
+         }
+
+ //   Добавление строки с информацией о новой версии
+ if (History.lastChild.innerHTML.search(reHist11)==-1)                                   //  Если в конце истории нет готовой пустой строки...
+         History.insertAdjacentElement("beforeEnd",document.createElement("P"));   //  то добавляем новую строку.
+ History.lastChild.innerHTML = versionText+" Скрипт: "+Script_Name+" — ("+textYouName+mDate[0]+")";  //  Добавляем в строку информацию о новой версии.
+ HiCh++;                       //  Изменяем индикатор истории.
+
+ }
+
+// ---------------------------------------------------------------
+// ----------------------------------------------
+// -----------------------------
+
+
+                 /// ФУНКЦИЯ "Генератор случайных чисел, с округлением"
+
+ function Rn_(rndN) {
+         return Math.floor(("0000000"+Math.tan(Ts+Math.random()*2000)).replace(/[\.\-]/g, "").replace(/.+(\d\d\d\d\d\d)\d$/g, "0.$1")*rndN);  //  Генерация случайных чисел от 0 до "rndN".
+         }
+
+// ---------------------------------------------------------------
+// ----------------------------------------------
+// -----------------------------
+
+
+                 /// ФУНКЦИЯ КОНВЕРТАЦИИ ВРЕМЕНИ  (мс  => мин., с)
+
+ var tempus=0;
+ var T;
+
+ function time(T) {
+
+         var Tmin  = Math.floor(T/60000);
+         var TsecD = (T%60000)/1000;
+         var Tsec = Math.floor(TsecD);
+
+         if (Tmin ==0)
+                 tempus = (+(TsecD+"").replace(/(.{1,5}).*/g, "$1")+"").replace(".", ",")+" сек";
+             else {
+                     tempus = Tmin+" мин";
+                     if (Tsec !=0)
+                             tempus += " " + Tsec+ " с" }
+
+         return tempus;
+
+         }
+
+// ---------------------------------------------------------------
+// ----------------------------------------------
+// -----------------------------
+
+
+                 /// ПРОВЕРКА РЕЖИМА
+
+ if (fbwBody.style.display == "none") {
+         window.external.SetStatusBarText("  •  Скрипт "+ScriptName+" v." + NumerusVersion + " можно запустить только в режиме «B» (Дизайн)");
+         return;
+         }
+
+// ---------------------------------------------------------------
+// ----------------------------------------------
+// -----------------------------
+
 
                  /// ПОДСЧЕТ И СОХРАНЕНИЕ ПАРАГРАФОВ
                  //      (регулярные выражения)
-
 
        //  Подсчет заголовков и подзаголовков
 
@@ -65,14 +312,23 @@ var Obrabotka_Subtitle_Em = 2;      // 0 ; 1 ; 2 //      ("0" — никогда
  var count_sTtl  = 0;
 
 
-       //  Поиск жирности/курсива
+       //  Поиск жирности, курсива, нижнего и верхнего индекса
 
- var reSt = new RegExp("<STRONG>","g");
- var reEm = new RegExp("<EM>","g");
- var reEmSt = new RegExp("<EM>|<STRONG>","g");
+ var reSt = new RegExp("<STRONG>.{1,}?</STRONG>","g");
+
+ var reEm = new RegExp("<EM>.{1,}?</EM>","g");
+
+ var reSub = new RegExp("<SUB>.{1,}?</SUB>","g");
+
+ var reSup = new RegExp("<SUP>.{1,}?</SUP>","g");
+ var reSupEx = new RegExp("<SUP>(<[^>]{1,}>|\\\s|"+nbspEntity+"){0,}(\\\d{1,}?|\\\[\\\d{1,}?\\\]|\\\{\\\d{1,}?\\\})(<[^>]{1,}>|\\\s|"+nbspEntity+"){0,}</SUP>","g");  // исключаются примечания
+ var SupTtlComm = false;
+ var SupSttlComm = false;
+
+ var reTag = new RegExp("<STRONG>.{1,}?</STRONG>|<EM>.{1,}?</EM>|<SUB>.{1,}?</SUB>|<SUP>.{1,}?</SUP>","g");
 
 
-       //  Подсчет выделеных строк в заголовках
+       //  Подсчет выделенных строк в заголовках
 
   //  С жирностью
  var m_01  = [];
@@ -82,303 +338,444 @@ var Obrabotka_Subtitle_Em = 2;      // 0 ; 1 ; 2 //      ("0" — никогда
  var m_02  = [];
  var count_002  = 0;
 
-
-       //  Подсчет выделенных строк в подзаголовках
-
-  //  С жирностью
+  //  С нижним индексом
  var m_03  = [];
  var count_003  = 0;
 
-  //  С курсивом
+  //  С верхним индексом
  var m_04  = [];
  var count_004  = 0;
 
 
-       //  Подсчет выделенных строк в заголовках в комментариях и примечаниях
- var m_05  = [];
- var count_005  = 0;
+       //  Подсчет выделенных строк в подзаголовках
+
+  //  С жирностью
+ var m_11  = [];
+ var count_011  = 0;
+
+  //  С курсивом
+ var m_12  = [];
+ var count_012  = 0;
+
+  //  С нижним индексом
+ var m_13  = [];
+ var count_013  = 0;
+
+  //  С верхним индексом
+ var m_14  = [];
+ var count_014  = 0;
+
+
+       //  Подсчет выделенных строк в заголовках комментариев и примечаний
+ var m_21  = [];
+ var count_021  = 0;
 
 // ---------------------------------------------------------------
 // ----------------------------------------------
 // -----------------------------
 
 
-
                  /// ПОДСЧЕТ И СОХРАНЕНИЕ ПАРАГРАФОВ
-                 //      (сборка функции "Vopros")
-
 
  var s="";
-
- function Vopros(ptr, bodyNC) {
-
- s=ptr.innerHTML;  // оригинальный абзац
- // В оригинальном абзаце ничего не изменяется
+ var s_="";
 
 
-   if (!bodyNC  &&  ptr.parentNode.className=="title") {
+         //  Функция "Vopros_1"  (обычные заголовки)
 
-           count_Ttl_1++;       //  Подсчет строк обычных заголовков
+ function Vopros_1 (ptr)  {
 
-                 //  Подсчет и сохранение строк обычных заголовков с полужирным шрифтом
-           if (Obrabotka_Title_St !=0  &&  s.search(reSt) !=-1) {
-                   m_01[count_001]  = ptr;
-                   count_001++ }
+         s=ptr.innerHTML;
 
-                 //  Подсчет и сохранение строк обычных заголовков с курсивом
-           if (Obrabotka_Title_Em !=0  &&  s.search(reEm) !=-1) {
-                   m_02[count_002]  = ptr;
-                   count_002++; }
-           }
+         count_Ttl_1++;       //  Подсчет всех строк в обычных заголовках
 
-   if (ptr.className=="subtitle") {
+               //  Подсчет и сохранение строк с полужирным шрифтом
+         if (Obrabotka_Title_St !=0  &&  s.search(reSt) !=-1) {
+                 m_01[count_001]  = ptr;
+                 count_001++
+                 }
 
-           count_sTtl++;       //  Подсчет строк подзаголовков
+               //  Подсчет и сохранение строк с курсивом
+         if (Obrabotka_Title_Em !=0  &&  s.search(reEm) !=-1) {
+                 m_02[count_002]  = ptr;
+                 count_002++;
+                 }
 
-                 //  Подсчет и сохранение строк подзаголовков с полужирным шрифтом
-           if (Obrabotka_Subtitle_St !=0  &&  s.search(reSt) !=-1) {
-                   m_03[count_003]  = ptr;
-                   count_003++; }
+               //  Подсчет и сохранение строк с нижним индексом
+         if (Obrabotka_Title_Sub !=0  &&  s.search(reSub) !=-1) {
+                 m_03[count_003]  = ptr;
+                 count_003++;
+                 }
 
-                 //  Подсчет и сохранение строк подзаголовков с курсивом
-           if (Obrabotka_Subtitle_Em !=0  &&  s.search(reEm) !=-1) {
-                   m_04[count_004]  = ptr;
-                   count_004++ }
-           }
+               //  Подсчет и сохранение строк с верхним индексом
+         if (Obrabotka_Title_Sup !=0  &&  s.search(reSup) !=-1) {
+                 if (s.search(reSupEx) !=-1)  { s=s.replace(reSupEx, "");  SupTtlComm = true }     //  * исключается текст похожий на примечание
+                 if (s.search(reSup) !=-1) {
+                         m_04[count_004]  = ptr;
+                         count_004++;
+                         }
+                 }
+         }
 
 
-   if (bodyNC  &&  ptr.parentNode.className=="title") {
+         //  Функция "Vopros_2"  (подзаголовки)
 
-           count_Ttl_2++;       //  Подсчет строк заголовков в комментариях и примечаниях
+ function Vopros_2 (ptr)  {
 
-                 //  Подсчет и сохранение строк заголовков с жирностью или курсивом
-           if (s.search(reEmSt) !=-1) {
-                   m_05[count_005]  = ptr;
-                   count_005++ }
-           }
+         s=ptr.innerHTML;
 
-    }
+         count_sTtl++;       //  Подсчет всех строк подзаголовков
+
+               //  Подсчет и сохранение строк с полужирным шрифтом
+         if (Obrabotka_Subtitle_St !=0  &&  s.search(reSt) !=-1) {
+                 m_11[count_011]  = ptr;
+                 count_011++;
+                 }
+
+               //  Подсчет и сохранение строк с курсивом
+         if (Obrabotka_Subtitle_Em !=0  &&  s.search(reEm) !=-1) {
+                 m_12[count_012]  = ptr;
+                 count_012++
+                 }
+
+               //  Подсчет и сохранение строк с нижним индексом
+         if (Obrabotka_Subtitle_Sub !=0  &&  s.search(reSub) !=-1) {
+                 m_13[count_013]  = ptr;
+                 count_013++;
+                 }
+
+               //  Подсчет и сохранение строк с верхним индексом
+         if (Obrabotka_Subtitle_Sup !=0  &&  s.search(reSup) !=-1) {
+                 if (s.search(reSupEx) !=-1)  { s=s.replace(reSupEx, "");  SupSttlComm = true }     //  * исключается текст похожий на примечание
+                 if (s.search(reSup) !=-1) {
+                         m_14[count_014]  = ptr;
+                         count_014++;
+                         }
+                 }
+         }
+
+
+         //  Функция "Vopros_3"  (заголовки в комментариях и примечаниях)
+
+ function Vopros_3 (ptr)  {
+
+         s=ptr.innerHTML;
+
+         count_Ttl_2++;       //  Подсчет строк заголовков в комментариях и примечаниях
+
+               //  Подсчет и сохранение строк заголовков с тегами
+         if (s.search(reTag) !=-1) {
+                 if (s.search(reSupEx) !=-1)  SupTtlComm = true;
+                 m_21[count_021]  = ptr;
+                 count_021++ }
+         }
 
 // ---------------------------------------------------------------
 // ----------------------------------------------
 // -----------------------------
 
 
-
                  /// ПОДСЧЕТ И СОХРАНЕНИЕ ПАРАГРАФОВ
-                 //      (применение функции "Vopros")
+                 //      (применение функций "Vopros_X")
 
+ var div;
+ var mP;
+ var mPL;
+ var j;
+ var jj;
+ var ptr;
 
-                                                                           // ОТКАТ (UNDO) начало    --  1-я часть записи
-    window.external.BeginUndoUnit(document,"«Удаление жирности/курсива в заголовках и подзаголовках» v."+NumerusVersion+":   Операции №091-092");
+ var mChild = fbwBody.children;     //  Получение всех первых разделов "fbw_body"
 
-
- var count_091 = 0;       //  Автоисправление вложений в параграфе (перезапись внутреннего содержимого)
- var re092 = new RegExp("STRONG|EM|SUP|SUB|STRIKE|SPAN","g");       //  Удаление внутренних тегов вне параграфа
- var count_092 = 0;
-
-
- var fbwBody=document.getElementById("fbw_body");   //  Структура текста (аннотация + история + все <body>, иначе говоря, всё это видно в режиме "B"-дизайн)
- var ptr=fbwBody;                                                           //  Начальное значение переменной "ptr"
- var bodyNC= false;                                  //  Индикатор:    параграф в "body" примечаний или комментариев
- var ProcessingEnding=false;                              //  Флаг завершения обработки
-
- while (!ProcessingEnding) {               //  Если конца текста не видно — продолжаем путешествие.
-         if (ptr.className =="body")           //  Если встретилось "body" примечаний или комментариев...
-                 if (ptr.getAttribute("fbname") !=null  &&  (ptr.getAttribute("fbname") =="notes"  ||  ptr.getAttribute("fbname") =="comments"))
-                         bodyNC = true;  else bodyNC = false;   //  ...то отмечаем это.
-         if (ptr.nodeName=="P"  &&  (ptr.parentNode.className=="title"  ||  ptr.className=="subtitle"))                  //  Если встретился параграф в заголовке или в подзаголовке...
-                 Vopros(ptr, bodyNC);                                                                        //  ...обрабатываем его функцией "Vopros".
-         if (ptr.firstChild!=null  &&  ptr.nodeName!="P")                //  Если есть куда углубляться, и это всё ещё не параграф...
-                 { ptr=ptr.firstChild }                                                       //  ...тогда спускаемся на один уровень.
-             else {                                                                                  //  Если углубляться нельзя...
-                     nextPtr = false;
-                     while (!nextPtr) {                                             //   Пока не осуществлен переход на соседний элемент...
-                             while (ptr.nextSibling==null)  {                              //  ...и если нет прохода на соседний элемент...
-                                     ptr=ptr.parentNode;                                           //  ...тогда поднимаемся, пока не появится этот проход.
-                                     if (ptr.nodeName =="P")                                                     //   Если при подъеме оказываемся в аномальном параграфе...
-                                             { ptr.innerHTML=ptr.innerHTML; count_091++ }           //   ...перезаписываем его.
-                                     if (ptr==fbwBody) {ProcessingEnding=true }                 // А если поднявшись, оказываемся в "fbw_body" — объявляем о завершении обработки текста.
-                                     }
-                             while (ptr.nextSibling !=null  &&  ptr.nextSibling.nodeName.search(re092)!=-1)    //   Если впереди странные теги курсива и т.п...
-                                     { ptr.nextSibling.removeNode(false); count_092++ }                                                             //   удаляем их все.
-                             if (ptr.nextSibling !=null)  { ptr=ptr.nextSibling; nextPtr = true }            //   И если возможно, то переходим на следующий элемент
+ for (j=0;  j<mChild.length;  j++) {            //  Последовательный просмотр всех первых разделов "fbw_body"
+         div = mChild[j];
+         if (div.className =="body"  &&  div.getAttribute("fbname")  &&  (div.getAttribute("fbname") =="notes"  ||  div.getAttribute("fbname") =="comments"))  {
+                 //  Если встретилось "body" примечаний или комментариев...
+                 mP = div.getElementsByTagName("P");          //  Получение всех строк в найденном разделе
+                 mPL = mP.length;                                       //  Получение количества строк
+                 for (jj=0;  jj<mPL;  jj++) {                      //  Последовательный просмотр строк
+                         ptr=mP[jj];
+                         if (ptr.parentNode.className=="title")  Vopros_3 (ptr);     //  Для строки в заголовке применяется функция "Vopros_3"
+                             else  if (ptr.className=="subtitle")  Vopros_2 (ptr);     //  Для строки в подзаголовке применяется функция "Vopros_2"
+                         }
+                 }
+             else  {       //  Если это не "body" примечаний или комментариев...
+                     mP = div.getElementsByTagName("P");          //  Получение всех строк в найденном разделе
+                     mPL = mP.length;                                       //  Получение количества строк
+                     for (jj=0;  jj<mPL;  jj++) {                      //  Последовательный просмотр строк
+                             ptr=mP[jj];
+                             if (ptr.parentNode.className=="title")  Vopros_1 (ptr);     //  Для строки в заголовке применяется функция "Vopros_1"
+                                 else  if (ptr.className=="subtitle")  Vopros_2 (ptr);     //  Для строки в подзаголовке применяется функция "Vopros_2"
                              }
                      }
          }
 
-
-    window.external.EndUndoUnit(document);                                             // undo конец (запись в систему для отката)
-
 // ---------------------------------------------------------------
 // ----------------------------------------------
 // -----------------------------
 
 
-
                  /// ПРОСМОТР И ИЗМЕНЕНИЕ ПАРАГРАФОВ
 
-
- var r=Object();
- var otvet2=0;
+ var otvet=0;
  var msg1="";
  var msg2="";
  var mP=[];
  var count;
- var reSocr = new RegExp("^(.{55}).{3,}","g");       //  Сокращение строки
- var reSocr_ = "$1...";
-
-         //  Функция перехода на начало элемента (FBE будет считать эту операцию изменением документа)
- function GoToBegin(Elem) {
- Elem5=document.createElement("ELEM");
- Elem.insertAdjacentElement("beforeBegin", Elem5);
- GoTo(Elem5);
- Elem5.removeNode(true);
- }
 
          //  Функция просмотра найденных строк
  function specto(msg1, mP, count) {
  n=0;
- GoToBegin(mP[n]);                                //  переход на первый элемент, сохраненный в массиве
- msg1 += "\n                  ПОКАЗАТЬ следующую строку, ан нет — так предыдущую?";    //  Вторая строка заголовка в окне
- otvet2=0;
- while (otvet2 !=2) {                     //  Окно ввода будет запускаться, пока не будет нажата кнопка "Отмена"
-         msg2=" • "+(n+1)+" из "+count+" •  "+mP[n].innerHTML.replace(reSocr, reSocr_)+" ";      //   Формирование строки: " • [номер эл-та] из [общее число эл-ов] •  [внутреннее содержание эл-та]"
-         otvet2 = InputBox(msg1, msg2, r);           //  Открытие окна ввода, и сохранение кода нажатой кнопки
-         if (otvet2 ==6)                          //   Если нажата кнопка "Да"
+ otvet=0;
+ while ("зацикливание") {                     //  Окно ввода будет запускаться, пока не будет нажата кнопка "Отмена"
+         if (n+1 != count)    msg2= "Строка "+(n+1)+" из "+count+"\n"+"                        ◊  Показать следующую строку?";
+         if (n+1 == count)  msg2= "Строка "+(n+1)+" из "+count+"\n"+"                        ◊  Вернуться к первой строке?";
+         if (count == 1)       msg2= "Строка "+(n+1)+" из "+count+"\n"+"                        ◊  Для выхода из режима просмотра нажмите \"Отмена\"";
+
+         StyleDiv = document.createElement("DIV");            //  Создаем раздел стилей.
+         mP[n].insertAdjacentElement("beforeBegin", StyleDiv);    //   Добавляем раздел стилей в текст.
+         StyleDiv.insertAdjacentElement("afterBegin", mP[n]);   //   Вставляем строки параграфа в этот раздел.
+         if (msg1.search("подзаг")!=-1)
+                 StyleDiv.style.backgroundColor="#B08CD1";         //  Выделяем раздел с подзаголовком одним цветом,
+             else  StyleDiv.style.backgroundColor="#C9B766";         //  а раздел со строкой заголовка - другим.
+         StyleDiv.style.color="black";                             //  Выбираем цвет шрифта
+         StyleDiv.style.border="none";                        //  и убираем рамку.
+
+         GoTo(mP[n]);              //  Переход на элемент с выбранным номером
+
+         T_pause -= new Date().getTime();
+         window.external.InputBox(msg2, msg1, "");        // спрашиваем
+         T_pause += new Date().getTime();
+
+         StyleDiv.removeNode(false);                            //  Удаляем раздел стилей.
+
+         otvet = window.external.GetModalResult();            //   получение кнопки ответа
+         if (otvet ==6)                          //   Если нажата кнопка "Да"
                  if (n<count-1) n++;        //   увеличивается номер элемента в массиве
                      else n=0;                        //   если нельзя увеличить, то выбирается самый первый номер
-         if (otvet2 ==7)                          //   Если нажата кнопка "Нет"
-                 if (n>0) n--;                        //   уменьшается номер элемента в массиве
-                     else n=count-1;             //   если нельзя уменьшить, то выбирается самый последний номер
-         if (otvet2 !=2) GoToBegin(mP[n]) }                //   Если не нажата кнопка "Отмена", осуществляется переход на элемент с выбранным номером
- }
-
- var ok="";
- var m1;
- var m2;
- var Numer;
-
-         //  Функция склонения по падежам в зависимости от числа
- function pad(Numer) {
- ok=2;
- m1=Numer % 10;
- m2=Numer % 100;
- if (m2<11 || m2>19) {
-         if (m1==1) ok=0;
-         else  if (m1==2 || m1==3 || m1==4) ok=1;    }
+         if (otvet ==7)                         //   Если нажата кнопка "Нет"
+                 if (n>0) n--;                       //   уменьшается номер элемента в массиве
+                     else n=count-1;           //   если нельзя уменьшить, то выбирается самый последний номер
+         if (otvet ==2)  break;         //   Если нажата кнопка "Отмена" -- выход из цикла
+         }
  }
 
 
          //   Вопросы к пользователю
 
- var Budut_ochishheny = [ "Будет очищена ", "Будут очищены ", "Будут очищены " ];
- var strok = [ " строка", " строки", " строк" ];
- var zagolovkov = [ " заголовка", " заголовков", " заголовков" ];
- var podzagolovkov = [ " подзаголовка", " подзаголовков", " подзаголовков" ];
+ var reSt_Del = new RegExp("</{0,1}STRONG>","g");       //  Удаление жирности
+ var reEm_Del = new RegExp("</{0,1}EM>","g");       //  Удаление курсива
+ var reSub_Del = new RegExp("</{0,1}SUB>","g");       //  Удаление нижнего индекса
 
- var otvet;
+ var reSup_Del = new RegExp("</{0,1}SUP>","g");       //  Удаление верхнего индекса
+ var reSup_Off = new RegExp("<(SUP>(<[^>]{1,}>|\\\s|"+nbspEntity+"){0,}(\\\d{1,}?|\\\[\\\d{1,}?\\\]|\\\{\\\d{1,}?\\\})(<[^>]{1,}>|\\\s|"+nbspEntity+"){0,}</SUP)>","g");       //  Скрытие исключения для верхнего индекса
+ var reSup_Off_ = "< $1 >";
+ var reSup_On = new RegExp("< (SUP>(<[^>]{1,}>|\\\s|"+nbspEntity+"){0,}(\\\d{1,}?|\\\[\\\d{1,}?\\\]|\\\{\\\d{1,}?\\\})(<[^>]{1,}>|\\\s|"+nbspEntity+"){0,}</SUP) >","g");       //  Возвращение исключения для верхнего индекса
+ var reSup_On_ = "<$1>";
 
- var re101 = new RegExp("</{0,1}STRONG>","g");       //  Удаление жирности
- var re102 = new RegExp("</{0,1}EM>","g");       //  Удаление курсива
- var re103 = new RegExp("</{0,1}STRONG>","g");       //  Удаление жирности
- var re104 = new RegExp("</{0,1}EM>","g");       //  Удаление курсива
- var re105 = new RegExp("</{0,1}EM>|</{0,1}STRONG>","g");       //  Удаление курсива и жирности
+ var reTag_Del = new RegExp("</{0,1}EM>|</{0,1}STRONG>|</{0,1}SUB>","g");       //  Удаление курсива, жирности и нижнего индекса
 
- var count_101 = 0;  var count_102 = 0;  var count_103 = 0;  var count_104 = 0;  var count_105 = 0;
-
-
-         //  Снятие показания времени перед открытием окон
-  var Tf1=new Date().getTime();
-  var Ts2=0;  var Tf2=0;  var Ts3=0;  var Tf3=0;  var Ts4=0;  var Tf4=0;  var Ts5=0;  var Tf5=0;
+ var count_101 = 0;  var count_102 = 0;  var count_103 = 0;  var count_104 = 0;
+ var count_111 = 0;  var count_112 = 0;  var count_113 = 0;  var count_114 = 0;
+ var count_121 = 0;
 
 
-    window.external.BeginUndoUnit(document,"«Удаление жирности/курсива в заголовках и подзаголовках» v."+NumerusVersion);                               // ОТКАТ (UNDO) начало
+ window.external.BeginUndoUnit(document, ScriptName + " v."+NumerusVersion);    // Начало записи в систему отмен.
 
+
+         //  Заголовки
 
  if (count_001 !=0)  {
-         otvet =2;
-         while (otvet ==2  &&  Obrabotka_Title_St ==2) {
-                 specto("                                     ◊  ЖИРНОСТЬ в ЗАГОЛОВКАХ  ◊", m_01, count_001);
-                 msg1="                                     ◊  ЖИРНОСТЬ в ЗАГОЛОВКАХ  ◊"+
-                              "\n                                                    ОЧИСТИТЬ?";
-                 pad(count_001);
-                 msg2=" • "+Budut_ochishheny[ok]+count_001+strok[ok]+zagolovkov[ok]+" • ";
-                 otvet = InputBox(msg1, msg2, r); }
-         if (otvet ==6  ||  Obrabotka_Title_St ==1) {
-                 Ts2=new Date().getTime();
+         otvet=false;
+         if (Obrabotka_Title_St ==2) {
+                 specto("• Жирность в заголовках • Просмотр •", m_01, count_001);
+                 T_pause -= new Date().getTime();
+                 otvet = AskYesNo ("◊  Удалить жирность во всех заголовках?                   ");
+                 T_pause += new Date().getTime();
+                 }
+         if (otvet  ||  Obrabotka_Title_St ==1)
                  for ( n=0; n<count_001; n++) {
-                         m_01[n].innerHTML=m_01[n].innerHTML.replace(re101, "");
-                         count_101++ }
-                 Tf2=new Date().getTime() }
+                         s=m_01[n].innerHTML;
+                         count_101 += s.match(reSt_Del).length /2;
+                         m_01[n].innerHTML=s.replace(reSt_Del, "");
+                         }
          }
 
  if (count_002 !=0)  {
-         otvet =2;
-         pad(count_002);
-         while (otvet ==2  &&  Obrabotka_Title_Em ==2) {
-                 specto("                                         ◊  КУРСИВ в ЗАГОЛОВКАХ  ◊", m_02, count_002);
-                 msg1="                                         ◊  КУРСИВ в ЗАГОЛОВКАХ  ◊"+
-                              "\n                                                    ОЧИСТИТЬ?";
-                 msg2=" • "+Budut_ochishheny[ok]+count_002+strok[ok]+zagolovkov[ok]+" • ";
-                 otvet = InputBox(msg1, msg2, r); }
-         if (otvet ==6  ||  Obrabotka_Title_Em ==1) {
-                 Ts3=new Date().getTime();
+         otvet=false;
+         if (Obrabotka_Title_Em ==2) {
+                 specto("• Курсив в заголовках • Просмотр •", m_02, count_002);
+                 T_pause -= new Date().getTime();
+                 otvet = AskYesNo ("◊  Удалить курсив во всех заголовках?                   ");
+                 T_pause += new Date().getTime();
+                 }
+         if (otvet  ||  Obrabotka_Title_Em ==1)
                  for ( n=0; n<count_002; n++) {
-                         m_02[n].innerHTML=m_02[n].innerHTML.replace(re102, "");
-                         count_102++ }
-                 Tf3=new Date().getTime() }
+                         s=m_02[n].innerHTML;
+                         count_102 += s.match(reEm_Del).length /2;
+                         m_02[n].innerHTML=s.replace(reEm_Del, "");
+                         }
          }
 
  if (count_003 !=0)  {
-         otvet =2;
-         pad(count_003);
-         while (otvet ==2  &&  Obrabotka_Subtitle_St ==2) {
-                 specto("                                  ◊  ЖИРНОСТЬ в ПОДЗАГОЛОВКАХ  ◊", m_03, count_003);
-                 msg1="                                  ◊  ЖИРНОСТЬ в ПОДЗАГОЛОВКАХ  ◊"+
-                              "\n                                                    ОЧИСТИТЬ?";
-                 msg2=" • "+Budut_ochishheny[ok]+count_003+strok[ok]+podzagolovkov[ok]+" • ";
-                 otvet = InputBox(msg1, msg2, r); }
-         if (otvet ==6  ||  Obrabotka_Subtitle_St ==1) {
-                 Ts4=new Date().getTime();
+         otvet=false;
+         if (Obrabotka_Title_Sub ==2) {
+                 specto("• Нижний индекс в заголовках • Просмотр •", m_03, count_003);
+                 T_pause -= new Date().getTime();
+                 otvet = AskYesNo ("◊  Удалить нижний индекс во всех заголовках?                   ");
+                 T_pause += new Date().getTime();
+                 }
+         if (otvet  ||  Obrabotka_Title_Sub ==1)
                  for ( n=0; n<count_003; n++) {
-                         m_03[n].innerHTML=m_03[n].innerHTML.replace(re103, "");
-                         count_103++ }
-                 Tf4=new Date().getTime() }
+                         s=m_03[n].innerHTML;
+                         count_103 += s.match(reSub_Del).length /2;
+                         m_03[n].innerHTML=s.replace(reSub_Del, "");
+                         }
          }
 
  if (count_004 !=0)  {
-         otvet =2;
-         pad(count_004);
-         while (otvet ==2  &&  Obrabotka_Subtitle_Em ==2) {
-                 specto("                                    ◊  КУРСИВ в ПОДЗАГОЛОВКАХ  ◊", m_04, count_004);
-                 msg1="                                    ◊  КУРСИВ в ПОДЗАГОЛОВКАХ  ◊"+
-                              "\n                                                    ОЧИСТИТЬ?";
-                 msg2=" • "+Budut_ochishheny[ok]+count_004+strok[ok]+podzagolovkov[ok]+" • ";
-                 otvet = InputBox(msg1, msg2, r); }
-         if (otvet ==6  ||  Obrabotka_Subtitle_Em ==1) {
-                 Ts5=new Date().getTime();
+         otvet=false;
+         if (Obrabotka_Title_Sup ==2) {
+                 specto("• Верхний индекс в заголовках • Просмотр •", m_04, count_004);
+                 T_pause -= new Date().getTime();
+                 if (SupTtlComm)
+                         otvet = AskYesNo ("◊  Удалить верхний индекс во всех заголовках?                   \n\n"+
+                                                               "_ _ _ _ _ _ _\n"+
+                                                               "* форматирование чисел сохраняется");
+                     else  otvet = AskYesNo ("◊  Удалить верхний индекс во всех заголовках?                   ");
+                 T_pause += new Date().getTime();
+                 }
+         if (otvet  ||  Obrabotka_Title_Sup ==1)
                  for ( n=0; n<count_004; n++) {
-                         m_04[n].innerHTML=m_04[n].innerHTML.replace(re104, "");
-                         count_104++ }
-                 Tf5=new Date().getTime() }
+                         s=m_04[n].innerHTML;
+                         s=s.replace(reSup_Off, reSup_Off_);  //  скрытие исключения
+                         count_104 += s.match(reSup_Del).length /2;
+                         s=s.replace(reSup_Del, "");                   //  удаление формата
+                         s=s.replace(reSup_On, reSup_On_);  //  возвращение исключения
+                         m_04[n].innerHTML=s;
+                         }
          }
 
 
-         //  Снятие показания времени после закрытия окон
-var Ts6=new Date().getTime();
+         //  Подзаголовки
+
+ if (count_011 !=0)  {
+         otvet=false;
+         if (Obrabotka_Subtitle_St ==2) {
+                 specto("• Жирность в подзаголовках • Просмотр •", m_11, count_011);
+                 T_pause -= new Date().getTime();
+                 otvet = AskYesNo ("◊  Удалить жирность во всех подзаголовках?                   ");
+                 T_pause += new Date().getTime();
+                 }
+         if (otvet  ||  Obrabotka_Subtitle_St ==1)
+                 for ( n=0; n<count_011; n++) {
+                         s=m_11[n].innerHTML;
+                         count_111 += s.match(reSt_Del).length /2;
+                         m_11[n].innerHTML=s.replace(reSt_Del, "");
+                         }
+         }
+
+ if (count_012 !=0)  {
+         otvet=false;
+         if (Obrabotka_Subtitle_Em ==2) {
+                 specto("• Курсив в подзаголовках • Просмотр •", m_12, count_012);
+                 T_pause -= new Date().getTime();
+                 otvet = AskYesNo ("◊  Удалить курсив во всех подзаголовках?                   ");
+                 T_pause += new Date().getTime();
+                 }
+         if (otvet  ||  Obrabotka_Subtitle_Em ==1)
+                 for ( n=0; n<count_012; n++) {
+                         s=m_12[n].innerHTML;
+                         count_112 += s.match(reEm_Del).length /2;
+                         m_12[n].innerHTML=s.replace(reEm_Del, "");
+                         }
+         }
+
+ if (count_013 !=0)  {
+         otvet=false;
+         if (Obrabotka_Subtitle_Sub ==2) {
+                 specto("• Нижний индекс в подзаголовках • Просмотр •", m_13, count_013);
+                 T_pause -= new Date().getTime();
+                 otvet = AskYesNo ("◊  Удалить нижний индекс во всех подзаголовках?                   ");
+                 T_pause += new Date().getTime();
+                 }
+         if (otvet  ||  Obrabotka_Subtitle_Sub ==1)
+                 for ( n=0; n<count_013; n++) {
+                         s=m_13[n].innerHTML;
+                         count_113 += s.match(reSub_Del).length /2;
+                         m_13[n].innerHTML=s.replace(reSub_Del, "");
+                         }
+         }
+
+ if (count_014 !=0)  {
+         otvet=false;
+         if (Obrabotka_Subtitle_Sup ==2) {
+                 specto("• Верхний индекс в подзаголовках • Просмотр •", m_14, count_014);
+                 T_pause -= new Date().getTime();
+                 if (SupSttlComm)
+                         otvet = AskYesNo ("◊  Удалить верхний индекс во всех* подзаголовках?                   \n\n"+
+                                                               "_________\n"+
+                                                               "* форматирование чисел сохраняется");
+                     else  otvet = AskYesNo ("◊  Удалить верхний индекс во всех подзаголовках?                   ");
+                 T_pause += new Date().getTime();
+                 }
+         if (otvet  ||  Obrabotka_Subtitle_Sup ==1)
+                 for ( n=0; n<count_014; n++) {
+                         s=m_14[n].innerHTML;
+                         s=s.replace(reSup_Off, reSup_Off_);  //  скрытие исключения
+                         count_114 += s.match(reSup_Del).length /2;
+                         s=s.replace(reSup_Del, "");                   //  удаление формата
+                         s=s.replace(reSup_On, reSup_On_);  //  возвращение исключения
+                         m_14[n].innerHTML=s;
+                         }
+         }
 
 
-         for ( n=0; n<count_005; n++) {
-                 m_05[n].innerHTML=m_05[n].innerHTML.replace(re105, "");
-                 count_105++ }
+         //  Заголовки примечаний и коментариев
+
+ for ( n=0; n<count_021; n++) {
+         s=m_21[n].innerHTML;
+         s_=s;
+         if (s.search(reTag_Del)>=0)  { count_121 += s.match(reTag_Del).length /2;    s=s.replace(reTag_Del, "");  }     //  удаление трех тегов
+         s=s.replace(reSup_Off, reSup_Off_);       //  скрытие исключения
+         if (s.search(reSup_Del)>=0)  { count_121 += s.match(reSup_Del).length /2;    s=s.replace(reSup_Del, "");  }    //  удаление формата верхнего индекса
+         s=s.replace(reSup_On, reSup_On_);        //  возвращение исключения
+         if (s_!=s)  m_21[n].innerHTML=s;        //  сохранение строки при ее изменении
+         }
 
 // ---------------------------------------------------------------
 // ----------------------------------------------
 // -----------------------------
 
 
-    window.external.EndUndoUnit(document);                                             // undo конец (запись в систему для отката)
+                 // Подсчет общего количества исправлений
+ var count_all = count_101 + count_102 + count_103 + count_104 + count_111 + count_112 + count_113 + count_114 + count_121;
+
+// ---------------------------------------------------------------
+// ----------------------------------------------
+// -----------------------------
+
+
+                 ///  ПОВЫШЕНИЕ ВЕРСИИ ФАЙЛА И ЗАПИСЬ В ИСТОРИЮ ИЗМЕНЕНИЙ
+                 //  (применение функции "HistoryChange")
+
+ var versionFile=document.getElementById("diVersion").value; //  Извлечение значения версии файла.
+ var newVersion = versionFile;                                                          //  Значение новой версии.
+
+ var HiCh=0;                     //  Код изменения истории.
+ var VersionUp=false;   //  Индикатор повышения версии.
+
+//  Если включено автоматическое повышение версии, а также если есть измененные строки или разрешено повышение версии когда нет изменений...
+ if (Version_on_off == 1  &&  (count_all  ||  Vsegda_on_off == 1))
+         HistoryChange(ScriptName + " " + NumerusVersion, youName);   //  запускаем функцию для изменения данных истории.
+
+// ---------------------------------------------------------------
+
+ window.external.EndUndoUnit(document);    // Конец записи в систему отмен.
+
+// ---------------------------------------------------------------
+// ----------------------------------------------
+// -----------------------------
 
 
                  /// ОКНО РЕЗУЛЬТАТОВ  :  Текущее время и дата
@@ -397,7 +794,6 @@ var Ts6=new Date().getTime();
  var currentMonth = 1+currentFullDate.getMonth();
  var currentYear = currentFullDate.getFullYear();
 
- if (currentDay<10) currentDay = "‌ ‌ " + currentDay;
  if (currentMonth<10) currentMonth = "0" + currentMonth;
 currentYear = (currentYear+"").replace(/^.*?(\d{1,2})$/g, "$1");
 
@@ -409,117 +805,100 @@ currentYear = (currentYear+"").replace(/^.*?(\d{1,2})$/g, "$1");
 // -----------------------------
 
 
+                 /// Демонстрационный режим "Показать все строки"
 
-                 /// ОКНО РЕЗУЛЬТАТОВ  :  Подсчет чистого компьютерного времени, потраченного на обработку текста
+var VseStroki_on_off = 0;      // 0 ; 1 //      ("0" — отключить, "1" — включить)
 
-
- var Tf6=new Date().getTime();
-
- var T2=(Tf1-Ts1)+(Tf2-Ts2)+(Tf3-Ts3)+(Tf4-Ts4)+(Tf5-Ts5)+(Tf6-Ts6);
- var Tmin  = Math.floor((T2)/60000);
- var TsecD = ((T2)%60000)/1000;
- var Tsec = Math.floor(TsecD);
-
- if (Tmin ==0)
-         tempus = (TsecD+"").replace(/(.{1,5}).*/g, "$1").replace(".", ",")+" сек";
-     else {
-             tempus = Tmin+" мин";
-             if (Tsec !=0)
-                     tempus += " " + Tsec+ " с" }
+ var d=0;
+ if (VseStroki_on_off == 1)  d="показать нули";
 
 // ---------------------------------------------------------------
 // ----------------------------------------------
 // -----------------------------
-
-
-
-                 /// ДОПОЛНЕНИЕ _2_  :  Демонстрационный режим "Показать все строки"
-
-
- var dem=false;
- var Exemplar="н/д";
-// dem=true;   // !!!!!  активатор
- if (dem) {
-          count_Ttl_1=Exemplar;  count_Ttl_2=Exemplar;  count_sTtl=Exemplar;
-          count_101=Exemplar;  count_102=Exemplar;  count_103=Exemplar;  count_104=Exemplar;  count_105=Exemplar;
-         }
-
-// ---------------------------------------------------------------
-// ----------------------------------------------
-// -----------------------------
-
 
 
                  /// ОКНО РЕЗУЛЬТАТОВ  :  Сборка массива с результатами обработки
 
-
+ var Tf=new Date().getTime();
  var mSt=[];
- var ind=1;
+ var ind=0;
 
-                                                             mSt[ind]='• СТАТИСТИКА:';  ind++;
-                                                             mSt[ind]='• Время выполнения  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .	'+tempus;  ind++;
- if (count_Ttl_1!=0) {
-      if (count_Ttl_2==0 || dem){ mSt[ind]='• Строк заголовков  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .	'+count_Ttl_1;  ind++ }
-      if (count_Ttl_2!=0)               { mSt[ind]='• Строк обычных заголовков  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .	'+count_Ttl_1;  ind++ }    }
- if (count_Ttl_2!=0)                    { mSt[ind]='• Строк заголовков примечаний/комментариев  .  .  .  .  .  .  .  .	'+count_Ttl_2;  ind++ }
- if (count_sTtl!=0)                       { mSt[ind]='• Строк подзаголовков  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .	'+count_sTtl;  ind++ }
+                 mSt[ind]=" «Удаление форматирования";  ind++;
+                 mSt[ind]="           в заголовках и подзаголовках» v."+NumerusVersion;  ind++;
+                 mSt[ind]="---------------------------------------------------------";  ind++;
+ if (d)   { mSt[ind]=" Демонстрационный режим";  ind++ }
+                 mSt[ind]="					     ";  ind++;
 
- var cTaT1=ind-1;  //  число строк в первом разделе
+                                         mSt[ind]="Вычисления  .  .  .  .  .  .  .  .  .  .  .  .	"+time(Tf - Ts - T_pause);  ind++;
+ if (T_pause!=d)       { mSt[ind]="Диалоговые паузы .  .  .  .  .  .  .  .  .	"+time(T_pause);  ind++; }
+ if (count_Ttl_1!=d) {
+      if (count_Ttl_2==0 || d) { mSt[ind]="Строк заголовков  .  .  .  .  .  .  .  .  .	"+count_Ttl_1;  ind++ }
+      if (count_Ttl_2!=d)          { mSt[ind]="Строк обычных заголовков  .  .  .  .	"+count_Ttl_1;  ind++ }    }
+ if (count_Ttl_2!=d)               { mSt[ind]="Строк заголовков примечаний	"+count_Ttl_2;  ind++ }
+ if (count_sTtl!=d)                 { mSt[ind]="Строк подзаголовков  .  .  .  .  .  .  .	"+count_sTtl;  ind++ }
 
-                                                             mSt[ind]='';  ind++;
-                                                             mSt[ind]='• ЧИСТКА СТРУКТУРЫ:';  ind++;
-         if (count_091!=0)             { mSt[ind]='091. Перезапись параграфов .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .	'+count_091;  ind++ }
-         if (count_092!=0)             { mSt[ind]='092. Удаление внутренних тегов вне параграфа   .  .  .  .  .  .  .  .  .  .  .	'+count_092;  ind++ }
+ var cTaT=ind;  //  число строк в 1-м разделе
 
- if (cTaT1==ind-3) ind=ind-2;  //  Удаление двух последних строк, если нет пунктов "ЧИСТКА СТРУКТУРЫ"
- var cTaT2=ind-1;  //  число строк в 2-х разделах
+                                         mSt[ind]="";  ind++;
+                                         mSt[ind]="• УДАЛЕНИЕ ФОРМАТОВ:";  ind++;
+ if (count_101!=d)  { mSt[ind]="Жирность в  заголовках .  .  .  .  .  .	"+count_101;  ind++ }
+ if (count_102!=d)  { mSt[ind]="Курсив в  заголовках   .  .  .  .  .  .  .	"+count_102;  ind++ }
+ if (count_103!=d)  { mSt[ind]="Нижний индекс в  заголовках  .  .  .	"+count_103;  ind++ }
+ if (count_104!=d)  { mSt[ind]="Верхний индекс в  заголовках .  .  .	"+count_104;  ind++ }
+ if (count_111!=d)  { mSt[ind]="Жирность в  подзаголовках .  .  .  .	"+count_111;  ind++ }
+ if (count_112!=d)  { mSt[ind]="Курсив в  подзаголовках   .  .  .  .  .	"+count_112;  ind++ }
+ if (count_113!=d)  { mSt[ind]="Нижний индекс в  подзаголовках	"+count_113;  ind++ }
+ if (count_114!=d)  { mSt[ind]="Верхний индекс в  подзаголовках	"+count_114;  ind++ }
+ if (count_121!=d)  { mSt[ind]="Теги в  заголовках  примечаний	"+count_121;  ind++ }
 
-                                                             mSt[ind]='';  ind++;
-                                                             mSt[ind]='• УДАЛЕННОЕ ФОРМАТИРОВАНИЕ:';  ind++;
- if (count_101!=0)                      { mSt[ind]='101. Жирность в заголовках  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .	'+count_101;  ind++ }
- if (count_102!=0)                      { mSt[ind]='102. Курсив в заголовках .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .	'+count_102;  ind++ }
- if (count_103!=0)                      { mSt[ind]='103. Жирность в подзаголовках   .  .  .  .  .  .  .  .  .  .  .  .  .  .  .	'+count_103;  ind++ }
- if (count_104!=0)                      { mSt[ind]='104. Курсив в подзаголовках  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .	'+count_104;  ind++ }
- if (count_105!=0)                      { mSt[ind]='105. Формат в заголовках примечаний/комментариев .  .  .  .  .	'+count_105;  ind++ }
+ if (cTaT==ind-2)  mSt[ind-1]=">> Исправлений нет";   //  Если нет пунктов с исправлениями  -  замена последней строки.
 
- if (cTaT2==ind-3) ind=ind-2;  //  Удаление двух последних строк, если нет пунктов "УДАЛЕННОЕ ФОРМАТИРОВАНИЕ"
+//  История
+ if (VersionUp ||  HiCh  ||  d)  { mSt[ind]="";  ind++ }
+ if (VersionUp  ||  d)                 { mSt[ind]="• Версия файла:  "+versionFile+"  ›››  "+newVersion;  ind++ }
+ if (HiCh==1  ||  d)                    { mSt[ind]="• Добавлена новая строка в историю";  ind++ }
+ if (HiCh==2  ||  d)                    { mSt[ind]="• Добавлены две строки в историю";  ind++ }
+ if (HiCh==3  ||  d)                    { mSt[ind]="• Изменены данные в строке истории";  ind++ }
 
- if (cTaT1==ind-1) {                      //   Добавление двух текстовых строк, если кроме "статистики" ничего нет
-                                                             mSt[ind]='';  ind++;
-                                                             mSt[ind]="                        ошибки в оформлении не обнаружены";  ind++ }
+ mSt[ind]="";  ind++;
+ mSt[ind]="---------------------------------------------------------";  ind++;
 
-                                                             mSt[ind]='';  ind++;
-                                                             mSt[ind]=" ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ "+currentDate+" ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ "+currentTime+" ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ";  ind++;
+//  Сборка строк текущей даты и времени
+ mSt[ind]= "• "+currentDate+" • "+currentTime+" •";  ind++;
 
 // ---------------------------------------------------------------
 // ----------------------------------------------
 // -----------------------------
-
 
 
                  /// ОКНО РЕЗУЛЬТАТОВ  :  Вывод окна результатов на экран
 
+ var stText="";   //  Текст результатов.
 
- var st2="";  //  текст результатов
+ for  ( n=0; n!=ind; n++ )
+        stText+=mSt[n]+"\n";   //  Добавление элемента из массива.
 
- for  ( n=1; n!=ind; n++ )
-        st2=st2+'\n    '+mSt[n];  //  добавление элемента из массива
-
-
-//  Вывод окна результатов
- MsgBox ('     .·.·.·.                                       –= ◊ =–                                       .·.·.·.\n'+
-                    '  ·.̉·.̉·.̉  «Жирность/курсив в заголовках и подзаголовках» v.'+NumerusVersion+'  .̉·.̉·.̉·                   \n'+
-                   '      ̉   ̉   ̉                                                                                                  ̉   ̉   ̉ '+st2);
+ MsgBox (stText);   //  Вывод окна результатов.
 
 // ---------------------------------------------------------------
 // ----------------------------------------------
 // -----------------------------
 
-
-
 }
 
 
+
+                 ///  ИСТОРИЯ ИЗМЕНЕНИЙ
+
+// v.1.0 — Создание скрипта — Александр Ка (21.03.2024)
+
+// v.2.0 — Глобальная редакция — Александр Ка (30.01.2025)
+// Изменено имя скрипта (было «Удаление жирности/курсива в заголовках и подзаголовках»)
+// Добавлено удаление формата верхнего и нижнего индекса
+// Исправлены все ошибки связанные с неправильным отображением текста в окнах для win7
+// И т.д., и т.п.
+
+// v.2.1 — Добавлена функция повышения версии файла и запись в историю изменений — Александр Ка (25.04.2025)
 
 
 
