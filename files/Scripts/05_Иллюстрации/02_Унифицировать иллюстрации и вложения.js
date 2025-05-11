@@ -2,6 +2,8 @@
 // Автор Sclex
 
 function Run() {
+ window.external.BeginUndoUnit(document,"binaries and images unification");
+ 
  var Ts=new Date().getTime();
  
  var versionNumber="1.6";
@@ -89,8 +91,19 @@ function Run() {
   ImgInfoNumById[NewId]=ImgInfoNumById[id];
   ImgInfoNumById[id]=null;
  }
+ 
+ function updateImages() {
+  var imgs=document.getElementsByTagName("IMG");
+  var myImg,pic_id;
+  for (var i=imgs.length-1; i>=0; i--) {
+   myImg=imgs[i];
+   pic_id=myImg.src;
+   myImg.src="";
+   myImg.src=pic_id;
+  }
+  FillCoverList();
+ }
 
- window.external.BeginUndoUnit(document,"binaries and images unification");
  var body=document.getElementById("fbw_body");
  if (!body) return;
  var imgs=body.getElementsByTagName("IMG");
@@ -457,6 +470,34 @@ function Run() {
  FillCoverList();
  if (NewTiCover!="") lists1[xyz1].value="#"+NewTiCover;
  if (NewStiCover!="") lists2[xyz2].value="#"+NewStiCover;
+ 
+ /*
+ var bins=document.all.binobj.getElementsByTagName("DIV");
+ var savedId,savedBase64data,savedSize,savedType,savedDims;
+ for (var i=0;i<bins.length;i++) {
+  savedId=bins[i].all.id.value;
+  savedSize=bins[i].all.size.value;
+  savedType=bins[i].all.type.value;
+  savedDims=bins[i].all.dims.value;
+  savedBase64data=bins[i].getAttribute("base64data");
+    
+  bins[i].all.id.value="";
+  bins[i].all.size.value="";
+  bins[i].all.type.value="";
+  bins[i].all.dims.value="";
+  bins[i].all.id.removeAttribute("oldId");
+  bins[i].removeAttribute("base64data");
+  
+  bins[i].all.id.value=savedId;
+  bins[i].all.id.setAttribute("oldId",savedId);
+  bins[i].all.size.value=savedSize;
+  bins[i].all.type.value=savedType;
+  bins[i].all.dims.value=savedDims;
+  bins[i].setAttribute("base64data",savedBase64data);
+ }
+ */
+ updateImages();
+ updateImages();
  window.external.EndUndoUnit(document);
 
  var Tf=new Date().getTime();
