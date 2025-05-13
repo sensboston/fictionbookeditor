@@ -1,5 +1,5 @@
 // Скрипт «Поиск странных символов» для редактора Fiction Book Editor (FBE).
-// Версия 5.1
+// Версия 5.2
 // Автор Sclex, набор RegExp-ов - TaKir, Sclex, январь, 2025
 // 30 января 2023 года исправлены недочеты поисковых команд, на которые (недочеты) указал пользователь stokber
 // 06 апреля 2023 года исправлены недочеты поисковых команд, на которые (недочеты) указал пользователь stokber
@@ -75,7 +75,7 @@ function Run() {
 
 
 
-// -------------начало блока TaKir - регэкспы (02.01.2025)---------------
+// -------------начало блока TaKir - регэкспы (25.02.2025)---------------
 
 
   //  _._._._._._._._._._._._._._._._._._._._._._._._
@@ -111,10 +111,12 @@ function Run() {
   
         addRegExp("[^\\u0400-\\u04FF\\u0020-\\u007F\\u0100-\\u017F\\u0180-\\u024F\\u00A0-\\u00FF\\u0370-\\u03FF\\u2200-\\u22FF\\u2150-\\u218F\\x20\\xA0\\t\\n\\r\\f„“–\…—­№✓♦•-]","","Найдено: Странные нетекстовые символы");
 
+  addRegExp("([а-я]2[а-я])","i","Найдено: вероятно, гласная буква с ударением.");
 
 
 
-// -------------конец блока TaKir - регэкспы (02.01.2025):---------------
+
+// -------------конец блока TaKir - регэкспы (25.02.2025):---------------
 
  }
 
@@ -442,7 +444,7 @@ function Run() {
    ignoreNullPosition=false; //tr.compareEndPoints("StartToEnd",tr)==0;
 
    el=ptr;
-   s=el.innerHTML.replace(removeTagsRE,removeTagsRE_).replace(imgTagRE,imgTagRE_).replace(shyRE,shyRE_).replace(ltRE,ltRE_).replace(gtRE,gtRE_).replace(nbspRE,nbspRE_).replace(ampRE,ampRE_);
+   s=el.innerHTML.replace(removeTagsRE,removeTagsRE_).replace(imgTagRE,imgTagRE_).replace(shyRE,shyRE_).replace(ltRE,ltRE_).replace(gtRE,gtRE_).replace(ampRE,ampRE_).replace(nbspRE,nbspRE_);
    s_len=s.length;
    //log+="Входим в searchNext.  s1_len: "+s1_len+"  s_len: "+s_len+"\n\n";
    tr.moveToElementText(el);
@@ -506,8 +508,8 @@ function Run() {
         rslt=regExps[i].exec(s_html);
         flag1=false;
         if (rslt) {
-         newPos=s_html.substr(0,rslt.index).replace(removeTagsRE,removeTagsRE_).replace(imgTagRE,imgTagRE_).replace(shyRE,shyRE_).replace(ltRE,ltRE_).replace(gtRE,gtRE_).replace(nbspRE,nbspRE_).replace(ampRE,ampRE_).length;
-         rslt_replaced=rslt[0].replace(removeTagsRE,removeTagsRE_).replace(imgTagRE,imgTagRE_).replace(shyRE,shyRE_).replace(ltRE,ltRE_).replace(gtRE,gtRE_).replace(nbspRE,nbspRE_).replace(ampRE,ampRE_);
+         newPos=s_html.substr(0,rslt.index).replace(removeTagsRE,removeTagsRE_).replace(imgTagRE,imgTagRE_).replace(shyRE,shyRE_).replace(ltRE,ltRE_).replace(gtRE,gtRE_).replace(ampRE,ampRE_).replace(nbspRE,nbspRE_).length;
+         rslt_replaced=rslt[0].replace(removeTagsRE,removeTagsRE_).replace(imgTagRE,imgTagRE_).replace(shyRE,shyRE_).replace(ltRE,ltRE_).replace(gtRE,gtRE_).replace(ampRE,ampRE_).replace(nbspRE,nbspRE_);
          if (ignoreNullPosition ? minPos==s1_html_len+1 : minPos==s1_html_len) break;
          if (rslt_replaced.length==0 || (rslt_replaced.length!=0 && rslt_replaced[0]!="<")) {
           k=regExps[i].lastIndex;
@@ -579,7 +581,7 @@ function Run() {
       if (el && el!=fbwBody) el=el.nextSibling;
      }
     if (el && el.nodeName=="P") {
-     s=el.innerHTML.replace(removeTagsRE,removeTagsRE_).replace(imgTagRE,imgTagRE_).replace(shyRE,shyRE_).replace(ltRE,ltRE_).replace(gtRE,gtRE_).replace(nbspRE,nbspRE_).replace(ampRE,ampRE_);
+     s=el.innerHTML.replace(removeTagsRE,removeTagsRE_).replace(imgTagRE,imgTagRE_).replace(shyRE,shyRE_).replace(ltRE,ltRE_).replace(gtRE,gtRE_).replace(ampRE,ampRE_).replace(nbspRE,nbspRE_);
      s1_len=0;
      s_html=el.innerHTML;
      s1_html_len=0;
