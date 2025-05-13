@@ -1,10 +1,9 @@
 // Скрипт «Поиск неразмеченных стихов» для редактора Fiction Book Editor (FBE).
-// Версия 1.1
-// Надстройка к скрипту Sclex-а «Поиск по регекспам…»
 // stokber, 2024, июнь.
+// Версия 1.2 (2025, январь?)
+// Надстройка к скрипту Sclex-а «Поиск по регекспам…»
 function Run() {
 	var nonStop;
-
 	function selPoem() {
 		var MyTagName = "B";
 		var metka = "<" + MyTagName + " id=CursorPosition></" + MyTagName + ">";
@@ -26,8 +25,9 @@ function Run() {
 		txtBezTags = txtBezTags.replace(/&lt;/g, "<"); // 
 		txtBezTags = txtBezTags.replace(/&gt;/g, ">"); //  
 		txtBezTags = txtBezTags.replace(/&shy;/g, String.fromCharCode(173)); //  
-		txtBezTags = txtBezTags.replace(/&amp;/g, "&"); // 
 		txtBezTags = txtBezTags.replace(/&nbsp;/g, " "); // 
+		txtBezTags = txtBezTags.replace(/&amp;/g, "&"); // 
+		
 		var lines = txtBezTags.split("\n"); // вычисляем кол. таких строк.
 		for(var i = 0; i < lines.length; i++) {
 			if(lines[i].length <= 67) { // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -49,13 +49,25 @@ function Run() {
 		// удаляем все теги, кроме: 
 		txt = txt.replace(/<(?!\/?(STRONG|EM)(?=>|\s.*>))\/?.*?>/gi, ""); // 
 		// alert("1\n"+txt);
-		// ищем места смены начертания строк:
-		txt = txt.replace(/<EM><STRONG>|<STRONG><EM>/g, "<ES>"); //  создаём новый смешанный стиль шрифта.
-		txt = txt.replace(/<\/EM><\/STRONG>|<\/STRONG><\/EM>/g, "</ES>"); // 
+		
+		// удаляем частичное форматирование строк курсивом и жирным (v.1.2):
+		
 		txt = txt.replace(/<\/EM><EM>/gi, ""); // 
 		txt = txt.replace(/<(EM)><\/EM>/gi, ""); // 
 		txt = txt.replace(/<\/STRONG><STRONG>/gi, ""); // 
 		txt = txt.replace(/<STRONG><\/STRONG>/gi, ""); // 
+		
+		txt = txt.replace(/^(?:<(?:EM|STRONG)>){1,2}([^<\r\n]+)(?:<\/(?:EM|STRONG)>){1,2}(?!$)/img, "$1"); 
+		txt = txt.replace(/^([^<\r\n]+?)(?:<(?:EM|STRONG)>){1,2}([^<\r\n]+?)(?:<\/(?:EM|STRONG)>){1,2}(?=$)/img, "$1$2"); 
+		// alert("2\n"+txt);
+		
+		// ищем места смены начертания строк:
+		txt = txt.replace(/<EM><STRONG>|<STRONG><EM>/g, "<ES>"); //  создаём новый смешанный стиль шрифта.
+		txt = txt.replace(/<\/EM><\/STRONG>|<\/STRONG><\/EM>/g, "</ES>"); // 
+		// txt = txt.replace(/<\/EM><EM>/gi, ""); // 
+		// txt = txt.replace(/<(EM)><\/EM>/gi, ""); // 
+		// txt = txt.replace(/<\/STRONG><STRONG>/gi, ""); // 
+		// txt = txt.replace(/<STRONG><\/STRONG>/gi, ""); // 
 		txt = txt.replace(/<\/ES><ES>/gi, ""); // 
 		txt = txt.replace(/<ES><\/ES>/gi, ""); // 
 		// поправляем пустые строки:
@@ -87,10 +99,10 @@ function Run() {
 		txt = txt.replace(/&lt;/g, "<"); // 
 		txt = txt.replace(/&gt;/g, ">"); //  
 		txt = txt.replace(/&shy;/g, String.fromCharCode(173)); //  
-		txt = txt.replace(/&amp;/g, "&"); // 
 		txt = txt.replace(/\r\n/gm, "\n"); // 
 		txt = txt.replace(/^&nbsp;\n/gm, "\n"); // 
 		txt = txt.replace(/&nbsp;/g, " "); // 
+		txt = txt.replace(/&amp;/g, "&"); 
 		// txt = txt.replace(new RegExp("^(.{67,}\\r?\\n?)((.*\\r?\\n?)*)", "m"), "");
 		// обрезаем другие непоэтические строки:
 		txt = txt.replace(new RegExp("^([*♠♣♦♥•■▶~©+].*\\r?\\n?)((.*\\r?\\n?)*)", "m"), "");
@@ -519,7 +531,7 @@ function Run() {
 			var savedIndex;
 			ignoreNullPosition = false; //tr.compareEndPoints("StartToEnd",tr)==0;
 			el = ptr;
-			s = el.innerHTML.replace(removeTagsRE, removeTagsRE_).replace(imgTagRE, imgTagRE_).replace(shyRE,shyRE_).replace(ltRE, ltRE_).replace(gtRE, gtRE_).replace(ampRE, ampRE_).replace(nbspRE, nbspRE_);
+			s = el.innerHTML.replace(removeTagsRE, removeTagsRE_).replace(imgTagRE, imgTagRE_).replace(shyRE,shyRE_).replace(ltRE, ltRE_).replace(gtRE, gtRE_).replace(nbspRE, nbspRE_).replace(ampRE, ampRE_);
 			s_len = s.length;
 			//log+="Входим в searchNext.  s1_len: "+s1_len+"  s_len: "+s_len+"\n\n";
 			tr.moveToElementText(el);
