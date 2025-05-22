@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FBE>
-	<Name>FictionBook Editor Release 2.7.7</Name>
-	<Date>05-01-2025</Date>
-	<Version>2.7.7</Version>
+	<Name>FictionBook Editor Release 2.7.8</Name>
+	<Date>22-05-2025</Date>
+	<Version>2.7.8</Version>
 	<Beta>false</Beta>
-	<DownloadUrl>https://github.com/sensboston/fictionbookeditor/releases/download/v2.7.7/FictionBook.Editor.Release.2.7.7.build.05.Jan.2025.exe</DownloadUrl>
-	<MD5>95ac5d2e3b6ffcbc6011fcb7860cb27b</MD5>
+	<DownloadUrl>https://github.com/sensboston/fictionbookeditor/releases/download/v2.7.8/FictionBook.Editor.Release.2.7.8.build.22.May.2025.exe</DownloadUrl>
+	<MD5>a5e482d18d7c06f23efb2d3e4aa619fb</MD5>
 </FBE>
