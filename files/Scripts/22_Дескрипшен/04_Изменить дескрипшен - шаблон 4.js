@@ -3,14 +3,16 @@
 //  Скрипт предназначен для пользовательской замены данных в разделе <description>
 //  * Скрипт тестировался в FBE v.2.7.7 (win XP, IE8 и win 7, IE11)
 // v.1.0 — Создание скрипта — Александр Ка (17.05.2025)
+// v.1.1 — Добавление обработки аннотации  — Александр Ка (20.05.2025)
+// v.1.2 — Исправлены две мелкие ошибки  — Александр Ка (21.05.2025)
 //------------------------------------------------------------------------------------------
 
 function Run() {
 
  var ScriptName="«Изменить дескрипшен»";
- var NumerusVersion="1.0";
- var titleInfoGenre=[], titleInfoAuthorFirstName=[], titleInfoAuthorMiddleName=[], titleInfoAuthorLastName=[], titleInfoAuthorNickname=[], titleInfoAuthorEmail=[], titleInfoAuthorHomePage=[], titleInfoAuthorID=[], titleInfoTranslatorFirstName=[], titleInfoTranslatorMiddleName=[], titleInfoTranslatorLastName=[], titleInfoTranslatorNickname=[], titleInfoTranslatorEmail=[], titleInfoTranslatorHomePage=[], srcTitleInfoGenre=[], srcTitleInfoAuthorFirstName=[], srcTitleInfoAuthorMiddleName=[], srcTitleInfoAuthorLastName=[], srcTitleInfoAuthorNickname=[], srcTitleInfoAuthorEmail=[], srcTitleInfoAuthorHomePage=[], srcTitleInfoAuthorID=[], srcTitleInfoTranslatorFirstName=[], srcTitleInfoTranslatorMiddleName=[], srcTitleInfoTranslatorLastName=[], srcTitleInfoTranslatorNickname=[], srcTitleInfoTranslatorEmail=[], srcTitleInfoTranslatorHomePage=[], documentInfoAuthorFirstName=[], documentInfoAuthorMiddleName=[], documentInfoAuthorLastName=[], documentInfoAuthorNickname=[], documentInfoAuthorEmail=[], documentInfoAuthorHomePage=[], customInfoType=[], customInfo=[];
- var titleInfoBookTitle, titleInfoKeywords, titleInfoDate, titleInfoDateValue, titleInfoLang, titleInfoSrcLang, titleInfoSequenceName, titleInfoSequenceNumber, srcTitleInfoBookTitle, srcTitleInfoKeywords, srcTitleInfoDate, srcTitleInfoDateValue, srcTitleInfoLang, srcTitleInfoSrcLang, srcTitleInfoSequenceName, srcTitleInfoSequenceNumber, documentInfoVersion, documentInfoProgramUsed, documentInfoDate, documentInfoDateValue, documentInfoSrcOcr, documentInfoSrcUrl, publishInfoBookName, publishInfoPublisher, publishInfoCity, publishInfoYear, publishInfoISBN, publishInfoSequenceName, publishInfoSequenceNumber;
+ var NumerusVersion="1.2";
+ var titleInfoGenre=[], titleInfoAuthorFirstName=[], titleInfoAuthorMiddleName=[], titleInfoAuthorLastName=[], titleInfoAuthorNickname=[], titleInfoAuthorEmail=[], titleInfoAuthorHomePage=[], titleInfoAuthorID=[], titleInfoTranslatorFirstName=[], titleInfoTranslatorMiddleName=[], titleInfoTranslatorLastName=[], titleInfoTranslatorNickname=[], titleInfoTranslatorEmail=[], titleInfoTranslatorHomePage=[], titleInfoAnnotation=[], srcTitleInfoGenre=[], srcTitleInfoAuthorFirstName=[], srcTitleInfoAuthorMiddleName=[], srcTitleInfoAuthorLastName=[], srcTitleInfoAuthorNickname=[], srcTitleInfoAuthorEmail=[], srcTitleInfoAuthorHomePage=[], srcTitleInfoAuthorID=[], srcTitleInfoTranslatorFirstName=[], srcTitleInfoTranslatorMiddleName=[], srcTitleInfoTranslatorLastName=[], srcTitleInfoTranslatorNickname=[], srcTitleInfoTranslatorEmail=[], srcTitleInfoTranslatorHomePage=[], documentInfoAuthorFirstName=[], documentInfoAuthorMiddleName=[], documentInfoAuthorLastName=[], documentInfoAuthorNickname=[], documentInfoAuthorEmail=[], documentInfoAuthorHomePage=[], customInfoType=[], customInfo=[];
+ var titleInfoBookTitle, titleInfoKeywords, titleInfoDate, titleInfoDateValue, titleInfoLang, titleInfoSrcLang, titleInfoSequenceName, titleInfoSequenceNumber, srcTitleInfoBookTitle, srcTitleInfoKeywords, srcTitleInfoDate, srcTitleInfoDateValue, srcTitleInfoLang, srcTitleInfoSrcLang, srcTitleInfoSequenceName, srcTitleInfoSequenceNumber, documentInfoVersion, documentInfoProgramUsed, documentInfoDate, documentInfoDateValue, documentInfoSrcOcr, documentInfoSrcUrl, documentInfoHistory, publishInfoBookName, publishInfoPublisher, publishInfoCity, publishInfoYear, publishInfoISBN, publishInfoSequenceName, publishInfoSequenceNumber;
  var k=0;
 
 // ---------------------------------------------------------------
@@ -19,18 +21,21 @@ function Run() {
 
  //   Название шаблона
  var ShablonName="«Без изменений»";      // текст //
- 
+
 
          //  Добавление данных
 
- //   Замена авторов fb2-файла
+ //   Сохранение авторов fb2-файла
  var ChangeAuthor = 1;      // 0 ; 1 //      ("0" — разрешить замену авторов, "1" — добавлять новые имена авторов к уже существующим)
 
- //   Замена  ID  fb2-файла
+ //   Сохранение  ID  fb2-файла
  var ChangeID = 1;      // 0 ; 1 //      ("0" — заменить на новый ID,  "1" — сохранить оригинальный ID)
 
-//    Удаление истории изменений файла
+//    Сохранение истории изменений файла
  var ClearHistory = 1;      // 0 ; 1 //      ("0" — удалить, "1" — сохранить историю)
+
+//    Сохранение аннотации
+ var ClearAnnotation = 1;      // 0 ; 1 //      ("0" — удалить, "1" — сохранить аннотацию)
 
 
          //  Автоматическое повышение версии файла и запись в историю изменений
@@ -49,7 +54,7 @@ function Run() {
 
 //  Здесь можно указать какие данные в разделе <description> следует изменить.
 //  Все заполненные значения добавляемых данных полностью заменяют исходные данные в fb2-файле.
-//  * Исключаются только поля с авторами файла, и строки истории изменений файла. Но и это исключение можно отменить, изменив "настройки".
+//  * Исключаются только поля с авторами файла, строки аннотации и истории изменений файла. Но и это исключение можно отменить, изменив "настройки".
 //  Вносить изменения в скрипт лучше при включенной программе FBE (чтобы не было проблем в случае ошибочного заполнения).
 
 //  Пустые кавычки означают, что данные останутся не измененными.
@@ -102,6 +107,10 @@ function Run() {
  titleInfoSequenceName =  "";
  titleInfoSequenceNumber =  "";
 
+ //  Аннотация  ::  для добавления нескольких строк, строку ниже можно размножить  ::  допускается использование тегов  "<strong>", "<emphasis>", "<sup>", "<sub>"
+ titleInfoAnnotation[k++] =  "";
+
+
 
          ///   Информация об оригинале книги  ::  <src-title-info>
 
@@ -146,6 +155,7 @@ function Run() {
  srcTitleInfoSequenceNumber =  "";
 
 
+
          ///   FB2 документ  ::  <document-info>
 
  //  Версия  ::  Добавление текста отключает "Автоматическое повышение версии файла"
@@ -177,6 +187,7 @@ function Run() {
  documentInfoHistory =  "";
 
 
+
          ///   Бумажная книга  ::  <publish-info>
 
  //  Заголовок книги
@@ -197,6 +208,7 @@ function Run() {
  //  Серия
  publishInfoSequenceName =  "";
  publishInfoSequenceNumber =  "";
+
 
 
          ///   Дополнительная информация  ::  <custom-info>
@@ -237,6 +249,8 @@ var j = 0;
  var mDiv=[];     //  Массив узлов "DIV"
  var div;                //  один из узлов "DIV"
  var Length;         //  длина массива
+
+ var reELine = new RegExp("^(\\\s|"+nbspEntity+"|<.[^P>][^>]{0,}>){0,}$","");   //  Признак пустой строки.
 
 // ---------------------------------------------------------------
 // ----------------------------------------------
@@ -392,19 +406,18 @@ fff:
 
          //   Добавление строк в историю изменений
 
-// var reHist11 = new RegExp("^(\\\s|"+nbspEntity+"){0,}$","");   //  Признак пустой строки.  // ** повтор **
  var reHist12 = new RegExp("(^|\\n)[^0-9]{0,12}"+versionFile.replace(/\./, "\\.")+"([^0-9]|$)","");   //  Поиск старой версии.
 
  //   Добавление строки с информацией о старой версии
  if (History.innerText.search(reHist12)==-1  &&  !documentInfoVersion) {       //  Если в истории нет записи о старой версии...
-         if (History.lastChild.innerHTML.search(reHist11)==-1)                                               //  то проверяем наличие пустой строки в конце истории
+         if (History.lastChild.innerHTML.search(reELine)==-1)                                               //  то проверяем наличие пустой строки в конце истории
                  History.insertAdjacentElement("beforeEnd",document.createElement("P"));       //  и если ее нет - добавляем новую.
          History.lastChild.innerHTML = "v."+versionFile+" — ?";  //  Затем добавляем в строку информацию о старой версии
          change_D09=true;              //  и отмечаем, что данные изменились.
          }
 
  //   Добавление строки с информацией о новой версии
- if (History.lastChild.innerHTML.search(reHist11)==-1)                                   //  Если в конце истории нет готовой пустой строки...
+ if (History.lastChild.innerHTML.search(reELine)==-1)                                   //  Если в конце истории нет готовой пустой строки...
          History.insertAdjacentElement("beforeEnd",document.createElement("P"));   //  то добавляем новую строку.
  History.lastChild.innerHTML = versionText+" "+TextHistory+" — "+textYouName+mDate[0];  //  Добавляем в строку информацию о новой версии.
  change_D09=true;              //  и отмечаем, что данные изменились.
@@ -434,6 +447,7 @@ fff:
  var change_T08=false;
  var change_T09=false;
  var change_T10=false;
+ var change_T11=false;
 
 
                  /// <title-info>  ::  Жанры
@@ -629,6 +643,63 @@ fff:
                  div.all.number.value = titleInfoSequenceNumber;    //  то добавляем и его,
              else  div.all.number.value = "";    //  а если нет - то удаляем старый номер.
          change_T10=true;              //  Отмечаем, что данные изменились.
+         }
+
+
+                 /// <title-info>  ::  Аннотация
+
+         //  Поиск раздела "аннотации"
+ var Annotation=fbwBody.firstChild;   //  Предполагаемый раздел аннотации.
+
+         //  Очистка раздела аннотации
+ if (Annotation.className == "annotation"  &&  ClearAnnotation == 0  &&  (Annotation.children.length !=1  ||  Annotation.children.length ==1  &&  Annotation.lastChild.innerHTML !="")) {
+         //   Если выбрано удаление всех строк аннотации...
+         Annotation.innerHTML = "";                  //  то удаляем всё из раздела аннотации,
+         Annotation.insertAdjacentElement("beforeEnd", document.createElement("P"));   //  добавляем пустую строку
+         window.external.inflateBlock(Annotation.lastChild)=true;
+         change_T11=true;              //  и отмечаем, что данные изменились.
+         }
+
+         //  Добавление новых данных
+
+ var reAnno01 = new RegExp("(</{0,1})strong>","g");   //  Преобразование обычных тегов, в теги применяемые внутри FBE.
+ var reAnno01_ = "$1STRONG>";
+ var reAnno02 = new RegExp("(</{0,1})emphasis>","g");
+ var reAnno02_ = "$1EM>";
+ var reAnno03 = new RegExp("(</{0,1})sup>","g");
+ var reAnno03_ = "$1SUP>";
+ var reAnno04 = new RegExp("(</{0,1})sub>","g");
+ var reAnno04_ = "$1SUB>";
+
+ var newSection = document.createElement("DIV");
+
+ Length = titleInfoAnnotation.length;          //  Определяем длину массива с новыми данными.
+
+ for ( ; k<Length; k++) {                 //  Перебираем все элементы с новыми данными.
+         if (titleInfoAnnotation[k])               //  Если есть заполненные данные  -  преобразуем теги.
+                 titleInfoAnnotation[k] = titleInfoAnnotation[k].replace(reAnno01, reAnno01_).replace(reAnno02, reAnno02_).replace(reAnno03, reAnno03_).replace(reAnno04, reAnno04_);
+         newSection.insertAdjacentElement("beforeEnd", document.createElement("P"));   //  Создаем новую строку в секции.
+         newSection.lastChild.innerHTML = titleInfoAnnotation[k];     //  Затем добавляем в строку новые данные.
+         window.external.inflateBlock(newSection.lastChild)=true;    //  На случай добавления пустой строки, нормализуем добавленную строку (строке с текстом это не повредит).
+         }
+
+ while (newSection.firstChild  &&  newSection.firstChild.innerText.search(reELine) !=-1)   //  Удаляем первые пустые строки.
+         newSection.firstChild.removeNode(true);
+
+ while (newSection.lastChild  &&  newSection.lastChild.innerText.search(reELine) !=-1)   //  Удаляем последние пустые строки.
+         newSection.lastChild.removeNode(true);
+
+ //  Если "Annotation" это и есть аннотация, и есть новые данные, и их нет в аннотации...
+ if (Annotation.className == "annotation"  &&  newSection.innerText !=""  &&  Annotation.innerHTML.search(newSection.innerHTML) ==-1) {
+         if (Annotation.lastChild.innerHTML.search(reELine)==-1) {                                               //  то проверяем наличие пустой строки в конце аннотации
+                 Annotation.insertAdjacentElement("beforeEnd", document.createElement("P"));   //  и если ее нет - добавляем новую.
+                 window.external.inflateBlock(Annotation.lastChild)=true;
+                 }
+         if (Annotation.children.length ==1)   //  Если в аннотации нет текста...
+                 Annotation.innerHTML = "";        //  то полностью очищаем её.
+         while (newSection.firstChild)             //  Переносим все строки новых данных в аннотацию.
+                 Annotation.insertAdjacentElement("beforeEnd", newSection.firstChild);
+         change_T11=true;              //  Отмечаем, что данные изменились.
          }
 
 // ---------------------------------------------------------------
@@ -908,8 +979,10 @@ Label_1:
                  if (ChangeAuthor != 0) {                //  Если выбрано добавление, а не замена...
                          mDiv = mDesc.diAuthor.getElementsByTagName("DIV");   //  Находим все разделы "DIV".
                          for (j=mDiv.length-1; j>=0; j--)         //  Если новые данные уже есть в дескрипшене...
-                                 if (documentInfoAuthorFirstName[k] == mDiv[j].all.first.value  &&  documentInfoAuthorMiddleName[k] == mDiv[j].all.middle.value  &&
-                                     documentInfoAuthorLastName[k] == mDiv[j].all.last.value  &&  documentInfoAuthorNickname[k] == mDiv[j].all.nick.value)
+                                 if (  (documentInfoAuthorFirstName[k] == mDiv[j].all.first.value  ||  !documentInfoAuthorFirstName[k]  &&  !mDiv[j].all.first.value)  &&
+                                     (documentInfoAuthorMiddleName[k] == mDiv[j].all.middle.value  ||  !documentInfoAuthorMiddleName[k]  &&  !mDiv[j].all.middle.value)  &&
+                                     (documentInfoAuthorLastName[k] == mDiv[j].all.last.value  ||  !documentInfoAuthorLastName[k]  &&  !mDiv[j].all.last.value)  &&
+                                     (documentInfoAuthorNickname[k] == mDiv[j].all.nick.value  ||  !documentInfoAuthorNickname[k]  &&  !mDiv[j].all.nick.value)  )
                                              continue Label_1;        //  то пропускаем нового автора.
                          }
                  if (!div.nextSibling) {               //  проверяем наличие отсутствия следующего раздела, и если нет его...
@@ -1019,17 +1092,16 @@ Label_1:
 
          //  Очистка раздела истории
  if (ClearHistory == 0  &&  (History.children.length !=1  ||  History.children.length ==1  &&  History.lastChild.innerHTML !="")) {    //   Если выбрано удаление всех строк истории...
-         History.innerHTML = "";                  //  то удаляем всё из раздела истории
-         History.insertAdjacentElement("beforeEnd",document.createElement("P"));   //  и добавляем пустую строку
+         History.innerHTML = "";                  //  то удаляем всё из раздела истории,
+         History.insertAdjacentElement("beforeEnd",document.createElement("P"));   //  добавляем пустую строку
          window.external.inflateBlock(History.lastChild)=true;
          change_D09=true;              //  и отмечаем, что данные изменились.
          }
 
          //  Добавление новых данных
  var reHist10 = new RegExp("<P>"+documentInfoHistory+"</P>","");   //  Поиск строки с новыми данными.
- var reHist11 = new RegExp("^(\\\s|"+nbspEntity+"){0,}$","");   //  Признак пустой строки.
  if (documentInfoHistory  &&  History.innerHTML.search(reHist10) ==-1) {        //  Если есть новые данные, и их ещё нет в истории...
-         if (History.lastChild.innerHTML.search(reHist11)==-1)                                                //  то проверяем наличие пустой строки в конце истории
+         if (History.lastChild.innerHTML.search(reELine)==-1)                                                //  то проверяем наличие пустой строки в конце истории
                  History.insertAdjacentElement("beforeEnd",document.createElement("P"));   //  и если ее нет - добавляем новую.
          History.lastChild.innerHTML = documentInfoHistory;     //  Затем добавляем в строку новые данные
          change_D09=true;              //  и отмечаем, что данные изменились.
@@ -1158,8 +1230,8 @@ Label_1:
  if (Version_on_off == 1  &&  !documentInfoHistory)
          HistoryChange(youName);   //  запускаем функцию для изменения данных истории.
 
- if (change_D09)  window.focus();  // Удаление курсора из текста, при изменении "истории".
-         
+ if (change_D09  ||  change_T11)  window.focus();  // Удаление курсора из текста, при изменении "истории" или "аннотации".
+
 // ---------------------------------------------------------------
  window.external.EndUndoUnit(document);    // Конец записи в систему отмен.
 // ---------------------------------------------------------------
@@ -1231,6 +1303,7 @@ var cTaT=ind;  //  Текущее число заполненных строк.
  if (change_T08 || d)  { mSt[ind]="   Язык оригинала";  ind++ }
  if (change_T09 || d)  { mSt[ind]="   Переводчики";  ind++ }
  if (change_T10 || d)  { mSt[ind]="   Серия";  ind++ }
+ if (change_T11 || d)  { mSt[ind]="   Аннотация";  ind++ }
 
  if (cTaT==ind-2)  ind=ind-2;   //  Если нет пунктов с изменениями - удаление двух последних строк.
 cTaT=ind;  //  Текущее число заполненных строк.
@@ -1280,7 +1353,7 @@ cTaT=ind;  //  Текущее число заполненных строк.
 
                                              mSt[ind]="";  ind++;
                                              mSt[ind]="• ИЗМЕНЕНИЯ в <custom-info>:";  ind++;
- if (change_C01 || d)  { mSt[ind]="   Все данные";  ind++ }
+ if (change_C01 || d)  { mSt[ind]="   Весь раздел";  ind++ }
 
  if (cTaT==ind-2)  ind=ind-2;   //  Если нет пунктов с изменениями - удаление двух последних строк.
 
@@ -1296,7 +1369,7 @@ cTaT=ind;  //  Текущее число заполненных строк.
                  mSt[ind]="требуется, в коде самого скрипта. ";  ind++;
                  mSt[ind]="А точнее в разделах: «Настройки» и ";  ind++;
                  mSt[ind]="«Добавляемые данные». ";  ind++;
-                 mSt[ind]="Оба этих раздела расположенны в самом ";  ind++;
+                 mSt[ind]="Оба этих раздела расположены в самом ";  ind++;
                  mSt[ind]="начале скрипта. ";  ind++;
                  }
          }
