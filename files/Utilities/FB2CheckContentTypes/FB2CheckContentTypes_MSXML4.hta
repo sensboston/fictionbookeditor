@@ -1,0 +1,180 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<HTML>
+<HEAD>
+<TITLE>FB2CheckContentTypes v1.0 (MSXML4 version) (автор Sclex)</TITLE>
+<HTA:APPLICATION ID="oHTA"/>
+<META http-equiv="Content-Type" content="text/html; charset=utf-8">
+<META http-equiv="MSThemeCompatible" content="yes">
+<STYLE>
+/* css reset
+http://meyerweb.com/eric/tools/css/reset/ 
+   v2.0 | 20110126
+   License: none (public domain)
+*/
+
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed, 
+figure, figcaption, footer, header, hgroup, 
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	font-size: 100%;
+	font: inherit;
+	vertical-align: baseline;
+}
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure, 
+footer, header, hgroup, menu, nav, section {
+	display: block;
+}
+body {
+	line-height: 1;
+}
+ol, ul {
+	list-style: none;
+}
+blockquote, q {
+	quotes: none;
+}
+blockquote:before, blockquote:after,
+q:before, q:after {
+	content: '';
+	content: none;
+}
+table {
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+/* конец css-reset-а */
+
+#elementList P {padding:0; margin:0;}
+input {font-family: Tahoma; font-size:14px;}
+input.gray {background-color:#D4D0C8; color:black;}
+
+body {
+ font-family: Arial;
+ padding: 20px;
+ -ms-user-select: element;
+ user-select: text;
+ -webkit-user-select: text;
+ -moz-user-select: text;
+}
+</STYLE>
+<SCRIPT type="text/javascript">
+//var DOMDocumentObjectName="Microsoft.XMLDOM";
+var DOMDocumentObjectName="Msxml2.DOMDocument.4.0";
+// var DOMDocumentObjectName="Msxml2.DOMDocument.6.0";
+
+var xmlDoc, openedFileName;
+
+//document.onselectstart = function() { return false; }
+
+function getTime2() {
+ var Tf=new Date().getTime();
+ var Tmin = Math.floor((Tf-Ts)/60000);
+ var Tsek = Math.ceil(10*((Tf-Ts)/1000-Tmin*60))/10;
+ if (Tmin>0) {var TimeStr=Tmin+" мин. "+Tsek+" с"}
+ else {var TimeStr=Tsek+" с"}
+ return TimeStr;
+}
+
+function atob_my(base64,lengthLimit) {
+  var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
+  var str = [];
+  var i = 0;
+
+  // Удаляем все символы, не входящие в Base64
+  base64 = base64.replace(/[^A-Za-z0-9+/=]/g, '');
+
+  while (i < base64.length && i < lengthLimit) {
+    var enc1 = chars.indexOf(base64.charAt(i++));
+    var enc2 = chars.indexOf(base64.charAt(i++));
+    var enc3 = chars.indexOf(base64.charAt(i++));
+    var enc4 = chars.indexOf(base64.charAt(i++));
+
+    // Преобразуем 4 символа Base64 в 3 байта
+    var chr1 = (enc1 << 2) | (enc2 >> 4);
+    var chr2 = ((enc2 & 15) << 4) | (enc3 >> 2);
+    var chr3 = ((enc3 & 3) << 6) | enc4;
+
+    str.push(chr1);
+    if (enc3 !== 64) str.push(chr2);
+    if (enc4 !== 64) str.push(chr3);
+  }
+
+  return str;
+}
+
+function fileSelectEvent() {
+ var f1=document.getElementById("f1");
+ if (!f1) {alert("Ошибка!"); return}
+ f1=f1.value;
+ try {
+  var fso=new ActiveXObject("Scripting.FileSystemObject");
+  var s1=fso.GetBaseName(f1)+"."+fso.GetExtensionName(f1);
+  if (fso.GetExtensionName(f1)=="" || fso.GetExtensionName(f1).toLowerCase()!="fb2") {
+    alert("Ошибка: вы не выбрали файл, либо выбрали НЕ-fb2 файл.");
+    return;
+  }
+ }
+ catch(e) {
+  alert("Ошибка!");
+  return;
+ }
+ xmlDoc=new ActiveXObject(DOMDocumentObjectName);
+ //xmlDoc=new ActiveXObject("Microsoft.XMLDOM");
+ xmlDoc.async=false;
+ xmlDoc.preserveWhiteSpace = true;
+ var fbNS="http://www.gribuser.ru/xml/fictionbook/2.0";
+ var xlNS="http://www.w3.org/1999/xlink";
+ xmlDoc.load(f1);
+ xmlDoc.setProperty("SelectionNamespaces", "xmlns:fb='"+fbNS+"' xmlns:xlink='"+xlNS+"'");
+ if (xmlDoc.parseError.errorCode) return;
+ openedFileName=f1;
+ var i;
+ //window.clipboardData.setData("text",getOuterXML(xmlDoc.documentElement));
+ //savedXmlDocCode=getOuterXML(xmlDoc.documentElement);
+ var fictionBook=xmlDoc.documentElement.selectSingleNode("//fb:FictionBook");
+ var binaries=fictionBook.selectNodes("./fb:binary");
+ //alert("binaries.length: "+binaries.length);
+ var htmlStr2="<BR>Результат проверки файла \""+openedFileName+"\".<BR>";
+ var htmlStr="";
+ var base64Data, binArray, fileType, contentType, binId;
+ for (i=0; i<binaries.length; i++) {
+  //alert("i: "+i);
+  base64Data=binaries[i].text;
+  contentType=binaries[i].getAttribute("content-type");
+  binId=binaries[i].getAttribute("id");
+  binArray=atob_my(base64Data,15);
+  fileType="не определено";
+  //alert("binArray: "+binArray[0]+","+binArray[1]+","+binArray[2]);
+  if (binArray.length>=3 && binArray[0]==0xFF && binArray[1]==0xD8 && binArray[2]==0xFF) fileType="image/jpeg";
+  if (binArray.length>=8 && binArray[0]==0x89 && binArray[1]==0x50 && binArray[2]==0x4E && binArray[3]==0x47 &&
+      binArray[4]==0x0D && binArray[5]==0x0A && binArray[6]==0x1A && binArray[7]==0x0A) fileType="image/png";
+  if (binArray.length>=12 && binArray[0]==0x52 && binArray[1]==0x49 && binArray[2]==0x46 && binArray[3]==0x46 &&
+      binArray[8]==0x57 && binArray[9]==0x45 && binArray[10]==0x42 && binArray[11]==0x50) fileType="image/webp";
+  if (contentType!=fileType)
+  htmlStr+="<BR>Тег binary "+(i+1)+"/"+binaries.length+". id: \""+binId+"\". Прописанный content-type: \""+contentType+"\". Фактический content-type: \""+fileType+"\".<BR>";
+ }
+ if (htmlStr=="") htmlStr="<BR>Неправильных content-type-ов не обнаружено.";
+ document.getElementById("resultDiv").innerHTML=htmlStr2+htmlStr;
+}
+</SCRIPT>
+</HEAD>
+<BODY style="font-family:tahoma; font-size:14px; padding:10px; margin:0; color:black; background-color:white;" onload="window.resizeTo(800,710);">
+<P style="text-align:center">Выберите fb2-файл:
+<br>
+<INPUT type=file style="width:500px;" id=f1 onchange="fileSelectEvent();"></P>
+<DIV id=resultDiv></DIV>
+</BODY>
+</HTML>
