@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <HTML>
 <HEAD>
-<TITLE>FB2CheckContentTypes v1.0 (MSXML4 version) (автор Sclex)</TITLE>
+<TITLE>FB2CheckContentTypes v1.1 (MSXML4 version) (автор Sclex)</TITLE>
 <HTA:APPLICATION ID="oHTA"/>
 <META http-equiv="Content-Type" content="text/html; charset=utf-8">
 <META http-equiv="MSThemeCompatible" content="yes">
@@ -159,10 +159,16 @@ function fileSelectEvent() {
   fileType="не определено";
   //alert("binArray: "+binArray[0]+","+binArray[1]+","+binArray[2]);
   if (binArray.length>=3 && binArray[0]==0xFF && binArray[1]==0xD8 && binArray[2]==0xFF) fileType="image/jpeg";
-  if (binArray.length>=8 && binArray[0]==0x89 && binArray[1]==0x50 && binArray[2]==0x4E && binArray[3]==0x47 &&
+  else if (binArray.length>=8 && binArray[0]==0x89 && binArray[1]==0x50 && binArray[2]==0x4E && binArray[3]==0x47 &&
       binArray[4]==0x0D && binArray[5]==0x0A && binArray[6]==0x1A && binArray[7]==0x0A) fileType="image/png";
-  if (binArray.length>=12 && binArray[0]==0x52 && binArray[1]==0x49 && binArray[2]==0x46 && binArray[3]==0x46 &&
+  else if (binArray.length>=12 && binArray[0]==0x52 && binArray[1]==0x49 && binArray[2]==0x46 && binArray[3]==0x46 &&
       binArray[8]==0x57 && binArray[9]==0x45 && binArray[10]==0x42 && binArray[11]==0x50) fileType="image/webp";
+  else if (binArray.length>=3 && binArray[0]==0x47 && binArray[1]==0x49 && binArray[2]==0x46) fileType="image/gif";
+  else if ((binArray.length>=4 && binArray[0]==0x49 && binArray[1]==0x49 && binArray[2]==0x2A && binArray[3]==0x00)
+        || (binArray.length>=4 && binArray[0]==0x4D && binArray[1]==0x4D && binArray[2]==0x00 && binArray[3]==0x2A)) 
+   fileType="image/tiff";
+  else if (binArray.length>=2 && binArray[0]==0x42 && binArray[1]==0x4D) fileType="image/bmp";
+
   if (contentType!=fileType)
   htmlStr+="<BR>Тег binary "+(i+1)+"/"+binaries.length+". id: \""+binId+"\". Прописанный content-type: \""+contentType+"\". Фактический content-type: \""+fileType+"\".<BR>";
  }
@@ -171,7 +177,7 @@ function fileSelectEvent() {
 }
 </SCRIPT>
 </HEAD>
-<BODY style="font-family:tahoma; font-size:14px; padding:10px; margin:0; color:black; background-color:white;" onload="window.resizeTo(800,710);">
+<BODY style="font-family:tahoma; font-size:14px; padding:10px; margin:0; color:black; background-color:white;">
 <P style="text-align:center">Выберите fb2-файл:
 <br>
 <INPUT type=file style="width:500px;" id=f1 onchange="fileSelectEvent();"></P>
