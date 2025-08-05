@@ -1,11 +1,11 @@
 //Скрипт «Разметить заголовки разделов либо подзаголовки, найденные по регэкспу»
 //Автор Sclex
 
-var markupTitlesOrSubtitles_versionNum="2.4";
+var markupTitlesOrSubtitles_versionNum="2.5";
 
 function Run() {
  var dialogWidth="700px";
- var dialogHeight="400px";
+ var dialogHeight="440px";
  
  // Нижеследующая команда задает список необычных пробелов,
  // которые в заголовках и подзаголовках должны обрабатываться

@@ -1,4 +1,4 @@
-<!-- версия скрипта 2.4 -->
+<!-- версия скрипта 2.5 -->
 <html>
 <head>
  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -178,7 +178,14 @@ table {
     '  while (ptrInSection) {'+
     '   if (ptrInSection.nodeName=="P" && ptrInSection.innerHTML=="") '+
     '     ptrInSection.innerHTML=nbspChar;'+
-    '   if (ptrInSection.nodeName=="P" && ptrInSection.className!="subtitle" && (!boldFlag || isParagraphEntirelyBold(ptrInSection)) && (!italicFlag || isParagraphEntirelyItalic(ptrInSection)) && (ptrInSection.innerHTML.replace(/<[^>]+>/g,"").replace(nbspRegExp,char160).replace(/&lt;/g,"<").replace(/&gt;/g,">").replace(/&amp;/g,"&").replace(unusualSpacesRegExp," ").length<=maxLength) && ptrInSection.innerHTML.replace(/<[^>]+>/g,"").replace(nbspRegExp,char160).replace(/&lt;/g,"<").replace(/&gt;/g,">").replace(/&amp;/g,"&").replace(unusualSpacesRegExp," ").search(titleRegExp)>=0) {'+
+    '   if (ptrInSection.nodeName=="P" &&'+
+    '       (!inEmptyLinesFlag || (ptrInSection.previousSibling && ptrInSection.nextSibling && ptrInSection.previousSibling.nodeName=="P" && ptrInSection.nextSibling.nodeName=="P" && isLineEmpty(ptrInSection.previousSibling) && isLineEmpty(ptrInSection.nextSibling))) &&'+
+    '       ptrInSection.className!="subtitle" &&'+
+    '       (!afterTitleFlag || (ptrInSection.previousSibling && /^(sub)?title$/gi.test(ptrInSection.previousSibling.className))) &&'+
+    '       (!boldFlag || isParagraphEntirelyBold(ptrInSection)) &&'+
+    '       (!italicFlag || isParagraphEntirelyItalic(ptrInSection)) &&'+
+    '       (ptrInSection.innerHTML.replace(/<[^>]+>/g,"").replace(nbspRegExp,char160).replace(/&lt;/g,"<").replace(/&gt;/g,">").replace(/&amp;/g,"&").replace(unusualSpacesRegExp," ").length<=maxLength) &&'+
+    '       ptrInSection.innerHTML.replace(/<[^>]+>/g,"").replace(nbspRegExp,char160).replace(/&lt;/g,"<").replace(/&gt;/g,">").replace(/&amp;/g,"&").replace(unusualSpacesRegExp," ").search(titleRegExp)>=0) {'+
     '    titleBegin=ptrInSection;'+
     '    titleEnd=ptrInSection;'+
     '    titleEnd.removeAttribute("className");'+
@@ -273,6 +280,8 @@ table {
     ' var unusualSpacesRegExp=new RegExp("['+unusualSpaces+']","g");'+
     ' var boldFlag='+document.getElementById("boldId").checked+';'+
     ' var italicFlag='+document.getElementById("italicId").checked+';'+
+    ' var afterTitleFlag='+document.getElementById("afterTitleId").checked+';'+
+    ' var inEmptyLinesFlag='+document.getElementById("inEmptyLinesId").checked+';'+
     ' window.external.BeginUndoUnit(document,"разметку заголовков разделов, найденных по регэкспу");'+
     ' fbwBody=document.getElementById("fbw_body");'+
     ' var ptrInFbwBody=fbwBody.firstChild;'+
@@ -337,7 +346,13 @@ table {
     '  while (ptrInSection) {'+
     '   if (ptrInSection.nodeName=="P" && ptrInSection.innerHTML=="") '+
     '     ptrInSection.innerHTML=nbspChar;'+
-    '   if (ptrInSection.nodeName=="P" && (ptrInSection.className=="" || ptrInSection.className=="normal") && (!boldFlag || isParagraphEntirelyBold(ptrInSection)) && (!italicFlag || isParagraphEntirelyItalic(ptrInSection)) && (ptrInSection.innerHTML.replace(/<[^>]+>/g,"").replace(nbspRegExp,char160).replace(/&lt;/g,"<").replace(/&gt;/g,">").replace(/&amp;/g,"&").replace(unusualSpacesRegExp," ").length<=maxLength) && ptrInSection.innerHTML.replace(/<[^>]+>/g,"").replace(nbspRegExp,char160).replace(/&lt;/g,"<").replace(/&gt;/g,">").replace(/&amp;/g,"&").replace(unusualSpacesRegExp," ").search(subtitleRegExp)>=0) {'+
+    '   if (ptrInSection.nodeName=="P" && (ptrInSection.className=="" || ptrInSection.className=="normal") &&'+
+    '       (!afterTitleFlag || (ptrInSection.previousSibling && /^(sub)?title$/gi.test(ptrInSection.previousSibling.className))) &&'+
+    '       (!inEmptyLinesFlag || (ptrInSection.previousSibling && ptrInSection.nextSibling && ptrInSection.previousSibling.nodeName=="P" && ptrInSection.nextSibling.nodeName=="P" && isLineEmpty(ptrInSection.previousSibling) && isLineEmpty(ptrInSection.nextSibling))) &&'+
+    '       (!boldFlag || isParagraphEntirelyBold(ptrInSection)) &&'+
+    '       (!italicFlag || isParagraphEntirelyItalic(ptrInSection)) &&'+ 
+    '       (ptrInSection.innerHTML.replace(/<[^>]+>/g,"").replace(nbspRegExp,char160).replace(/&lt;/g,"<").replace(/&gt;/g,">").replace(/&amp;/g,"&").replace(unusualSpacesRegExp," ").length<=maxLength) &&'+
+    '        ptrInSection.innerHTML.replace(/<[^>]+>/g,"").replace(nbspRegExp,char160).replace(/&lt;/g,"<").replace(/&gt;/g,">").replace(/&amp;/g,"&").replace(unusualSpacesRegExp," ").search(subtitleRegExp)>=0) {'+
     '    ptrInSection.className="subtitle";'+
     '    newSubtitleCnt++;'+
     '    var el2=ptrInSection.previousSibling;'+
@@ -404,6 +419,8 @@ table {
     ' }'+
     ' var boldFlag='+document.getElementById("boldId").checked+';'+
     ' var italicFlag='+document.getElementById("italicId").checked+';'+
+    ' var afterTitleFlag='+document.getElementById("afterTitleId").checked+';'+
+    ' var inEmptyLinesFlag='+document.getElementById("inEmptyLinesId").checked+';'+
     ' window.external.BeginUndoUnit(document,"разметку подзаголовков, найденных по регэкспу");'+
     ' var unusualSpacesRegExp=new RegExp("['+unusualSpaces+']","g");'+
     ' fbwBody=document.getElementById("fbw_body");'+
@@ -504,10 +521,12 @@ table {
  <input type=checkbox id="caseSensitiveId"><label for="caseSensitiveId"> учитывать регистр при поиске по регэкспу</label><br>
  <input type=checkbox id="boldId"><label for="boldId"> абзац должен быть полностью жирным (кроме, разве что, ссылок и пробелов)</label><br>
  <input type=checkbox id="italicId"><label for="italicId"> абзац должен быть полностью курсивным (кроме, разве что, ссылок и пробелов)</label><br>
+ <input type=checkbox id="afterTitleId"><label for="afterTitleId"> абзац должен находиться сразу после уже размеченного (под)заголовка</label><br>
+ <input type=checkbox id="inEmptyLinesId"><label for="inEmptyLinesId"> абзац должен быть обрамлен пустыми строками</label><br>
  Длина абзаца должна быть не больше, чем столько символов: <input type=text id="maxLengthId" value="60" style="width:80px; text-align:center;"><br>
  <select id=captureBeforeId><option selected value=0>0<option value=1>1<option value=2>2<option value=3>3</option></select> сколько захватывать в создаваемый заголовок либо подзаголовок абзацев, находящихся <b>перед</b> абзацем, найденным по регэкспу<br>
  <select id=captureAfterId><option selected value=0>0<option value=1>1<option value=2>2<option value=3>3</option></select> сколько захватывать в создаваемый заголовок либо подзаголовок абзацев, находящихся <b>после</b> абзаца, найденного по регэкспу<br>
- <p style="text-align:center; margin-top:8px; padding-top:0; margin-bottom:0; padding-bottom:0;"><input type=button value="Разметить заголовки" onclick="markupTitles();" style="width:220px;"><input type=button value="Разметить заголовки и выйти" onclick="markupTitles(); window.close();" style="width:240px;"><input type=button onclick="window.close();" value="Выйти" style="width:120px;"></p>
-<p style="text-align:center; margin-top:8px; padding-top:0; margin-bottom:0; padding-bottom:0;"><input type=button value="Разметить подзаголовки" onclick="markupSubtitles();" style="width:220px;"><input type=button value="Разметить подзаголовки и выйти" onclick="markupSubtitles(); window.close();" style="width:240px;"><input type=button onclick="window.close();" value="Выйти" style="width:120px;"></p>
+ <p style="text-align:center; margin-top:8px; padding-top:0; margin-bottom:0; padding-bottom:0;"><input type=button value="Разметить заголовки" onclick="markupTitles();" style="width:220px;"><input type=button value="Разметить заголовки и выйти" onclick="markupTitles(); window.close();" style="width:260px;"><input type=button onclick="window.close();" value="Выйти" style="width:120px;"></p>
+<p style="text-align:center; margin-top:8px; padding-top:0; margin-bottom:0; padding-bottom:0;"><input type=button value="Разметить подзаголовки" onclick="markupSubtitles();" style="width:220px;"><input type=button value="Разметить подзаголовки и выйти" onclick="markupSubtitles(); window.close();" style="width:260px;"><input type=button onclick="window.close();" value="Выйти" style="width:120px;"></p>
 </body>
 </html>
