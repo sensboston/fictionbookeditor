@@ -1,7 +1,7 @@
 <html>
 <head>
  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
- <!-- version 4.4 -->
+ <!-- version 4.5 -->
  <meta http-equiv="MSThemeCompatible" content="yes">
  <style>
   body, input{font-family:Tahoma; font-size:16px;margin:2px;}
@@ -460,6 +460,7 @@
     '  foundMarkerLen=findMarkerLen(firstP.innerText,notFirstParagraphMarker);'+
     '  if (!previosPWasPartOfNote && foundMarkerLen==0) return;'+
     '  if (!containsFirstNotePMarker(pInnerHTML) && foundMarkerLen==0) return;'+
+    '  if (foundMarkerLen==0 && pIsSubtitleRegExp.test(firstP.innerText)) return;'+
     '  if (notesTextCnt==0) notesTextCnt++;'+
     '  if (foundMarkerLen==0 && firstNoteFlag==false) {'+
     '   notesTextCnt++;'+
