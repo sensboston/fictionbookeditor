@@ -1,9 +1,21 @@
-﻿// Создать таблицу расположения имеющихся маркеров сносок. v. 1.31.
+﻿// Создать таблицу расположения имеющихся маркеров сносок. v. 1.32.
 // Автор: stokber
 
 function Run() {
+
+                            /// НАСТРОЙКИ
+    var display = 1; // 0 - показывать в IE, 1 - в браузере по умолчанию.
+ 
+    // путь для показа в браузере по умолчанию:
+    if (display == 1) {
+       // путь для временного html-файла создаваемого для вашего браузера по умолчанию (HTML/temp.html):
+       var filePatch = document.location.href.replace("file:///", "").replace(/%20/g," ").replace(/main\.html/, "HTML/temp.html");
+       // или указать любой другой путь, например:
+       // var filePatch = "C:\\temp.html"; // Следует иметь ввиду, что скрипт не создаёт новых директорий. Все папки, как и диски указанные в этой переменной, должны реально существовать.
+   }
+
     var name = "Создать таблицу расположения имеющихся маркеров сносок";
-    var version = "1.31";
+    var version = "1.32";
     var avtor = "stokber";
     var sel = document.getElementById("fbw_body");
     var str = sel.innerHTML;
@@ -13,12 +25,19 @@ function Run() {
     var nT;
     var report = "";
     var colour;
-    var colour0a = "DarkKhaki"; // цвет фона Заголовков таблицы.
+	
+
+	var colour0a = "#bdb76b"; // цвет фона Заголовков таблицы.
+    // var colour0a = "DarkKhaki"; // цвет фона Заголовков таблицы.
+	// var colour0d = "silver"; // цвет пустых ячеек.
     var colour0d = "#c0c0c0"; // цвет пустых ячеек.
-    var colour1 = "Khaki"; // цвет первой полосы «зебры».
-    var colour2 = "LightCyan"; // цвет второй полосы «зебры».
-    var colour5 = "orange"; // цвет строки маркера знака сноски №1.
-    var colour6 = "white"; // цвет новой страницы
+    // var colour1 = "Khaki"; // цвет первой полосы «зебры».
+	var colour1 = "#f1e7a2"; // цвет первой полосы «зебры».
+    // var colour2 = "LightCyan"; // цвет второй полосы «зебры».
+    // var colour5 = "#ffa500"; // цвет строки маркера знака сноски №1.
+	var colour5 = "orange"; // цвет строки маркера знака сноски №1.
+    // var colour6 = "#ffffff"; // цвет новой страницы #FFFFFF
+	var colour6 = "white"; // цвет новой страницы
     var lenZ = 120; // кол. символов для отображения в ячейке для маркера знака сноски.
     var lenT = 120; // кол. символов для отображения в ячейке для маркера текста сноски.
 
@@ -153,7 +172,7 @@ function Run() {
         var regexp = new RegExp("([^" + s2 + "\\n\\r]{1," + lenZ + "})(" + s1 + ".+?" + s2 + ")|^(" + s1 + ".+?" + s2 + ")([^" + s1 + "\\n\\r]{1," + lenT + "})", "gm"); // регулярное выражение для маркера сноски.
 
         var result;
-        var report = ""; // список маркеров  сносок.
+        // var report = ""; // список маркеров  сносок.
 
         while (result = regexp.exec(str)) {
             report += (result[0]) + "\r\n"; // для маркера сноски.
@@ -206,21 +225,42 @@ function Run() {
         // закрасить пустые ячейки:
         report = report.replace(/<td><\/td>/mg, "<td BGCOLOR=\"" + colour0d + "\"><\/td>");
 
-        // window.clipboardData.setData("text",report);
-        // alert(report);
         // делим книгу на страницы:
         report = report.replace(new RegExp("([^>]</td></tr>\\r\\n)(<tr BGCOLOR=\"" + colour5 + "\"><td align=\"right\">)", "gm"), "$1<tr BGCOLOR=\"" + colour6 + "\"><td><sub>Новая страница с маркерами сносок:</sub></td><td></td></tr>\r\n$2");
-        report = report.replace(new RegExp("([^>]</td></tr>\\r\\n)(<tr BGCOLOR=\"" + colour1 + "\"><td align=\"right\">)", "gm"), "$1<tr BGCOLOR=\"" + colour6 + "\"><td><sub>Новая страница с маркерами сносок:</sub></td><td></td></tr>\r\n$2");
+        report = report.replace(new RegExp("([^>]</td></tr>\\r\\n)(<tr BGCOLOR=\"" + colour1 + "\"><td align=\"right\">)", "gm"), "$1<tr BGCOLOR=\"" + colour6 + "\"><td>Новая страница с маркерами сносок:</td><td></td></tr>\r\n$2");
 
-        var reportDo = "<h2 align=\"center\">Таблица расположения имеющихся маркеров сносок</h2><table width=\"100%\" border=\"3\" cellpadding=\"5\" cellspacing=\"5\"><tr BGCOLOR=\"" + colour0a + "\"><th height=\"40\">Сноска (" + z + ")</th><th>Текст сноски (" + t + ")</th></tr>\r\n";
-        var reportPosle = "</table><p align=\"center\"><sub>Скрипт \"" + name + "\" v." + version + " (" + avtor + ")</sub></p>";
+        var reportDo = "<h2 align=\"center\">Таблица расположения имеющихся маркеров сносок</h2><table width=\"100%\" border=\"1\" cellpadding=\"5\" cellspacing=\"5\"><tr BGCOLOR=\"" + colour0a + "\"><th height=\"40\">Сноска (" + z + ")</th><th>Текст сноски (" + t + ")</th></tr><tr><td><sub>Первая страница с маркерами сносок:</sub></td><td></td></tr>\r\n";
+        var reportPosle = "</table><p align=\"center\">Скрипт \"" + name + "\" v." + version + " (" + avtor + ")</p>";
         report = reportDo + "" + report + "" + reportPosle;
-        // alert(report);
+       
+	   /* MsgBox(report);
+        window.clipboardData.setData("text",report); // данные в буфер обмена для Excel и т. п. программ. */
+	   
+
+		
+   // для показа в IE:
+    if (display == 0) {
         MyMsgWindow(report);
+    }
+    // для показа в браузере по умолчанию:
+    if (display == 1) {
+        WriteFile();
+    }
     }
 
     function MyMsgWindow(report) {
         var MsgWindow = window.open("HTML/Создать таблицу маркеров-сносок.htm", null, "status=no,toolbar=no,menubar=no,location=no,scrollbars=yes,resizable=yes");
         MsgWindow.document.body.innerHTML = report;
+      }
+
+        function WriteFile() {
+        var shell = new ActiveXObject("WScript.Shell");
+        var fso = new ActiveXObject("Scripting.FileSystemObject");
+        var fh = fso.CreateTextFile(filePatch, true);
+        fh.WriteLine(report);
+        fh.Close();
+        shell.Run("\""+filePatch+"\"");
     }
+        // ========================================
+
 }

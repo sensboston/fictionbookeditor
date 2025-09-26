@@ -1,9 +1,21 @@
-﻿// Создать таблицу соответствия маркеров будущих сносок. v. 1.11.
+﻿// Создать таблицу соответствия маркеров будущих сносок. v. 1.12.
 // Автор: stokber
 
 function Run() {
+
+                   ///НАСТРОЙКИ
+    var display = 1; // 0 - показывать в IE, 1 - в браузере по умолчанию.
+    // путь для показа в браузере по умолчанию:
+    if (display == 1) {
+       // путь для временного html-файла создаваемого для вашего браузера по умолчанию (HTML/temp.html):
+       var filePatch = document.location.href.replace("file:///", "").replace(/%20/g," ").replace(/main\.html/, "HTML/temp.html");
+       // или указать любой другой путь, например:
+       // var filePatch = "C:\\temp.html"; // Следует иметь ввиду, что скрипт не создаёт новых директорий. Все папки, как и диски указанные в этой переменной, должны реально существовать.
+    }
+    // ================================
+
     var name = "Создать таблицу соответствия маркеров будущих сносок";
-    var version = "1.11";
+    var version = "1.12";
     var avtor = "stokber";
     var sel = document.getElementById("fbw_body");
     var str = sel.innerHTML;
@@ -127,7 +139,7 @@ function Run() {
         var regexp = new RegExp(s1, "g");
         var colMarker = (str.match(regexp) || []).length;
         if (colMarker == 0) {
-            MsgBox("Не найдено ни одного маркера сносок " + markSign + ".\nТаблица создана не будет.\n" + name + " v." + version);
+            MsgBox("Не найдено ни одного маркера сносок " + markSign + ".\nТаблица создана не будет.\n\nСкрипт \"" + name + "\" v." + version);
             return;
         }
         var regexp = new RegExp("^" + s1, "gm")
@@ -219,9 +231,6 @@ function Run() {
             report = report.replace(/(<td)>(\{~1~\}.+?<\/td><\/tr>)/gm, "$1 BGCOLOR=\"" + colour2 + "\">$2");
         }
 
-        /*       window.clipboardData.setData("text",report); //
-           alert(report);  */
-
         // закрасить пустые ячейки:
         report = report.replace(/<td><\/td>/mg, "<td BGCOLOR=\"" + colour0d + "\"><\/td>");
         report = report.replace(/<td align="right"><\/td>/mg, "<td BGCOLOR=\"" + colour0d + "\"><\/td>");
@@ -235,15 +244,35 @@ function Run() {
 
         var reportDo = "<h2 align=\"center\">Таблица соответствия маркеров будущих сносок</h2><table  width=\"100%\" border=\"1\" cellpadding=\"5\" cellspacing=\"5\"><tr BGCOLOR=\"" + colour0a + "\"><th height=\"40\">Сноска (" + z + ")</th><th>№</th><th>Текст сноски (" + t + ")</th></tr>";
 
-        var reportPosle = "</table><p align=\"center\"><sub>Скрипт \"" + name + "\" v." + version + " (" + avtor + ")</sub></p>";
+        var reportPosle = "</table><p align=\"center\">Скрипт \"" + name + "\" v." + version + " (" + avtor + ")</p>";
         report = reportDo + "" + report + "" + reportPosle;
-        // window.clipboardData.setData("text",report); // данные в буфер обмена для Excel и т. п. программ.
 
+       /*  MsgBox(report);
+        window.clipboardData.setData("text",report); // данные в буфер обмена для Excel и т. п. программ. */
+
+    // для показа в IE:
+    if (display == 0) {
         MyMsgWindow(report);
+    }
+    // для показа в браузере по умолчанию:
+    if (display == 1) {
+        WriteFile();
+    }
+
     }
 
     function MyMsgWindow(report) {
         var MsgWindow = window.open("HTML/Создать таблицу маркеров-сносок.htm", null, "status=no,toolbar=no,menubar=no,location=no,scrollbars=yes,resizable=yes");
         MsgWindow.document.body.innerHTML = report;
     }
+
+    function WriteFile() {
+        var shell = new ActiveXObject("WScript.Shell");
+        var fso = new ActiveXObject("Scripting.FileSystemObject");
+        var fh = fso.CreateTextFile(filePatch, true);
+        fh.WriteLine(report);
+        fh.Close();
+        shell.Run("\""+filePatch+"\"");
+    }
+        // ================================
 }
