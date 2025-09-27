@@ -1,6 +1,6 @@
 //======================================
 // Поиск отсутствующих или неиспользуемых изображений
-//                  Alex Saveliev script for FBW2         version 1.1
+//                  Alex Saveliev script for FBW2         version 1.11
 //======================================
 
 // TO DO: Go to the first broken image if any
@@ -33,9 +33,17 @@ function Run()
  unused="\nНеиспользуемые бинарные объекты: \n"+unused;
 
  // Find broken images (no binary)
+ 
 
-   if(!imgs || imgs.length==0, !bins || bins.length==0){ MsgBox("\nВ этой книге нет ни обложки, ни иллюстраций. \n\n"); return; }
 
+   // if(!imgs || imgs.length==0, !bins || bins.length==0){ MsgBox("\nВ этой книге нет ни обложки, ни иллюстраций. \n\n"); return; }
+   
+   //-----------------------------------------------------------------
+   // с закомментированной выше строкой скрипт не указывал на наличие пустых ссылок если в документе не было ни одного бинарника.(stokber)
+   // MsgBox("imgs.length: "+imgs.length+"\nbins.length: "+bins.length);
+   if(imgs.length==0 && bins.length==0){ MsgBox("\nВ этой книге нет ни обложки, ни иллюстраций. \n\n"); return; }
+   //========================================
+   
  var broken="";
 
  for(var i=0; i<imgs_len; i++)
@@ -49,7 +57,7 @@ function Run()
 
  if(broken=='') broken=" • не найдено\n";
 
- MsgBox("           —= AlexS Script=— \n   «Проверка иллюстраций» v.1.1\n\n" +unused+"\nОтсутствующие иллюстрации: \n"+broken+"\n");
+ MsgBox("           —= AlexS Script=— \n   «Проверка иллюстраций» v.1.11\n\n" +unused+"\nОтсутствующие иллюстрации: \n"+broken+"\n");
 
 }
 
