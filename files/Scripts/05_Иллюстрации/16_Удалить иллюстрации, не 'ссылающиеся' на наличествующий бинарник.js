@@ -1,11 +1,11 @@
-// Скрипт "Удалить пустые ссылки на иллюстрации"
-// Версия 1.1
+// Скрипт "Удалить иллюстрации, не 'ссылающиеся' на наличествующий бинарник"
+// Версия 1.0
 // Автор stokber (сентябрь, 2025)
 // Скрипт написан по мотивам скрипта "Удалить все теги иллюстраций - теги image -  v1.6" за авторством Sclex-а.
 
 function Run() {
-    var name = "Удалить пустые ссылки на иллюстрации";
-    var versionStr = "1.1";
+    var name = "Удалить иллюстрации, не 'ссылающиеся' на наличествующий бинарник";
+    var versionStr = "1.0";
     var rx;
 	var str;
 
@@ -54,7 +54,7 @@ function Run() {
 
     var emptyLines = [];
     var fbwBody = document.getElementById("fbw_body");
-    var undoUnitName = "удаление пустых ссылок на иллюстрации";
+    var undoUnitName = "удаление иллюстраций";
     var firstRemoving = true;
     var elem, elem2, elems2, i, j;
     var replaceCounter1 = 0;
@@ -119,16 +119,16 @@ function Run() {
     var s;
     s = "Скрипт «" + name + "» v" + versionStr + ".\n" +
         "\n" +
-        "Удалено пустых ссылок «блочных» иллюстраций: " + replaceCounter1 + ".\n" +
-        "Удалено пустых ссылок внутриабзацных иллюстраций: " + replaceCounter2 + ".\n" +
-        (replaceCounter3 == 0 ? "" : "Удалено пустых ссылок непонятных (вероятно, ошибочных) иллюстраций: " + replaceCounter3 + ".\n") +
+        "Удалено «блочных» иллюстраций: " + replaceCounter1 + ".\n" +
+        "Удалено внутриабзацных иллюстраций: " + replaceCounter2 + ".\n" +
+        (replaceCounter3 == 0 ? "" : "Удалено ссылок непонятных (вероятно, ошибочных) иллюстраций: " + replaceCounter3 + ".\n") +
         "\n" +
-        "Всего удалено пустых ссылок иллюстраций (тегов image): " + (replaceCounter1 + replaceCounter2 + replaceCounter3) + ".\n" +
+        "Всего удалено иллюстраций (тегов image): " + (replaceCounter1 + replaceCounter2 + replaceCounter3) + ".\n" +
         "\n" +
         "Удалено пустых строк (которые были рядом с иллюстрациями): " + removedEmptyLinesCnt + ".";
     if (!firstRemoving) window.external.EndUndoUnit(document);
     if ((replaceCounter1 + replaceCounter2 + replaceCounter3) == 0) {
-        MsgBox("Пустых ссылок на иллюстрации не найдено!\n\nСкрипт «" + name + "» v" + versionStr)
+        MsgBox("Изображений не 'ссылающихся' на наличествующий бинарник не найдено!\n\nСкрипт «" + name + "» v" + versionStr)
     } else {
         MsgBox(s);
     }
