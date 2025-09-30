@@ -1,4 +1,10 @@
+// Скрипт «Перейти на предыдущую 'блочную' иллюстрацию» v.1.1
+// автор — Sсlex.
+// костыль от ошибки выделения — stokber (сентябрь 2025).
+
 function Run() {
+var name = "Перейти на предыдущую 'блочную' иллюстрацию";
+var vers ="1.1";
 //имя тэга, который используется в маркере позиции курсора
  var MyTagName="B";
 //направление поиска картинок
@@ -10,7 +16,16 @@ function Run() {
  var coll=body.document.selection.createRange()
  var ttr1 = body.document.selection.createRange();
 // var el=body.document.elementFromPoint(coll[0].left, coll[0].top);
+
+try {
  var tr=ttr1.duplicate();
+ } catch (err) {
+  // обработка ошибки
+var shell = new ActiveXObject("WScript.Shell");
+shell.SendKeys("+{ESC}");
+shell.SendKeys("{LEFT}");
+}
+
  tr.collapse();
  tr.pasteHTML("<"+MyTagName+" id=NextImageCursorPosition></"+MyTagName+">");
  var ptr=body;
@@ -53,9 +68,16 @@ function Run() {
    }
   }
  }
+ 
+ if(!CursorPosition) { alert("Установите курсор в документ!"); return}
  CursorPosition.parentNode.removeChild(CursorPosition);
  //a
  if (!ImageFound) {
-   MsgBox("  Иллюстраций больше нет.     ");
+   MsgBox("  Иллюстраций больше нет.  \n\nСкрипт '"+name+"' v."+vers);
+   return
  }
+   // слезаем с картинки:
+var shell = new ActiveXObject("WScript.Shell");
+shell.SendKeys("+{ESC}");
+shell.SendKeys("{LEFT}");
 }
