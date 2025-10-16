@@ -1,4 +1,4 @@
-<!-- версия скрипта 2.9 -->
+<!-- версия скрипта 3.0 -->
 <html>
 <head>
  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -94,7 +94,7 @@ table {
     ' var emptyLineRegExp=new RegExp("^( | |&nbsp;|"+nbspChar+")*?$","i");'+
     ''+
     ' function isLineEmpty(ptr) {'+
-    '  return emptyLineRegExp.test(ptr.innerHTML.replace(/<[^>]*?>/gi,""));'+
+    '  return emptyLineRegExp.test(ptr.innerHTML.replace(/<(?!IMG)[^>]*?>/gi,""));'+
     ' }'+
     ''+
     ' var removeLinksRE=new RegExp("<A( [^<>]*)?>.*?</A>","gi");'+
