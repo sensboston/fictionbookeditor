@@ -2,6 +2,7 @@
 <head>
  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
  <meta http-equiv="MSThemeCompatible" content="yes">
+ <!-- версия скрипта 1.3 -->
  <style>
   body, input{font-family:Tahoma; font-size:16px;margin:2px;}
  </style>
@@ -15,6 +16,8 @@ function markerFunc() {
  if (document.getElementById("radio6").checked) return "♣";
  if (document.getElementById("radio7").checked) return "♥";
  if (document.getElementById("radio8").checked) return "♦";
+ if (document.getElementById("radio10").checked) return "#";
+ if (document.getElementById("radio11").checked) return "^";
  if (document.getElementById("radio9").checked) return document.getElementById("markerInput").value
                                                          .replace(/&/g,"&amp;")
                                                          .replace(/</g,"&lt;")
@@ -31,7 +34,9 @@ function markerFunc() {
 <label for="radio5"><input type="radio" name="markerSign" id="radio5">♠</label>
 <label for="radio6"><input type="radio" name="markerSign" id="radio6">♣</label>
 <label for="radio7"><input type="radio" name="markerSign" id="radio7">♥</label>
-<label for="radio8"><input type="radio" name="markerSign" id="radio8">♦</label><br>
+<label for="radio8"><input type="radio" name="markerSign" id="radio8">♦</label>
+<label for="radio8"><input type="radio" name="markerSign" id="radio10">#</label>
+<label for="radio8"><input type="radio" name="markerSign" id="radio11">^</label><br>
 <label for="radio9"><input type="radio" name="markerSign" id="radio9">Задать свой маркер:</label> <input type=text style="width: 150px;" onfocus="getElementById('radio9').checked=true;" id=markerInput><br>
 <input type="button" value="Добавить маркеры списка" onclick="window.returnValue=markerFunc(); window.close();"><br>
 <input type="button" value="Отмена" onclick="window.returnValue=null; window.close();">

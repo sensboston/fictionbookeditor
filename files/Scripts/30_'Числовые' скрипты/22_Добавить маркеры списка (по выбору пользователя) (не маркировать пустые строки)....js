@@ -1,10 +1,10 @@
 //скрипт «Добавить маркеры списка (по выбору пользователя) (не нумеровать пустые строки).js»
 //автор Sclex
-//v1.2
+//v1.3
 
 function Run() {
 
- listMarker_versionNum="v1.2";
+ listMarker_versionNum="v1.3";
 
  try { var nbspChar=window.external.GetNBSP(); var nbspEntity; if (nbspChar.charCodeAt(0)==160) nbspEntity="&nbsp;"; else nbspEntity=nbspChar;}
  catch(e) { var nbspChar=String.fromCharCode(160); var nbspEntity="&nbsp;";}
@@ -41,7 +41,7 @@ function Run() {
   return;
  }
  
- var dialogWidth="400px";
+ var dialogWidth="440px";
  var dialogHeight="240px";
  var fbwBody=document.getElementById("fbw_body");
  var coll=new Object();
