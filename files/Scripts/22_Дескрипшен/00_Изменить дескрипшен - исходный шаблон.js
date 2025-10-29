@@ -1,22 +1,25 @@
 //------------------------------------------------------------------------------------------
 //             «Изменить дескрипшен»
 //  Скрипт предназначен для пользовательской замены данных в разделе <description>
-//  * Скрипт тестировался в FBE v.2.7.7 (win XP, IE8 и win 7, IE11)
-// v.1.0 — Создание скрипта — Александр Ка (17.05.2025)
-// v.1.1 — Добавление обработки аннотации  — Александр Ка (20.05.2025)
-// v.1.2 — Исправлены две мелкие ошибки  — Александр Ка (21.05.2025)
+//  * Скрипт тестировался в FBE v.2.7.8 (win XP, IE8 и win 7, IE11)
+//  * История изменений в конце скрипта
 //------------------------------------------------------------------------------------------
 
 function Run() {
 
  var ScriptName="«Изменить дескрипшен»";
- var NumerusVersion="1.2";
+ var NumerusVersion="1.4";
  var titleInfoGenre=[], titleInfoAuthorFirstName=[], titleInfoAuthorMiddleName=[], titleInfoAuthorLastName=[], titleInfoAuthorNickname=[], titleInfoAuthorEmail=[], titleInfoAuthorHomePage=[], titleInfoAuthorID=[], titleInfoTranslatorFirstName=[], titleInfoTranslatorMiddleName=[], titleInfoTranslatorLastName=[], titleInfoTranslatorNickname=[], titleInfoTranslatorEmail=[], titleInfoTranslatorHomePage=[], titleInfoAnnotation=[], srcTitleInfoGenre=[], srcTitleInfoAuthorFirstName=[], srcTitleInfoAuthorMiddleName=[], srcTitleInfoAuthorLastName=[], srcTitleInfoAuthorNickname=[], srcTitleInfoAuthorEmail=[], srcTitleInfoAuthorHomePage=[], srcTitleInfoAuthorID=[], srcTitleInfoTranslatorFirstName=[], srcTitleInfoTranslatorMiddleName=[], srcTitleInfoTranslatorLastName=[], srcTitleInfoTranslatorNickname=[], srcTitleInfoTranslatorEmail=[], srcTitleInfoTranslatorHomePage=[], documentInfoAuthorFirstName=[], documentInfoAuthorMiddleName=[], documentInfoAuthorLastName=[], documentInfoAuthorNickname=[], documentInfoAuthorEmail=[], documentInfoAuthorHomePage=[], customInfoType=[], customInfo=[];
  var titleInfoBookTitle, titleInfoKeywords, titleInfoDate, titleInfoDateValue, titleInfoLang, titleInfoSrcLang, titleInfoSequenceName, titleInfoSequenceNumber, srcTitleInfoBookTitle, srcTitleInfoKeywords, srcTitleInfoDate, srcTitleInfoDateValue, srcTitleInfoLang, srcTitleInfoSrcLang, srcTitleInfoSequenceName, srcTitleInfoSequenceNumber, documentInfoVersion, documentInfoProgramUsed, documentInfoDate, documentInfoDateValue, documentInfoSrcOcr, documentInfoSrcUrl, documentInfoHistory, publishInfoBookName, publishInfoPublisher, publishInfoCity, publishInfoYear, publishInfoISBN, publishInfoSequenceName, publishInfoSequenceNumber;
  var k=0;
 
 // ---------------------------------------------------------------
                  ///  НАСТРОЙКИ
+// ---------------------------------------------------------------
+
+ //   Показывать напоминание об опасном расположении курсора
+ var Napominanie = 1;      // 0 ; 1 //      ("0" — Отключить, "1" — Показывать)
+
 // ---------------------------------------------------------------
 
  //   Название шаблона
@@ -63,6 +66,7 @@ function Run() {
 //  Сам обратный слэш, экранируется точно так же: «\\».
 //  Разрыв строки, который может быть в <custom-info> записывается символами «\n».
 //  Чтобы не мешались, можно свободно удалять любые незаполненные разделы, и строки комментариев (они начинаются символами «//»).
+//  Строку "k++;" можно удалять только вместе с разделом, к которому она приставлена.
 
 
          ///   Книга  ::  <title-info>
@@ -250,7 +254,43 @@ var j = 0;
  var div;                //  один из узлов "DIV"
  var Length;         //  длина массива
 
- var reELine = new RegExp("^(\\\s|"+nbspEntity+"|<.[^P>][^>]{0,}>){0,}$","");   //  Признак пустой строки.
+ var reELine = new RegExp("^(\\\s|"+nbspEntity+"|<[^>]{1,}>){0,}$","");   //  Признак пустой строки.
+ var reELine_ex = new RegExp("<SPAN [^>]{0,}?class=image","g");
+
+ var ex;   //  Экс-значение данных в дескрипшен.
+ var change = false;   //  Индикатор изменения;
+
+// ---------------------------------------------------------------
+// ----------------------------------------------
+// -----------------------------
+
+
+                 ///   Напоминание
+
+ var napominanieText =
+         " • НАПОМИНАНИЕ \n\n"+
+         " Перед запуском скрипта не забудьте убедиться, \n"+
+         " что в «Описании документа» не установлен курсор \n"+
+         " в текстовом поле, которое может быть \n"+
+         " удалено скриптом. \n\n"+
+         " Такие поля располагаются в разделах: \n"+
+         "    Жанры \n"+
+         "    Авторы \n"+
+         "    Переводчики \n"+
+         "    Дополнительная информация \n\n"+
+         " Исключаются только первые строки данных. \n"+
+         " Если же курсор оказывается \n"+
+         " в любой строке, следующей за первой, \n"+
+         " то существует очень большая вероятность \n"+
+         " вылета программы «FictionBook Editor» из-за того, \n"+
+         " что при переходе в раздел «Описание документа», \n"+
+         " программа не сможет вернуть курсор \n"+
+         " на прежнее место. \n\n"+
+         " ◊ Продолжить выполнение скрипта?"
+
+ if (Napominanie !=0  &&  fbwBody.style.display == "block")    //  Если скрипт работает без паузы, и включено напоминание, и действует режим "Дизайн"...
+         if (! AskYesNo (napominanieText))     //  Создаем окно вопроса и если выбран отказ от продолжения...
+                 return;      //  то выходим из скрипта.
 
 // ---------------------------------------------------------------
 // ----------------------------------------------
@@ -283,6 +323,17 @@ var j = 0;
          }
 
  var SegodnjaText = currentDay + " " + currentMonth + " " + currentYear;
+
+// ---------------------------------------------------------------
+// ----------------------------------------------
+// -----------------------------
+
+
+                 ///   Функция преобразования в код
+
+ function inCode(text) {      //  Преобразование обычного текста в код.
+         return  text.replace(/&/g, "&amp;").replace(/ /g, nbspEntity).replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/­/g, "&shy;");
+         }
 
 // ---------------------------------------------------------------
 // ----------------------------------------------
@@ -336,9 +387,11 @@ fff:
  try  { youName = fbeUserName }   //  Если есть строка:   var fbeUserName = "Имя";   в файле "main.js"  --  Изменение имени в соответствии с глобальной переменной.
  catch(e)  {}                                            //  Если глобальная переменная отсутствует - пропуск операции по изменению имени.
 
- var textYouName = youName+"";    //  Имя в тексте.
+ var textYouName = inCode(youName+"");    //  Имя в тексте.
  if (youName!="")                           //  Если есть заполненное имя...
          textYouName += ", ";   //  то добавляем к текстовой записи запятую.
+
+ TextHistory = inCode(TextHistory);    //  Обработка добавляемого текста.
 
  var reHist00s = new RegExp("[^А-яЁёA-Za-z0-9]"+TextHistory+"[^А-яЁёA-Za-z0-9]","");   //  Стартовая.
  //  Добавление текста перед словом "Скрипт"
@@ -406,21 +459,150 @@ fff:
 
          //   Добавление строк в историю изменений
 
+ var reHist11 = new RegExp("^(\\\s|"+nbspEntity+"){0,}$","");   //  Признак пустой строки.
  var reHist12 = new RegExp("(^|\\n)[^0-9]{0,12}"+versionFile.replace(/\./, "\\.")+"([^0-9]|$)","");   //  Поиск старой версии.
 
  //   Добавление строки с информацией о старой версии
- if (History.innerText.search(reHist12)==-1  &&  !documentInfoVersion) {       //  Если в истории нет записи о старой версии...
-         if (History.lastChild.innerHTML.search(reELine)==-1)                                               //  то проверяем наличие пустой строки в конце истории
+ if (ValidationVersion  &&  History.innerText.search(reHist12)==-1  &&  !documentInfoVersion) {       //  Если в истории нет записи о старой версии...
+         if (History.lastChild.innerHTML.search(reHist11)==-1)                                               //  то проверяем наличие пустой строки в конце истории
                  History.insertAdjacentElement("beforeEnd",document.createElement("P"));       //  и если ее нет - добавляем новую.
          History.lastChild.innerHTML = "v."+versionFile+" — ?";  //  Затем добавляем в строку информацию о старой версии
          change_D09=true;              //  и отмечаем, что данные изменились.
          }
 
  //   Добавление строки с информацией о новой версии
- if (History.lastChild.innerHTML.search(reELine)==-1)                                   //  Если в конце истории нет готовой пустой строки...
+ if (History.lastChild.innerHTML.search(reHist11)==-1)                                   //  Если в конце истории нет готовой пустой строки...
          History.insertAdjacentElement("beforeEnd",document.createElement("P"));   //  то добавляем новую строку.
  History.lastChild.innerHTML = versionText+" "+TextHistory+" — "+textYouName+mDate[0];  //  Добавляем в строку информацию о новой версии.
  change_D09=true;              //  и отмечаем, что данные изменились.
+
+ }
+
+// ---------------------------------------------------------------
+// ----------------------------------------------
+// -----------------------------
+
+
+                 /// Функция добавления жанров
+
+ function AddGenre (mGenre, elem) {
+
+ change = false;              //  Отмечаем, что изменений пока нет.
+ ex = elem.innerHTML;    //  Сохраняем исходный текст структуры.
+
+ Length = mGenre.length;          //  Определяем длину массива с новыми данными.
+
+ div = elem.firstChild;         //  Находим первый элемент в разделе жанров.
+ while (div.nextSibling.nodeName != "DIV")    //  Находим раздел перед первым "DIV".
+         div = div.nextSibling;
+
+ for (k=0; k<Length; k++)                  //  Перебираем все элементы с новыми данными.
+         if (mGenre[k]) {               //  Если есть заполненные данные...
+                 if (!div.nextSibling)               //  проверяем наличие отсутствия следующего раздела, и если нет его...
+                         div.insertAdjacentElement("afterEnd", div.cloneNode(true));   //  то добавляем копию раздела "DIV".
+                 div = div.nextSibling;               //  Затем переходим на следующий узел "DIV".
+                 div.all.genre.value = mGenre[k];   //  Заменяем жанр в этом узле.
+                 if (div.all.match)                           //  Если там есть данные "соответствия жанру"...
+                         div.all.match.value = "";    //  то удаляем их.
+                 change=true;              //  Отмечаем, что данные изменились.
+                 }
+
+ if (change) {         //  Если данные изменились...
+         while (div.nextSibling  &&  div.nextSibling.nodeName == "DIV")   //  то удаляем все неиспользованные разделы "DIV"
+                 div.nextSibling.removeNode(true);
+         PutSpacers(elem);                   //  и правильно оформляем список.
+         }
+
+ return (ex != elem.innerHTML);   //  Возвращаем индикацию изменения дескрипшена.
+
+ }
+
+// ---------------------------------------------------------------
+// ----------------------------------------------
+// -----------------------------
+
+
+                 /// Функция добавления авторов и переводчиков
+
+ function AddAuthor (mFirstName, mMiddleName, mLastName, mNickname, mEmail, mHomePage, mID, elem, ID) {
+
+ change = false;              //  Отмечаем, что изменений пока нет.
+ ex = elem.innerHTML;    //  Сохраняем исходный текст структуры.
+
+ Length = mFirstName.length;          //  Определяем максимальную длину массива с новыми данными.
+ if (mMiddleName.length > Length)
+         Length = mMiddleName.length;
+ if (mLastName.length > Length)
+         Length = mLastName.length;
+ if (mNickname.length > Length)
+         Length = mNickname.length;
+
+ div = elem.firstChild;         //  Находим первый элемент в разделе авторов.
+ while (div.nextSibling.nodeName != "DIV")    //  Находим раздел перед первым "DIV".
+         div = div.nextSibling;
+
+ for ( ; k<Length; k++)                  //  Перебираем все элементы с новыми данными.
+         if (mFirstName[k]  ||  mMiddleName[k]  ||  mLastName[k]  ||  mNickname[k]) {   //  Если есть заполненные данные...
+                 if (!div.nextSibling)                                //  проверяем наличие отсутствия следующего раздела, и если нет его...
+                         div.insertAdjacentElement("afterEnd", div.cloneNode(true));   //  и добавляем копию раздела "DIV".
+                 div = div.nextSibling;                                                //  Затем переходим на следующий узел "DIV".
+                 if (mFirstName[k])                                  //  Если есть новое имя автора...
+                         div.all.first.value = mFirstName[k];   //  то заменяем старое,
+                     else  div.all.first.value = "";                         //  а если нет - то удаляем старое имя.
+                 if (mMiddleName[k])                               //  Если есть новое отчество автора...
+                         div.all.middle.value = mMiddleName[k];   //  то заменяем старое,
+                     else  div.all.middle.value = "";                            //  а если нет - то удаляем старое отчество.
+                 if (mLastName[k])                                       //  и т.д.
+                         div.all.last.value = mLastName[k];
+                     else  div.all.last.value = "";
+                 if (mNickname[k])
+                         div.all.nick.value = mNickname[k];
+                     else  div.all.nick.value = "";
+                 if (mEmail[k])
+                         div.all.email.value = mEmail[k];
+                     else  div.all.email.value = "";
+                 if (mHomePage[k])
+                         div.all.home.value = mHomePage[k];
+                     else  div.all.home.value = "";
+                 if (ID  &&  mID[k]  &&  div.all.id.value != mID[k])
+                         div.all.id.value = mID[k];
+                 change=true;              //  Отмечаем, что данные изменились.
+                 }
+
+ if (change) {         //  Если данные изменились...
+         while (div.nextSibling  &&  div.nextSibling.nodeName == "DIV")   //  то удаляем все неиспользованные разделы "DIV"
+                 div.nextSibling.removeNode(true);
+         PutSpacers(elem);                   //  и правильно оформляем список.
+         }
+
+ return (ex != elem.innerHTML);   //  Возвращаем индикацию изменения дескрипшена.
+
+ }
+
+// ---------------------------------------------------------------
+// ----------------------------------------------
+// -----------------------------
+
+
+                 /// Функция добавления серии
+
+ function AddSequence (sequenceName, sequenceNumber, elem) {
+
+ ex = elem.innerHTML;    //  Сохраняем исходный текст структуры.
+
+ if (sequenceName) {                    //  Если есть новое название серии...
+         mDiv = elem.getElementsByTagName("DIV");   //  Находим все разделы "DIV".
+         for (j=mDiv.length-1; j>0; j--)                        //  И удаляем их все, кроме самого первого раздела.
+                 mDiv[j].removeNode(true);
+         div = mDiv[0];                 //  Выбираем оставшийся раздел.
+         div.all.del.disabled = true;   //  Гасим там кнопку удаления.
+         div.all.name.value = sequenceName;    //  Заменяем название.
+         if (sequenceNumber)                        //  Если есть новый номер...
+                 div.all.number.value = sequenceNumber;    //  то добавляем и его,
+             else  div.all.number.value = "";    //  а если нет - то удаляем старый номер.
+         }
+
+ return (ex != elem.innerHTML);   //  Возвращаем индикацию изменения дескрипшена.
 
  }
 
@@ -452,89 +634,20 @@ fff:
 
                  /// <title-info>  ::  Жанры
 
- Length = titleInfoGenre.length;          //  Определяем длину массива с новыми данными.
-
- div = mDesc.tiGenre.firstChild;         //  Находим первый элемент в разделе жанров.
- while (div.nextSibling.nodeName != "DIV")    //  Находим раздел перед первым "DIV".
-         div = div.nextSibling;
-
- for (k=0; k<Length; k++)                  //  Перебираем все элементы с новыми данными.
-         if (titleInfoGenre[k]) {               //  Если есть заполненные данные...
-                 if (!div.nextSibling) {               //  проверяем наличие отсутствия следующего раздела, и если нет его...
-                         div.all.del.disabled = false;               //  активируем кнопку удаления
-                         div.insertAdjacentElement("afterEnd", div.cloneNode(true));   //  и добавляем копию раздела "DIV".
-                         }
-                 div = div.nextSibling;               //  Затем переходим на следующий узел "DIV".
-                 div.all.genre.value = titleInfoGenre[k];   //  Заменяем жанр в этом узле.
-                 if (div.all.match)                           //  Если там есть данные "соответствия жанру"...
-                         div.all.match.value = "";    //  то удаляем их.
-                 change_T01=true;              //  Отмечаем, что данные изменились.
-                 }
-
- if (change_T01) {         //  Если данные изменились...
-         while (div.nextSibling  &&  div.nextSibling.nodeName == "DIV")   //  то удаляем все неиспользованные разделы "DIV".
-                 div.nextSibling.removeNode(true);
-         if (! div.previousSibling  ||  div.previousSibling.nodeName != "DIV")   //  И если остался только один раздел "DIV"...
-                 div.all.del.disabled = true;             //  то гасим кнопку удаления.
-         }
+ //  Запускаем функцию добавления жанров и сохраняем результат в индикаторе изменений.
+ change_T01 = AddGenre (titleInfoGenre, mDesc.tiGenre);
 
 
                  /// <title-info>  ::  Авторы
 
- Length = titleInfoAuthorFirstName.length;          //  Определяем максимальную длину массива с новыми данными.
- if (titleInfoAuthorMiddleName.length > Length)
-         Length = titleInfoAuthorMiddleName.length;
- if (titleInfoAuthorLastName.length > Length)
-         Length = titleInfoAuthorLastName.length;
- if (titleInfoAuthorNickname.length > Length)
-         Length = titleInfoAuthorNickname.length;
-
- div = mDesc.tiAuthor.firstChild;         //  Находим первый элемент в разделе авторов.
- while (div.nextSibling.nodeName != "DIV")    //  Находим раздел перед первым "DIV".
-         div = div.nextSibling;
-
- for ( ; k<Length; k++)                  //  Перебираем все элементы с новыми данными.
-         if (titleInfoAuthorFirstName[k]  ||  titleInfoAuthorMiddleName[k]  ||  titleInfoAuthorLastName[k]  ||  titleInfoAuthorNickname[k]) {   //  Если есть заполненные данные...
-                 if (!div.nextSibling) {               //  проверяем наличие отсутствия следующего раздела, и если нет его...
-                         div.all.del.disabled = false;               //  активируем кнопку удаления
-                         div.insertAdjacentElement("afterEnd", div.cloneNode(true));   //  и добавляем копию раздела "DIV".
-                         }
-                 div = div.nextSibling;               //  Затем переходим на следующий узел "DIV".
-                 if (titleInfoAuthorFirstName[k])            //  Если есть новое имя автора...
-                         div.all.first.value = titleInfoAuthorFirstName[k];   //  то заменяем старое,
-                     else  div.all.first.value = "";                //  а если нет - то удаляем старое имя.
-                 if (titleInfoAuthorMiddleName[k])            //  Если есть новое отчество автора...
-                         div.all.middle.value = titleInfoAuthorMiddleName[k];   //  то заменяем старое,
-                     else  div.all.middle.value = "";                //  а если нет - то удаляем старое отчество.
-                 if (titleInfoAuthorLastName[k])                //  и т.д.
-                         div.all.last.value = titleInfoAuthorLastName[k];
-                     else  div.all.last.value = "";
-                 if (titleInfoAuthorNickname[k])
-                         div.all.nick.value = titleInfoAuthorNickname[k];
-                     else  div.all.nick.value = "";
-                 if (titleInfoAuthorEmail[k])
-                         div.all.email.value = titleInfoAuthorEmail[k];
-                     else  div.all.email.value = "";
-                 if (titleInfoAuthorHomePage[k])
-                         div.all.home.value = titleInfoAuthorHomePage[k];
-                     else  div.all.home.value = "";
-                 if (titleInfoAuthorID[k])
-                         div.all.id.value = titleInfoAuthorID[k];
-                     else  div.all.id.value = "";
-                 change_T02=true;              //  Отмечаем, что данные изменились.
-                 }
-
- if (change_T02) {         //  Если данные изменились...
-         while (div.nextSibling  &&  div.nextSibling.nodeName == "DIV")   //  то удаляем все неиспользованные разделы "DIV".
-                 div.nextSibling.removeNode(true);
-         if (! div.previousSibling  ||  div.previousSibling.nodeName != "DIV")   //  И если остался только один раздел "DIV"...
-                 div.all.del.disabled = true;             //  то гасим кнопку удаления.
-         }
+ //  Запускаем функцию добавления авторов и переводчиков, и сохраняем результат в индикаторе изменений.
+ change_T02 = AddAuthor (titleInfoAuthorFirstName, titleInfoAuthorMiddleName, titleInfoAuthorLastName, titleInfoAuthorNickname, titleInfoAuthorEmail, titleInfoAuthorHomePage, titleInfoAuthorID, mDesc.tiAuthor, true);
 
 
                  /// <title-info>  ::  Название
 
- if (titleInfoBookTitle) {        //  Если есть новое название книги...
+
+ if (titleInfoBookTitle  &&  mDesc.tiTitle.value != titleInfoBookTitle) {        //  Если есть новое название книги...
          mDesc.tiTitle.value = titleInfoBookTitle;   //  то отправляем его в дескрипшен
          change_T03=true;              //  Отмечаем, что данные изменились.
          }
@@ -542,7 +655,7 @@ fff:
 
                  /// <title-info>  ::  Ключевые слова
 
- if (titleInfoKeywords) {         //  Если есть новые ключевые слова...
+ if (titleInfoKeywords  &&  mDesc.tiKwd.value != titleInfoKeywords) {         //  Если есть новые ключевые слова...
          mDesc.tiKwd.value = titleInfoKeywords;   //  то отправляем их в дескрипшен
          change_T04=true;              //  Отмечаем, что данные изменились.
          }
@@ -550,7 +663,7 @@ fff:
 
                  /// <title-info>  ::  Дата текстом
 
- if (titleInfoDate) {        //  Если есть новая дата...
+ if (titleInfoDate  &&  mDesc.tiDate.value != titleInfoDate) {        //  Если есть новая дата...
          mDesc.tiDate.value = titleInfoDate;   //  то отправляем её в дескрипшен
          change_T05=true;              //  Отмечаем, что данные изменились.
          }
@@ -558,7 +671,7 @@ fff:
 
                  /// <title-info>  ::  Значение даты
 
- if (titleInfoDateValue) {         //  Если есть новое значение даты...
+ if (titleInfoDateValue  &&  mDesc.tiDateVal.value != titleInfoDateValue) {         //  Если есть новое значение даты...
          mDesc.tiDateVal.value = titleInfoDateValue;   //  то отправляем его в дескрипшен
          change_T06=true;              //  Отмечаем, что данные изменились.
          }
@@ -566,132 +679,85 @@ fff:
 
                  /// <title-info>  ::  Язык
 
- if (titleInfoLang) {         //  Если есть новые данные по языку книги...
-         mDesc.tiLang.value = titleInfoLang;   //  то отправляем их в дескрипшен
-         change_T07=true;              //  Отмечаем, что данные изменились.
+ if (titleInfoLang  &&  mDesc.tiLang.value != titleInfoLang) {         //  Если есть новые данные по языку книги...
+         ex = mDesc.tiLang.innerHTML;                 //  то сохраняем исходный текст структуры в дескрипшен,
+         mDesc.tiLang.value = titleInfoLang;                     //  заменяем старые данные
+         if (ex != mDesc.tiLang.innerHTML)  change_T07=true;   //  и если дескрипшен изменился - то отмечаем это.
          }
 
 
                  /// <title-info>  ::  Язык оригинала
 
- if (titleInfoSrcLang) {        //  Если есть новые данные по языку оригинальной книги...
-         mDesc.tiSrcLang.value = titleInfoSrcLang;   //  то отправляем их в дескрипшен
-         change_T08=true;              //  Отмечаем, что данные изменились.
+ if (titleInfoSrcLang  &&  mDesc.tiSrcLang.value != titleInfoSrcLang) {        //  Если есть новые данные по языку оригинальной книги...
+         ex = mDesc.tiSrcLang.innerHTML;                 //  то сохраняем исходный текст структуры в дескрипшен,
+         mDesc.tiSrcLang.value = titleInfoSrcLang;                     //  заменяем старые данные
+         if (ex != mDesc.tiSrcLang.innerHTML)  change_T08=true;   //  и если дескрипшен изменился - то отмечаем это.
          }
 
 
                  /// <title-info>  ::  Переводчики
 
- Length = titleInfoTranslatorFirstName.length;          //  Определяем максимальную длину массива с новыми данными.
- if (titleInfoTranslatorMiddleName.length > Length)
-         Length = titleInfoTranslatorMiddleName.length;
- if (titleInfoTranslatorLastName.length > Length)
-         Length = titleInfoTranslatorLastName.length;
- if (titleInfoTranslatorNickname.length > Length)
-         Length = titleInfoTranslatorNickname.length;
-
- div = mDesc.tiTrans.firstChild;         //  Находим первый элемент в разделе переводчиков.
- while (div.nextSibling.nodeName != "DIV")    //  Находим раздел перед первым "DIV".
-         div = div.nextSibling;
-
- for ( ; k<Length; k++)                  //  Перебираем все элементы с новыми данными.
-         if (titleInfoTranslatorFirstName[k]  ||  titleInfoTranslatorMiddleName[k]  ||  titleInfoTranslatorLastName[k]  ||  titleInfoTranslatorNickname[k]) {   //  Если есть заполненные данные...
-                 if (!div.nextSibling) {               //  проверяем наличие отсутствия следующего раздела, и если нет его...
-                         div.all.del.disabled = false;               //  активируем кнопку удаления
-                         div.insertAdjacentElement("afterEnd", div.cloneNode(true));   //  и добавляем копию раздела "DIV".
-                         }
-                 div = div.nextSibling;               //  Затем переходим на следующий узел "DIV".
-                 if (titleInfoTranslatorFirstName[k])            //  Если есть новое имя переводчик...
-                         div.all.first.value = titleInfoTranslatorFirstName[k];   //  то заменяем старое,
-                     else  div.all.first.value = "";                //  а если нет - то удаляем старое имя.
-                 if (titleInfoTranslatorMiddleName[k])            //  Если есть новое отчество переводчика...
-                         div.all.middle.value = titleInfoTranslatorMiddleName[k];   //  то заменяем старое,
-                     else  div.all.middle.value = "";                //  а если нет - то удаляем старое отчество.
-                 if (titleInfoTranslatorLastName[k])                //  и т.д.
-                         div.all.last.value = titleInfoTranslatorLastName[k];
-                     else  div.all.last.value = "";
-                 if (titleInfoTranslatorNickname[k])
-                         div.all.nick.value = titleInfoTranslatorNickname[k];
-                     else  div.all.nick.value = "";
-                 if (titleInfoTranslatorEmail[k])
-                         div.all.email.value = titleInfoTranslatorEmail[k];
-                     else  div.all.email.value = "";
-                 if (titleInfoTranslatorHomePage[k])
-                         div.all.home.value = titleInfoTranslatorHomePage[k];
-                     else  div.all.home.value = "";
-                 change_T09=true;              //  Отмечаем, что данные изменились.
-                 }
-
- if (change_T09) {         //  Если данные изменились...
-         while (div.nextSibling  &&  div.nextSibling.nodeName == "DIV")   //  то удаляем все неиспользованные разделы "DIV".
-                 div.nextSibling.removeNode(true);
-         if (! div.previousSibling  ||  div.previousSibling.nodeName != "DIV")   //  И если остался только один раздел "DIV"...
-                 div.all.del.disabled = true;             //  то гасим кнопку удаления.
-         }
+ //  Запускаем функцию добавления авторов и переводчиков, и сохраняем результат в индикаторе изменений.
+ change_T09 = AddAuthor (titleInfoTranslatorFirstName, titleInfoTranslatorMiddleName, titleInfoTranslatorLastName, titleInfoTranslatorNickname, titleInfoTranslatorEmail, titleInfoTranslatorHomePage, 0, mDesc.tiTrans, false);
 
 
                  /// <title-info>  ::  Серия
 
- if (titleInfoSequenceName) {                    //  Если есть новое название серии...
-         mDiv = mDesc.tiSeq.getElementsByTagName("DIV");   //  Находим все разделы "DIV".
-         for (j=mDiv.length-1; j>0; j--)                        //  И удаляем их все, кроме самого первого раздела.
-                 mDiv[j].removeNode(true);
-         div = mDiv[0];                 //  Выбираем оставшийся раздел.
-         div.all.del.disabled = true;   //  Гасим там кнопку удаления.
-         div.all.name.value = titleInfoSequenceName;    //  Заменяем название.
-         if (titleInfoSequenceNumber)                        //  Если есть новый номер...
-                 div.all.number.value = titleInfoSequenceNumber;    //  то добавляем и его,
-             else  div.all.number.value = "";    //  а если нет - то удаляем старый номер.
-         change_T10=true;              //  Отмечаем, что данные изменились.
-         }
+ //  Запускаем функцию добавления серии о сохраняем результат в индикаторе изменений.
+ change_T10 = AddSequence (titleInfoSequenceName, titleInfoSequenceNumber, mDesc.tiSeq);
 
 
                  /// <title-info>  ::  Аннотация
 
-         //  Поиск раздела "аннотации"
  var Annotation=fbwBody.firstChild;   //  Предполагаемый раздел аннотации.
 
+ if (Annotation.className == "annotation") {   //  Если "Annotation" - это действительно аннотация...
+
+ ex = Annotation.innerHTML;    //  Сохраняем исходный текст.
+
          //  Очистка раздела аннотации
- if (Annotation.className == "annotation"  &&  ClearAnnotation == 0  &&  (Annotation.children.length !=1  ||  Annotation.children.length ==1  &&  Annotation.lastChild.innerHTML !="")) {
-         //   Если выбрано удаление всех строк аннотации...
+ if (ClearAnnotation == 0) {                //   Если выбрано удаление всех строк аннотации...
          Annotation.innerHTML = "";                  //  то удаляем всё из раздела аннотации,
          Annotation.insertAdjacentElement("beforeEnd", document.createElement("P"));   //  добавляем пустую строку
          window.external.inflateBlock(Annotation.lastChild)=true;
-         change_T11=true;              //  и отмечаем, что данные изменились.
          }
 
          //  Добавление новых данных
 
- var reAnno01 = new RegExp("(</{0,1})strong>","g");   //  Преобразование обычных тегов, в теги применяемые внутри FBE.
- var reAnno01_ = "$1STRONG>";
- var reAnno02 = new RegExp("(</{0,1})emphasis>","g");
- var reAnno02_ = "$1EM>";
- var reAnno03 = new RegExp("(</{0,1})sup>","g");
- var reAnno03_ = "$1SUP>";
- var reAnno04 = new RegExp("(</{0,1})sub>","g");
- var reAnno04_ = "$1SUB>";
+ var reAnn01 = new RegExp("&lt;(/{0,1})strong&gt;","g");   //  Преобразование обычных тегов, в теги применяемые внутри FBE.
+ var reAnn01_ = "<$1STRONG>";
+ var reAnn02 = new RegExp("&lt;(/{0,1})emphasis&gt;","g");
+ var reAnn02_ = "<$1EM>";
+ var reAnn03 = new RegExp("&lt;(/{0,1})sup&gt;","g");
+ var reAnn03_ = "<$1SUP>";
+ var reAnn04 = new RegExp("&lt;(/{0,1})sub&gt;","g");
+ var reAnn04_ = "<$1SUB>";
 
  var newSection = document.createElement("DIV");
 
  Length = titleInfoAnnotation.length;          //  Определяем длину массива с новыми данными.
 
  for ( ; k<Length; k++) {                 //  Перебираем все элементы с новыми данными.
-         if (titleInfoAnnotation[k])               //  Если есть заполненные данные  -  преобразуем теги.
-                 titleInfoAnnotation[k] = titleInfoAnnotation[k].replace(reAnno01, reAnno01_).replace(reAnno02, reAnno02_).replace(reAnno03, reAnno03_).replace(reAnno04, reAnno04_);
+         if (titleInfoAnnotation[k]) {              //  Если есть заполненные данные...
+                 titleInfoAnnotation[k] = inCode(titleInfoAnnotation[k]);      //  то преобразуем текст в код, а обычные теги в рабочие.
+                 titleInfoAnnotation[k] = titleInfoAnnotation[k].replace(reAnn01, reAnn01_).replace(reAnn02, reAnn02_).replace(reAnn03, reAnn03_).replace(reAnn04, reAnn04_);
+                 }
          newSection.insertAdjacentElement("beforeEnd", document.createElement("P"));   //  Создаем новую строку в секции.
          newSection.lastChild.innerHTML = titleInfoAnnotation[k];     //  Затем добавляем в строку новые данные.
          window.external.inflateBlock(newSection.lastChild)=true;    //  На случай добавления пустой строки, нормализуем добавленную строку (строке с текстом это не повредит).
          }
 
- while (newSection.firstChild  &&  newSection.firstChild.innerText.search(reELine) !=-1)   //  Удаляем первые пустые строки.
+ //  Удаляем первые пустые строки.
+ while (newSection.firstChild  &&  newSection.firstChild.innerHTML.search(reELine) !=-1  &&  newSection.firstChild.innerHTML.search(reELine_ex) ==-1)
          newSection.firstChild.removeNode(true);
 
- while (newSection.lastChild  &&  newSection.lastChild.innerText.search(reELine) !=-1)   //  Удаляем последние пустые строки.
+ //  Удаляем последние пустые строки.
+ while (newSection.lastChild  &&  newSection.lastChild.innerHTML.search(reELine) !=-1  &&  newSection.lastChild.innerHTML.search(reELine_ex) ==-1)
          newSection.lastChild.removeNode(true);
 
- //  Если "Annotation" это и есть аннотация, и есть новые данные, и их нет в аннотации...
- if (Annotation.className == "annotation"  &&  newSection.innerText !=""  &&  Annotation.innerHTML.search(newSection.innerHTML) ==-1) {
-         if (Annotation.lastChild.innerHTML.search(reELine)==-1) {                                               //  то проверяем наличие пустой строки в конце аннотации
+ if (newSection.innerText !=""  &&  Annotation.innerHTML.search(newSection.innerHTML) ==-1) {   //  Если есть новые данные, и их нет в аннотации...
+         //  то проверяем наличие пустой строки в конце аннотации
+         if (Annotation.lastChild.innerHTML.search(reELine)==-1  ||  Annotation.lastChild.innerHTML.search(reELine_ex)!=-1) {
                  Annotation.insertAdjacentElement("beforeEnd", document.createElement("P"));   //  и если ее нет - добавляем новую.
                  window.external.inflateBlock(Annotation.lastChild)=true;
                  }
@@ -699,8 +765,11 @@ fff:
                  Annotation.innerHTML = "";        //  то полностью очищаем её.
          while (newSection.firstChild)             //  Переносим все строки новых данных в аннотацию.
                  Annotation.insertAdjacentElement("beforeEnd", newSection.firstChild);
-         change_T11=true;              //  Отмечаем, что данные изменились.
          }
+
+ if (ex != Annotation.innerHTML)  change_T11=true;   //  Если дескрипшен изменился - то отмечаем это.
+
+ }
 
 // ---------------------------------------------------------------
 // ----------------------------------------------
@@ -723,89 +792,19 @@ fff:
 
                  /// <src-title-info>  ::  Жанры
 
- Length = srcTitleInfoGenre.length;          //  Определяем длину массива с новыми данными.
-
- div = mDesc.stiGenre.firstChild;         //  Находим первый элемент в разделе жанров.
- while (div.nextSibling.nodeName != "DIV")    //  Находим раздел перед первым "DIV".
-         div = div.nextSibling;
-
- for ( ; k<Length; k++)                  //  Перебираем все элементы с новыми данными.
-         if (srcTitleInfoGenre[k]) {               //  Если есть заполненные данные...
-                 if (!div.nextSibling) {               //  проверяем наличие отсутствия следующего раздела, и если нет его...
-                         div.all.del.disabled = false;               //  активируем кнопку удаления
-                         div.insertAdjacentElement("afterEnd", div.cloneNode(true));   //  и добавляем копию раздела "DIV".
-                         }
-                 div = div.nextSibling;               //  Затем переходим на следующий узел "DIV".
-                 div.all.genre.value = srcTitleInfoGenre[k];   //  Заменяем жанр в этом узле.
-                 if (div.all.match)                           //  Если там есть данные "соответствия жанру"...
-                         div.all.match.value = "";    //  то удаляем их.
-                 change_S01=true;              //  Отмечаем, что данные изменились.
-                 }
-
- if (change_S01) {         //  Если данные изменились...
-         while (div.nextSibling  &&  div.nextSibling.nodeName == "DIV")   //  то удаляем все неиспользованные разделы "DIV".
-                 div.nextSibling.removeNode(true);
-         if (! div.previousSibling  ||  div.previousSibling.nodeName != "DIV")   //  И если остался только один раздел "DIV"...
-                 div.all.del.disabled = true;             //  то гасим кнопку удаления.
-         }
+ //  Запускаем функцию добавления жанров и сохраняем результат в индикаторе изменений.
+ change_S01 = AddGenre (srcTitleInfoGenre, mDesc.stiGenre);
 
 
                  /// <src-title-info>  ::  Авторы
 
- Length = srcTitleInfoAuthorFirstName.length;          //  Определяем максимальную длину массива с новыми данными.
- if (srcTitleInfoAuthorMiddleName.length > Length)
-         Length = srcTitleInfoAuthorMiddleName.length;
- if (srcTitleInfoAuthorLastName.length > Length)
-         Length = srcTitleInfoAuthorLastName.length;
- if (srcTitleInfoAuthorNickname.length > Length)
-         Length = srcTitleInfoAuthorNickname.length;
-
- div = mDesc.stiAuthor.firstChild;         //  Находим первый элемент в разделе авторов.
- while (div.nextSibling.nodeName != "DIV")    //  Находим раздел перед первым "DIV".
-         div = div.nextSibling;
-
- for ( ; k<Length; k++)                  //  Перебираем все элементы с новыми данными.
-         if (srcTitleInfoAuthorFirstName[k]  ||  srcTitleInfoAuthorMiddleName[k]  ||  srcTitleInfoAuthorLastName[k]  ||  srcTitleInfoAuthorNickname[k]) {   //  Если есть заполненные данные...
-                 if (!div.nextSibling) {               //  проверяем наличие отсутствия следующего раздела, и если нет его...
-                         div.all.del.disabled = false;               //  активируем кнопку удаления
-                         div.insertAdjacentElement("afterEnd", div.cloneNode(true));   //  и добавляем копию раздела "DIV".
-                         }
-                 div = div.nextSibling;               //  Затем переходим на следующий узел "DIV".
-                 if (srcTitleInfoAuthorFirstName[k])            //  Если есть новое имя автора...
-                         div.all.first.value = srcTitleInfoAuthorFirstName[k];   //  то заменяем старое,
-                     else  div.all.first.value = "";                //  а если нет - то удаляем старое имя.
-                 if (srcTitleInfoAuthorMiddleName[k])            //  Если есть новое отчество автора...
-                         div.all.middle.value = srcTitleInfoAuthorMiddleName[k];   //  то заменяем старое,
-                     else  div.all.middle.value = "";                //  а если нет - то удаляем старое отчество.
-                 if (srcTitleInfoAuthorLastName[k])                //  и т.д.
-                         div.all.last.value = srcTitleInfoAuthorLastName[k];
-                     else  div.all.last.value = "";
-                 if (srcTitleInfoAuthorNickname[k])
-                         div.all.nick.value = srcTitleInfoAuthorNickname[k];
-                     else  div.all.nick.value = "";
-                 if (srcTitleInfoAuthorEmail[k])
-                         div.all.email.value = srcTitleInfoAuthorEmail[k];
-                     else  div.all.email.value = "";
-                 if (srcTitleInfoAuthorHomePage[k])
-                         div.all.home.value = srcTitleInfoAuthorHomePage[k];
-                     else  div.all.home.value = "";
-                 if (srcTitleInfoAuthorID[k])
-                         div.all.id.value = srcTitleInfoAuthorID[k];
-                     else  div.all.id.value = "";
-                 change_S02=true;              //  Отмечаем, что данные изменились.
-                 }
-
- if (change_S02) {         //  Если данные изменились...
-         while (div.nextSibling  &&  div.nextSibling.nodeName == "DIV")   //  то удаляем все неиспользованные разделы "DIV".
-                 div.nextSibling.removeNode(true);
-         if (! div.previousSibling  ||  div.previousSibling.nodeName != "DIV")   //  И если остался только один раздел "DIV"...
-                 div.all.del.disabled = true;             //  то гасим кнопку удаления.
-         }
+ //  Запускаем функцию добавления авторов и переводчиков, и сохраняем результат в индикаторе изменений.
+ change_S02 = AddAuthor (srcTitleInfoAuthorFirstName, srcTitleInfoAuthorMiddleName, srcTitleInfoAuthorLastName, srcTitleInfoAuthorNickname, srcTitleInfoAuthorEmail, srcTitleInfoAuthorHomePage, srcTitleInfoAuthorID, mDesc.stiAuthor, true);
 
 
                  /// <src-title-info>  ::  Название
 
- if (srcTitleInfoBookTitle) {        //  Если есть новое название книги...
+ if (srcTitleInfoBookTitle  &&  mDesc.stiTitle.value != srcTitleInfoBookTitle) {        //  Если есть новое название книги...
          mDesc.stiTitle.value = srcTitleInfoBookTitle;   //  то отправляем его в дескрипшен
          change_S03=true;              //  и отмечаем, что данные изменились.
          }
@@ -813,7 +812,7 @@ fff:
 
                  /// <src-title-info>  ::  Ключевые слова
 
- if (srcTitleInfoKeywords) {        //  Если есть новые ключевые слова...
+ if (srcTitleInfoKeywords  &&  mDesc.stiKwd.value != srcTitleInfoKeywords) {        //  Если есть новые ключевые слова...
          mDesc.stiKwd.value = srcTitleInfoKeywords;   //  то отправляем их в дескрипшен
          change_S04=true;              //  и отмечаем, что данные изменились.
          }
@@ -821,7 +820,7 @@ fff:
 
                  /// <src-title-info>  ::  Дата текстом
 
- if (srcTitleInfoDate) {        //  Если есть новая дата...
+ if (srcTitleInfoDate  &&  mDesc.stiDate.value != srcTitleInfoDate) {        //  Если есть новая дата...
          mDesc.stiDate.value = srcTitleInfoDate;   //  то отправляем её в дескрипшен
          change_S05=true;              //  и отмечаем, что данные изменились.
          }
@@ -829,7 +828,7 @@ fff:
 
                  /// <src-title-info>  ::  Значение даты
 
- if (srcTitleInfoDateValue) {        //  Если есть новое значение даты...
+ if (srcTitleInfoDateValue  &&  mDesc.stiDateVal.value != srcTitleInfoDateValue) {        //  Если есть новое значение даты...
          mDesc.stiDateVal.value = srcTitleInfoDateValue;   //  то отправляем его в дескрипшен
          change_S06=true;              //  и отмечаем, что данные изменились.
          }
@@ -837,84 +836,33 @@ fff:
 
                  /// <src-title-info>  ::  Язык
 
- if (srcTitleInfoLang) {        //  Если есть новые данные по языку книги...
-         mDesc.stiLang.value = srcTitleInfoLang;   //  то отправляем их в дескрипшен
-         change_S07=true;              //  и отмечаем, что данные изменились.
+ if (srcTitleInfoLang  &&  mDesc.stiLang.value != srcTitleInfoLang) {        //  Если есть новые данные по языку книги...
+         ex = mDesc.stiLang.innerHTML;                 //  то сохраняем исходный текст структуры в дескрипшен,
+         mDesc.stiLang.value = srcTitleInfoLang;                     //  заменяем старые данные
+         if (ex != mDesc.stiLang.innerHTML)  change_S07=true;   //  и если дескрипшен изменился - то отмечаем это.
          }
 
 
                  /// <src-title-info>  ::  Язык оригинала
 
- if (srcTitleInfoSrcLang) {        //  Если есть новые данные по языку оригинальной книги...
-         mDesc.stiSrcLang.value = srcTitleInfoSrcLang;   //  то отправляем их в дескрипшен
-         change_S08=true;              //  и отмечаем, что данные изменились.
+ if (srcTitleInfoSrcLang  &&  mDesc.stiSrcLang.value != srcTitleInfoSrcLang) {        //  Если есть новые данные по языку оригинальной книги...
+         ex = mDesc.stiSrcLang.innerHTML;                 //  то сохраняем исходный текст структуры в дескрипшен,
+         mDesc.stiSrcLang.value = srcTitleInfoSrcLang;                     //  заменяем старые данные
+         if (ex != mDesc.stiSrcLang.innerHTML)  change_S08=true;   //  и если дескрипшен изменился - то отмечаем это.
          }
 
 
                  /// <src-title-info>  ::  Переводчики
 
- Length = srcTitleInfoTranslatorFirstName.length;          //  Определяем максимальную длину массива с новыми данными.
- if (srcTitleInfoTranslatorMiddleName.length > Length)
-         Length = srcTitleInfoTranslatorMiddleName.length;
- if (srcTitleInfoTranslatorLastName.length > Length)
-         Length = srcTitleInfoTranslatorLastName.length;
- if (srcTitleInfoTranslatorNickname.length > Length)
-         Length = srcTitleInfoTranslatorNickname.length;
-
- div = mDesc.stiTrans.firstChild;         //  Находим первый элемент в разделе переводчиков.
- while (div.nextSibling.nodeName != "DIV")    //  Находим раздел перед первым "DIV".
-         div = div.nextSibling;
-
- for ( ; k<Length; k++)                  //  Перебираем все элементы с новыми данными.
-         if (srcTitleInfoTranslatorFirstName[k]  ||  srcTitleInfoTranslatorMiddleName[k]  ||  srcTitleInfoTranslatorLastName[k]  ||  srcTitleInfoTranslatorNickname[k]) {   //  Если есть заполненные данные...
-                 if (!div.nextSibling) {               //  проверяем наличие отсутствия следующего раздела, и если нет его...
-                         div.all.del.disabled = false;               //  активируем кнопку удаления
-                         div.insertAdjacentElement("afterEnd", div.cloneNode(true));   //  и добавляем копию раздела "DIV".
-                         }
-                 div = div.nextSibling;               //  Затем переходим на следующий узел "DIV".
-                 if (srcTitleInfoTranslatorFirstName[k])            //  Если есть новое имя переводчика...
-                         div.all.first.value = srcTitleInfoTranslatorFirstName[k];   //  то заменяем старое,
-                     else  div.all.first.value = "";                //  а если нет - то удаляем старое имя.
-                 if (srcTitleInfoTranslatorMiddleName[k])            //  Если есть новое отчество переводчика...
-                         div.all.middle.value = srcTitleInfoTranslatorMiddleName[k];   //  то заменяем старое,
-                     else  div.all.middle.value = "";                //  а если нет - то удаляем старое отчество.
-                 if (srcTitleInfoTranslatorLastName[k])                //  и т.д.
-                         div.all.last.value = srcTitleInfoTranslatorLastName[k];
-                     else  div.all.last.value = "";
-                 if (srcTitleInfoTranslatorNickname[k])
-                         div.all.nick.value = srcTitleInfoTranslatorNickname[k];
-                     else  div.all.nick.value = "";
-                 if (srcTitleInfoTranslatorEmail[k])
-                         div.all.email.value = srcTitleInfoTranslatorEmail[k];
-                     else  div.all.email.value = "";
-                 if (srcTitleInfoTranslatorHomePage[k])
-                         div.all.home.value = srcTitleInfoTranslatorHomePage[k];
-                     else  div.all.home.value = "";
-                 change_S09=true;              //  Отмечаем, что данные изменились.
-                 }
-
- if (change_S09) {         //  Если данные изменились...
-         while (div.nextSibling  &&  div.nextSibling.nodeName == "DIV")   //  то удаляем все неиспользованные разделы "DIV".
-                 div.nextSibling.removeNode(true);
-         if (! div.previousSibling  ||  div.previousSibling.nodeName != "DIV")   //  И если остался только один раздел "DIV"...
-                 div.all.del.disabled = true;             //  то гасим кнопку удаления.
-         }
+ //  Запускаем функцию добавления авторов и переводчиков, и сохраняем результат в индикаторе изменений.
+ change_S09 = AddAuthor (srcTitleInfoTranslatorFirstName, srcTitleInfoTranslatorMiddleName, srcTitleInfoTranslatorLastName, srcTitleInfoTranslatorNickname, srcTitleInfoTranslatorEmail, srcTitleInfoTranslatorHomePage, 0, mDesc.stiTrans, false);
 
 
                  /// <src-title-info>  ::  Серия
 
- if (srcTitleInfoSequenceName) {                    //  Если есть новое название серии...
-         mDiv = mDesc.stiSeq.getElementsByTagName("DIV");   //  Находим все разделы "DIV".
-         for (j=mDiv.length-1; j>0; j--)                        //  И удаляем их все, кроме самого первого раздела.
-                 mDiv[j].removeNode(true);
-         div = mDiv[0];                 //  Выбираем оставшийся раздел.
-         div.all.del.disabled = true;   //  Гасим там кнопку удаления.
-         div.all.name.value = srcTitleInfoSequenceName;    //  Заменяем название.
-         if (srcTitleInfoSequenceNumber)                        //  Если есть новый номер...
-                 div.all.number.value = srcTitleInfoSequenceNumber;    //  то добавляем и его,
-             else  div.all.number.value = "";    //  а если нет - то удаляем старый номер.
-         change_S10=true;              //  и отмечаем, что данные изменились.
-         }
+ //  Запускаем функцию добавления серии и сохраняем результат в индикаторе изменений.
+ change_S10 = AddSequence (srcTitleInfoSequenceName, srcTitleInfoSequenceNumber, mDesc.stiSeq);
+
 
 // ---------------------------------------------------------------
 // ----------------------------------------------
@@ -936,7 +884,7 @@ fff:
 
                  /// <document-info>  ::  Версия
 
- if (documentInfoVersion) {        //  Если есть новая версия...
+ if (documentInfoVersion  &&  mDesc.diVersion.value != documentInfoVersion) {        //  Если есть новая версия...
          mDesc.diVersion.value = documentInfoVersion;   //  отправляем значение новой версии в дескрипшен
          change_D01=true;              //  и отмечаем, что данные изменились.
          }
@@ -951,6 +899,9 @@ fff:
 
 
                  /// <document-info>  ::  Авторы
+
+ change = false;              //  Отмечаем, что изменений пока нет.
+ ex = mDesc.diAuthor.innerHTML;    //  Сохраняем исходный текст структуры.
 
  Length = documentInfoAuthorFirstName.length;          //  Определяем максимальную длину массива с новыми данными.
  if (documentInfoAuthorMiddleName.length > Length)
@@ -983,12 +934,10 @@ Label_1:
                                      (documentInfoAuthorMiddleName[k] == mDiv[j].all.middle.value  ||  !documentInfoAuthorMiddleName[k]  &&  !mDiv[j].all.middle.value)  &&
                                      (documentInfoAuthorLastName[k] == mDiv[j].all.last.value  ||  !documentInfoAuthorLastName[k]  &&  !mDiv[j].all.last.value)  &&
                                      (documentInfoAuthorNickname[k] == mDiv[j].all.nick.value  ||  !documentInfoAuthorNickname[k]  &&  !mDiv[j].all.nick.value)  )
-                                             continue Label_1;        //  то пропускаем нового автора.
+                                             continue Label_1;        //  то пропускаем этого автора.
                          }
-                 if (!div.nextSibling) {               //  проверяем наличие отсутствия следующего раздела, и если нет его...
-                         div.all.del.disabled = false;               //  активируем кнопку удаления
+                 if (!div.nextSibling)               //  проверяем наличие отсутствия следующего раздела, и если нет его...
                          div.insertAdjacentElement("afterEnd", div.cloneNode(true));   //  и добавляем копию раздела "DIV".
-                         }
                  div = div.nextSibling;               //  Затем переходим на следующий узел "DIV".
                  if (documentInfoAuthorFirstName[k])            //  Если есть новое имя автора...
                          div.all.first.value = documentInfoAuthorFirstName[k];   //  то заменяем старое,
@@ -1008,20 +957,21 @@ Label_1:
                  if (documentInfoAuthorHomePage[k])
                          div.all.home.value = documentInfoAuthorHomePage[k];
                      else  div.all.home.value = "";
-                 change_D03=true;              //  Отмечаем, что данные изменились.
+                 change=true;              //  Отмечаем, что данные изменились.
                  }
 
- if (change_D03) {         //  Если данные изменились...
-         while (div.nextSibling  &&  div.nextSibling.nodeName == "DIV")   //  то удаляем все неиспользованные разделы "DIV".
+ if (change) {         //  Если данные изменились...
+         while (div.nextSibling  &&  div.nextSibling.nodeName == "DIV")   //  то удаляем все неиспользованные разделы "DIV"
                  div.nextSibling.removeNode(true);
-         if (! div.previousSibling  ||  div.previousSibling.nodeName != "DIV")   //  И если остался только один раздел "DIV"...
-                 div.all.del.disabled = true;             //  то гасим кнопку удаления.
+         PutSpacers(mDesc.diAuthor);                   //  и правильно оформляем список.
          }
+
+ if (ex != mDesc.diAuthor.innerHTML)  change_D03=true;   //  Если дескрипшен изменился - то отмечаем это.
 
 
                  /// <document-info>  ::  Использованы программы
 
- if (documentInfoProgramUsed) {        //  Если есть новые данные...
+ if (documentInfoProgramUsed  &&  mDesc.diProgs.value != documentInfoProgramUsed) {        //  Если есть новые данные...
          mDesc.diProgs.value = documentInfoProgramUsed;   //  то отправляем их в дескрипшен
          change_D04=true;              //  и отмечаем, что данные изменились.
          }
@@ -1029,9 +979,9 @@ Label_1:
 
                  /// <document-info>  ::  Дата текстом
 
- if (documentInfoDate) {        //  Если есть новые данные...
-         if (documentInfoDate == "сегодня")
-                 documentInfoDate = SegodnjaText;
+ if (documentInfoDate == "сегодня")
+         documentInfoDate = SegodnjaText;
+ if (documentInfoDate  &&  mDesc.diDate.value != documentInfoDate) {        //  Если есть новые данные...
          mDesc.diDate.value = documentInfoDate;   //  то отправляем их в дескрипшен
          change_D05=true;              //  и отмечаем, что данные изменились.
          }
@@ -1039,9 +989,9 @@ Label_1:
 
                  /// <document-info>  ::  Значение даты
 
- if (documentInfoDateValue) {        //  Если есть новые данные...
-         if (documentInfoDateValue == "сегодня")
-                 documentInfoDateValue = Segodnja;
+ if (documentInfoDateValue == "сегодня")
+         documentInfoDateValue = Segodnja;
+ if (documentInfoDateValue  &&  mDesc.diDateVal.value != documentInfoDateValue) {        //  Если есть новые данные...
          mDesc.diDateVal.value = documentInfoDateValue;   //  то отправляем их в дескрипшен
          change_D06=true;              //  и отмечаем, что данные изменились.
          }
@@ -1049,7 +999,7 @@ Label_1:
 
                  /// <document-info>  ::  Source OCR
 
- if (documentInfoSrcOcr) {        //  Если есть новые данные...
+ if (documentInfoSrcOcr  &&  mDesc.diOCR.value != documentInfoSrcOcr) {        //  Если есть новые данные...
          mDesc.diOCR.value = documentInfoSrcOcr;   //  то отправляем их в дескрипшен
          change_D07=true;              //  и отмечаем, что данные изменились.
          }
@@ -1058,13 +1008,14 @@ Label_1:
                  /// <document-info>  ::  Source URLs
 
  if (documentInfoSrcUrl) {                                 //  Если есть новые данные...
+         ex = mDesc.diURL.innerHTML;    //  Сохраняем исходный текст структуры.
          mDiv = mDesc.diURL.getElementsByTagName("DIV");   //  Находим все разделы "DIV".
          for (j=mDiv.length-1; j>0; j--)                        //  И удаляем их все, кроме самого первого раздела.
                  mDiv[j].removeNode(true);
          div = mDiv[0];                 //  Выбираем оставшийся раздел.
          div.all.del.disabled = true;   //  Гасим там кнопку удаления.
-         div.lastChild.value = documentInfoSrcUrl;    //  Заменяем данные.
-         change_D08=true;              //  и отмечаем, что данные изменились.
+         div.lastChild.value = documentInfoSrcUrl;    //  Заменяем старые данные.
+         if (ex != mDesc.diURL.innerHTML)  change_D08=true;   //  Если дескрипшен изменился - то отмечаем это.
          }
 
 
@@ -1099,9 +1050,12 @@ Label_1:
          }
 
          //  Добавление новых данных
- var reHist10 = new RegExp("<P>"+documentInfoHistory+"</P>","");   //  Поиск строки с новыми данными.
+ if (documentInfoHistory) {        //  Если есть новые данные...
+         documentInfoHistory = inCode(documentInfoHistory);
+         var reHist10 = new RegExp("<P>"+documentInfoHistory+"</P>","");   //  Поиск строки с новыми данными.
+         }
  if (documentInfoHistory  &&  History.innerHTML.search(reHist10) ==-1) {        //  Если есть новые данные, и их ещё нет в истории...
-         if (History.lastChild.innerHTML.search(reELine)==-1)                                                //  то проверяем наличие пустой строки в конце истории
+         if (History.lastChild.innerHTML.search(reELine)==-1  ||  History.lastChild.innerHTML.search(reELine_ex)!=-1)   //  то проверяем наличие пустой строки в конце истории
                  History.insertAdjacentElement("beforeEnd",document.createElement("P"));   //  и если ее нет - добавляем новую.
          History.lastChild.innerHTML = documentInfoHistory;     //  Затем добавляем в строку новые данные
          change_D09=true;              //  и отмечаем, что данные изменились.
@@ -1124,7 +1078,7 @@ Label_1:
 
                  /// <publish-info>  ::  Заголовок книги
 
- if (publishInfoBookName) {        //  Если есть новые данные...
+ if (publishInfoBookName  &&  mDesc.piName.value != publishInfoBookName) {        //  Если есть новые данные...
          mDesc.piName.value = publishInfoBookName;   //  то отправляем их в дескрипшен
          change_P01=true;              //  и отмечаем, что данные изменились.
          }
@@ -1132,7 +1086,7 @@ Label_1:
 
                  /// <publish-info>  ::  Издатель
 
- if (publishInfoPublisher) {        //  Если есть новые данные...
+ if (publishInfoPublisher  &&  mDesc.piPub.value != publishInfoPublisher) {        //  Если есть новые данные...
          mDesc.piPub.value = publishInfoPublisher;   //  то отправляем их в дескрипшен
          change_P02=true;              //  и отмечаем, что данные изменились.
          }
@@ -1140,7 +1094,7 @@ Label_1:
 
                  /// <publish-info>  ::  Город
 
- if (publishInfoCity) {        //  Если есть новые данные...
+ if (publishInfoCity  &&  mDesc.piCity.value != publishInfoCity) {        //  Если есть новые данные...
          mDesc.piCity.value = publishInfoCity;   //  то отправляем их в дескрипшен
          change_P03=true;              //  и отмечаем, что данные изменились.
          }
@@ -1148,7 +1102,7 @@ Label_1:
 
                  /// <publish-info>  ::  Год
 
- if (publishInfoYear) {        //  Если есть новые данные...
+ if (publishInfoYear  &&  mDesc.piYear.value != publishInfoYear) {        //  Если есть новые данные...
          mDesc.piYear.value = publishInfoYear;   //  то отправляем их в дескрипшен
          change_P04=true;              //  и отмечаем, что данные изменились.
          }
@@ -1156,7 +1110,7 @@ Label_1:
 
                  /// <publish-info>  ::  ISBN
 
- if (publishInfoISBN) {        //  Если есть новые данные...
+ if (publishInfoISBN  &&  mDesc.piISBN.value != publishInfoISBN) {        //  Если есть новые данные...
          mDesc.piISBN.value = publishInfoISBN;   //  то отправляем их в дескрипшен
          change_P05=true;              //  и отмечаем, что данные изменились.
          }
@@ -1164,18 +1118,8 @@ Label_1:
 
                  /// <publish-info>  ::  Серия
 
- if (publishInfoSequenceName) {                    //  Если есть новое название серии...
-         mDiv = mDesc.piSeq.getElementsByTagName("DIV");   //  Находим все разделы "DIV".
-         for (j=mDiv.length-1; j>0; j--)                        //  И удаляем их все, кроме самого первого раздела.
-                 mDiv[j].removeNode(true);
-         div = mDiv[0];                 //  Выбираем оставшийся раздел.
-         div.all.del.disabled = true;   //  Гасим там кнопку удаления.
-         div.all.name.value = publishInfoSequenceName;    //  Заменяем название.
-         if (publishInfoSequenceNumber)                        //  Если есть новый номер...
-                 div.all.number.value = publishInfoSequenceNumber;    //  то добавляем и его,
-             else  div.all.number.value = "";    //  а если нет - то удаляем старый номер.
-         change_P06=true;              //  и отмечаем, что данные изменились.
-         }
+ //  Запускаем функцию добавления серии и сохраняем результат в индикаторе изменений.
+ change_P06 = AddSequence (publishInfoSequenceName, publishInfoSequenceNumber, mDesc.piSeq);
 
 // ---------------------------------------------------------------
 // ----------------------------------------------
@@ -1189,6 +1133,9 @@ Label_1:
 
                  /// <custom-info>  ::  Тип / Значение
 
+ change = false;              //  Отмечаем, что изменений пока нет.
+ ex = mDesc.ci.innerHTML;    //  Сохраняем исходный текст структуры.
+
  Length = customInfo.length;          //  Определяем длину массива с новыми данными.
 
  div = mDesc.ci.firstChild;         //  Находим первый элемент в разделе дополнительной информации.
@@ -1198,25 +1145,24 @@ Label_1:
  for ( ; k<Length; k++) {                 //  Перебираем все элементы с новыми данными.
          customInfo[k] = customInfo[k].replace(/^\n+|\n+$/g, "");   //  Удаляем все первые и последние разрывы строк.
          if (customInfo[k]) {               //  Если есть заполненные данные...
-                 if (!div.nextSibling) {               //  проверяем наличие отсутствия следующего раздела, и если нет его...
-                         div.all.del.disabled = false;               //  активируем кнопку удаления
+                 if (!div.nextSibling)               //  проверяем наличие отсутствия следующего раздела, и если нет его...
                          div.insertAdjacentElement("afterEnd", div.cloneNode(true));   //  и добавляем копию раздела "DIV".
-                         }
                  div = div.nextSibling;               //  Затем переходим на следующий узел "DIV".
                  div.all.val.innerText = customInfo[k];   //  Заменяем дополнительные данные в этом узле.
                  if (customInfoType[k])                           //  Если указан тип данных...
                          div.all.type.value = customInfoType[k];    //  то добавляем и его,
                      else  div.all.type.value = "";    //  а если нет - то удаляем старое значение типа.
-                 change_C01=true;              //  и отмечаем, что данные изменились.
+                 change=true;              //  и отмечаем, что данные изменились.
                  }
          }
 
- if (change_C01) {         //  Если данные изменились...
+ if (change) {         //  Если данные изменились...
          while (div.nextSibling  &&  div.nextSibling.nodeName == "DIV")   //  то удаляем все неиспользованные разделы "DIV".
                  div.nextSibling.removeNode(true);
-         if (! div.previousSibling  ||  div.previousSibling.nodeName != "DIV")   //  И если остался только один раздел "DIV"...
-                 div.all.del.disabled = true;             //  то гасим кнопку удаления.
+         PutSpacers(mDesc.ci);                   //  и правильно оформляем список.
          }
+
+ if (ex != mDesc.ci.innerHTML)  change_C01=true;   //  Если дескрипшен изменился - то отмечаем это.
 
 // ---------------------------------------------------------------
 // ----------------------------------------------
@@ -1388,7 +1334,7 @@ cTaT=ind;  //  Текущее число заполненных строк.
 
  var st2="";  //  текст результатов
 
- for  ( k=0; k!=ind; k++ )     //  Последовательный просмотр всех элементов массива строк с результатами обработки.
+ for  ( k=0; k!=ind; k++ )     //  Последовательный перебор всех элементов массива строк с результатами обработки.
         st2+=mSt[k]+"\n";      //  Добавление элемента из массива.
 
          //  Вывод окна результатов
@@ -1402,6 +1348,19 @@ cTaT=ind;  //  Текущее число заполненных строк.
 
 
 
+
+                 ///  ИСТОРИЯ ИЗМЕНЕНИЙ
+
+// v.1.0 — Создание скрипта — Александр Ка (17.05.2025)
+// v.1.1 — Добавление обработки аннотации  — Александр Ка (20.05.2025)
+// v.1.2 — Исправлены две мелкие ошибки  — Александр Ка (21.05.2025)
+// v.1.3 — Александр Ка (09.06.2025)
+//   возможность записи в историю изменений и аннотацию символов:   "<", ">", "&"
+//   сокращение кода скрипта
+//   более точная статистика
+//   правильное оформление списков при добавлении авторов, жанров и т.д.
+//   напоминание
+// v.1.4 — Исправлены две ошибки  — Александр Ка (13.06.2025)
 
 
 
