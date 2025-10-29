@@ -1,4 +1,4 @@
-﻿// Создать таблицу соответствия маркеров будущих сносок. v. 1.12.
+﻿// Создать таблицу соответствия маркеров будущих сносок. v. 1.2.
 // Автор: stokber
 
 function Run() {
@@ -15,7 +15,7 @@ function Run() {
     // ================================
 
     var name = "Создать таблицу соответствия маркеров будущих сносок";
-    var version = "1.12";
+    var version = "1.2";
     var avtor = "stokber";
     var sel = document.getElementById("fbw_body");
     var str = sel.innerHTML;
@@ -36,7 +36,7 @@ function Run() {
     var lenT = 120; // кол. символов для отображения в ячейке для маркера текста сноски.
 
     // окно выбора вида маркеров сносок:
-    var dialogWidth = "300px";
+    var dialogWidth = "330px";
     var dialogHeight;
     // проверка версии IE: 
     var isIE6 = false;
@@ -48,10 +48,10 @@ function Run() {
     }
     if (isIE6) {
         // alert('Используется Internet Explorer 6');
-        dialogHeight = "280px";
+        dialogHeight = "310px";
     } else {
         // alert('Используется другая версия Internet Explorer или другой браузер');
-        dialogHeight = "250px";
+        dialogHeight = "280px";
     }
 
     var fbwBody = document.getElementById("fbw_body");
@@ -89,6 +89,7 @@ function Run() {
         str = str.replace(/<SUP>\s*(\d+)(\s*)<\/SUP>/ig, s1 + "$1" + s2 + "$2"); //подменяем теги SUP на метки.
         str = str.replace(/<\/?[^<>]+>/g, ""); // удаляем все теги.
         str = str.replace(/[¹²³⁴⁵⁶⁷⁸⁹⁰]+/g, s1 + "$&" + s2); // учитываем надстрочные символы цифр.
+
     } else if (markSign == "вида *") {
         str = str.replace(/<\/?(STRONG|EM|SUP|SUB|STRIKE)>/ig, "");
         str = str.replace(/<SPAN class=code>(.+?)<\/SPAN>/ig, "$1"); // 
@@ -105,6 +106,24 @@ function Run() {
             }
         }
         str = str.replace(/[*]+/ig, s1 + "$&" + s2);
+
+    } else if (markSign == "вида #") {
+        str = str.replace(/<\/?(STRONG|EM|SUP|SUB|STRIKE)>/ig, "");
+        str = str.replace(/<SPAN class=code>(.+?)<\/SPAN>/ig, "$1"); // 
+        str = str.replace(/&nbsp;(&nbsp;| |#)/g, " $1"); // 
+        str = str.replace(/(&nbsp;| |#)&nbsp;/g, "$1 "); // 
+        str = str.replace(/[ □▫◦]/g, " "); // 
+        for (; countGrid != 0;) { // заменяем решётки в пустых строках другими символами (@).
+            var grid = new RegExp("^((?:<\\/?[^>]+>)*)([ @]*)([#])([ #]*)((?:<\\/?[^>]+>)*)$", "gm");
+            var grid_ = "$1$2@$4$5";
+            var countGrid = 0;
+            if (str.search(grid) != -1) {
+                str = str.replace(grid, grid_);
+                countGrid++
+            }
+        }
+        str = str.replace(/[#]+/ig, s1 + "$&" + s2);
+
     } else if (markSign == "вида [1]") {
         str = str.replace(/<\/?(STRONG|EM|SUP|SUB|STRIKE)>/ig, "");
         str = str.replace(/<SPAN class=code>(.+?)<\/SPAN>/ig, "$1"); // 
@@ -213,6 +232,10 @@ function Run() {
         if (markSign == "вида *") {
             report = report.replace(/(<td align=\"right\")>(.*?[^*]\*<\/td>)/gm, "$1 BGCOLOR=\"" + colour2 + "\">$2");
             report = report.replace(/(<td)>(\*[^*].+?<\/td><\/tr>)/gm, "$1 BGCOLOR=\"" + colour2 + "\">$2");
+        }
+		if (markSign == "вида #") {
+            report = report.replace(/(<td align=\"right\")>(.*?[^#]#<\/td>)/gm, "$1 BGCOLOR=\"" + colour2 + "\">$2");
+            report = report.replace(/(<td)>(#[^#].+?<\/td><\/tr>)/gm, "$1 BGCOLOR=\"" + colour2 + "\">$2");
         }
         if (markSign == "вида [1]") {
             report = report.replace(/(<td align=\"right\")>(.*?\[1\]<\/td>)/gm, "$1 BGCOLOR=\"" + colour2 + "\">$2");
