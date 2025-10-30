@@ -1,5 +1,5 @@
 //======================================
-//             «Генеральная уборка» (версия 2.6)
+//             «Генеральная уборка» (версия 2.7)
 //                                             Engine by ©Sclex
 //                                                    01.05.2007 – 31.08.2022
 //~~~~~~~~~~~~~~~~~~
@@ -96,7 +96,7 @@
 //v.2.5 — регэкспы (п.п. 142-149) — TaKir
 
 //======================================
-var VersionNumber="2.6";
+var VersionNumber="2.7";
 
 //обрабатывать ли history
 var ObrabotkaHistory=true;
@@ -736,14 +736,14 @@ function Run() {
  var count_128 = 0;
 
             // Унификация открывающих болдов и курсивов (TaKir)
- var re129 = new RegExp("<EM><STRONG>","gi");
- var re129_ = "<STRONG><EM>"
- var count_129 = 0;
+// var re129 = new RegExp("<EM><STRONG>","gi");
+// var re129_ = "<STRONG><EM>"
+// var count_129 = 0;
 
             // Унификация закрывающих болдов и курсивов (TaKir)
- var re130 = new RegExp("</EM></STRONG>","gi");
- var re130_ = "</STRONG></EM>"
- var count_130 = 0;
+// var re130 = new RegExp("</EM></STRONG>","gi");
+// var re130_ = "</STRONG></EM>"
+// var count_130 = 0;
 
         // удаление символов "Соединитель слов" U+2060 (TaKir)
  var re131 = new RegExp("([\\u2060])","gi");
@@ -999,8 +999,8 @@ function Run() {
 	   if (s.search(re126)!=-1)       { count_126+=s.match(re126).length;s=s.replace(re126, re126_); }
 	   if (s.search(re127)!=-1)       { count_127+=s.match(re127).length;s=s.replace(re127, re127_); }
 	   if (s.search(re128)!=-1)       { count_128+=s.match(re128).length;s=s.replace(re128, re128_); }
-	   if (s.search(re129)!=-1)       { count_129+=s.match(re129).length;s=s.replace(re129, re129_); }
-	   if (s.search(re130)!=-1)       { count_130+=s.match(re130).length;s=s.replace(re130, re130_); }
+//	   if (s.search(re129)!=-1)       { count_129+=s.match(re129).length;s=s.replace(re129, re129_); }
+//	   if (s.search(re130)!=-1)       { count_130+=s.match(re130).length;s=s.replace(re130, re130_); }
 	   if (s.search(re131)!=-1)       { count_131+=s.match(re131).length;s=s.replace(re131, re131_); }
 	   if (s.search(re132)!=-1)       { count_132+=s.match(re132).length;s=s.replace(re132, re132_); }
 	   if (s.search(re133)!=-1)       { count_133+=s.match(re133).length;s=s.replace(re133, re133_); }
@@ -1157,8 +1157,8 @@ var Tsec3 = Math.ceil(1000*((Tf-Ts)/1000-Tmin*60))/1000;
  if (count_126!=0)   {st2+='\n• Горизонтальные линии U+2015:	'+count_126;}
  if (count_127!=0)   {st2+='\n• Сдвоенные открывающие болды:	'+count_127;}
  if (count_128!=0)   {st2+='\n• Сдвоенные закрывающие болды:	'+count_128;}
- if (count_129!=0)   {st2+='\n• Унификация открывающих болдов и курсивов:	'+count_129;}
- if (count_130!=0)   {st2+='\n• Унификация закрывающих болдов и курсивов:	'+count_130;}
+// if (count_129!=0)   {st2+='\n• Унификация открывающих болдов и курсивов:	'+count_129;}
+// if (count_130!=0)   {st2+='\n• Унификация закрывающих болдов и курсивов:	'+count_130;}
  if (count_131!=0)   {st2+='\n• Соединитель слов U+2060:	'+count_131;}
  if (count_132!=0)   {st2+='\n• Em пробел U+2003:	'+count_132;}
  if (count_133!=0)   {st2+='\n• Цифровой пробел U+2007:	'+count_133;}
