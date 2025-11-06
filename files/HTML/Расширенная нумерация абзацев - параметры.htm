@@ -1,0 +1,179 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+    <title>Параметры нумерации абзацев</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <style>
+        body { 
+            font-family: Tahoma; 
+            margin: 15px; 
+            font-size: 14px;
+        }
+        h2 { 
+            color: #333; 
+            margin-bottom: 20px;
+        }
+        .settings-group {
+            margin-bottom: 15px;
+        }
+        label { 
+            display: inline-block; 
+            width: 200px; 
+            margin: 8px 0;
+            vertical-align: top;
+        }
+        input { 
+            margin: 5px; 
+        }
+        button { 
+            padding: 10px 25px; 
+            margin: 15px 10px 10px 0; 
+            font-size: 14px;
+        }
+        .preview { 
+            background: #f8f9fa; 
+            padding: 12px; 
+            margin: 20px 0; 
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+        }
+        .help-text {
+            font-size: 0.75em;
+            color: #6c757d;
+            margin-left: 10px;
+        }
+        .description {
+            background: #e9ecef;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+            font-size: 0.85em;
+            line-height: 1.4;
+        }
+        .description h3 {
+            margin-top: 0;
+            color: #495057;
+        }
+        .description ul {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+        .description li {
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body onload="updatePreview()">
+    <h3>Настройки нумерации абзацев</h3>
+    
+    <div class="settings-group">
+        <label for="prefix">Префикс:</label>
+        <input type="text" id="prefix" value="" placeholder="§ или •" oninput="updatePreview()" onchange="updatePreview()">
+        <span class="help-text">текст перед номером</span>
+    </div>
+    
+    <div class="settings-group">
+        <label for="useNumbering">Использовать нумерацию:</label>
+        <input type="checkbox" id="useNumbering" checked onchange="updatePreview()">
+    </div>
+    
+    <div class="settings-group">
+        <label for="startNumber">Начальное число:</label>
+        <input type="number" id="startNumber" value="1" oninput="updatePreview()" onchange="updatePreview()">
+    </div>
+    
+    <div class="settings-group">
+        <label for="increment">Шаг инкремента:</label>
+        <input type="number" id="increment" value="1" oninput="updatePreview()" onchange="updatePreview()">
+        <span class="help-text">может быть отрицательным</span>
+    </div>
+    
+    <div class="settings-group">
+        <label for="suffix">Суффикс:</label>
+        <input type="text" id="suffix" value=". " placeholder=". или :" oninput="updatePreview()" onchange="updatePreview()">
+        <span class="help-text">текст после номера</span>
+    </div>
+    
+    <div class="settings-group">
+        <label for="onlySelected">Только выделенные абзацы:</label>
+        <input type="checkbox" id="onlySelected" checked>
+    </div>
+    
+    <div class="settings-group">
+        <label for="skipEmpty">Пропускать пустые абзацы:</label>
+        <input type="checkbox" id="skipEmpty" checked>
+    </div>
+    
+    <div class="preview">
+        <strong>Предпросмотр:</strong><br>
+        <span id="previewText">§1. Пример текста абзаца</span>
+    </div>
+
+    <div class="description">
+        <h3>Описание параметров:</h3>
+        <ul>
+            <li><strong>Префикс</strong> — текст, который появится перед номером (или маркером). Например: §, •, -.</li>
+            <li><strong>Использовать нумерацию</strong> — отметьте галочку, если нужны числа (1, 2, 3…). Снимите, если нужен только маркер.</li>
+            <li><strong>Начальное число</strong> — с какого числа начать отсчёт (если нумерация включена)(может быть отрицательным).</li>
+            <li><strong>Шаг инкремента</strong> — на сколько увеличивать число (может быть отрицательным: –1, –10 и т. д.).</li>
+            <li><strong>Суффикс</strong> — текст, который появится после номера (или маркера). Например: . , : , → .</li>
+        </ul>
+    </div>
+    
+    <div>
+        <button onclick="applySettings()">Применить нумерацию</button>
+        <button onclick="cancelSettings()">Отмена</button>
+    </div>
+
+    <script>
+        function updatePreview() {
+            try {
+                var prefix = document.getElementById('prefix').value;
+                var useNumbering = document.getElementById('useNumbering').checked;
+                var startNumber = document.getElementById('startNumber').value;
+                var suffix = document.getElementById('suffix').value;
+                
+                var numberPart = useNumbering ? startNumber : '';
+                var preview = prefix + numberPart + suffix + 'Пример текста абзаца';
+                document.getElementById('previewText').textContent = preview;
+            } catch(e) {
+                // Игнорируем ошибки при инициализации
+            }
+        }
+
+        function applySettings() {
+            var settings = {
+                prefix: document.getElementById('prefix').value,
+                useNumbering: document.getElementById('useNumbering').checked,
+                startNumber: parseInt(document.getElementById('startNumber').value),
+                increment: parseInt(document.getElementById('increment').value),
+                suffix: document.getElementById('suffix').value,
+                onlySelected: document.getElementById('onlySelected').checked,
+                skipEmpty: document.getElementById('skipEmpty').checked
+            };
+            
+            if (isNaN(settings.startNumber)) {
+                alert('Начальное число должно быть целым!');
+                return;
+            }
+            if (isNaN(settings.increment)) {
+                alert('Шаг инкремента должен быть целым!');
+                return;
+            }
+            
+            window.returnValue = settings;
+            window.close();
+        }
+
+        function cancelSettings() {
+            window.returnValue = null;
+            window.close();
+        }
+
+        // Инициализация при загрузке
+        setTimeout(updatePreview, 100);
+    </script>
+</body>
+</html>
