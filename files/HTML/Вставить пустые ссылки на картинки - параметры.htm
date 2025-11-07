@@ -1,0 +1,92 @@
+<html>
+<head>
+<title>Параметры вставки пустых ссылок на картинки</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style>
+body {
+    font-family: Tahoma, sans-serif;
+    margin: 15px;
+    padding: 0;
+    font-size: 16px;
+}
+.form-container {
+    margin: 15px;
+}
+h3 {
+    margin-bottom: 25px;
+    font-size: 18px;
+}
+.checkbox-group {
+    margin: 20px 0;
+    padding: 12px;
+    font-size: 16px;
+}
+.buttons {
+    margin-top: 25px;
+    text-align: center;
+}
+input[type="button"] {
+    padding: 10px 20px;
+    margin: 0 12px;
+    font-size: 16px;
+}
+input[type="checkbox"] {
+    margin-right: 10px;
+    transform: scale(1.2);
+}
+</style>
+</head>
+<body>
+<div class="form-container">
+    <h3>Вставить пустые ссылки на картинки:</h3>
+    
+    <div class="checkbox-group">
+        <input type="checkbox" name="insertStart" id="insertStart" checked>
+        <label for="insertStart">Вставить пустые картинки <strong>в начале</strong> всех секций</label>
+    </div>
+    
+    <div class="checkbox-group">
+        <input type="checkbox" name="insertEnd" id="insertEnd" checked>
+        <label for="insertEnd">Вставить пустые картинки <strong>в конце</strong> всех секций</label>
+    </div>
+    
+    <div class="buttons">
+        <input type="button" value="Выполнить" onclick="doOK()">
+        <input type="button" value="Отмена" onclick="doCancel()">
+    </div>
+    
+    <div style="font-size: 12px; color: #666; line-height: 1.4; margin: 15px 0;">
+        <p><strong>ВНИМАНИЕ!</strong></p>
+        <ul style="margin: 5px 0; padding-left: 15px;">
+            <li>В отдельных случаях из-за структурных особенностей конкретного fb2 документа может быть не проставлена пустая картинка или проставлена лишняя.</li>
+            <li>Поэтому иногда требуется ручная проверка правильности расстановки и небольшая доработка руками в вашем файле.</li>
+        </ul>
+        <p style="margin: 10px 0 5px 0;"><strong>Перед запуском данного скрипта НАСТОЯТЕЛЬНО РЕКОМЕНДУЕТСЯ обработать ваш документ скриптом «13_Почистить структуру.js»</strong> из папки 08_Структура разделов.</p>
+        <p style="margin: 10px 0 5px 0;"><strong>После запуска данного скрипта также рекомендуетя обработать ваш документ скриптом «13_Почистить структуру.js»</strong> для устранения возможной невалидности документа в некоторых случаях.</p>
+        <p style="margin: 10px 0 5px 0;">Если где-то в началах или концах секций уже есть расставленные пустые картинки, <strong>скрипт не будет повторно расставлять пустые картинки в эти же места</strong>.</p>
+        <p style="margin: 10px 0 5px 0;"><strong>Пустые картинки, уже вставленные между обычных абзацев,</strong> не помешают расстановке в началах и концах секций.</p>
+        <p style="margin: 10px 0 5px 0;"><strong>Обычные картинки, уже вставленные в началах или концах секций,</strong> также не помешают расстановке пустых картинок в началах и концах секций.</p>
+    </div>
+</div>
+
+<script>
+function doOK() {
+    var params = {
+        insertStart: document.getElementById('insertStart').checked,
+        insertEnd: document.getElementById('insertEnd').checked
+    };
+    window.returnValue = params;
+    window.close();
+}
+
+function doCancel() {
+    window.returnValue = null;
+    window.close();
+}
+
+window.onload = function() {
+    document.getElementById('insertStart').focus();
+};
+</script>
+</body>
+</html>
