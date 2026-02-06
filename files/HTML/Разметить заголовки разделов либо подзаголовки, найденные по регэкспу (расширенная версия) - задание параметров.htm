@@ -1,15 +1,11 @@
-<<<<<<< HEAD
-<!-- версия скрипта 1.9 -->
-=======
-<!-- версия скрипта 3.0 -->
->>>>>>> 9f6754009804376ed260d1710fd91714a1c949e1
+<!-- версия скрипта 2.5 -->
 <html>
 <head>
  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
  <meta http-equiv="MSThemeCompatible" content="yes">
  <style>
 /* css reset
-http://meyerweb.com/eric/tools/css/reset/ 
+http://meyerweb.com/eric/tools/css/reset/
    v2.0 | 20110126
    License: none (public domain)
 */
@@ -22,8 +18,8 @@ b, u, i, center,
 dl, dt, dd, ol, ul, li,
 fieldset, form, label, legend,
 table, caption, tbody, tfoot, thead, tr, th, td,
-article, aside, canvas, details, embed, 
-figure, figcaption, footer, header, hgroup, 
+article, aside, canvas, details, embed,
+figure, figcaption, footer, header, hgroup,
 menu, nav, output, ruby, section, summary,
 time, mark, audio, video {
 	margin: 0;
@@ -34,7 +30,7 @@ time, mark, audio, video {
 	vertical-align: baseline;
 }
 /* HTML5 display-role reset for older browsers */
-article, aside, details, figcaption, figure, 
+article, aside, details, figcaption, figure,
 footer, header, hgroup, menu, nav, section {
 	display: block;
 }
@@ -80,7 +76,7 @@ table {
     timerId=null;
     document.getElementById('regExpId1').value='';
     currentRegExp=null;
-   } 
+   }
   }
 
   function onListChange() {
@@ -95,10 +91,10 @@ table {
     ' try { var nbspChar=window.external.GetNBSP(); var nbspEntity; if (nbspChar.charCodeAt(0)==160) nbspEntity="&nbsp;"; else nbspEntity=nbspChar; }'+
     ' catch(e) { var nbspChar=String.fromCharCode(160); var nbspEntity="&nbsp;";};'+
     ''+
-    ' var emptyLineRegExp=new RegExp("^( | |&nbsp;|"+nbspChar+")*?$","i");'+
+    ' var emptyLineRegExp=new RegExp("^( | |&nbsp;|"+nbspChar+")*?$","i");'+
     ''+
     ' function isLineEmpty(ptr) {'+
-    '  return emptyLineRegExp.test(ptr.innerHTML.replace(/<(?!IMG)[^>]*?>/gi,""));'+
+    '  return emptyLineRegExp.test(ptr.innerHTML.replace(/<[^>]*?>/gi,""));'+
     ' }'+
     ''+
     ' var removeLinksRE=new RegExp("<A( [^<>]*)?>.*?</A>","gi");'+
@@ -179,20 +175,10 @@ table {
     '   ptrInSection=saveNext;'+
     '  }'+
     '  ptrInSection=sectionPtr.firstChild;'+
-    '  var wereOnlyEmptyLines=true;'+
     '  while (ptrInSection) {'+
     '   if (ptrInSection.nodeName=="P" && ptrInSection.innerHTML=="") '+
     '     ptrInSection.innerHTML=nbspChar;'+
-    '   if (ptrInSection.nodeName=="P" &&'+
-    '       (!inEmptyLinesFlag || (ptrInSection.previousSibling && ptrInSection.nextSibling && ptrInSection.previousSibling.nodeName=="P" && ptrInSection.nextSibling.nodeName=="P" && isLineEmpty(ptrInSection.previousSibling) && isLineEmpty(ptrInSection.nextSibling))) &&'+
-    '       ptrInSection.className!="subtitle" &&'+
-    '       (!afterTitleFlag || (ptrInSection.previousSibling && /^(sub)?title$/gi.test(ptrInSection.previousSibling.className))) &&'+
-    '       (!boldFlag || isParagraphEntirelyBold(ptrInSection)) &&'+
-    '       (!italicFlag || isParagraphEntirelyItalic(ptrInSection)) &&'+
-    '       (!inUntitledSectionFlag || wereOnlyEmptyLines) &&'+
-    '       (ptrInSection.innerHTML.replace(/<[^>]+>/g,"").replace(nbspRegExp,char160).replace(/&lt;/g,"<").replace(/&gt;/g,">").replace(/&amp;/g,"&").replace(unusualSpacesRegExp," ").length<=maxLength) &&'+
-    '       ptrInSection.innerHTML.replace(/<[^>]+>/g,"").replace(nbspRegExp,char160).replace(/&lt;/g,"<").replace(/&gt;/g,">").replace(/&amp;/g,"&").replace(unusualSpacesRegExp," ").search(titleRegExp)>=0) {'+
-    '    while (inUntitledSectionFlag && ptrInSection.previousSibling && isLineEmpty(ptrInSection.previousSibling)) ptrInSection.previousSibling.removeNode(true);'+
+    '   if (ptrInSection.nodeName=="P" && ptrInSection.className!="subtitle" && (!boldFlag || isParagraphEntirelyBold(ptrInSection)) && (!italicFlag || isParagraphEntirelyItalic(ptrInSection)) && (ptrInSection.innerHTML.replace(/<[^>]+>/g,"").replace(nbspRegExp,char160).replace(/&lt;/g,"<").replace(/&gt;/g,">").replace(/&amp;/g,"&").replace(unusualSpacesRegExp," ").length<=maxLength) && ptrInSection.innerHTML.replace(/<[^>]+>/g,"").replace(nbspRegExp,char160).replace(/&lt;/g,"<").replace(/&gt;/g,">").replace(/&amp;/g,"&").replace(unusualSpacesRegExp," ").search(titleRegExp)>=0) {'+
     '    titleBegin=ptrInSection;'+
     '    titleEnd=ptrInSection;'+
     '    titleEnd.removeAttribute("className");'+
@@ -238,12 +224,8 @@ table {
     '    newEl.innerHTML="Sclex_SplittingIntoSections_"+randomNum+"_"+newTitleCnt+"_end";'+
     '    el=titleEnd.parentNode.insertBefore(newEl,titleEnd.nextSibling);      '+
     '    ptrInSection=el.nextSibling;'+
-    '    wereOnlyEmptyLines=false;'+
     '   };'+
-    '   else {'+
-    '    if (!isLineEmpty(ptrInSection)) wereOnlyEmptyLines=false;'+
-    '    ptrInSection=ptrInSection.nextSibling;'+
-    '   }'+
+    '   else ptrInSection=ptrInSection.nextSibling;'+
     '  }'+
     '  regExp1=new RegExp("<P(\\\\s[^>]*?)?>Sclex_SplittingIntoSections_"+randomNum+"_"+"(\\\\d+)_begin</P>","g");'+
     '  regExp1_="</DIV><DIV class=section><DIV class=title>";'+
@@ -291,9 +273,6 @@ table {
     ' var unusualSpacesRegExp=new RegExp("['+unusualSpaces+']","g");'+
     ' var boldFlag='+document.getElementById("boldId").checked+';'+
     ' var italicFlag='+document.getElementById("italicId").checked+';'+
-    ' var afterTitleFlag='+document.getElementById("afterTitleId").checked+';'+
-    ' var inEmptyLinesFlag='+document.getElementById("inEmptyLinesId").checked+';'+
-    ' var inUntitledSectionFlag='+document.getElementById("inUntitledSectionId").checked+';'+
     ' window.external.BeginUndoUnit(document,"разметку заголовков разделов, найденных по регэкспу");'+
     ' fbwBody=document.getElementById("fbw_body");'+
     ' var ptrInFbwBody=fbwBody.firstChild;'+
@@ -315,7 +294,7 @@ table {
    catch (e) {
     alert("Произошла ошибка. Возможная причина –\nвы запускаете обработку после\nтого, как создали новый документ\nв основном окне FBE. В таком\nслучае перезапустите скрипт.");
     return;
-   } 
+   }
    myWin.splittingIntoSections_OK(document);
   }
   function markupSubtitles() {
@@ -355,19 +334,10 @@ table {
     '   ptrInSection=saveNext;'+
     '  }'+
     '  ptrInSection=sectionPtr.firstChild;'+
-    '  var wereOnlyEmptyLines=true;'+
     '  while (ptrInSection) {'+
     '   if (ptrInSection.nodeName=="P" && ptrInSection.innerHTML=="") '+
     '     ptrInSection.innerHTML=nbspChar;'+
-    '   if (ptrInSection.nodeName=="P" && (ptrInSection.className=="" || ptrInSection.className=="normal") &&'+
-    '       (!afterTitleFlag || (ptrInSection.previousSibling && /^(sub)?title$/gi.test(ptrInSection.previousSibling.className))) &&'+
-    '       (!inEmptyLinesFlag || (ptrInSection.previousSibling && ptrInSection.nextSibling && ptrInSection.previousSibling.nodeName=="P" && ptrInSection.nextSibling.nodeName=="P" && isLineEmpty(ptrInSection.previousSibling) && isLineEmpty(ptrInSection.nextSibling))) &&'+
-    '       (!boldFlag || isParagraphEntirelyBold(ptrInSection)) &&'+
-    '       (!italicFlag || isParagraphEntirelyItalic(ptrInSection)) &&'+ 
-    '       (!inUntitledSectionFlag || wereOnlyEmptyLines) &&'+
-    '       (ptrInSection.innerHTML.replace(/<[^>]+>/g,"").replace(nbspRegExp,char160).replace(/&lt;/g,"<").replace(/&gt;/g,">").replace(/&amp;/g,"&").replace(unusualSpacesRegExp," ").length<=maxLength) &&'+
-    '        ptrInSection.innerHTML.replace(/<[^>]+>/g,"").replace(nbspRegExp,char160).replace(/&lt;/g,"<").replace(/&gt;/g,">").replace(/&amp;/g,"&").replace(unusualSpacesRegExp," ").search(subtitleRegExp)>=0) {'+
-    '    while (inUntitledSectionFlag && ptrInSection.previousSibling && isLineEmpty(ptrInSection.previousSibling)) ptrInSection.previousSibling.removeNode(true);'+
+    '   if (ptrInSection.nodeName=="P" && (ptrInSection.className=="" || ptrInSection.className=="normal") && (!boldFlag || isParagraphEntirelyBold(ptrInSection)) && (!italicFlag || isParagraphEntirelyItalic(ptrInSection)) && (ptrInSection.innerHTML.replace(/<[^>]+>/g,"").replace(nbspRegExp,char160).replace(/&lt;/g,"<").replace(/&gt;/g,">").replace(/&amp;/g,"&").replace(unusualSpacesRegExp," ").length<=maxLength) && ptrInSection.innerHTML.replace(/<[^>]+>/g,"").replace(nbspRegExp,char160).replace(/&lt;/g,"<").replace(/&gt;/g,">").replace(/&amp;/g,"&").replace(unusualSpacesRegExp," ").search(subtitleRegExp)>=0) {'+
     '    ptrInSection.className="subtitle";'+
     '    newSubtitleCnt++;'+
     '    var el2=ptrInSection.previousSibling;'+
@@ -386,13 +356,9 @@ table {
     '        el2.className="subtitle";'+
     '      if (el2) el2=el2.nextSibling;'+
     '    }'+
-    '    wereOnlyEmptyLines=false;'+
     '    ptrInSection=ptrInSection.nextSibling;'+
     '   };'+
-    '   else {'+
-    '    if (!isLineEmpty(ptrInSection)) wereOnlyEmptyLines=false;'+
-    '    ptrInSection=ptrInSection.nextSibling;'+
-    '   }'+
+    '   else ptrInSection=ptrInSection.nextSibling;'+
     '  }'+
     '  regExp1=new RegExp("<P(\\\\s[^>]*?)?>Sclex_SplittingIntoSections_"+randomNum+"_"+"(\\\\d+)_begin</P>","g");'+
     '  regExp1_="</DIV><DIV class=section><DIV class=title>";'+
@@ -438,9 +404,6 @@ table {
     ' }'+
     ' var boldFlag='+document.getElementById("boldId").checked+';'+
     ' var italicFlag='+document.getElementById("italicId").checked+';'+
-    ' var afterTitleFlag='+document.getElementById("afterTitleId").checked+';'+
-    ' var inEmptyLinesFlag='+document.getElementById("inEmptyLinesId").checked+';'+
-    ' var inUntitledSectionFlag='+document.getElementById("inUntitledSectionId").checked+';'+
     ' window.external.BeginUndoUnit(document,"разметку подзаголовков, найденных по регэкспу");'+
     ' var unusualSpacesRegExp=new RegExp("['+unusualSpaces+']","g");'+
     ' fbwBody=document.getElementById("fbw_body");'+
@@ -465,7 +428,7 @@ table {
    catch (e) {
     alert("Произошла ошибка. Возможная причина –\nвы запускаете обработку после\nтого, как создали новый документ\nв основном окне FBE. В таком\nслучае перезапустите скрипт.");
     return;
-   } 
+   }
    myWin.splittingIntoSections_OK(document);
   }
   function myBeforeUnload() {
@@ -511,17 +474,12 @@ table {
 <option value="^[ \xA0]*Книга[ \xA0]">Абзац начинается с «Книга »</option>
 <option value="^[ \xA0]*Раздел[ \xA0]">Абзац начинается с «Раздел »</option>
 <option value="^[ \xA0]*Том[ \xA0]">Абзац начинается с «Том »</option>
-<option value="^[ \xA0]*(Пролог|Эпилог|Предисловие|Заключение|Послесловие|Введение|Вступление|Глоссарий|Посвящение|Преамбула|Интермедия|Термины|Интерлюдия|Индекс|Словарь|Упражнения|Завершение|Литература|Prolog|Prologue|Epilog|Epilogue|Foreword|Afterword|Preface|Introduction|Dedication|Guides|Bibliography|Biography|Summary|Appendix|Appendices|Vocabulary|Glossary|От[ \xA0]+автора|Об[ \xA0]+авторе|От[ \xA0]+редакции|От[ \xA0]+составителей|Оглавление|Содержание|Иллюстрации|Цветная врезка|Алфавитный[ \xA0]+указатель[ \xA0]+имен|Библиография|Благодарности|Вступительное[ \xA0]+слово|Вступительная[ \xA0]+статья|От[ \xA0]+переводчика|От[ \xA0]+редактора|От[ \xA0]+составителя|От[ \xA0]+издательства|Краткая[ \xA0]+библиография|Библиографический[ \xA0]+указатель|Предварительные[ \xA0]+замечания|Использованная[ \xA0]+литература|Рекомендуемая[ \xA0]+литература|Рекомендованная[ \xA0]+литература|Именной[ \xA0]+и[ \xA0]+тематический[ \xA0]+указатель|Именной[ \xA0]+указатель|Указатель[ \xA0]+имен|Предметный[ \xA0]+указатель|Указатель[ \xA0]+источников|Указатель[ \xA0]+литературы|Список[ \xA0]+имен|Список[ \xA0]+литературы|Список[ \xA0]+сокращений|Список[ \xA0]+аббревиатур|Перечень[ \xA0]+литературы|Краткий[ \xA0]+словарь[ \xA0]+[а-я]+(и|ы)х[ \xA0]+терминов|Перечень[ \xA0]+использованных[ \xA0]+источников|Хронологическая[ \xA0]+таблица|Предисловие[ \xA0]+редактора|Предисловие[ \xA0]+автора|Предисловие[ \xA0]+издателя|Предисловие[ \xA0]+издательства|Предисловие[ \xA0]+переводчика|Предисловие[ \xA0]+составителя|Предисловие[ \xA0]+редакции|Комментарии[ \xA0]+составителя|Примечания[ \xA0]+составителя|Комментарии[ \xA0]+редактора|Примечания[ \xA0]+редактора|Комментарии[ \xA0]+редакции|Примечания[ \xA0]+редакции|Вместо[ \xA0]+эпилога|Действующие[ \xA0]+лица|Приложение|Приложения|Комментарии)\.?[ \xA0]*$">«Пролог», «Эпилог», «Предисловие» и прочее стандартное</option>
+<option value="^[ \xA0]*(Пролог|Эпилог|Предисловие|Заключение|Послесловие|Введение|Вступление|От[ \xA0]+автора|Оглавление|Содержание|Иллюстрации|Алфавитный[ \xA0]+указатель[ \xA0]+имен|Библиография|Благодарности|От[ \xA0]+переводчика|От[ \xA0]+редактора|От[ \xA0]+составителя|Краткая[ \xA0]+библиография|Предварительные[ \xA0]+замечания|Использованная[ \xA0]+литература|Именной[ \xA0]+и[ \xA0]+тематический[ \xA0]+указатель|Именной[ \xA0]+указатель|Указатель[ \xA0]+имен|Предметный[ \xA0]+указатель|Указатель[ \xA0]+источников|Указатель[ \xA0]+литературы|Краткий[ \xA0]+словарь[ \xA0]+[а-я]+(и|ы)х[ \xA0]+терминов|Перечень[ \xA0]+использованных[ \xA0]+источников|Хронологическая[ \xA0]+таблица|Предисловие[ \xA0]+редактора|Вместо[ \xA0]+эпилога|Приложение|Комментарии)\.?[ \xA0]*$">«Пролог», «Эпилог», «Предисловие» и прочее стандартное</option>
 <option value="^[ \xA0]*(\d+\.)*\d+\.?">Вида «1.1.1. Имя подраздела»</option>
 <option value="^[ \xA0]*§[ \xA0]*(\d+\.)*\d+\.?">Вида «§ 123. Имя подраздела»</option>
 <option value="^[ \xA0]*Таблица[ \xA0]+№?[ \xA0]+?(\d+\.?)+.+[ \xA0]*$">Вида «Таблица №123»</option>
-<<<<<<< HEAD
-<option value="^[ \xA0]*((Действующие[ \xA0]+лица:?)|((Сцена|Картина)([ \xA0]+(первая|вторая|третья|четв[её]ртая|пятая|шестая|седьмая|восьмая|девятая|десятая|одиннадцатая|двенадцатая|тринадцатая|четырнадцатая|пятнадцатая|шестнадцатая|семнадцатая|восемнадцатая|девятнадцатая|двадцатая|двадцать|тридцатая|тридцать|сороковая|сорок|пятидесятая|пятьдесят|шестидесятая|шестьдесят|семидесятая|семьдесят|восьмидесятая|восемьдесят|девяностая|девяносто|сотая|сто|двухсотая|двести|тр[её]хсотая|триста|четыр[её]хсотая|четыреста|пятисотая|пятьсот|шестисотая|шестьсот|семисотая|семьсот|восьмисотая|восемьсот|девятисотая|девятьсот|тысячная))+)|((Действие|Явление)([ \xA0]+(первое|второе|третье|четв[её]ртое|пятое|шестое|седьмое|восьмое|девятое|десятое|одиннадцатое|двенадцатое|тринадцатое|четырнадцатое|пятнадцатое|шестнадцатое|семнадцатое|восемнадцатое|девятнадцатое|двадцатое|двадцать|тридцатое|тридцать|сороковое|сорок|пятидесятое|пятьдесят|шестидесятое|шестьдесят|семидесятое|семьдесят|восьмидесятое|восемьдесят|девяностое|девяносто|сотое|сто|двухсотое|двести|тр[её]хсотое|триста|четыр[её]хсотое|четыреста|пятисотое|пятьсот|шестисотое|шестьсот|семисотое|семьсот|восьмисотое|восемьсот|девятисотое|девятьсот|тысячное))+)|(Эпизод|Акт)([ \xA0]+(первый|второй|третий|четв[её]ртый|пятый|шестой|седьмой|восьмой|девятый|десятый|одиннадцатый|двенадцатый|тринадцатый|четырнадцатый|пятнадцатый|шестнадцатый|семнадцатый|восемнадцатый|девятнадцатый|двадцатый|двадцать|тридцатый|тридцать|сороковой|сорок|пятидесятый|пятьдесят|шестидесятый|шестьдесят|семидесятый|семьдесят|восьмидесятый|восемьдесят|девяностый|девяносто|сотый|сто|двухсотый|двести|тр[её]хсотый|триста|четыр[её]хсотый|четыреста|пятисотый|пятьсот|шестисотый|шестьсот|семисотый|семьсот|восьмисотый|восемьсот|девятисотый|девятьсот|тысячный))+|(Первый|Второй|Третий|Четв[её]ртый|Пятый|Шестой|Седьмой|Восьмой|Девятый|Десятый|Одиннадцатый|Двенадцатый|Тринадцатый|Четырнадцатый|Пятнадцатый|Шестнадцатый|Семнадцатый|Восемнадцатый|Девятнадцатый|Двадцатый|Двадцать|Тридцатый|Тридцать|Сороковой|Сорок|Пятидесятый|Пятьдесят|Шестидесятый|Шестьдесят|Семидесятый|Семьдесят|Восьмидесятый|Восемьдесят|Девяностый|Девяносто|Сотый|Сто|Двухсотый|Двести|Тр[её]хсотый|Триста|Четыр[её]хсотый|Четыреста|Пятисотый|Пятьсот|Шестисотый|Шестьсот|Семисотый|Семьсот|Восьмисотый|Восемьсот|Девятисотый|Девятьсот|Тысячный)([ \xA0]+(первый|второй|третий|четв[её]ртый|пятый|шестой|седьмой|восьмой|девятый|десятый|одиннадцатый|двенадцатый|тринадцатый|четырнадцатый|пятнадцатый|шестнадцатый|семнадцатый|восемнадцатый|девятнадцатый|двадцатый|двадцать|тридцатый|тридцать|сороковой|сорок|пятидесятый|пятьдесят|шестидесятый|шестьдесят|семидесятый|семьдесят|восьмидесятый|восемьдесят|девяностый|девяносто|сотый|сто|двухсотый|двести|тр[её]хсотый|триста|четыр[её]хсотый|четыреста|пятисотый|пятьсот|шестисотый|шестьсот|семисотый|семьсот|восьмисотый|восемьсот|девятисотый|девятьсот|тысячный))*[ \xA0]+(эпизод|акт)|(Сцена|Картина|Действие|Явление|Эпизод|Акт)[ \xA0]+(\d+|[IVXLCDM]+))[ \xA0]*$">Типичное для драматургии («Акт I», «Сцена 2» и др.)</option>
-<option value="^[ \xA0]*[.…«&quot;&#39;’\( \xA0]*([A-ZА-ЯЁ]+(?![A-ZА-ЯЁ])[-—–\d\.\*,;:&#39;’?!…«»“”„\(\) \xA0&quot;&#39;\[\]{}]*)+[ \xA0]*$">Вида «ЗАГОЛОВОК» (включите флажок «учитывать регистр»)</option>
-=======
-<option value="^[ \xA0]*((Действующие[ \xA0]+лица:?)|((Сцена|Картина)([ \xA0]+(первая|вторая|третья|четв[её]ртая|пятая|шестая|седьмая|восьмая|девятая|десятая|одиннадцатая|двенадцатая|тринадцатая|четырнадцатая|пятнадцатая|шестнадцатая|семнадцатая|восемнадцатая|девятнадцатая|двадцатая|двадцать|тридцатая|тридцать|сороковая|сорок|пятидесятая|пятьдесят|шестидесятая|шестьдесят|семидесятая|семьдесят|восьмидесятая|восемьдесят|девяностая|девяносто|сотая|сто|двухсотая|двести|тр[её]хсотая|триста|четыр[её]хсотая|четыреста|пятисотая|пятьсот|шестисотая|шестьсот|семисотая|семьсот|восьмисотая|восемьсот|девятисотая|девятьсот|тысячная))+)|((Действие|Явление)([ \xA0]+(первое|второе|третье|четв[её]ртое|пятое|шестое|седьмое|восьмое|девятое|десятое|одиннадцатое|двенадцатое|тринадцатое|четырнадцатое|пятнадцатое|шестнадцатое|семнадцатое|восемнадцатое|девятнадцатле|двадцатое|двадцать|тридцатое|тридцать|сороковое|сорок|пятидесятое|пятьдесят|шестидесятое|шестьдесят|семидесятое|семьдесят|восьмидесятое|восемьдесят|девяностое|девяносто|сотое|сто|двухсотое|двести|тр[её]хсотое|триста|четыр[её]хсотое|четыреста|пятисотое|пятьсот|шестисотое|шестьсот|семисотое|семьсот|восьмисотое|восемьсот|девятисотое|девятьсот|тысячное))+)|(Эпизод|Акт)([ \xA0]+(первый|второй|третий|четв[её]ртый|пятый|шестой|седьмой|восьмой|девятый|десятый|одиннадцатый|двенадцатый|тринадцатый|четырнадцатый|пятнадцатый|шестнадцатый|семнадцатый|восемнадцатый|девятнадцатый|двадцатый|двадцать|тридцатый|тридцать|сороковой|сорок|пятидесятый|пятьдесят|шестидесятый|шестьдесят|семидесятый|семьдесят|восьмидесятый|восемьдесят|девяностый|девяносто|сотый|сто|двухсотый|двести|тр[её]хсотый|триста|четыр[её]хсотый|четыреста|пятисотый|пятьсот|шестисотый|шестьсот|семисотый|семьсот|восьмисотый|восемьсот|девятисотый|девятьсот|тысячный))+|(Первый|Второй|Третий|Четв[её]ртый|Пятый|Шестой|Седьмой|Восьмой|Девятый|Десятый|Одиннадцатый|Двенадцатый|Тринадцатый|Четырнадцатый|Пятнадцатый|Шестнадцатый|Семнадцатый|Восемнадцатый|Девятнадцатый|Двадцатый|Двадцать|Тридцатый|Тридцать|Сороковой|Сорок|Пятидесятый|Пятьдесят|Шестидесятый|Шестьдесят|Семидесятый|Семьдесят|Восьмидесятый|Восемьдесят|Девяностый|Девяносто|Сотый|Сто|Двухсотый|Двести|Тр[её]хсотый|Триста|Четыр[её]хсотый|Четыреста|Пятисотый|Пятьсот|Шестисотый|Шестьсот|Семисотый|Семьсот|Восьмисотый|Восемьсот|Девятисотый|Девятьсот|Тысячный)([ \xA0]+(первый|второй|третий|четв[её]ртый|пятый|шестой|седьмой|восьмой|девятый|десятый|одиннадцатый|двенадцатый|тринадцатый|четырнадцатый|пятнадцатый|шестнадцатый|семнадцатый|восемнадцатый|девятнадцатый|двадцатый|двадцать|тридцатый|тридцать|сороковой|сорок|пятидесятый|пятьдесят|шестидесятый|шестьдесят|семидесятый|семьдесят|восьмидесятый|восемьдесят|девяностый|девяносто|сотый|сто|двухсотый|двести|тр[её]хсотый|триста|четыр[её]хсотый|четыреста|пятисотый|пятьсот|шестисотый|шестьсот|семисотый|семьсот|восьмисотый|восемьсот|девятисотый|девятьсот|тысячный))*[ \xA0]+(эпизод|акт)|(Сцена|Картина|Действие|Явление|Эпизод|Акт)[ \xA0]+(\d+|[IVXLCDM]+))\.?[ \xA0]*$">Типичное для драматургии («Акт I», «Сцена 2» и др.)</option>
+<option value="^[ \xA0]*((Действующие[ \xA0]+лица:?)|((Сцена|Картина)([ \xA0]+(первая|вторая|третья|четв[её]ртая|пятая|шестая|седьмая|восьмая|девятая|десятая|одиннадцатая|двенадцатая|тринадцатая|четырнадцатая|пятнадцатая|шестнадцатая|семнадцатая|восемнадцатая|девятнадцатая|двадцатая|двадцать|тридцатая|тридцать|сороковая|сорок|пятидесятая|пятьдесят|шестидесятая|шестьдесят|семидесятая|семьдесят|восьмидесятая|восемьдесят|девяностая|девяносто|сотая|сто|двухсотая|двести|тр[её]хсотая|триста|четыр[её]хсотая|четыреста|пятисотая|пятьсот|шестисотая|шестьсот|семисотая|семьсот|восьмисотая|восемьсот|девятисотая|девятьсот|тысячная))+)|((Действие|Явление)([ \xA0]+(первое|второе|третье|четв[её]ртое|пятое|шестое|седьмое|восьмое|девятое|десятое|одиннадцатое|двенадцатое|тринадцатое|четырнадцатое|пятнадцатое|шестнадцатое|семнадцатое|восемнадцатое|девятнадцатое|двадцатое|двадцать|тридцатое|тридцать|сороковое|сорок|пятидесятое|пятьдесят|шестидесятое|шестьдесят|семидесятое|семьдесят|восьмидесятое|восемьдесят|девяностое|девяносто|сотое|сто|двухсотое|двести|тр[её]хсотое|триста|четыр[её]хсотое|четыреста|пятисотое|пятьсот|шестисотое|шестьсот|семисотое|семьсот|восьмисотое|восемьсот|девятисотое|девятьсот|тысячное))+)|(Эпизод|Акт)([ \xA0]+(первый|второй|третий|четв[её]ртый|пятый|шестой|седьмой|восьмой|девятый|десятый|одиннадцатый|двенадцатый|тринадцатый|четырнадцатый|пятнадцатый|шестнадцатый|семнадцатый|восемнадцатый|девятнадцатый|двадцатый|двадцать|тридцатый|тридцать|сороковой|сорок|пятидесятый|пятьдесят|шестидесятый|шестьдесят|семидесятый|семьдесят|восьмидесятый|восемьдесят|девяностый|девяносто|сотый|сто|двухсотый|двести|тр[её]хсотый|триста|четыр[её]хсотый|четыреста|пятисотый|пятьсот|шестисотый|шестьсот|семисотый|семьсот|восьмисотый|восемьсот|девятисотый|девятьсот|тысячный))+|(Первый|Второй|Третий|Четв[её]ртый|Пятый|Шестой|Седьмой|Восьмой|Девятый|Десятый|Одиннадцатый|Двенадцатый|Тринадцатый|Четырнадцатый|Пятнадцатый|Шестнадцатый|Семнадцатый|Восемнадцатый|Девятнадцатый|Двадцатый|Двадцать|Тридцатый|Тридцать|Сороковой|Сорок|Пятидесятый|Пятьдесят|Шестидесятый|Шестьдесят|Семидесятый|Семьдесят|Восьмидесятый|Восемьдесят|Девяностый|Девяносто|Сотый|Сто|Двухсотый|Двести|Тр[её]хсотый|Триста|Четыр[её]хсотый|Четыреста|Пятисотый|Пятьсот|Шестисотый|Шестьсот|Семисотый|Семьсот|Восьмисотый|Восемьсот|Девятисотый|Девятьсот|Тысячный)([ \xA0]+(первый|второй|третий|четв[её]ртый|пятый|шестой|седьмой|восьмой|девятый|десятый|одиннадцатый|двенадцатый|тринадцатый|четырнадцатый|пятнадцатый|шестнадцатый|семнадцатый|восемнадцатый|девятнадцатый|двадцатый|двадцать|тридцатый|тридцать|сороковой|сорок|пятидесятый|пятьдесят|шестидесятый|шестьдесят|семидесятый|семьдесят|восьмидесятый|восемьдесят|девяностый|девяносто|сотый|сто|двухсотый|двести|тр[её]хсотый|триста|четыр[её]хсотый|четыреста|пятисотый|пятьсот|шестисотый|шестьсот|семисотый|семьсот|восьмисотый|восемьсот|девятисотый|девятьсот|тысячный))*[ \xA0]+(эпизод|акт)|(Сцена|Картина|Действие|Явление|Эпизод|Акт)[ \xA0]+(\d+|[IVXLCDM]+))\.?[ \xA0]*$">Типичное для драматургии («Акт I», «Сцена 2» и др.)</option>
 <option value="^[ \xA0]*[.…«&quot;&#39;’\( \xA0]*([A-ZА-ЯЁ]+(?![A-ZА-ЯЁ])[-—–\d\.\*,;:&#39;’?!…«»“”„\(\) \xA0&quot;&#39;\[\]{}]*)+\.?[ \xA0]*$">Вида «ЗАГОЛОВОК» (включите флажок «учитывать регистр»)</option>
->>>>>>> 9f6754009804376ed260d1710fd91714a1c949e1
 <option value="^[ \xA0]*«.{1,70}([?!]\.\.|\?!\.|…|\.\.\.)»[ \xA0]*$">Вида «Заголовок стиха из текста первой строки…»</option>
 <option value="^[ \xA0]*(\*[ \xA0]*){3}[ \xA0]*$">Вида «***»</option>
 <option value="^[ \xA0]*Part[ \xA0]+\d+(\..*)?[ \xA0]*$">Вида «Part 123»</option>
@@ -539,20 +497,17 @@ table {
 <option value="^[ \xA0]*Stave[ \xA0]+\d+(\..*)?[ \xA0]*$">Вида «Stave 123»</option>
 <option value="^[ \xA0]*Stave[ \xA0]+[IVXLCDM]+(\..*)?[ \xA0]*$">Вида «Stave XVI»</option>
 <option value="^[ \xA0]*Stave[ \xA0]+(One|Two|Three|Four|Five|Six|Seven|Eight|Nine|Ten|Eleven|Twelve|Thirteen|Fourteen|Fifteen|Sixteen|Seventeen|Eighteen|Nineteen|Twenty|Thirty|Forty|Fifty|Sixty|Seventy|Eighty|Ninety|Hundred)(?![a-z])">Вида «Stave One»</option>
-<option value="^[ \xA0]*(Prolog|Prologue|Epilog|Epilogue|Foreword|Afterword|Preface|Introduction|Dedication|Guides|Bibliography|Biography|Summary|Appendix|Appendices|Vocabulary|Glossary)\.?[ \xA0]*$">Prologue, Epilogue, Foreword и пр.</option>
+<option value="^[ \xA0]*(Prolog|Prologue|Epilog|Epilogue|Foreword|Afterword|Preface)\.?[ \xA0]*$">Prologue, Epilogue, Foreword и пр.</option>
 </select><br>
  Регэксп для поиска абзацев, которые следует превратить в заголовки либо подзаголовки. Можете задать <span style="font-style: italic;">свой</span> регэксп (например: «<span style="background-color:#7A7666; color:white;">^Глава&#160;\d+$</span>»), а можете использовать готовый, воспользовавшись выпадающим списком выше.<br>
  <input type=text id=regExpId value="^.*[^ \xA0].*$" style="width:100%;"><br>
  <input type=checkbox id="caseSensitiveId"><label for="caseSensitiveId"> учитывать регистр при поиске по регэкспу</label><br>
  <input type=checkbox id="boldId"><label for="boldId"> абзац должен быть полностью жирным (кроме, разве что, ссылок и пробелов)</label><br>
  <input type=checkbox id="italicId"><label for="italicId"> абзац должен быть полностью курсивным (кроме, разве что, ссылок и пробелов)</label><br>
- <input type=checkbox id="afterTitleId"><label for="afterTitleId"> абзац должен находиться сразу после уже размеченного (под)заголовка</label><br>
- <input type=checkbox id="inEmptyLinesId"><label for="inEmptyLinesId"> абзац должен быть обрамлен пустыми строками</label><br>
- <input type=checkbox id="inUntitledSectionId"><label for="inUntitledSectionId"> абзац должен быть первым непустым абзацем от начала безымянного раздела</label><br>
  Длина абзаца должна быть не больше, чем столько символов: <input type=text id="maxLengthId" value="60" style="width:80px; text-align:center;"><br>
  <select id=captureBeforeId><option selected value=0>0<option value=1>1<option value=2>2<option value=3>3</option></select> сколько захватывать в создаваемый заголовок либо подзаголовок абзацев, находящихся <b>перед</b> абзацем, найденным по регэкспу<br>
  <select id=captureAfterId><option selected value=0>0<option value=1>1<option value=2>2<option value=3>3</option></select> сколько захватывать в создаваемый заголовок либо подзаголовок абзацев, находящихся <b>после</b> абзаца, найденного по регэкспу<br>
- <p style="text-align:center; margin-top:8px; padding-top:0; margin-bottom:0; padding-bottom:0;"><input type=button value="Разметить заголовки" onclick="markupTitles();" style="width:220px;"><input type=button value="Разметить заголовки и выйти" onclick="markupTitles(); window.close();" style="width:260px;"><input type=button onclick="window.close();" value="Выйти" style="width:120px;"></p>
-<p style="text-align:center; margin-top:8px; padding-top:0; margin-bottom:0; padding-bottom:0;"><input type=button value="Разметить подзаголовки" onclick="markupSubtitles();" style="width:220px;"><input type=button value="Разметить подзаголовки и выйти" onclick="markupSubtitles(); window.close();" style="width:260px;"><input type=button onclick="window.close();" value="Выйти" style="width:120px;"></p>
+ <p style="text-align:center; margin-top:8px; padding-top:0; margin-bottom:0; padding-bottom:0;"><input type=button value="Разметить заголовки" onclick="markupTitles();" style="width:220px;"><input type=button value="Разметить заголовки и выйти" onclick="markupTitles(); window.close();" style="width:240px;"><input type=button onclick="window.close();" value="Выйти" style="width:120px;"></p>
+<p style="text-align:center; margin-top:8px; padding-top:0; margin-bottom:0; padding-bottom:0;"><input type=button value="Разметить подзаголовки" onclick="markupSubtitles();" style="width:220px;"><input type=button value="Разметить подзаголовки и выйти" onclick="markupSubtitles(); window.close();" style="width:240px;"><input type=button onclick="window.close();" value="Выйти" style="width:120px;"></p>
 </body>
 </html>

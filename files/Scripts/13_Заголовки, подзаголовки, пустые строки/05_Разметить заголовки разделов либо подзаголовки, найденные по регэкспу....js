@@ -1,16 +1,12 @@
 //Скрипт «Разметить заголовки разделов либо подзаголовки, найденные по регэкспу»
 //Автор Sclex
 
-<<<<<<< HEAD
-var markupTitlesOrSubtitles_versionNum="4.3";
-=======
-var markupTitlesOrSubtitles_versionNum="4.7";
->>>>>>> 9f6754009804376ed260d1710fd91714a1c949e1
+var markupTitlesOrSubtitles_versionNum="4.8";
 
 function Run() {
  var dialogWidth="700px";
  var dialogHeight="335px";
- 
+
  // Нижеследующая команда задает список необычных пробелов,
  // которые в заголовках и подзаголовках должны обрабатываться
  // наравне с обычными пробелами:
@@ -22,7 +18,7 @@ function Run() {
   String.fromCharCode(8239)+
   String.fromCharCode(8201)+
   String.fromCharCode(8202);
-  
+
  var fbwBody=document.getElementById("fbw_body");
  var coll=new Object();
  coll["fbwBody"]=fbwBody;
