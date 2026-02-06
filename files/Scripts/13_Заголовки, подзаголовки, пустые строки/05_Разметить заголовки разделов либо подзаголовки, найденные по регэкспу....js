@@ -1,7 +1,7 @@
 //Скрипт «Разметить заголовки разделов либо подзаголовки, найденные по регэкспу»
 //Автор Sclex
 
-var markupTitlesOrSubtitles_versionNum="4.8";
+var markupTitlesOrSubtitles_versionNum="4.9";
 
 function Run() {
  var dialogWidth="700px";
