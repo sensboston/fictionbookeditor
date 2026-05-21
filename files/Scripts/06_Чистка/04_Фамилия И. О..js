@@ -1,3 +1,5 @@
+// Скрипт "Фамилия И. О."
+// Версия 2.4
 //======================================
 //               Инициалы до и после фамилий
 //               Автор скрипта - jurgennt
@@ -18,13 +20,46 @@
 //======================================
 // v.2.2 — доработка движка под прерывание и выход — sclex, май 2010
 //======================================
-var VersionNumber="2.3";
+// v.2.4 — добавление подсветки — stokber + DeepSeek, май 2026
+//======================================
+
+
+var name="Фамилия И. О.";
+var VersionNumber="2.4";
 
 //обрабатывать ли history
 var ObrabotkaHistory=true;
 //обрабатывать ли annotation
 var ObrabotkaAnnotation=true;
 
+// Функция выделения текста внутри абзаца с помощью findText (IE6)
+function highlightMatch(ptr, matchText) {
+    if (!ptr || !matchText) return false;
+    try {
+        // Приводим искомый текст к виду, соответствующему DOM (заменяем сущности)
+        var cleanMatch = matchText;
+        cleanMatch = cleanMatch.replace(/&nbsp;/g, ' ');
+        cleanMatch = cleanMatch.replace(/&#160;/g, ' ');
+        cleanMatch = cleanMatch.replace(/&lt;/g, '<');
+        cleanMatch = cleanMatch.replace(/&gt;/g, '>');
+        cleanMatch = cleanMatch.replace(/&amp;/g, '&');
+        
+        var range = document.body.createTextRange();
+        range.moveToElementText(ptr);
+        // Ищем точное совпадение (с учётом регистра)
+        if (range.findText(cleanMatch)) {
+            range.select();
+            return true;
+        }
+        // Если не найдено, пробуем с исходным matchText (на случай, если в DOM нет замен)
+        range.moveToElementText(ptr);
+        if (range.findText(matchText)) {
+            range.select();
+            return true;
+        }
+    } catch(e) {}
+    return false;
+}
 
 function Run() {
   try { var nbspChar=window.external.GetNBSP(); var nbspEntity; if (nbspChar.charCodeAt(0)==160) nbspEntity="&nbsp;"; else nbspEntity=nbspChar;}
@@ -35,7 +70,8 @@ function Run() {
 
   var count=0;                                                  //  счётчик
 
-          Col = new Object();                               // коллекция временных замен
+          Col = new Object();                               // коллекция временных замен (то, на что заменяем)
+          xCol = new Object();                              // коллекция оригинальных фрагментов (для восстановления при выделении)
           NoCol = new Object();                          // коллекция «отменённых», чтобы по десять раз от них не отмахиваться
           YesCol = new Object();                         // коллекция одобренных изменений
           var k = 0;
@@ -112,30 +148,9 @@ var re70 = new RegExp("^(.*?[^А-яЁёA-z\\\d]){0,1}([А-ЯA-Z][а-яёa-z]+) (
  // функция, обрабатывающая абзац P
  function HandleP(ptr) {
   s=ptr.innerHTML;
-/*
-ptr2=ptr;                                      // следующий абзац за совпадением — переход на него, чтобы в FBE было видно  проблемное место
-if (ptr2.hasChildNodes()) {
-   ptr2=ptr2.firstChild;
-} else {
-   while (ptr2!=fbw_body && !ptr2.nextSibling) ptr2=ptr2.parentNode;
-   if (ptr2!=fbw_body) ptr2=ptr2.nextSibling;
-}
-while (ptr2!=fbw_body && ptr2.nodeName!="P") {
-   if (ptr2.hasChildNodes() && ptr2.nodeName!="P") {
-     ptr2=ptr2.firstChild;
-   } else {
-     while (ptr2!=fbw_body && !ptr2.nextSibling) ptr2=ptr2.parentNode;
-     if (ptr2!=fbw_body) ptr2=ptr2.nextSibling;
-   }
-}
-*/
-
-// Попытался отменить переход на следующий абзац за совпадением, но всё равно оно подлазит под окошко
 
        if (s.search(re10)!=-1 || s.search(re20)!=-1 || s.search(re30)!=-1 || s.search(re40)!=-1 || s.search(re50)!=-1 || s.search(re60)!=-1 || s.search(re70)!=-1 )  
          { GoTo(ptr);
-//           if (ptr2==fbw_body) GoTo(ptr); else GoTo(ptr2);
-
 
 //                    ===================   ДО   ==============
 
@@ -150,22 +165,24 @@ while (ptr2!=fbw_body && ptr2.nodeName!="P") {
     var vvv1  = s.replace(re10, re16);
 
   if (NoCol[vv1]==true)  {
-        if (k<10)   { Col[k] = vvv1;    s=sll1+("col1¦" +k+ "¦")+sp1; } 
-        if (k>10)   { Col[k] = vvv1;    s=sll1+("col2¦" +k+ "¦")+sp1; }
+        if (k<10)   { Col[k] = vvv1; xCol[k] = vvv1; s=sll1+("col1¦" +k+ "¦")+sp1; } 
+        if (k>10)   { Col[k] = vvv1; xCol[k] = vvv1; s=sll1+("col2¦" +k+ "¦")+sp1; }
 		 k++;} 
   if (YesCol[vv1]!=null)  {
-        if (k<10)   { Col[k] = YesCol[vv1];    s=sl1+("col1¦" +k+ "¦")+sp1; count++; } 
-        if (k>10)   { Col[k] = YesCol[vv1];    s=sl1+("col2¦" +k+ "¦")+sp1; count++; }
+        if (k<10)   { Col[k] = YesCol[vv1]; xCol[k] = vvv1; s=sl1+("col1¦" +k+ "¦")+sp1; count++; } 
+        if (k>10)   { Col[k] = YesCol[vv1]; xCol[k] = vvv1; s=sl1+("col2¦" +k+ "¦")+sp1; count++; }
 		 k++;}
  var r=Object();
 	 if (k<10 && NoCol[vv1]==null && YesCol[vv1]==null)
-	 { if (InputBox(" Предлагается следующий           При «Отмене» останется:        … "+count+" …\n вариант :. v .:                                      " +vv1,v1, r) == IDCANCEL) return "exit";
-		 if(r!=null && r.$!="")  { Col[k] = r.$; YesCol[vv1]=r.$; s=sl1+("col1¦" +k+ "¦")+sp1; count++; } 
-	 else { Col[k] = vvv1;  NoCol[vv1]=true;  s=sll1+("col1¦" +k+ "¦")+sp1; } }
+	 { highlightMatch(ptr, vv1);
+	   if (InputBox(" Предлагается следующий           При «Отмене» останется:        … "+count+" …\n вариант :. v .:                                      " +vv1,v1, r) == IDCANCEL) return "exit";
+		 if(r!=null && r.$!="")  { Col[k] = r.$; xCol[k] = vvv1; YesCol[vv1]=r.$; s=sl1+("col1¦" +k+ "¦")+sp1; count++; } 
+	 else { Col[k] = vvv1; xCol[k] = vvv1; NoCol[vv1]=true;  s=sll1+("col1¦" +k+ "¦")+sp1; } }
 	 if (k>=10 && NoCol[vv1]==null && YesCol[vv1]==null)
-		 { if (InputBox(" Предлагается следующий           При «Отмене» останется:        … "+count+" …\n вариант :. v .:                                      " +vv1,v1, r) == IDCANCEL) return "exit";
-		 if(r!=null && r.$!="")  { Col[k] = r.$; YesCol[vv1]=r.$; s=sl1+("col2¦" +k+ "¦")+sp1; count++; } 
-		 else { Col[k] = vvv1;  NoCol[vv1]=true;  s=sll1+("col2¦" +k+ "¦")+sp1; } }
+		 { highlightMatch(ptr, vv1);
+		   if (InputBox(" Предлагается следующий           При «Отмене» останется:        … "+count+" …\n вариант :. v .:                                      " +vv1,v1, r) == IDCANCEL) return "exit";
+		 if(r!=null && r.$!="")  { Col[k] = r.$; xCol[k] = vvv1; YesCol[vv1]=r.$; s=sl1+("col2¦" +k+ "¦")+sp1; count++; } 
+		 else { Col[k] = vvv1; xCol[k] = vvv1; NoCol[vv1]=true;  s=sll1+("col2¦" +k+ "¦")+sp1; } }
  k++;  }
 
 
@@ -179,27 +196,27 @@ while (ptr2!=fbw_body && ptr2.nodeName!="P") {
     var vvv2  = s.replace(re20, re26);
 
   if (NoCol[vv2]==true)  {
-        if (k<10)   { Col[k] = vvv2;    s=sll2+("col1¦" +k+ "¦")+sp2; } 
-        if (k>10)   { Col[k] = vvv2;    s=sll2+("col2¦" +k+ "¦")+sp2; }
-		 k++;}                                                                                                                              //                            MsgBox ('после автозамен: \n' +s );
+        if (k<10)   { Col[k] = vvv2; xCol[k] = vvv2; s=sll2+("col1¦" +k+ "¦")+sp2; } 
+        if (k>10)   { Col[k] = vvv2; xCol[k] = vvv2; s=sll2+("col2¦" +k+ "¦")+sp2; }
+		 k++;} 
 
   if (YesCol[vv2]!=null)  {
-        if (k<10)   { Col[k] = YesCol[vv2];    s=sl2+("col1¦" +k+ "¦")+sp2; count++; } 
-        if (k>10)   { Col[k] = YesCol[vv2];    s=sl2+("col2¦" +k+ "¦")+sp2; count++; }
-		                                                                                                                                         //      MsgBox ('после автозамен: \n' +s+ '\n\nvv2 =  ' +vv2+ '\n\nYesCol: =  ' +YesCol[vv2] );
+        if (k<10)   { Col[k] = YesCol[vv2]; xCol[k] = vvv2; s=sl2+("col1¦" +k+ "¦")+sp2; count++; } 
+        if (k>10)   { Col[k] = YesCol[vv2]; xCol[k] = vvv2; s=sl2+("col2¦" +k+ "¦")+sp2; count++; }
 		 k++;}
 
  var r=Object();
 	 if (k<10 && NoCol[vv2]==null && YesCol[vv2]==null)
-	 {  if (InputBox(" Предлагается следующий           При «Отмене» останется:        … "+count+" …\n вариант :. v .:                                      " +vv2,v2, r) == IDCANCEL) return "exit";
-		 if(r!=null && r.$!="")  { Col[k] = r.$; YesCol[vv2]=r.$; s=sl2+("col1¦" +k+ "¦")+sp2; count++; } 
-	 else { Col[k] = vvv2;  NoCol[vv2]=true;  s=sll2+("col1¦" +k+ "¦")+sp2; } }
-	 		//                                      MsgBox ('      И где это я?     \n\nv2:  ' +v2+ '\nvv2:  ' +vv2+ '\n\nNoCol: =  ' +NoCol[vv2]+ '\n\nCol [' +k+ '] =  ' +Col[k]+ '\n\nабзац:\n' +s+ '\n\nYesCol[' +vv2+']: =  ' +YesCol[vv2]  );
+	 { highlightMatch(ptr, vv2);
+	   if (InputBox(" Предлагается следующий           При «Отмене» останется:        … "+count+" …\n вариант :. v .:                                      " +vv2,v2, r) == IDCANCEL) return "exit";
+		 if(r!=null && r.$!="")  { Col[k] = r.$; xCol[k] = vvv2; YesCol[vv2]=r.$; s=sl2+("col1¦" +k+ "¦")+sp2; count++; } 
+	 else { Col[k] = vvv2; xCol[k] = vvv2; NoCol[vv2]=true;  s=sll2+("col1¦" +k+ "¦")+sp2; } }
 	 if (k>=10 && NoCol[vv2]==null && YesCol[vv2]==null)
-		 {  if (InputBox(" Предлагается следующий           При «Отмене» останется:        … "+count+" …\n вариант :. v .:                                      " +vv2,v2, r) == IDCANCEL) return "exit";
-		 if(r!=null && r.$!="")  { Col[k] = r.$; YesCol[vv2]=r.$; s=sl2+("col2¦" +k+ "¦")+sp2; count++; } 
-		 else { Col[k] = vvv2;  NoCol[vv2]=true;  s=sll2+("col2¦" +k+ "¦")+sp2; } }
- k++;  }                                                                                                                                     //                                       MsgBox ('вручную: \n' +s );
+		 { highlightMatch(ptr, vv2);
+		   if (InputBox(" Предлагается следующий           При «Отмене» останется:        … "+count+" …\n вариант :. v .:                                      " +vv2,v2, r) == IDCANCEL) return "exit";
+		 if(r!=null && r.$!="")  { Col[k] = r.$; xCol[k] = vvv2; YesCol[vv2]=r.$; s=sl2+("col2¦" +k+ "¦")+sp2; count++; } 
+		 else { Col[k] = vvv2; xCol[k] = vvv2; NoCol[vv2]=true;  s=sll2+("col2¦" +k+ "¦")+sp2; } }
+ k++;  }
 
 
         while (s.search(re30)!=-1)                                 // одинарные инициалы "до"
@@ -212,22 +229,24 @@ while (ptr2!=fbw_body && ptr2.nodeName!="P") {
     var vvv3  = s.replace(re30, re36);
 
   if (NoCol[vv3]==true)  {
-        if (k<10)   { Col[k] = vvv3;    s=sll3+("col1¦" +k+ "¦")+sp3; } 
-        if (k>10)   { Col[k] = vvv3;    s=sll3+("col2¦" +k+ "¦")+sp3; }
+        if (k<10)   { Col[k] = vvv3; xCol[k] = vvv3; s=sll3+("col1¦" +k+ "¦")+sp3; } 
+        if (k>10)   { Col[k] = vvv3; xCol[k] = vvv3; s=sll3+("col2¦" +k+ "¦")+sp3; }
 		 k++;} 
   if (YesCol[vv3]!=null)  {
-        if (k<10)   { Col[k] = YesCol[vv3];    s=sl3+("col1¦" +k+ "¦")+sp3; count++; } 
-        if (k>10)   { Col[k] = YesCol[vv3];    s=sl3+("col2¦" +k+ "¦")+sp3; count++; }
+        if (k<10)   { Col[k] = YesCol[vv3]; xCol[k] = vvv3; s=sl3+("col1¦" +k+ "¦")+sp3; count++; } 
+        if (k>10)   { Col[k] = YesCol[vv3]; xCol[k] = vvv3; s=sl3+("col2¦" +k+ "¦")+sp3; count++; }
 		 k++;}
  var r=Object();
 	 if (k<10 && NoCol[vv3]==null && YesCol[vv3]==null)
-	 { if (InputBox(" Предлагается следующий           При «Отмене» останется:        … "+count+" …\n вариант :. v .:                                      " +vv3,v3, r) == IDCANCEL) return "exit";
-		 if(r!=null && r.$!="")  { Col[k] = r.$; YesCol[vv3]=r.$; s=sl3+("col1¦" +k+ "¦")+sp3; count++; } 
-	 else { Col[k] = vvv3;  NoCol[vv3]=true;  s=sll3+("col1¦" +k+ "¦")+sp3; } }
+	 { highlightMatch(ptr, vv3);
+	   if (InputBox(" Предлагается следующий           При «Отмене» останется:        … "+count+" …\n вариант :. v .:                                      " +vv3,v3, r) == IDCANCEL) return "exit";
+		 if(r!=null && r.$!="")  { Col[k] = r.$; xCol[k] = vvv3; YesCol[vv3]=r.$; s=sl3+("col1¦" +k+ "¦")+sp3; count++; } 
+	 else { Col[k] = vvv3; xCol[k] = vvv3; NoCol[vv3]=true;  s=sll3+("col1¦" +k+ "¦")+sp3; } }
 	 if (k>=10 && NoCol[vv3]==null && YesCol[vv3]==null)
-		 { if (InputBox(" Предлагается следующий           При «Отмене» останется:        … "+count+" …\n вариант :. v .:                                      " +vv3,v3, r) == IDCANCEL) return "exit";
-		 if(r!=null && r.$!="")  { Col[k] = r.$; YesCol[vv3]=r.$; s=sl3+("col2¦" +k+ "¦")+sp3; count++; } 
-		 else { Col[k] = vvv3;  NoCol[vv3]=true;  s=sll3+("col2¦" +k+ "¦")+sp3; } }
+		 { highlightMatch(ptr, vv3);
+		   if (InputBox(" Предлагается следующий           При «Отмене» останется:        … "+count+" …\n вариант :. v .:                                      " +vv3,v3, r) == IDCANCEL) return "exit";
+		 if(r!=null && r.$!="")  { Col[k] = r.$; xCol[k] = vvv3; YesCol[vv3]=r.$; s=sl3+("col2¦" +k+ "¦")+sp3; count++; } 
+		 else { Col[k] = vvv3; xCol[k] = vvv3; NoCol[vv3]=true;  s=sll3+("col2¦" +k+ "¦")+sp3; } }
  k++;  }
 
 
@@ -244,22 +263,24 @@ while (ptr2!=fbw_body && ptr2.nodeName!="P") {
     var spp4   = s.replace(re40, re46);
 
   if (NoCol[vv4]==true)  {
-        if (k<10)   { Col[k] = vvv4;    s=sl4+("col1¦" +k+ "¦")+spp4; } 
-        if (k>10)   { Col[k] = vvv4;    s=sl4+("col2¦" +k+ "¦")+spp4; }
+        if (k<10)   { Col[k] = vvv4; xCol[k] = vvv4; s=sl4+("col1¦" +k+ "¦")+spp4; } 
+        if (k>10)   { Col[k] = vvv4; xCol[k] = vvv4; s=sl4+("col2¦" +k+ "¦")+spp4; }
 		 k++;} 
   if (YesCol[vv4]!=null)  {
-        if (k<10)   { Col[k] = YesCol[vv4];    s=sl4+("col1¦" +k+ "¦")+sp4; count++; } 
-        if (k>10)   { Col[k] = YesCol[vv4];    s=sl4+("col2¦" +k+ "¦")+sp4; count++; }
+        if (k<10)   { Col[k] = YesCol[vv4]; xCol[k] = vvv4; s=sl4+("col1¦" +k+ "¦")+sp4; count++; } 
+        if (k>10)   { Col[k] = YesCol[vv4]; xCol[k] = vvv4; s=sl4+("col2¦" +k+ "¦")+sp4; count++; }
 		 k++;}
  var r=Object();
 	 if (k<10 && NoCol[vv4]==null && YesCol[vv4]==null)
-					{ if (InputBox(" Предлагается следующий           При «Отмене» останется:        … "+count+" …\n вариант :. v .:                                      " +vv4,v4, r) == IDCANCEL) return "exit";
-		 if(r!=null && r.$!="")  { Col[k] = r.$; YesCol[vv4]=r.$; s=sl4+("col1_" +k)+sp4; count++; }
-					 else { Col[k] = vvv4;  NoCol[vv4]=true;  s=sl4+("col1¦" +k+ "¦")+spp4; } }
+					{ highlightMatch(ptr, vv4);
+					  if (InputBox(" Предлагается следующий           При «Отмене» останется:        … "+count+" …\n вариант :. v .:                                      " +vv4,v4, r) == IDCANCEL) return "exit";
+		 if(r!=null && r.$!="")  { Col[k] = r.$; xCol[k] = vvv4; YesCol[vv4]=r.$; s=sl4+("col1_" +k)+sp4; count++; }
+					 else { Col[k] = vvv4; xCol[k] = vvv4; NoCol[vv4]=true;  s=sl4+("col1¦" +k+ "¦")+spp4; } }
 	 if (k>=10 && NoCol[vv4]==null && YesCol[vv4]==null)
-					{ if (InputBox(" Предлагается следующий           При «Отмене» останется:        … "+count+" …\n вариант :. v .:                                      " +vv4,v4, r) == IDCANCEL) return "exit";
-		 if(r!=null && r.$!="")  { Col[k] = r.$; YesCol[vv4]=r.$; s=sl4+("col2¦" +k+ "¦")+spp4; count++; }
-					 else { Col[k] = vvv4;  NoCol[vv4]=true;  s=sl4+("col2¦" +k+ "¦")+spp4; } }
+					{ highlightMatch(ptr, vv4);
+					  if (InputBox(" Предлагается следующий           При «Отмене» останется:        … "+count+" …\n вариант :. v .:                                      " +vv4,v4, r) == IDCANCEL) return "exit";
+		 if(r!=null && r.$!="")  { Col[k] = r.$; xCol[k] = vvv4; YesCol[vv4]=r.$; s=sl4+("col2¦" +k+ "¦")+spp4; count++; }
+					 else { Col[k] = vvv4; xCol[k] = vvv4; NoCol[vv4]=true;  s=sl4+("col2¦" +k+ "¦")+spp4; } }
  k++; }
 
 
@@ -273,22 +294,24 @@ while (ptr2!=fbw_body && ptr2.nodeName!="P") {
     var spp5   = s.replace(re50, re56);
 
   if (NoCol[vv5]==true)  {
-        if (k<10)   { Col[k] = vvv5;    s=sl5+("col1¦" +k+ "¦")+spp5; } 
-        if (k>10)   { Col[k] = vvv5;    s=sl5+("col2¦" +k+ "¦")+spp5; }
+        if (k<10)   { Col[k] = vvv5; xCol[k] = vvv5; s=sl5+("col1¦" +k+ "¦")+spp5; } 
+        if (k>10)   { Col[k] = vvv5; xCol[k] = vvv5; s=sl5+("col2¦" +k+ "¦")+spp5; }
 		 k++;} 
   if (YesCol[vv5]!=null)  {
-        if (k<10)   { Col[k] = YesCol[vv5];    s=sl5+("col1¦" +k+ "¦")+sp5; count++; } 
-        if (k>10)   { Col[k] = YesCol[vv5];    s=sl5+("col2¦" +k+ "¦")+sp5; count++; }
+        if (k<10)   { Col[k] = YesCol[vv5]; xCol[k] = vvv5; s=sl5+("col1¦" +k+ "¦")+sp5; count++; } 
+        if (k>10)   { Col[k] = YesCol[vv5]; xCol[k] = vvv5; s=sl5+("col2¦" +k+ "¦")+sp5; count++; }
 		 k++;}
  var r=Object();
 	 if (k<10 && NoCol[vv5]==null && YesCol[vv5]==null)
-					{ if (InputBox(" Предлагается следующий           При «Отмене» останется:        … "+count+" …\n вариант :. v .:                                      " +vv5,v5, r) == IDCANCEL) return "exit";
-		 if(r!=null && r.$!="")  { Col[k] = r.$; YesCol[vv5]=r.$; s=sl5+("col1¦" +k+ "¦")+sp5; count++; }
-					 else { Col[k] = vvv5;  NoCol[vv5]=true;  s=sl5+("col1¦" +k+ "¦")+spp5; } }
+					{ highlightMatch(ptr, vv5);
+					  if (InputBox(" Предлагается следующий           При «Отмене» останется:        … "+count+" …\n вариант :. v .:                                      " +vv5,v5, r) == IDCANCEL) return "exit";
+		 if(r!=null && r.$!="")  { Col[k] = r.$; xCol[k] = vvv5; YesCol[vv5]=r.$; s=sl5+("col1¦" +k+ "¦")+sp5; count++; }
+					 else { Col[k] = vvv5; xCol[k] = vvv5; NoCol[vv5]=true;  s=sl5+("col1¦" +k+ "¦")+spp5; } }
 	 if (k>=10 && NoCol[vv5]==null && YesCol[vv5]==null)
-					{ if (InputBox(" Предлагается следующий           При «Отмене» останется:        … "+count+" …\n вариант :. v .:                                      " +vv5,v5, r) == IDCANCEL) return "exit";
-		 if(r!=null && r.$!="")  { Col[k] = r.$; YesCol[vv5]=r.$; s=sl5+("col2¦" +k+ "¦")+sp5; count++; }
-					 else { Col[k] = vvv5;  NoCol[vv5]=true;  s=sl5+("col2¦" +k+ "¦")+spp5; } }
+					{ highlightMatch(ptr, vv5);
+					  if (InputBox(" Предлагается следующий           При «Отмене» останется:        … "+count+" …\n вариант :. v .:                                      " +vv5,v5, r) == IDCANCEL) return "exit";
+		 if(r!=null && r.$!="")  { Col[k] = r.$; xCol[k] = vvv5; YesCol[vv5]=r.$; s=sl5+("col2¦" +k+ "¦")+sp5; count++; }
+					 else { Col[k] = vvv5; xCol[k] = vvv5; NoCol[vv5]=true;  s=sl5+("col2¦" +k+ "¦")+spp5; } }
  k++; }
 
 
@@ -302,22 +325,24 @@ while (ptr2!=fbw_body && ptr2.nodeName!="P") {
     var spp6   = s.replace(re60, re66);
 
   if (NoCol[vv6]==true)  {
-        if (k<10)   { Col[k] = vvv6;    s=sl6+("col1¦" +k+ "¦")+spp6; } 
-        if (k>10)   { Col[k] = vvv6;    s=sl6+("col2¦" +k+ "¦")+spp6; }
+        if (k<10)   { Col[k] = vvv6; xCol[k] = vvv6; s=sl6+("col1¦" +k+ "¦")+spp6; } 
+        if (k>10)   { Col[k] = vvv6; xCol[k] = vvv6; s=sl6+("col2¦" +k+ "¦")+spp6; }
 		 k++;} 
   if (YesCol[vv6]!=null)  {
-        if (k<10)   { Col[k] = YesCol[vv6];    s=sl6+("col1¦" +k+ "¦")+sp6; count++; } 
-        if (k>10)   { Col[k] = YesCol[vv6];    s=sl6+("col2¦" +k+ "¦")+sp6; count++; }
+        if (k<10)   { Col[k] = YesCol[vv6]; xCol[k] = vvv6; s=sl6+("col1¦" +k+ "¦")+sp6; count++; } 
+        if (k>10)   { Col[k] = YesCol[vv6]; xCol[k] = vvv6; s=sl6+("col2¦" +k+ "¦")+sp6; count++; }
 		 k++;}
  var r=Object();
 	 if (k<10 && NoCol[vv6]==null && YesCol[vv6]==null)
-					{ if (InputBox(" Предлагается следующий           При «Отмене» останется:        … "+count+" …\n вариант :. v .:                                      " +vv6,v6, r) == IDCANCEL) return "exit";
-		 if(r!=null && r.$!="")  { Col[k] = r.$; YesCol[vv6]=r.$; s=sl6+("col1¦" +k+ "¦")+sp6; count++; }
-					 else { Col[k] = vvv6;  NoCol[vv6]=true;  s=sl6+("col1¦" +k+ "¦")+spp6; } }
+					{ highlightMatch(ptr, vv6);
+					  if (InputBox(" Предлагается следующий           При «Отмене» останется:        … "+count+" …\n вариант :. v .:                                      " +vv6,v6, r) == IDCANCEL) return "exit";
+		 if(r!=null && r.$!="")  { Col[k] = r.$; xCol[k] = vvv6; YesCol[vv6]=r.$; s=sl6+("col1¦" +k+ "¦")+sp6; count++; }
+					 else { Col[k] = vvv6; xCol[k] = vvv6; NoCol[vv6]=true;  s=sl6+("col1¦" +k+ "¦")+spp6; } }
 	 if (k>=10 && NoCol[vv6]==null && YesCol[vv6]==null)
-					{ if (InputBox(" Предлагается следующий           При «Отмене» останется:        … "+count+" …\n вариант :. v .:                                      " +vv6,v6, r) == IDCANCEL) return "exit";
-		 if(r!=null && r.$!="")  { Col[k] = r.$; YesCol[vv6]=r.$; s=sl6+("col2¦" +k+ "¦")+sp6; count++; }
-					 else { Col[k] = vvv6;  NoCol[vv6]=true;  s=sl6+("col2¦" +k+ "¦")+spp6; } }
+					{ highlightMatch(ptr, vv6);
+					  if (InputBox(" Предлагается следующий           При «Отмене» останется:        … "+count+" …\n вариант :. v .:                                      " +vv6,v6, r) == IDCANCEL) return "exit";
+		 if(r!=null && r.$!="")  { Col[k] = r.$; xCol[k] = vvv6; YesCol[vv6]=r.$; s=sl6+("col2¦" +k+ "¦")+sp6; count++; }
+					 else { Col[k] = vvv6; xCol[k] = vvv6; NoCol[vv6]=true;  s=sl6+("col2¦" +k+ "¦")+spp6; } }
  k++; }
 
 
@@ -329,22 +354,24 @@ while (ptr2!=fbw_body && ptr2.nodeName!="P") {
     var sp7   = s.replace(re70, re73);
 
   if (NoCol[vv7]==true)  {
-        if (k<10)   { Col[k] = vv7;    s=sl7+("col1¦" +k+ "¦")+sp7; } 
-        if (k>10)   { Col[k] = vv7;    s=sl7+("col2¦" +k+ "¦")+sp7; }
+        if (k<10)   { Col[k] = vv7; xCol[k] = vv7; s=sl7+("col1¦" +k+ "¦")+sp7; } 
+        if (k>10)   { Col[k] = vv7; xCol[k] = vv7; s=sl7+("col2¦" +k+ "¦")+sp7; }
 		 k++;} 
   if (YesCol[vv7]!=null)  {
-        if (k<10)   { Col[k] = YesCol[vv7];    s=sl7+("col1¦" +k+ "¦")+sp7; count++; } 
-        if (k>10)   { Col[k] = YesCol[vv7];    s=sl7+("col2¦" +k+ "¦")+sp7; count++; }
+        if (k<10)   { Col[k] = YesCol[vv7]; xCol[k] = vv7; s=sl7+("col1¦" +k+ "¦")+sp7; count++; } 
+        if (k>10)   { Col[k] = YesCol[vv7]; xCol[k] = vv7; s=sl7+("col2¦" +k+ "¦")+sp7; count++; }
 		 k++;}
  var r=Object();
 	 if (k<10 && NoCol[vv7]==null && YesCol[vv7]==null)
-					{ if (InputBox(" Предлагается следующий           При «Отмене» останется:        … "+count+" …\n вариант :. v .:                                      " +vv7,v7, r) == IDCANCEL) return "exit";
-		 if(r!=null && r.$!="")  { Col[k] = r.$; YesCol[vv7]=r.$; s=sl7+("col1¦" +k+ "¦")+sp7; count++; }
-					 else { Col[k] = vv7;  NoCol[vv7]=true;  s=sl7+("col1¦" +k+ "¦")+sp7; } }
+					{ highlightMatch(ptr, vv7);
+					  if (InputBox(" Предлагается следующий           При «Отмене» останется:        … "+count+" …\n вариант :. v .:                                      " +vv7,v7, r) == IDCANCEL) return "exit";
+		 if(r!=null && r.$!="")  { Col[k] = r.$; xCol[k] = vv7; YesCol[vv7]=r.$; s=sl7+("col1¦" +k+ "¦")+sp7; count++; }
+					 else { Col[k] = vv7; xCol[k] = vv7; NoCol[vv7]=true;  s=sl7+("col1¦" +k+ "¦")+sp7; } }
 	 if (k>=10 && NoCol[vv7]==null && YesCol[vv7]==null)
-					{ if (InputBox(" Предлагается следующий           При «Отмене» останется:        … "+count+" …\n вариант :. v .:                                      " +vv7,v7, r) == IDCANCEL) return "exit";
-		 if(r!=null && r.$!="")  { Col[k] = r.$; YesCol[vv7]=r.$; s=sl7+("col2¦" +k+ "¦")+sp7; count++; }
-					 else { Col[k] = vv7;  NoCol[vv7]=true;  s=sl7+("col2¦" +k+ "¦")+sp7; } }
+					{ highlightMatch(ptr, vv7);
+					  if (InputBox(" Предлагается следующий           При «Отмене» останется:        … "+count+" …\n вариант :. v .:                                      " +vv7,v7, r) == IDCANCEL) return "exit";
+		 if(r!=null && r.$!="")  { Col[k] = r.$; xCol[k] = vv7; YesCol[vv7]=r.$; s=sl7+("col2¦" +k+ "¦")+sp7; count++; }
+					 else { Col[k] = vv7; xCol[k] = vv7; NoCol[vv7]=true;  s=sl7+("col2¦" +k+ "¦")+sp7; } }
  k++; }
 
 				}                                                                                                          // конец поиска и расстановки заглушек
@@ -419,8 +446,8 @@ var Tsec3 = Math.ceil(1000*((Tf-Ts)/1000-Tmin*60))/1000;
  else { if (Thour>=1)                    TimeStr=Thour+ " ч " +Tmin+ " мин " +Tsec+ " с"  }}}}}
 
    MsgBox ('  –= Jürgen Script =– \n'+
-                 ' «Фамилия И. О.» v'+VersionNumber+'  	 \n\n'+
+                 ' «'+name+'» v'+VersionNumber+'  	 \n\n'+
                  ' Произведено замен: ' +count+'\n\n'+
-                 ' Время: ' +TimeStr+ '.\n' ); 
+                 ' Время: '+TimeStr+'.\n' ); 
 
-} 
+}
