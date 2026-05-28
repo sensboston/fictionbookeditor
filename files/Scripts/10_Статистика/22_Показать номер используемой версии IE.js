@@ -1,3 +1,6 @@
+// Скрипт "Показать номер используемой версии IE"
+// Версия 1.1
+
 function Run() {
 
     function getIEVersion() {
@@ -29,8 +32,10 @@ function Run() {
     
     // Использование:
     var ieVersion = getIEVersion();
+    var ua = window.navigator.userAgent;
     if (ieVersion) {
-        MsgBox('Используется Internet Explorer версии ' + ieVersion);
+        MsgBox('Используется Internet Explorer версии ' + ieVersion+".\n\n"+
+               'Значение window.navigator.userAgent:\n"'+ua+'"');
     } else {
         MsgBox('Это не Internet Explorer');
     }
