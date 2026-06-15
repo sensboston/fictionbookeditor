@@ -1,5 +1,5 @@
 // Скрипт "Закрыть второй фрейм"
-// Версия 1.0
+// Версия 1.1
 // Автор Sclex
 
 function Run() {
@@ -9,8 +9,10 @@ function Run() {
     MsgBox("Произошла ошибка!");
     return;
   }
+  window.external.BeginUndoUnit(document,"закрытие второго фрейма");
   fbwBody.style.height="100%";
   fbwBody.style.overflow="auto";
   containerEl.outerHTML=fbwBody.outerHTML;
   InflateIt(containerEl);
+  window.external.EndUndoUnit(document);
 }

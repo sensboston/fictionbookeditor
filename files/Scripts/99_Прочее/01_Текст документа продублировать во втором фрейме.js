@@ -1,5 +1,5 @@
 // Скрипт "Текст документа продублировать во втором фрейме"
-// Версия 1.0
+// Версия 1.1
 // Автор Sclex (также при создании скрипта использовался ИИ DeepSeek)
 
 // Настройка allowEditingInSecondFrame либо разрешает, либо запрещает редактирование
@@ -177,12 +177,16 @@ function Run() {
   
   var fbwBody=document.getElementById("fbw_body");
   if (!fbwBody) return;
+  
+  window.external.BeginUndoUnit(document,"добавление второго фрейма");
   fbwBody.style.height="50%";
   //fbwBody2.innerHTML=fbwBody.innerHTML;
-  
+
+  var re0=new RegExp(" +id=[^ <>]+(?=>| [^<>]*>)","gi");
+  var re0_="";
   fbwBody.outerHTML="<DIV id='container'>"+fbwBody.outerHTML+
                     "<DIV id='divider' style='display: block;'></DIV>"+
-                    "<DIV id='fbw_body_2' contentEditable='"+(allowEditingInSecondFrame==1?true:false)+"' style='display: block;'>"+fbwBody.innerHTML+"</DIV>"+
+                    "<DIV id='fbw_body_2' contentEditable='"+(allowEditingInSecondFrame==1?true:false)+"' style='display: block;'>"+fbwBody.innerHTML.replace(re0,re0_)+"</DIV>"+
                     "</DIV>";
                     
   var fbwBody=document.getElementById("fbw_body");
@@ -191,5 +195,7 @@ function Run() {
   fbwBody.style.overflow="auto";
   
   SplitManager.init();
+  window.external.EndUndoUnit(document);
+   
   MsgBox("Второй фрейм был успешно создан.");
 }
