@@ -1,0 +1,434 @@
+body
+{
+	font-size: 12pt;
+	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+	padding: 0;
+	margin: 0;
+}
+
+div#fbw_desc
+{
+	text-align: left;
+	font-size: 8pt;
+	font-family: Tahoma, sans-serif;
+	background-color: #DCDCDC;
+	padding: 0.4em;
+
+}
+
+div#fbw_desc fieldset
+{
+	width: 61.5em;
+	margin: 0.1em;
+	padding-left: 0.5em;
+	padding-right: 0.5em;
+	padding-bottom: 0.5em;
+	padding-top: 0.5em;
+	border: 1px solid #C0C0C0;
+}
+
+div#fbw_desc legend
+{
+	padding-left: 0.5em;
+	padding-right: 0.5em;
+}
+
+div#fbw_desc br
+{
+	height: 0.5em;
+}
+
+div#fbw_desc div
+{
+	border: none;
+	white-space: nowrap;
+	clear: both;
+}
+
+div#fbw_desc div.float
+{
+   visibility: hidden;
+   position: absolute;
+   z-index: 1;
+   top: 0;
+   left: 0;
+   background: white;
+}
+
+div#fbw_desc button
+{
+	font-family: "Webdings";
+	font-size: 8pt;
+	color: Black;
+	float: right;
+	cursor: pointer;
+}
+
+div#fbw_desc button.popup_btn
+{
+	float: none;
+}
+
+div#fbw_desc input
+{
+	font-family: "Tahoma",sans-serif;
+	font-size: 8pt;
+	border: 1px solid #7F9DB8;
+	margin-top:2px;
+	margin-bottom:2px;
+
+}
+
+div#fbw_desc input.short
+{
+	width: 2em;
+}
+
+div#fbw_desc input.middle
+{
+	width: 35em;
+}
+
+div#fbw_desc input.wide
+{
+	width: 48em;
+}
+
+div#fbw_desc input.url
+{
+	width: 53.4em;
+	margin-left: 0.3em;
+	margin-top: 0.3em;
+	margin-bottom: 0.1em;
+}
+
+
+div#fbw_desc textarea#val
+{
+	width: 48em;
+	font-family: "Tahoma",sans-serif;
+	font-size: 8pt;
+	border: 1px solid Black;
+}
+
+div#fbw_desc label
+{
+	width: 6.5em;
+	text-align: right;
+	margin-top: 0.3em;
+	padding-left: 0.4em;
+	padding-right: 0.3em;
+	vertical-align: 20%;
+	color: black;
+}
+
+div#fbw_desc label.hl
+{
+	color: #EE0000;
+	font-weight: bold;
+}
+
+div#fbw_desc label.short
+{
+	width: 4em;
+}
+
+div#fbw_desc fieldset label
+{
+	width: 6.9em;
+}
+div#fbw_desc fieldset.kid
+{
+	width: 60em;
+	border: solid 1px #B0B0B0;
+}
+
+div#fbw_desc fieldset.kid label
+{
+	width: 6.5em;
+}
+
+div#fbw_desc legend.top
+{
+	font-size: 10pt;
+	color: #0000AA;
+	font-weight: bold;
+	margin-top: 1.7em;
+	margin-bottom: 0.4em;
+}
+
+div#fbw_desc textarea#stylesheetId 
+{
+	width: 60em;
+	font-family: "Tahoma",sans-serif;
+	font-size: 10pt;
+	border: 1px solid Black;
+}
+
+span.top
+{
+	vertical-align: top;
+}
+
+div#fbw_body
+{
+	padding: 0;
+	margin: 0.2em 0.2em 0 0.2em;
+	border: none;
+	clear: both;
+	width: 99%;
+}
+
+div#fbw_body_2
+{
+	padding: 0;
+	margin: 0.2em 0.2em 0 0.2em;
+	border: none;
+	clear: both;
+	width: 99%;
+}
+
+div#fbw_body div{
+	padding: 0em 0em 0em 0.4em;
+	margin: 0.5em 0em 0.5em 0em;
+	border-left: solid 1px;
+	clear: both;
+}
+
+div#fbw_body_2 div{
+	padding: 0em 0em 0em 0.4em;
+	margin: 0.5em 0em 0.5em 0em;
+	border-left: solid 1px;
+	clear: both;
+}
+
+div#fbw_body div.body {
+	padding: 0px;
+	margin: 0px;
+	border: none;
+}
+
+div#fbw_body_2 div.body {
+	padding: 0px;
+	margin: 0px;
+	border: none;
+}
+
+div.section{
+	border-color: #008000;
+}
+div.cite{
+	padding-left: 2em;
+	padding-right: 2em;
+	color: #660000;
+	border-color: #660000;
+}
+
+em{
+	font-style: italic;
+}
+div.epigraph{
+	font-size: 80%;
+	/*font-style: italic;*/
+	border-color: #00FFFF;
+	color: #FF0066;
+}
+
+div.epigraph p{
+	text-indent: 3em;
+	margin: 0 1em 0.5em 25%;
+}
+div.annotation{
+	border-color: #00CC99;
+	color: #6633FF;
+}
+div.history{
+	border-color: #FF1515;
+	color: #FF1515;
+}
+div.poem{
+	border-color: black;
+}
+div.stanza{
+	border-color: #FF1493;
+}
+div.stanza p{
+	text-align: left;
+	text-indent: 3em;
+	margin-bottom: 0em;
+	color: #006600;
+}
+div.title{
+	font-size: 130%;
+	border-color: #008080;
+	background: #008080;
+	color: white;
+	padding: 0.3em;
+}
+div.title p{
+	text-align: center;
+	text-indent: 0em;
+}  
+p{
+	text-indent: 3em;
+	margin-top: 0em;
+	margin-bottom: 0.2em;
+	text-align: justify;
+}
+p.subtitle{
+	text-align: center;
+	font-weight: bold;
+	text-indent: 0em;
+	color: #003300;
+}
+p.text-author{
+	margin-left: 3em;
+	margin-bottom: 1em;
+	color: #9900CC;
+}
+span.code{
+	font-family: monospace;
+	background: rgb(238,238,238);
+}
+a.note{
+	vertical-align: super;
+	color: blue;
+	font-size: 75%;
+}
+div.table {
+	border-color: teal;
+}
+div.tr {
+	border-color: rgb(150,120,20);
+}
+p.th {
+	text-align: center;
+	background: rgb(117,255,255);
+	text-indent: 0em;
+	margin-bottom: 0em;
+	color: purple;
+}
+p.td {
+	text-indent: 0em;
+	margin-bottom: 0em;
+	background: rgb(186,213,237);
+	color: navy;
+}
+
+div#fbw_body div.image{
+	margin: 0;
+	padding: 0;
+	border: none;
+	overflow: hidden;
+	clear: both;
+	text-align: center;
+}
+
+div#fbw_body_2 div.image{
+	margin: 0;
+	padding: 0;
+	border: none;
+	overflow: hidden;
+	clear: both;
+	text-align: center;
+}
+
+img{
+	margin: 0;
+	padding: 0;
+	border: none;
+	position: relative;
+	cursor: move;
+}
+
+div#fbw_body div.hider{
+	border: none;
+	margin: 0;
+	padding: 0;
+	width: 100%;
+}
+
+div#fbw_body_2 div.hider{
+	border: none;
+	margin: 0;
+	padding: 0;
+	width: 100%;
+}
+
+span.image{
+	text-indent: 0em;
+	margin: 0;
+	padding: 0;
+	border: none;
+	overflow: hidden;
+	clear: both;
+	text-align: center;
+}
+
+em{
+font-style: italic;
+color: #0000E0;
+}
+
+strong{
+font-style: bold;
+color: #660066;
+}
+
+html, body {
+    height: 100%;
+    overflow: hidden;
+    margin: 0;
+    padding: 0;
+}
+
+#container {
+    height: 100%;
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+}
+
+#fbw_body {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    z-index: 1;
+}
+
+#fbw_body_2 {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    top: 50%;
+    bottom: 0;
+    /*  –»“»◊≈— »≈ »—œ–¿¬À≈Õ»ﬂ ƒÀﬂ IE6 */
+    overflow-y: auto;
+    overflow-x: auto;
+    z-index: 1;
+    /* ’‡ÍË ‰Îˇ IE6 */
+    _overflow-y: auto;
+    _overflow-x: auto;
+    _height: expression(this.style.top ? 
+        (parseInt(this.parentNode.offsetHeight) - 
+         parseInt(this.style.top) - 6) + 'px' : 'auto');
+}
+
+#divider {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: 6px;
+    background-color: #333333;
+    cursor: n-resize;
+    z-index: 10;
+    font-size: 0;
+    line-height: 0;
+}
+
+#divider:hover {
+    background-color: #666666;
+}
